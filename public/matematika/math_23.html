@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Analisis Data Statistika</title>
+    
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="/tailwindcss.js"></script>
+    
+    <!-- Memuat Font Google (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Konfigurasi kustom Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+        
+        /* Menyembunyikan radio button bawaan */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling kustom untuk label opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            font-weight: 500;
+        }
+        
+        .option-label:hover {
+            border-color: #cbd5e1;
+            background-color: #f1f5f9;
+        }
+        
+        /* Styling saat opsi dipilih */
+        input[type="radio"]:checked + .option-label {
+            border-color: #7c3aed;
+            background-color: #f5f3ff;
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.1);
+        }
+        
+        /* Bulatan indikator kustom (Radio Button Custom) */
+        .radio-custom {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1rem;
+            margin-top: 0.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        
+        /* Titik dalam bulatan saat dipilih */
+        input[type="radio"]:checked + .option-label .radio-custom::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #7c3aed;
+            border-radius: 50%;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-custom {
+            border-color: #7c3aed;
+        }
+
+        /* Styling untuk kotak pembahasan (tersembunyi secara default) */
+        .explanation-box {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center">
+            <!-- Tombol Kembali -->
+            <button onclick="goBack()" class="text-slate-500 hover:text-slate-800 transition-colors mr-4 focus:outline-none" aria-label="Kembali">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            <h1 class="text-xl font-bold text-slate-800 truncate">Latihan Analisis Data & Statistika</h1>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        
+        <!-- Papan Petunjuk -->
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 mb-8 flex items-start shadow-sm">
+            <i class="fas fa-brain text-indigo-500 text-2xl mr-4 mt-1"></i>
+            <div>
+                <h2 class="text-lg font-bold text-indigo-900 mb-1">Petunjuk Pengerjaan (HOTS)</h2>
+                <p class="text-indigo-800 text-sm md:text-base leading-relaxed">Soal-soal ini dirancang untuk menguji kemampuan analisis dan logikamu (High Order Thinking Skills). Pilihlah jawaban yang paling tepat. Kamu bisa langsung mengecek hasilnya dengan tombol <strong>"Periksa Jawaban"</strong> di bawah kapan pun kamu mau.</p>
+            </div>
+        </div>
+
+        <form id="quizForm" onsubmit="return false;">
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Soal dirender oleh Vanilla JS di sini -->
+            </div>
+
+            <!-- Tombol Aksi Periksa -->
+            <div class="mt-10 mb-12 flex justify-center" id="actionArea">
+                <button type="button" onclick="checkAnswers()" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 text-lg w-full md:w-auto flex items-center justify-center">
+                    <i class="fas fa-tasks mr-3"></i> Periksa Jawaban
+                </button>
+            </div>
+
+            <!-- Area Hasil Akhir -->
+            <div id="resultArea" class="hidden bg-white rounded-3xl shadow-xl p-8 mb-12 text-center border-t-8 border-primary-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mr-10 -mt-10 text-primary-100 opacity-50 transform rotate-12">
+                    <i class="fas fa-award" style="font-size: 16rem;"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h3>
+                    <div class="relative inline-flex items-center justify-center w-40 h-40 rounded-full bg-primary-50 mb-6 shadow-inner border-4 border-primary-100">
+                        <span id="scoreDisplay" class="text-6xl font-extrabold text-primary-600">0</span>
+                    </div>
+                    <p id="scoreMessage" class="text-xl text-slate-600 mb-10 font-medium">Menghitung...</p>
+                    
+                    <!-- Tombol Reset / Ulangi -->
+                    <button type="button" onclick="resetQuiz()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-slate-300 w-full md:w-auto shadow-md">
+                        <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes dari Awal
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-medium text-sm md:text-base tracking-wide flex items-center justify-center">
+                By EDUFILLAH, Unlock The Secret Of Curious Minds
+                <i class="fas fa-lightbulb ml-2 text-yellow-400"></i>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        // Data soal, opsi, kunci jawaban terverifikasi matematis, dan pembahasan ekspansif
+        const quizData = [
+            {
+                id: 1,
+                question: "Perhatikan tabel frekuensi nilai ujian Matematika dari dua kelompok siswa berikut:<br><br><strong>Kelompok A:</strong><br>Nilai: 6, 7, 8, 9, 10<br>Frekuensi: 3, 5, 8, 4, 2<br><br><strong>Kelompok B:</strong><br>Nilai: 6, 7, 8, 9, 10<br>Frekuensi: 2, 6, 7, 5, 2<br><br>Berdasarkan tabel tersebut, modus dari Kelompok A dan Kelompok B berturut-turut adalah...",
+                options: {
+                    a: "A. 8 dan 7",
+                    b: "B. 8 dan 8",
+                    c: "C. 7 dan 8",
+                    d: "D. 8 dan 9"
+                },
+                answer: "b",
+                explanation: "<strong>Modus</strong> adalah nilai yang paling sering muncul (memiliki frekuensi paling tinggi). Ibarat pemilihan ketua kelas, modus adalah peraih suara terbanyak.<br><br><strong>Langkah Analisis:</strong><br>&bull; Pada <strong>Kelompok A</strong>, nilai dengan siswa terbanyak adalah nilai <strong>8</strong> (ada 8 siswa).<br>&bull; Pada <strong>Kelompok B</strong>, nilai dengan siswa terbanyak juga nilai <strong>8</strong> (ada 7 siswa).<br><br>Meskipun jumlah siswanya (frekuensinya) berbeda, namun <em>nilai</em> yang menjadi pemenangnya sama-sama angka 8. Jadi, modus keduanya berturut-turut adalah 8 dan 8."
+            },
+            {
+                id: 2,
+                question: "Diagram batang di bawah ini menunjukkan jumlah penjualan sepatu di Toko \"Maju\" dan Toko \"Jaya\" selama 5 hari pertama bulan Januari.<br><br><strong>Toko Maju:</strong> Senin (12), Selasa (15), Rabu (18), Kamis (10), Jumat (20)<br><strong>Toko Jaya:</strong> Senin (15), Selasa (12), Rabu (14), Kamis (16), Jumat (18)<br><br>Perbandingan rata-rata (mean) penjualan harian Toko Maju dan Toko Jaya adalah...",
+                options: {
+                    a: "A. 15 : 15",
+                    b: "B. 15 : 14",
+                    c: "C. 14 : 15",
+                    d: "D. 16 : 15"
+                },
+                answer: "a",
+                explanation: "Untuk mencari perbandingan rata-rata, kita harus menghitung rata-rata harian masing-masing toko terlebih dahulu.<br><br><strong>1. Rata-rata Toko Maju:</strong><br>Total = 12 + 15 + 18 + 10 + 20 = 75 pasang sepatu.<br>Rata-rata = 75 &divide; 5 hari = <strong>15 pasang/hari</strong>.<br><br><strong>2. Rata-rata Toko Jaya:</strong><br>Total = 15 + 12 + 14 + 16 + 18 = 75 pasang sepatu.<br>Rata-rata = 75 &divide; 5 hari = <strong>15 pasang/hari</strong>.<br><br>Ternyata, performa rata-rata kedua toko tersebut identik! Maka perbandingannya adalah 15 berbanding 15 (atau 1:1)."
+            },
+            {
+                id: 3,
+                question: "Diberikan data tinggi badan (dalam cm) dari dua tim basket sekolah:<br><br><strong>Tim Eagle:</strong> 170, 172, 175, 178, 180, 182, 185<br><strong>Tim Tiger:</strong> 168, 170, 175, 175, 180, 183, 188<br><br>Selisih nilai median dari tinggi badan Tim Eagle dan Tim Tiger adalah...",
+                options: {
+                    a: "A. 0 cm",
+                    b: "B. 2 cm",
+                    c: "C. 3 cm",
+                    d: "D. 5 cm"
+                },
+                answer: "c",
+                explanation: "<strong>Median</strong> adalah nilai tengah dari suatu kumpulan data yang sudah <em>diurutkan</em> dari kecil ke besar.<br><br><strong>1. Tim Eagle (7 orang):</strong><br>Datanya sudah urut. Nilai tengah (orang ke-4) adalah <strong>178 cm</strong>.<br><br><strong>2. Tim Tiger (7 orang):</strong><br>Datanya juga sudah urut. Nilai tengah (orang ke-4) adalah <strong>175 cm</strong>.<br><br><strong>3. Selisih Median:</strong><br>Selisih (pengurangan) = 178 cm &minus; 175 cm = <strong>3 cm</strong>."
+            },
+            {
+                id: 4,
+                question: "Diagram garis berikut menunjukkan suhu badan (dalam &deg;C) dua pasien yang dipantau setiap 2 jam sekali dari pukul 08.00 hingga 16.00.<br><br><strong>Pasien X:</strong> 37.5, 38.0, 38.5, 37.0, 36.5<br><strong>Pasien Y:</strong> 38.0, 38.5, 39.0, 38.0, 37.5<br><br>Berdasarkan data tersebut, analisis yang paling tepat mengenai ukuran penyebaran (jangkauan) suhu kedua pasien adalah...",
+                options: {
+                    a: "A. Jangkauan suhu Pasien X lebih besar daripada Pasien Y.",
+                    b: "B. Jangkauan suhu Pasien Y lebih besar daripada Pasien X.",
+                    c: "C. Jangkauan suhu kedua pasien adalah sama besar.",
+                    d: "D. Jangkauan suhu Pasien X adalah dua kali lipat jangkauan suhu Pasien Y."
+                },
+                answer: "a",
+                explanation: "<strong>Jangkauan (Range)</strong> dalam statistik mengukur seberapa \"liar\" atau lebar jarak penyebaran data, dihitung dengan <strong>Nilai Maksimum &minus; Nilai Minimum</strong>.<br><br>&bull; <strong>Pasien X:</strong> Suhu tertinggi 38.5&deg;C, terendah 36.5&deg;C.<br>Jangkauan = 38.5 &minus; 36.5 = <strong>2.0&deg;C</strong>.<br><br>&bull; <strong>Pasien Y:</strong> Suhu tertinggi 39.0&deg;C, terendah 37.5&deg;C.<br>Jangkauan = 39.0 &minus; 37.5 = <strong>1.5&deg;C</strong>.<br><br>Kesimpulannya: Suhu Pasien X lebih berfluktuasi/naik-turun drastis sehingga jangkauannya (2.0) lebih besar daripada Pasien Y (1.5)."
+            },
+            {
+                id: 5,
+                question: "Perhatikan data persentase jenis pelanggaran lalu lintas di dua wilayah. Total pelanggaran di Wilayah P adalah <strong>200 kasus</strong>, sedangkan di Wilayah Q adalah <strong>300 kasus</strong>.<br><br><strong>Wilayah P:</strong> Tidak pakai helm (40%), Melawan arus (30%), Tanpa surat (20%), Lain-lain (10%)<br><strong>Wilayah Q:</strong> Tidak pakai helm (30%), Melawan arus (25%), Tanpa surat (35%), Lain-lain (10%)<br><br>Seorang petugas menyatakan: <em>\"Kasus 'Tidak memakai helm' di Wilayah P lebih banyak daripada di Wilayah Q karena persentasenya lebih besar (40% > 30%).\"</em> Evaluasilah pernyataan tersebut!",
+                options: {
+                    a: "A. Pernyataan benar, karena 40% secara matematis lebih besar daripada 30%.",
+                    b: "B. Pernyataan salah, karena jumlah riil kasus di Wilayah P adalah 80 kasus, sedangkan di Wilayah Q adalah 90 kasus.",
+                    c: "C. Pernyataan salah, karena jumlah riil kasus di Wilayah P adalah 120 kasus, sedangkan di Wilayah Q adalah 100 kasus.",
+                    d: "D. Pernyataan benar, karena selisih persentase kedua wilayah adalah 10%."
+                },
+                answer: "b",
+                explanation: "Inilah jebakan dari membaca persentase tanpa melihat basis populasi (totalnya)! Persentase besar dari kelompok yang kecil bisa kalah dari persentase kecil di kelompok yang besar.<br><br>Mari kita hitung jumlah orang (kasus) sebenarnya:<br>&bull; <strong>Wilayah P:</strong> 40% dari 200 kasus = (40 &divide; 100) &times; 200 = <strong>80 orang</strong>.<br>&bull; <strong>Wilayah Q:</strong> 30% dari 300 kasus = (30 &divide; 100) &times; 300 = <strong>90 orang</strong>.<br><br>Faktanya, pelanggar di Wilayah Q lebih banyak (90 > 80). Jadi, pernyataan petugas tersebut keliru."
+            },
+            {
+                id: 6,
+                question: "Tabel berikut menunjukkan nilai ulangan harian IPA dari dua kelas.<br><br><strong>Kelas IX-A:</strong><br>Nilai (Banyak Siswa): 60(4), 70(8), 80(10), 90(6), 100(2)<br><strong>Kelas IX-B:</strong><br>Nilai (Banyak Siswa): 60(2), 70(6), 80(12), 90(8), 100(2)<br><br>Jika syarat kelulusan adalah mendapat nilai <strong>minimal 80</strong> (80 ke atas), perbandingan jumlah siswa yang lulus antara Kelas IX-A dan Kelas IX-B adalah...",
+                options: {
+                    a: "A. 9 : 11",
+                    b: "B. 18 : 22",
+                    c: "C. 5 : 6",
+                    d: "D. 3 : 4"
+                },
+                answer: "a",
+                explanation: "Langkah pertama adalah menghitung siswa yang mendapat nilai 80, 90, dan 100 dari masing-masing kelas.<br><br>&bull; <strong>Siswa lulus IX-A:</strong> 10 siswa + 6 siswa + 2 siswa = <strong>18 siswa</strong>.<br>&bull; <strong>Siswa lulus IX-B:</strong> 12 siswa + 8 siswa + 2 siswa = <strong>22 siswa</strong>.<br><br>Perbandingannya adalah 18 : 22. Dalam matematika, perbandingan wajib disederhanakan ke bentuk paling kecil (dibagi 2).<br>18 &divide; 2 = 9<br>22 &divide; 2 = 11<br>Jadi perbandingannya adalah <strong>9 : 11</strong>."
+            },
+            {
+                id: 7,
+                question: "Dua kelompok belajar memiliki nilai rata-rata ujian yang persis sama, yaitu 78. Data nilai mereka adalah:<br><br><strong>Kelompok Alpha:</strong> 70, 75, 78, 82, 85<br><strong>Kelompok Beta:</strong> 60, 70, 78, 87, 95<br><br>Berdasarkan ukuran penyebaran datanya (jangkauan), kesimpulan yang paling tepat mengenai kondisi kedua kelompok tersebut adalah...",
+                options: {
+                    a: "A. Kelompok Beta memiliki kemampuan yang lebih merata (homogen) dibandingkan Kelompok Alpha.",
+                    b: "B. Kelompok Alpha memiliki kemampuan yang lebih merata (homogen) dibandingkan Kelompok Beta.",
+                    c: "C. Kedua kelompok memiliki tingkat pemerataan kemampuan yang sama karena rata-ratanya sama.",
+                    d: "D. Kelompok Beta lebih unggul karena memiliki nilai tertinggi 95."
+                },
+                answer: "b",
+                explanation: "Meskipun rata-ratanya sama, karakter kemampuan siswanya berbeda. Ukuran 'homogenitas' (kemerataan) diukur dengan melihat jangkauan (selisih terbesar dan terkecil).<br><br>&bull; Jangkauan <strong>Alpha</strong> = 85 &minus; 70 = <strong>15 poin</strong>.<br>&bull; Jangkauan <strong>Beta</strong> = 95 &minus; 60 = <strong>35 poin</strong>.<br><br>Kelompok Alpha memiliki jangkauan yang sangat kecil (hanya beda 15 poin). Artinya, kepintaran anak-anak Alpha sangat mirip/merata satu sama lain (homogen). Sedangkan di kelompok Beta terjadi kesenjangan yang jauh (ada yang nilainya hancur 60, ada yang sangat jenius 95)."
+            },
+            {
+                id: 8,
+                question: "Data hasil panen padi (dalam ton) di Desa Makmur dan Desa Subur dari tahun 2019 sampai 2023:<br><br><strong>Desa Makmur:</strong> 10, 12, 15, 13, 18<br><strong>Desa Subur:</strong> 12, 14, 12, 16, 15<br><br>Selisih rata-rata hasil panen tahunan antara Desa Makmur dan Desa Subur selama periode tersebut adalah...",
+                options: {
+                    a: "A. 0.2 ton",
+                    b: "B. 0.4 ton",
+                    c: "C. 0.6 ton",
+                    d: "D. 0.8 ton"
+                },
+                answer: "a",
+                explanation: "Mari kita cari rata-rata hasil panen untuk masing-masing desa selama 5 tahun.<br><br>1. <strong>Desa Makmur:</strong><br>Total = 10 + 12 + 15 + 13 + 18 = 68 ton.<br>Rata-rata = 68 &divide; 5 = <strong>13.6 ton</strong>.<br><br>2. <strong>Desa Subur:</strong><br>Total = 12 + 14 + 12 + 16 + 15 = 69 ton.<br>Rata-rata = 69 &divide; 5 = <strong>13.8 ton</strong>.<br><br>3. <strong>Selisih Rata-rata:</strong><br>13.8 ton &minus; 13.6 ton = <strong>0.2 ton</strong>."
+            },
+            {
+                id: 9,
+                question: "Tabel di bawah ini menunjukkan waktu tempuh (dalam menit) sekelompok siswa saat bersepeda menuju sekolah.<br><br><strong>Kelompok Mandiri:</strong><br>Waktu (menit): 10, 12, 15, 18, 20<br>Frekuensi: 2, 3, 5, 4, 1<br><br><strong>Kelompok Ceria:</strong><br>Waktu (menit): 10, 12, 15, 18, 20<br>Frekuensi: 1, 4, 6, 3, 1<br><br>Analisis hubungan antara median kedua kelompok data tersebut adalah...",
+                options: {
+                    a: "A. Median Kelompok Mandiri lebih besar daripada median Kelompok Ceria.",
+                    b: "B. Median Kelompok Ceria lebih besar daripada median Kelompok Mandiri.",
+                    c: "C. Median kedua kelompok adalah sama, yaitu 15 menit.",
+                    d: "D. Median kedua kelompok tidak dapat ditentukan karena jumlah frekuensinya berbeda."
+                },
+                answer: "c",
+                explanation: "Kita harus mencari letak posisi Median pada data frekuensi (mencari anak yang berbaris di tengah).<br><br><strong>1. Kelompok Mandiri:</strong><br>Total siswa = 2 + 3 + 5 + 4 + 1 = 15 anak.<br>Posisi tengah dari 15 anak adalah anak urutan ke-8 ((15+1)&divide;2).<br>Hitung urutannya: Anak ke-1 s.d 2 (10 menit), Anak ke-3 s.d 5 (12 menit), <strong>Anak ke-6 s.d 10 (15 menit)</strong>. Jadi, anak urutan ke-8 mencatat waktu <strong>15 menit</strong>.<br><br><strong>2. Kelompok Ceria:</strong><br>Total siswa = 1 + 4 + 6 + 3 + 1 = 15 anak. Posisi tengahnya juga anak ke-8.<br>Hitung urutannya: Anak ke-1 (10 mnt), Anak ke-2 s.d 5 (12 mnt), <strong>Anak ke-6 s.d 11 (15 menit)</strong>. Anak urutan ke-8 ada di kelompok <strong>15 menit</strong>.<br><br>Kesimpulan: Kedua kelompok memiliki median yang sama persis."
+            },
+            {
+                id: 10,
+                question: "Seorang guru ingin membandingkan kinerja dua kelas dalam ujian fisika berdasarkan metrik berikut:<br><br>&bull; <strong>Kelas X:</strong> Rata-rata = 75, Median = 74, Jangkauan = 30<br>&bull; <strong>Kelas Y:</strong> Rata-rata = 75, Median = 78, Jangkauan = 15<br><br>Guru menyimpulkan: <em>\"Kelas Y memiliki performa yang lebih stabil dan secara umum sebagian besar siswanya mendapat nilai lebih tinggi dibanding Kelas X.\"</em> Evaluasilah kesimpulan guru tersebut!",
+                options: {
+                    a: "A. Salah, karena rata-rata kedua kelas sama, sehingga performa keduanya mutlak identik.",
+                    b: "B. Salah, karena jangkauan Kelas X lebih besar, yang berarti Kelas X pasti lebih pintar.",
+                    c: "C. Benar, karena median Kelas Y yang lebih tinggi menunjukkan separuh lebih siswanya unggul, dan jangkauan yang kecil menunjukkan kestabilan yang merata.",
+                    d: "D. Benar, murni hanya karena jangkauan Kelas Y lebih kecil tanpa perlu peduli nilai mediannya."
+                },
+                answer: "c",
+                explanation: "Ini adalah soal analisis data level tinggi (C5). <br>Meskipun \"Rata-rata\" mereka sama (75), wajah aslinya sangat berbeda.<br><br>1. <strong>Median Kelas Y (78) > Kelas X (74)</strong>. Ini berarti lebih dari separuh (50%) siswa di Kelas Y mendapat nilai di atas 78. Sementara di Kelas X, separuh siswanya hanya mendapat nilai di atas 74.<br>2. <strong>Jangkauan Kelas Y (15) < Kelas X (30)</strong>. Kelas Y tidak memiliki siswa dengan nilai yang sangat anjlok, semuanya berdekatan. Sangat stabil. Di Kelas X kesenjangan nilainya terlalu lebar.<br><br>Oleh karena itu, deduksi (kesimpulan) sang guru sangat akurat secara keilmuan statistika."
+            },
+            {
+                id: 11,
+                question: "Diagram lingkaran menunjukkan hobi dari 80 siswa Kelas IX-1 dan 100 siswa Kelas IX-2.<br><br><strong>Kelas IX-1 (80 siswa):</strong> Olahraga (50%), Membaca (25%), Musik (15%), Seni (10%)<br><strong>Kelas IX-2 (100 siswa):</strong> Olahraga (40%), Membaca (30%), Musik (20%), Seni (10%)<br><br>Selisih jumlah siswa yang memiliki hobi <strong>membaca</strong> antara Kelas IX-1 dan Kelas IX-2 adalah...",
+                options: {
+                    a: "A. 5 siswa",
+                    b: "B. 10 siswa",
+                    c: "C. 15 siswa",
+                    d: "D. 20 siswa"
+                },
+                answer: "b",
+                explanation: "Sekali lagi, jika populasinya berbeda, ubah persentase menjadi jumlah orang sesungguhnya!<br><br>&bull; Anak gemar membaca di <strong>IX-1:</strong> 25% dari 80 siswa = (25/100) &times; 80 = <strong>20 siswa</strong>.<br>&bull; Anak gemar membaca di <strong>IX-2:</strong> 30% dari 100 siswa = (30/100) &times; 100 = <strong>30 siswa</strong>.<br><br>Selisih orangnya = 30 &minus; 20 = <strong>10 siswa</strong>."
+            },
+            {
+                id: 12,
+                question: "Tabel berikut menunjukkan distribusi nilai tes potensi akademik dari dua kelompok calon pegawai.<br><br><strong>Kelompok I:</strong><br>Nilai (Frekuensi): 60(5), 70(15), 80(20), 90(10)<br><strong>Kelompok II:</strong><br>Nilai (Frekuensi): 60(10), 70(10), 80(15), 90(15)<br><br>Jika kita membandingkan nilai rata-rata kedua kelompok, pernyataan yang benar adalah...",
+                options: {
+                    a: "A. Rata-rata Kelompok I lebih tinggi daripada Kelompok II.",
+                    b: "B. Rata-rata Kelompok II lebih tinggi daripada Kelompok I.",
+                    c: "C. Rata-rata kedua kelompok adalah sama.",
+                    d: "D. Rata-rata Kelompok I adalah 75, sedangkan Kelompok II adalah 73."
+                },
+                answer: "c",
+                explanation: "Mari kita berhitung total nilainya dengan mengalikan Nilai &times; Frekuensi.<br><br><strong>1. Rata-rata Kelompok I (50 orang):</strong><br>Total Nilai = (60&times;5) + (70&times;15) + (80&times;20) + (90&times;10)<br>Total Nilai = 300 + 1050 + 1600 + 900 = 3850.<br>Rata-rata = 3850 &divide; 50 = <strong>77</strong>.<br><br><strong>2. Rata-rata Kelompok II (50 orang):</strong><br>Total Nilai = (60&times;10) + (70&times;10) + (80&times;15) + (90&times;15)<br>Total Nilai = 600 + 700 + 1200 + 1350 = 3850.<br>Rata-rata = 3850 &divide; 50 = <strong>77</strong>.<br><br>Terbukti secara matematis rata-rata kedua kelompok adalah sama identik, yaitu 77."
+            },
+            {
+                id: 13,
+                question: "Dua buah mesin digunakan untuk mengemas kopi ke dalam wadah target 250 gram. Sampel acak berat kemasan (dalam gram) dicatat sebagai berikut:<br><br><strong>Mesin A:</strong> 248, 250, 251, 249, 252, 250<br><strong>Mesin B:</strong> 245, 255, 250, 247, 253, 250<br><br>Manajer pabrik harus memilih mesin yang paling presisi dan konsisten agar perusahaan tidak rugi. Evaluasilah mesin mana yang sebaiknya dipilih!",
+                options: {
+                    a: "A. Mesin B, karena bisa memproduksi kemasan lebih banyak yaitu 255 gram.",
+                    b: "B. Mesin A, karena jangkauan eror/variasinya sangat kecil (4 gram) dibanding Mesin B (10 gram).",
+                    c: "C. Kedua mesin sama-sama sempurna karena rata-ratanya tepat 250 gram.",
+                    d: "D. Mesin B, karena memiliki variasi data yang besar dan tidak membosankan."
+                },
+                answer: "b",
+                explanation: "Dalam dunia industri, <strong>presisi/konsistensi adalah segalanya</strong>. Konsistensi dalam statistik dinilai dari seberapa kecil nilai 'Jangkauan' (penyimpangan data).<br><br>Keduanya memang memiliki rata-rata 250 gram. Namun mari lihat eror mesinnya:<br>&bull; Jangkauan eror <strong>Mesin A</strong>: Kemasan terbesar 252g dikurangi terkecil 248g = beda <strong>4 gram</strong> saja.<br>&bull; Jangkauan eror <strong>Mesin B</strong>: Kemasan terbesar 255g dikurangi terkecil 245g = beda <strong>10 gram</strong>. Ini sangat berisiko membuat pelanggan komplain karena isinya kadang terlalu sedikit, atau pabrik rugi karena isinya berlebih.<br><br>Maka, <strong>Mesin A jauh lebih baik.</strong>"
+            },
+            {
+                id: 14,
+                question: "Data nilai ujian sosiologi dari dua kelas disajikan sebagai berikut:<br><br><strong>Kelas A:</strong> Nilai (Frekuensi): 5(2), 6(4), 7(8), 8(5), 9(1)<br><strong>Kelas B:</strong> Nilai (Frekuensi): 5(1), 6(3), 7(10), 8(4), 9(2)<br><br>Berdasarkan data di atas, perbandingan nilai median antara Kelas A dan Kelas B adalah...",
+                options: {
+                    a: "A. Median Kelas A > Median Kelas B",
+                    b: "B. Median Kelas A < Median Kelas B",
+                    c: "C. Median Kelas A = Median Kelas B",
+                    d: "D. Median Kelas A dan Kelas B tidak dapat dibandingkan"
+                },
+                answer: "c",
+                explanation: "Mari kita cari letak median (nilai tengah). Keduanya memiliki total siswa = 20 orang (Genap). Maka letak median ada di rata-rata antara data ke-10 dan data ke-11.<br><br><strong>1. Kelas A:</strong><br>Anak urutan 1-2 (Nilai 5). Anak urutan 3-6 (Nilai 6). <strong>Anak urutan 7-14 (Nilai 7)</strong>.<br>Maka anak ke-10 dan ke-11 sama-sama bernilai <strong>7</strong>.<br><br><strong>2. Kelas B:</strong><br>Anak urutan 1 (Nilai 5). Anak urutan 2-4 (Nilai 6). <strong>Anak urutan 5-14 (Nilai 7)</strong>.<br>Maka anak ke-10 dan ke-11 juga sama-sama bernilai <strong>7</strong>.<br><br>Kesimpulannya: Median Kelas A sama dengan Kelas B."
+            },
+            {
+                id: 15,
+                question: "Diagram batang di bawah ini menunjukkan curah hujan bulanan (dalam mm) di Kota Utara dan Kota Selatan selama semester pertama.<br><br><strong>Kota Utara:</strong> Jan (250), Feb (200), Mar (150), Apr (100), Mei (50), Jun (30)<br><strong>Kota Selatan:</strong> Jan (150), Feb (150), Mar (150), Apr (150), Mei (150), Jun (150)<br><br>Analisis yang paling tepat secara matematis mengenai ukuran pemusatan dan penyebaran curah hujan kedua kota tersebut adalah...",
+                options: {
+                    a: "A. Rata-rata curah hujan Kota Utara sama dengan Kota Selatan, namun jangkauannya berbeda.",
+                    b: "B. Rata-rata curah hujan Kota Utara lebih besar daripada Kota Selatan, dengan jangkauan yang sama.",
+                    c: "C. Rata-rata curah hujan Kota Selatan lebih besar daripada Kota Utara, dengan jangkauan yang lebih kecil.",
+                    d: "D. Rata-rata dan jangkauan curah hujan kedua kota adalah persis sama besar."
+                },
+                answer: "c",
+                explanation: "Mari kita hitung dengan saksama:<br><br>1. <strong>Kota Utara:</strong><br>Total = 250+200+150+100+50+30 = 780. Rata-rata = 780 &divide; 6 = <strong>130 mm</strong>.<br>Jangkauan (Naik turunnya cuaca) = 250 &minus; 30 = <strong>220 mm</strong> (Sangat ekstrem fluktuasinya).<br><br>2. <strong>Kota Selatan:</strong><br>Total = 150 &times; 6 = 900. Rata-rata = 900 &divide; 6 = <strong>150 mm</strong>.<br>Jangkauan = 150 &minus; 150 = <strong>0 mm</strong> (Curah hujannya konstan tidak berubah-ubah).<br><br>Jadi, Rata-rata Kota Selatan (150) > Kota Utara (130). Dan Jangkauan Kota Selatan (0) < Kota Utara (220)."
+            },
+            {
+                id: 16,
+                question: "Berikut adalah tabel frekuensi nilai matematika siswa kelas IX C:<br><br>Nilai (Frekuensi): 50(2), 60(5), 70(8), 80(12), 90(7), 100(6)<br><br>Jika syarat kelulusan adalah mendapatkan nilai <strong>di atas nilai rata-rata kelas</strong> (bukan sama dengan rata-rata), maka banyak siswa yang <strong>tidak lulus</strong> adalah...",
+                options: {
+                    a: "A. 7 siswa",
+                    b: "B. 15 siswa",
+                    c: "C. 27 siswa",
+                    d: "D. 13 siswa"
+                },
+                answer: "b",
+                explanation: "Kita harus mencari 'Garis Kriteria (Rata-rata)' terlebih dahulu.<br><br>1. <strong>Hitung Rata-rata:</strong><br>Total Nilai = (50&times;2) + (60&times;5) + (70&times;8) + (80&times;12) + (90&times;7) + (100&times;6)<br>Total Nilai = 100 + 300 + 560 + 960 + 630 + 600 = 3150.<br>Total Siswa = 2 + 5 + 8 + 12 + 7 + 6 = 40 siswa.<br>Rata-rata Kelas = 3150 &divide; 40 = <strong>78.75</strong>.<br><br>2. <strong>Cari yang Tidak Lulus:</strong><br>Siswa yang nilainya di bawah atau sama dengan 78.75 adalah siswa yang mendapat nilai 50, 60, dan 70.<br>Banyak siswa = 2 + 5 + 8 = <strong>15 siswa</strong>."
+            },
+            {
+                id: 17,
+                question: "Dua rute jalan dicoba oleh seorang pengendara motor menuju kantor selama 10 hari. Waktu tempuh (dalam menit) dicatat sebagai berikut:<br><br><strong>Rute 1:</strong> 20, 22, 21, 20, 23, 22, 21, 20, 22, 21<br><strong>Rute 2:</strong> 15, 25, 18, 22, 30, 12, 28, 17, 20, 25<br><br>Pernyataan analisis yang paling tepat mengenai \"keandalan (efisiensi) waktu\" dari kedua rute tersebut untuk berangkat kerja adalah...",
+                options: {
+                    a: "A. Rute 2 lebih baik karena memiliki waktu tempuh memecahkan rekor tercepat yaitu 12 menit.",
+                    b: "B. Rute 1 jauh lebih dapat diandalkan karena rentang waktunya sangat stabil (jangkauan hanya 3 menit).",
+                    c: "C. Rute 2 memiliki rata-rata waktu tempuh yang lebih kecil daripada Rute 1.",
+                    d: "D. Rute 1 dan Rute 2 memiliki tingkat kestabilan variabilitas waktu yang persis sama."
+                },
+                answer: "b",
+                explanation: "Jika tujuanmu adalah pergi ke kantor, kamu tidak ingin mengambil rute yang waktunya tidak bisa ditebak (kadang 12 menit, tapi kadang macet total 30 menit seperti Rute 2). <br><br>Hal ini diukur dari Jangkauan datanya:<br>&bull; <strong>Jangkauan Rute 1</strong> = 23 &minus; 20 = <strong>3 menit</strong>.<br>&bull; <strong>Jangkauan Rute 2</strong> = 30 &minus; 12 = <strong>18 menit</strong>.<br><br>Rute 1 sangat konsisten (pasti sampai dalam 20-23 menit), membuatnya jauh lebih bisa diandalkan secara harian untuk merencanakan jam keberangkatan dari rumah."
+            },
+            {
+                id: 18,
+                question: "Sebuah perusahaan kurir membandingkan waktu pengiriman paket (dalam jam) oleh dua kurir selama seminggu.<br><br><strong>Kurir X:</strong> 2, 3, 3, 4, 4, 5, 21 <em>(Hari terakhir tercatat lambat karena motor mogok di jalan tol)</em><br><strong>Kurir Y:</strong> 5, 5, 6, 6, 6, 7, 7<br><br>Manajer ingin melihat siapa yang paling cepat secara alami sehari-hari. Metrik ukuran pemusatan apa yang <strong>paling adil</strong> digunakan untuk kasus ini?",
+                options: {
+                    a: "A. Rata-rata (mean), karena secara adil memperhitungkan seluruh waktu termasuk saat motor mogok.",
+                    b: "B. Median, karena nilai ekstrem 21 jam (pencilan/outlier) akibat motor mogok tidak akan merusak representasi kecepatan harian asli Kurir X.",
+                    c: "C. Jangkauan, karena Kurir Y memiliki jangkauan yang lebih kecil sehingga pasti lebih cepat.",
+                    d: "D. Modus, karena kemunculan waktu yang sering adalah kunci kecepatan."
+                },
+                answer: "b",
+                explanation: "Kasus kurir motor mogok (21 jam) adalah bentuk kecelakaan sesaat (anomali) yang disebut <strong>Nilai Ekstrem (Outlier)</strong>.<br><br>Kelemahan terbesar nilai <strong>Rata-rata (Mean)</strong> adalah ia sangat sensitif (mudah rusak) oleh angka ekstrem ini. Jika dihitung, rata-rata Kurir X akan anjlok menjadi 6 jam, seolah-olah dia lambat padahal sehari-hari dia hanya butuh 2-4 jam.<br><br><strong>Median (Nilai Tengah)</strong> sangat kebal terhadap angka ekstrem (pencilan) ini. Median Kurir X adalah 4 jam, menunjukkan identitas kecepatan aslinya secara adil."
+            },
+            {
+                id: 19,
+                question: "Tabel berikut menunjukkan tinggi tanaman (dalam cm) dari dua jenis pupuk yang berbeda setelah 4 minggu.<br><br><strong>Pupuk Organik:</strong> Tinggi 12cm(3), 14cm(5), 15cm(10), 16cm(5), 18cm(2)<br><strong>Pupuk Kimia:</strong> Tinggi 12cm(1), 14cm(4), 15cm(12), 16cm(6), 18cm(2)<br><br>Berdasarkan data tersebut, perbandingan nilai kuartil bawah (Q1) dari tinggi tanaman yang diberi Pupuk Organik dan Pupuk Kimia adalah...",
+                options: {
+                    a: "A. Q1 Pupuk Organik < Q1 Pupuk Kimia",
+                    b: "B. Q1 Pupuk Organik > Q1 Pupuk Kimia",
+                    c: "C. Q1 Pupuk Organik = Q1 Pupuk Kimia",
+                    d: "D. Q1 kedua kelompok tidak dapat ditentukan karena sifat datanya."
+                },
+                answer: "a",
+                explanation: "Kuartil Bawah (Q1) adalah posisi tengah dari 50% data bagian awal. Total data kedua pupuk adalah 25 buah. Posisi Q1 untuk n=25 berada pada data urutan ke-6.5 (antara data ke-6 dan ke-7).<br><br><strong>1. Pupuk Organik:</strong><br>Data ke-1 s.d 3 (12cm). <strong>Data ke-4 s.d 8 (14cm)</strong>.<br>Maka data ke-6 dan ke-7 bernilai 14. <strong>Q1 Organik = 14 cm</strong>.<br><br><strong>2. Pupuk Kimia:</strong><br>Data ke-1 (12cm). Data ke-2 s.d 5 (14cm). <strong>Data ke-6 s.d 17 (15cm)</strong>.<br>Maka data ke-6 dan ke-7 bernilai 15. <strong>Q1 Kimia = 15 cm</strong>.<br><br>Karena 14 < 15, maka <strong>Q1 Pupuk Organik < Q1 Pupuk Kimia</strong>."
+            },
+            {
+                id: 20,
+                question: "Perhatikan data tren penjualan dua produk kosmetik selama periode Juli - Desember berikut.<br><br><strong>Produk A:</strong> Jul(100), Ags(120), Sep(110), Okt(130), Nov(140), Des(150)<br><strong>Produk B:</strong> Jul(50), Ags(80), Sep(120), Okt(150), Nov(190), Des(210)<br><br>Manajer pemasaran mengklaim: <em>\"Produk A lebih sukses dari Produk B karena datanya sangat konsisten/stabil mendatar dari awal tahun.\"</em> Evaluasilah klaim yang keliru tersebut secara statistika bisnis!",
+                options: {
+                    a: "A. Klaim benar, karena jangkauan/kestabilan yang kecil adalah tanda satu-satunya bisnis yang sukses.",
+                    b: "B. Klaim keliru, karena meskipun Produk A 'stabil', Produk B menunjukkan tren peningkatan eksponensial dengan nilai total dan rata-rata akhir yang sukses meroket lebih tinggi.",
+                    c: "C. Klaim keliru, karena rata-rata penjualan Produk A jauh lebih kecil daripada Produk B pada bulan Agustus.",
+                    d: "D. Klaim benar, karena Produk B pernah anjlok di angka 50."
+                },
+                answer: "b",
+                explanation: "Dalam menganalisis grafik deret waktu untuk bisnis, kita tidak hanya melihat 'kestabilan' semata, tetapi juga <strong>TREN Pertumbuhan</strong> (Gradient).<br><br>Produk A memang stabil (penjualannya mendatar lambat). Namun, Produk B melesat tajam bagai roket (grafik eksponensial naik). Meski awalnya B hanya terjual 50, tapi di bulan November dan Desember ia menghancurkan rekor Produk A dengan mudah hingga menembus 210.<br><br>Menilai kesuksesan produk semata-mata dari 'kestabilan yang lambat' dan mengabaikan tren pertumbuhan pesat adalah analisis bisnis yang salah kaprah."
+            }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            quizData.forEach((q, index) => {
+                // Regex untuk menangkap pola Base64 image
+                let formattedQuestion = q.question.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" alt="Gambar Soal" style="max-width:100%; border-radius:8px;" class="mx-auto shadow-sm my-5 border border-slate-200">');
+
+                const questionHTML = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 transition-all duration-300 relative overflow-hidden group" id="q-card-${index}">
+                        
+                        <!-- Side marker indicator -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-primary-400 transition-colors duration-300" id="card-indicator-${index}"></div>
+                        
+                        <div class="flex items-start mb-6 pl-2">
+                            <span class="flex-shrink-0 bg-primary-100 text-primary-700 font-bold w-10 h-10 rounded-full flex items-center justify-center mr-4 mt-0.5 text-lg shadow-inner border border-primary-200">
+                                ${q.id}
+                            </span>
+                            <p class="text-lg font-medium text-slate-800 leading-relaxed">${formattedQuestion}</p>
+                        </div>
+                        
+                        <div class="space-y-4 pl-2 md:pl-14">
+                            ${Object.entries(q.options).map(([key, value]) => `
+                                <div>
+                                    <input type="radio" name="q${index}" id="q${index}_${key}" value="${key}">
+                                    <label for="q${index}_${key}" class="option-label text-slate-700">
+                                        <div class="radio-custom"></div>
+                                        <span class="leading-relaxed">${value}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kotak Pembahasan (Disembunyikan pada tahap awal) -->
+                        <div id="explanation-${index}" class="explanation-box mt-8 p-6 rounded-xl border-l-4 ml-2 md:ml-14 bg-slate-50 border-slate-300">
+                            <div class="flex items-center mb-3">
+                                <i id="icon-${index}" class="fas mr-3 text-2xl"></i>
+                                <h4 id="title-${index}" class="font-bold text-xl"></h4>
+                            </div>
+                            <div class="text-base text-slate-700 leading-relaxed space-y-3" id="text-${index}">
+                                <!-- Pembahasan akan di-inject disini -->
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += questionHTML;
+            });
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const icon = document.getElementById(`icon-${index}`);
+                const title = document.getElementById(`title-${index}`);
+                const textContainer = document.getElementById(`text-${index}`);
+                const card = document.getElementById(`q-card-${index}`);
+                const indicator = document.getElementById(`card-indicator-${index}`);
+
+                // Tampilkan kotak pembahasan
+                explanationBox.classList.add('show');
+                
+                // Reset styling box ke netral sebelum di-assign
+                explanationBox.className = 'explanation-box show mt-8 p-6 rounded-xl border-l-4 ml-2 md:ml-14';
+                card.classList.remove('border-emerald-400', 'border-rose-400', 'bg-emerald-50/20', 'bg-rose-50/20');
+
+                // Logika penilaian
+                if (selectedOption && selectedOption.value === q.answer) {
+                    correctCount++;
+                    
+                    // Styling jika BENAR
+                    explanationBox.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    icon.className = 'fas fa-check-circle text-emerald-500';
+                    title.className = 'font-bold text-xl text-emerald-700';
+                    title.textContent = 'Analisis Tepat!';
+                    card.classList.add('border-emerald-400', 'bg-emerald-50/20');
+                    indicator.classList.replace('bg-slate-200', 'bg-emerald-500');
+                    indicator.classList.replace('group-hover:bg-primary-400', 'group-hover:bg-emerald-500');
+                    
+                    // Masukkan teks eksplanasi murni
+                    textContainer.innerHTML = q.explanation;
+                } else {
+                    // Styling jika SALAH / TIDAK DIJAWAB
+                    explanationBox.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    icon.className = 'fas fa-times-circle text-rose-500';
+                    title.className = 'font-bold text-xl text-rose-700';
+                    
+                    if(!selectedOption) {
+                        title.textContent = 'Belum Dijawab';
+                    } else {
+                        title.textContent = 'Analisis Kurang Tepat';
+                    }
+
+                    // Tampilkan kunci jawaban di blok peringatan kecil sebelum narasi
+                    textContainer.innerHTML = `<div class="mb-4 inline-block bg-white px-4 py-2.5 rounded-lg border border-rose-200 shadow-sm"><span class="font-bold text-rose-800">Kunci Jawaban:</span> <span class="font-black text-rose-900 ml-1 bg-rose-100 px-2 py-1 rounded">${q.answer.toUpperCase()}</span></div>${q.explanation}`;
+                    
+                    card.classList.add('border-rose-400', 'bg-rose-50/20');
+                    indicator.classList.replace('bg-slate-200', 'bg-rose-500');
+                    indicator.classList.replace('group-hover:bg-primary-400', 'group-hover:bg-rose-500');
+                }
+            });
+
+            // Kalkulasi skala persentase 0-100
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Atur visibilitas UI
+            document.getElementById('actionArea').classList.add('hidden');
+            const resultArea = document.getElementById('resultArea');
+            resultArea.classList.remove('hidden');
+            
+            // Animasi angka Counter (Skor)
+            let currentScore = 0;
+            const scoreElement = document.getElementById('scoreDisplay');
+            try {
+                scoreElement.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            const messageElement = document.getElementById('scoreMessage');
+            
+            // Kategori Feedback
+            if(score >= 85) {
+                messageElement.innerHTML = "Brilian! Kemampuan nalar logis dan analisismu setara dengan Data Scientist. <i class='fas fa-gem text-primary-500 ml-1'></i>";
+                messageElement.className = "text-xl text-emerald-600 mb-10 font-bold";
+            } else if(score >= 65) {
+                messageElement.innerHTML = "Kerja bagus! Konsep statistikamu sudah kuat, perhatikan jebakan analisanya ya. <i class='fas fa-thumbs-up text-primary-500 ml-1'></i>";
+                messageElement.className = "text-xl text-primary-600 mb-10 font-bold";
+            } else {
+                messageElement.innerHTML = "Tetap semangat! Baca ulang pembahasannya pelan-pelan agar logikanya makin terasah. <i class='fas fa-book-reader text-rose-500 ml-1'></i>";
+                messageElement.className = "text-xl text-rose-600 mb-10 font-semibold";
+            }
+
+            // Interval hitung angka untuk efek dramatis
+            const timer = setInterval(() => {
+                if (currentScore >= score) {
+                    clearInterval(timer);
+                    scoreElement.textContent = score; try { scoreElement.setAttribute('data-final-score', score); } catch(e){}
+                } else {
+                    currentScore += (score > 50 ? 2 : 1);
+                    if(currentScore > score) currentScore = score;
+                    scoreElement.textContent = currentScore;
+                }
+            }, 25);
+
+            // Scroll otomatis yang smooth menuju bawah
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function resetQuiz() {
+            // Bersihkan pilihan di radio buttons
+            document.getElementById('quizForm').reset();
+            
+            // Sembunyikan dan normalkan kembali tampilan kartu soal
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                explanationBox.classList.remove('show');
+                
+                // Bersihkan injeksi 'Kunci Jawaban'
+                const textContainer = document.getElementById(`text-${index}`);
+                textContainer.innerHTML = ''; 
+
+                // Reset kartu border
+                const card = document.getElementById(`q-card-${index}`);
+                card.classList.remove('border-emerald-400', 'border-rose-400', 'bg-emerald-50/20', 'bg-rose-50/20');
+                
+                // Reset indikator warna
+                const indicator = document.getElementById(`card-indicator-${index}`);
+                indicator.className = 'absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-primary-400 transition-colors duration-300';
+            });
+
+            // Tampilkan kembali tombol periksa, sembunyikan area hasil
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('actionArea').classList.remove('hidden');
+            
+            // Scroll instan ke titik koordinat 0 (puncak layar)
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        }
+
+        // Panggil fungsi render tepat setelah halaman termuat
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuestions);
+        } else {
+            renderQuestions();
+        }
+        window.onload = function() {
+            renderQuestions();
+        };
+    </script>
+</body>
+</html>

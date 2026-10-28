@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Literasi & Karakter Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Customizing radio inputs for better UI/UX */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Smooth transition for explanation boxes */
+        .explanation-box {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2000px;
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Styling for story/context quotes to make them stand out */
+        .quote-box {
+            border-left: 4px solid #3b82f6; /* blue-500 */
+            background-color: #f0f9ff; /* sky-50 */
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+            font-style: italic;
+            color: #1e3a8a; /* blue-900 */
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        /* Quote mark decorative element */
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #bae6fd; /* sky-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        /* Responsive images for future proofing base64 logic */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-2xl font-bold text-slate-800 text-center flex-1 px-2">Kuis Literasi & Karakter</h1>
+            <div class="w-24"></div> <!-- Spacer for flexbox centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6 text-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Uji Nalar Sosial & Literasimu! 🚀</h2>
+                <p class="text-slate-600 text-[15px] md:text-lg leading-relaxed max-w-2xl mx-auto">
+                    Bacalah teks dengan saksama dan evaluasi situasi yang terjadi. Kuis ini melatih nalar kritis dan kepedulian sosialmu. Kamu boleh langsung memeriksa jawaban tanpa harus mengisi semua soal.
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Soal akan di-render di sini oleh JavaScript -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message"></p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 1 dan 2.</strong><div class='quote-box'>Dulu, setiap sore lapangan ini penuh dengan tawa anak-anak yang bermain petak umpet atau layangan. Sekarang, sunyi sekali. Semua anak mendekam di dalam kamar, menatap layar gawai masing-masing, larut dalam permainan virtual yang tak menyisakan ruang untuk bersosialisasi secara nyata.</div>Berdasarkan kutipan cerpen di atas, peristiwa manakah dalam kehidupan sehari-hari saat ini yang paling relevan dengan isi teks tersebut?",
+                options: [
+                    "Banyaknya pembangunan gedung bertingkat yang menggusur lahan bermain anak-anak di desa.",
+                    "Anak-anak zaman sekarang lebih memilih bermain game online di rumah daripada bermain fisik bersama teman di lingkungan sekitar.",
+                    "Orang tua yang melarang anaknya keluar rumah karena khawatir akan bahaya kriminalitas di jalanan.",
+                    "Meningkatnya jumlah penjualan gawai pintar di kalangan anak-anak usia sekolah dasar."
+                ],
+                answer: 1, // B
+                explanation: "Halo Sobat Kritis! Mari kita analisis inti teks di atas.<br>Teks tersebut membandingkan kondisi masa lalu (anak-anak bermain fisik di lapangan) dengan kondisi masa kini (anak-anak diam di kamar bermain gawai). <br><br>Pilihan yang paling mewakili atau <em>relevan</em> dengan keluhan pada cerita tersebut adalah <strong>Opsi B</strong>, yaitu fenomena di mana game online di rumah telah menggantikan aktivitas bermain fisik di luar ruangan bersama teman-teman."
+            },
+            {
+                text: "Bagaimana kamu mengevaluasi sikap tokoh \"anak-anak zaman sekarang\" dalam teks tersebut jika dikaitkan dengan pentingnya kesehatan sosial remaja?",
+                options: [
+                    "Sikap tersebut sangat baik karena teknologi melatih kemampuan kognitif dan motorik halus anak melalui game modern.",
+                    "Sikap tersebut kurang bijak karena mengabaikan interaksi sosial langsung yang sangat penting untuk melatih empati dan komunikasi nyata.",
+                    "Sikap tersebut wajar karena mengikuti perkembangan zaman agar tidak tertinggal dari negara-negara maju.",
+                    "Sikap tersebut harus didukung penuh oleh sekolah dengan memfasilitasi sarana game online saat jam istirahat."
+                ],
+                answer: 1, // B
+                explanation: "Pertanyaan ini memintamu mengevaluasi dampak perilaku terhadap <strong>kesehatan sosial</strong>.<br><br>Manusia adalah makhluk sosial. Bermain hanya di dunia virtual (gawai) membuat remaja kehilangan kesempatan berharga untuk berinteraksi langsung. Padahal, interaksi tatap muka sangat dibutuhkan untuk belajar membaca ekspresi wajah, melatih rasa empati, dan keterampilan komunikasi di dunia nyata. Jadi, sikap mengisolasi diri tersebut <strong>kurang bijak (Opsi B)</strong>."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 3 dan 4.</strong><div class='quote-box'>Roni melihat tumpukan sampah plastik menyumbat selokan di depan rumahnya. Ia menghela napas, lalu melewatinya begitu saja. \"Ah, nanti juga ada petugas kebersihan yang membersihkannya,\" gumam Roni dalam hati.</div>Evaluasilah tindakan Roni dalam kutipan teks di atas. Mengapa tindakan tersebut tidak relevan dengan upaya menjaga kelestarian lingkungan di lingkungan tempat tinggalmu saat ini?",
+                options: [
+                    "Karena petugas kebersihan memang sudah digaji untuk menyelesaikan semua masalah sampah di lingkungan warga.",
+                    "Karena membiarkan sampah menyumbat selokan dapat memicu banjir bandang yang merusak fasilitas umum secara instan.",
+                    "Karena menjaga kebersihan lingkungan adalah tanggung jawab bersama seluruh warga, bukan hanya mengandalkan petugas kebersihan.",
+                    "Karena sampah plastik merupakan bahan organik yang sebenarnya dapat terurai dengan cepat tanpa bantuan manusia."
+                ],
+                answer: 2, // C
+                explanation: "Mari kita bedah pemikiran Roni: <em>\"Ah, nanti juga ada petugas\"</em>. Ini adalah sikap apatis (tidak peduli).<br><br>Dalam kehidupan bermasyarakat, kita tidak boleh melempar tanggung jawab. Petugas kebersihan bertugas membantu, tetapi <strong>tanggung jawab utama menjaga kelestarian lingkungan ada pada setiap individu warga</strong> (tanggung jawab komunal). Jika semua orang berpikir seperti Roni, lingkungan pasti akan cepat rusak. Jawaban paling tepat adalah <strong>C</strong>."
+            },
+            {
+                text: "Jika peristiwa dalam teks tersebut terjadi di lingkungan sekolahmu, tindakan nyata apa yang paling tepat kamu lakukan sebagai bentuk kepedulian lingkungan?",
+                options: [
+                    "Menegur Roni dengan keras di depan umum agar ia merasa jera dan malu atas kelalaiannya.",
+                    "Melaporkan tumpukan sampah tersebut kepada kepala sekolah agar segera memanggil petugas kebersihan.",
+                    "Mengabaikannya karena merasa itu bukan area piket kelas yang menjadi tanggung jawab harianmu.",
+                    "Mengajak teman-teman untuk bergotong royong membersihkan selokan tersebut tanpa menunggu pihak lain."
+                ],
+                answer: 3, // D
+                explanation: "Soal ini mencari solusi berupa <strong>tindakan nyata dan positif</strong> di sekolah.<br><br>Menegur keras atau hanya melapor (melempar tanggung jawab lagi) bukanlah solusi terbaik. Tindakan yang mencerminkan karakter pelajar Pancasila yang peduli lingkungan dan memiliki jiwa <strong>gotong royong</strong> adalah berinisiatif mengajak teman-teman membersihkan selokan itu bersama-sama (<strong>Opsi D</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 5 dan 6.</strong><div class='quote-box'>Di media sosial, beredar kabar bahwa besok pagi akan terjadi pemadaman listrik total se-kabupaten selama tiga hari berturut-turut. Tanpa memeriksa kebenaran berita tersebut, Bu Ani langsung membagikannya ke grup WhatsApp keluarga dan warga RT, memicu kepanikan massal hingga warga berbondong-bondong membeli lilin dan genset.</div>Peristiwa dalam teks di atas sangat sering terjadi dalam kehidupan modern saat ini. Apa evaluasi kritis yang paling tepat mengenai perilaku Bu Ani?",
+                options: [
+                    "Tindakan Bu Ani sangat mulia karena ia memiliki kepedulian yang tinggi terhadap keselamatan dan kesiapan warga RT-nya.",
+                    "Bu Ani bertindak tergesa-gesa menyebarkan informasi tanpa verifikasi (hoaks), yang dapat merugikan masyarakat secara psikologis dan finansial.",
+                    "Bu Ani seharusnya menjual lilin dan genset terlebih dahulu sebelum menyebarkan berita tersebut agar mendapat keuntungan.",
+                    "Tindakan tersebut sepenuhnya salah platform media sosial yang tidak menyaring informasi sebelum dibaca oleh Bu Ani."
+                ],
+                answer: 1, // B
+                explanation: "Perilaku Bu Ani adalah contoh rendahnya <em>literasi digital</em>.<br><br>Meskipun niat awalnya mungkin baik (ingin memberi tahu), menyebarkan berita yang belum jelas kebenarannya (berpotensi hoaks) akan berdampak sangat merugikan. Warga panik (kerugian psikologis) dan membuang uang untuk hal yang tidak perlu (kerugian finansial). Evaluasi yang kritis menyoroti <strong>tindakan tergesa-gesa tanpa verifikasi</strong> ini (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "Bagaimana cara yang paling efektif bagi seorang pelajar SMP untuk menghindari perilaku seperti Bu Ani dalam kehidupan sehari-hari?",
+                options: [
+                    "Menghapus semua akun media sosial dan tidak menggunakan internet sama sekali dalam kehidupan sehari-hari.",
+                    "Selalu membagikan setiap informasi yang diterima kepada guru agar guru yang menentukan kebenarannya.",
+                    "Menerapkan prinsip \"saring sebelum sharing\" dengan memverifikasi kebenaran berita melalui sumber resmi atau tepercaya.",
+                    "Mengabaikan semua berita yang ada di media sosial dan hanya membaca buku pelajaran sekolah saja."
+                ],
+                answer: 2, // C
+                explanation: "Kita tidak bisa menghindari internet dan media sosial sepenuhnya (opsi A dan D berlebihan). Kita juga harus mandiri, tidak merepotkan guru setiap saat (opsi B kurang tepat).<br><br>Cara paling logis dan efektif adalah membiasakan diri mengecek fakta. Istilah populernya adalah <strong>\"Saring sebelum Sharing\"</strong>. Cari tahu dulu di portal berita resmi sebelum menekan tombol <em>forward</em> (<strong>Opsi C</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 7 dan 8.</strong><div class='quote-box'>Andi sangat ingin membeli sepatu olahraga keluaran terbaru seharga dua juta rupiah agar bisa tampil keren di depan teman-temannya. Padahal, ayahnya baru saja kehilangan pekerjaan akibat pengurangan karyawan. Andi terus merengek dan mogok makan agar keinginannya dikabulkan.</div>Berdasarkan kutipan di atas, nilai kehidupan apa yang dilanggar oleh Andi dalam hubungannya dengan situasi keluarga?",
+                options: [
+                    "Nilai kejujuran dalam menyampaikan keinginan kepada orang tua.",
+                    "Nilai empati dan tenggang rasa terhadap kondisi ekonomi orang tua yang sedang sulit.",
+                    "Nilai kedisiplinan dalam mengatur waktu belajar dan bermain.",
+                    "Nilai keadilan dalam membagi kasih sayang antaranggota keluarga."
+                ],
+                answer: 1, // B
+                explanation: "Mari lihat situasi keluarga: Ayahnya baru saja kena PHK (kehilangan sumber penghasilan).<br><br>Alih-alih mengerti, Andi justru memaksakan kehendak membeli barang tersier (sepatu mahal) demi gengsi. Tindakan Andi ini sangat egois dan jelas-jelas melanggar <strong>nilai empati (ikut merasakan penderitaan orang lain) dan tenggang rasa</strong> terhadap orang tuanya yang sedang kesusahan (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "Bagaimana kamu menilai relevansi perilaku Andi dengan gaya hidup konsumtif remaja di era digital saat ini?",
+                options: [
+                    "Perilaku Andi sangat relevan karena remaja saat ini dituntut untuk selalu tampil modis demi menjaga gengsi di media sosial.",
+                    "Perilaku Andi tidak relevan karena remaja masa kini umumnya sudah mandiri secara finansial melalui bisnis online.",
+                    "Perilaku Andi sangat relevan dan menjadi refleksi negatif bagaimana tekanan sosial (peer pressure) dapat mengalahkan rasa empati terhadap keluarga.",
+                    "Perilaku Andi hanya terjadi pada keluarga kaya, sehingga tidak relevan dengan kehidupan masyarakat menengah ke bawah."
+                ],
+                answer: 2, // C
+                explanation: "Mengapa Andi memaksakan diri? Teks menyebutkan <em>\"agar bisa tampil keren di depan teman-temannya\"</em>.<br><br>Ini adalah cerminan gaya hidup remaja modern yang sering kali terjebak dalam rasa gengsi atau tekanan pergaulan (<em>peer pressure</em>) akibat paparan media sosial. Sedihnya, demi gengsi tersebut, mereka terkadang tega mengabaikan kondisi riil keluarganya (kehilangan empati). Penilaian <strong>Opsi C</strong> sangat tajam dan objektif."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 9 dan 10.</strong><div class='quote-box'>Sejak pagi, Pak Joko bekerja keras di sawah tanpa lelah demi membiayai sekolah anak tunggalnya, Budi. Namun di sekolah, Budi sering membolos dan menggunakan uang SPP yang diberikan ayahnya untuk bermain game di warnet bersama teman-temannya.</div>Evaluasilah pertentangan karakter antara Pak Joko dan Budi dalam teks tersebut. Apa dampak jangka panjang yang paling mungkin terjadi pada masa depan Budi?",
+                options: [
+                    "Budi akan menjadi pengusaha game yang sukses karena sudah melatih keterampilannya sejak dini.",
+                    "Budi akan mengecewakan pengorbanan ayahnya dan berpotensi menghadapi masa depan yang suram akibat kurangnya pendidikan dan keterampilan.",
+                    "Pak Joko akan semakin bersemangat bekerja karena melihat anaknya memiliki hobi yang jelas di bidang teknologi.",
+                    "Budi akan mendapatkan beasiswa prestasi dari sekolah karena keahliannya bermain game di luar jam sekolah."
+                ],
+                answer: 1, // B
+                explanation: "Terdapat kontras yang menyedihkan: Sang ayah berkorban keras (keringat), sementara sang anak (Budi) membuang-buang uang dan waktu (membolos).<br><br>Dampak logis jangka panjang dari bermalas-malasan dan bolos sekolah adalah tertinggal dalam pendidikan. Tanpa ilmu dan karakter disiplin, masa depan Budi berisiko besar menjadi <strong>suram dan mengecewakan orang tuanya (Opsi B)</strong>."
+            },
+            {
+                text: "Sikap apa yang seharusnya ditunjukkan oleh Budi sebagai bentuk apresiasi terhadap perjuangan keras ayahnya?",
+                options: [
+                    "Meminta uang saku yang lebih banyak agar bisa mengajak ayahnya bermain game bersama di warnet.",
+                    "Belajar dengan tekun, menggunakan uang SPP sesuai peruntukannya, dan membantu meringankan beban orang tua sebisa mungkin.",
+                    "Berhenti sekolah secara sepihak dan langsung bekerja di sawah bersama ayahnya mulai besok pagi.",
+                    "Meminta bantuan teman-temannya untuk menasihati ayahnya agar tidak bekerja terlalu keras di sawah."
+                ],
+                answer: 1, // B
+                explanation: "Sebagai seorang pelajar, cara terbaik untuk membalas budi dan menghargai keringat orang tua bukanlah dengan langsung bekerja (opsi C ekstrem), melainkan dengan <strong>menjalankan kewajiban utamanya, yaitu: Belajar dengan tekun, jujur dalam menggunakan amanah uang sekolah, dan menjadi anak yang berbakti (Opsi B).</strong>"
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 11 dan 12.</strong><div class='quote-box'>Di era modern ini, tradisi gotong royong membersihkan kampung mulai luntur. Ketika ada kegiatan kerja bakti hari Minggu, sebagian besar warga perumahan memilih untuk tetap berada di dalam rumah atau pergi berlibur, dan memilih membayar denda berupa uang iuran sebagai gantinya.</div>Berdasarkan teks di atas, perubahan sosial apa yang terjadi pada masyarakat perkotaan saat ini terkait nilai kebersamaan?",
+                options: [
+                    "Masyarakat menjadi lebih dermawan karena bersedia membayar denda iuran yang besar.",
+                    "Terjadinya pergeseran dari nilai sosial-kebersamaan menjadi nilai materialistis-individualis.",
+                    "Meningkatnya kesadaran warga akan pentingnya menjaga kesehatan fisik melalui liburan keluarga.",
+                    "Terciptanya sistem pengelolaan kebersihan yang lebih profesional dan modern di lingkungan perumahan."
+                ],
+                answer: 1, // B
+                explanation: "Dulu orang bekerja bersama-sama menggunakan tenaga (kolektif/kebersamaan). Kini, mereka memilih menghindar dan merasa semua kewajiban bisa <em>\"dibeli\"</em> dengan uang denda.<br><br>Ini menunjukkan adanya perubahan karakter masyarakat menuju sifat <strong>individualis (mementingkan diri/keluarga sendiri) dan materialistis (berpikir bahwa uang adalah solusi atas segala kewajiban sosial). (Opsi B)</strong>."
+            },
+            {
+                text: "Bagaimana kamu mengevaluasi keputusan warga yang memilih membayar denda daripada ikut kerja bakti secara langsung?",
+                options: [
+                    "Keputusan tersebut sangat efektif karena uang denda dapat digunakan untuk menyewa pekerja profesional yang hasilnya lebih bersih.",
+                    "Keputusan tersebut kurang tepat karena dapat mengikis tali silaturahmi, rasa kepedulian, dan kebersamaan antar-tetangga yang tidak bisa dinilai dengan uang.",
+                    "Keputusan tersebut sangat tepat karena waktu libur hari Minggu sepenuhnya merupakan hak pribadi yang tidak boleh diganggu gugat oleh RT.",
+                    "Keputusan tersebut harus dilarang keras oleh pemerintah karena melanggar hukum adat yang berlaku di seluruh wilayah Indonesia."
+                ],
+                answer: 1, // B
+                explanation: "Kerja bakti (gotong royong) tujuan utamanya bukan semata-mata soal selokan yang bersih. <br><br>Tujuan esensialnya adalah sebagai wadah berkumpul warga, bertukar sapa, dan mempererat ikatan persaudaraan bertetangga. Jika semua orang memilih membayar denda, maka interaksi sosial itu hilang. Oleh karena itu, <strong>keputusan warga tersebut kurang tepat karena mengikis nilai kebersamaan (Opsi B)</strong>."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 13 dan 14.</strong><div class='quote-box'>Santi merasa sangat sedih dan tidak percaya diri karena sering diejek bertubuh pendek oleh teman-teman sekelasnya. Ia mulai menarik diri dari pergaulan dan sering berpura-pura sakit agar tidak perlu masuk sekolah.</div>Peristiwa perundungan (bullying) fisik seperti yang dialami Santi sering terjadi di sekolah. Evaluasilah dampak psikologis tindakan perundungan tersebut terhadap korban berdasarkan isi teks!",
+                options: [
+                    "Perundungan membuat korban menjadi lebih kuat mentalnya dan termotivasi untuk membuktikan kemampuannya.",
+                    "Perundungan merusak rasa percaya diri korban, memicu kecemasan akademik, dan mengisolasi diri dari lingkungan sosial.",
+                    "Perundungan membantu korban menyadari kekurangan fisiknya sehingga ia bisa segera melakukan perbaikan penampilan.",
+                    "Perundungan tidak memiliki dampak yang signifikan selama korban memiliki keluarga yang harmonis di rumah."
+                ],
+                answer: 1, // B
+                explanation: "Mari analisis kondisi Santi dalam cerita:<br>1. Ia merasa tidak percaya diri.<br>2. Menarik diri dari pergaulan (isolasi sosial).<br>3. Berpura-pura sakit agar tidak sekolah (kecemasan/demotivasi akademik).<br><br>Ketiga hal ini membuktikan bahwa perundungan membawa <strong>dampak psikologis yang sangat destruktif (merusak) pada mental korban (Opsi B)</strong>."
+            },
+            {
+                text: "Jika kamu melihat teman sekelasmu memperlakukan seseorang seperti teman-teman Santi memperlakukannya, tindakan apa yang paling sesuai dengan nilai kemanusiaan?",
+                options: [
+                    "Ikut tertawa kecil agar tidak dianggap kaku atau tidak setia kawan oleh teman-teman yang lain.",
+                    "Menasihati pelaku secara baik-baik, merangkul dan menyemangati korban, serta melaporkan kejadian tersebut kepada guru BK jika terus berlanjut.",
+                    "Diam saja dan berpura-pura tidak melihat karena tidak ingin ikut campur dalam urusan orang lain yang bisa memicu konflik baru.",
+                    "Menyarankan kepada korban untuk segera pindah sekolah agar tidak bertemu lagi dengan para pelaku perundungan."
+                ],
+                answer: 1, // B
+                explanation: "Diam saja berarti membiarkan kejahatan terjadi (pembiaran). Ikut tertawa berarti menjadi pelaku pasif.<br><br>Tindakan yang menunjukkan <em>keberanian, empati, dan nilai kemanusiaan</em> adalah <strong>membela korban</strong>. Caranya: menegur pelaku, mendampingi korban agar merasa aman, dan meminta bantuan otoritas sekolah (Guru BK/Wali Kelas) agar masalah terselesaikan (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 15 dan 16.</strong><div class='quote-box'>Doni selalu menunda-nunda mengerjakan tugas sekolah yang diberikan guru. Ia lebih memilih menonton video pendek di ponselnya hingga larut malam. Akibatnya, pada hari pengumpulan tugas, Doni panik dan langsung menyalin (copypaste) pekerjaan temannya tanpa membaca isinya terlebih dahulu.</div>Evaluasilah perilaku Doni dalam mengelola waktu dan tanggung jawabnya sebagai siswa!",
+                options: [
+                    "Perilaku Doni sangat cerdas karena ia berhasil memanfaatkan teknologi untuk menyelesaikan tugasnya dengan cepat dan efisien.",
+                    "Doni menunjukkan sikap tidak disiplin, tidak bertanggung jawab, dan melakukan tindakan plagiarisme yang merusak integritas akademiknya.",
+                    "Tindakan Doni wajar dilakukan oleh siswa zaman sekarang karena beban tugas dari sekolah yang terlalu banyak dan tidak masuk akal.",
+                    "Doni adalah korban dari perkembangan teknologi gawai yang seharusnya dilarang keras oleh pemerintah untuk anak usia sekolah."
+                ],
+                answer: 1, // B
+                explanation: "Doni menderita penyakit \"prokrastinasi\" (suka menunda-nunda pekerjaan).<br><br>Evaluasi perilakunya jelas negatif: Ia <strong>tidak disiplin</strong> (terjebak candu video pendek), <strong>tidak bertanggung jawab</strong> atas tugasnya, dan puncaknya ia mencuri ide temannya (<strong>plagiarisme</strong>). Ini merusak kejujuran atau integritasnya sebagai pelajar (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "Apa pelajaran berharga (moral value) dari peristiwa dalam teks tersebut yang dapat kamu terapkan dalam kehidupan sehari-hari sebagai pelajar?",
+                options: [
+                    "Menonton video pendek boleh dilakukan asal tugas sekolah dikerjakan oleh orang lain.",
+                    "Menghargai waktu dengan membuat skala prioritas agar tugas dapat diselesaikan secara mandiri dan jujur.",
+                    "Menyalin tugas teman diperbolehkan asalkan meminta izin terlebih dahulu kepada pemilik tugas tersebut.",
+                    "Menghindari semua tugas sekolah yang dirasa sulit agar tidak mengalami stres atau kepanikan."
+                ],
+                answer: 1, // B
+                explanation: "Masalah utama Doni adalah ia tidak tahu mana yang harus diutamakan (prioritas).<br><br>Pelajaran moralnya adalah kita harus <strong>mengatur waktu dan mendahulukan kewajiban utama (belajar/tugas)</strong> sebelum bersantai. Dengan begitu, kita bisa mengerjakan tugas secara mandiri, jujur (tidak perlu menyontek), dan tenang tanpa kepanikan (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 17 dan 18.</strong><div class='quote-box'>Meskipun berasal dari keluarga sederhana, lbu Aminah selalu menyisihkan sebagian kecil penghasilannya dari berjualan kue untuk dimasukkan ke dalam kotak amal masjid setiap hari Jumat. Ia percaya bahwa berbagi tidak akan membuatnya miskin.</div>Bagaimana kamu menilai relevansi sikap Ibu Aminah dengan kehidupan masyarakat modern yang cenderung konsumtif?",
+                options: [
+                    "Sikap Ibu Aminah tidak relevan karena di zaman sekarang kita harus mengutamakan kebutuhan pribadi sebelum membantu orang lain.",
+                    "Sikap Ibu Aminah sangat relevan sebagai pengingat bahwa ketulusan dalam berbagi tidak diukur dari nominal, melainkan dari keikhlasan dan konsistensi.",
+                    "Sikap Ibu Aminah kurang realistis karena berjualan kue di era modern sudah tidak menghasilkan keuntungan yang cukup untuk ditabung.",
+                    "Sikap Ibu Aminah hanya cocok diterapkan di lingkungan pedesaan yang biaya hidupnya masih sangat murah."
+                ],
+                answer: 1, // B
+                explanation: "Di era modern, orang sering berpikir \"tunggu kaya dulu baru bersedekah\".<br><br>Sikap Ibu Aminah justru <strong>sangat relevan</strong> untuk \"menampar\" pola pikir tersebut. Ia membuktikan bahwa berbagi bukan soal seberapa banyak uang yang kita miliki, melainkan seberapa besar keikhlasan dan niat baik (konsistensi) kita untuk membantu sesama walau dalam kesempitan (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "Nilai karakter apa yang paling menonjol dari sosok Ibu Aminah yang patut diteladani oleh generasi muda saat ini?",
+                options: [
+                    "Kerja keras tanpa memedulikan kesehatan fisik demi mendapatkan keuntungan maksimal.",
+                    "Kedermawanan dan keikhlasan dalam membantu sesama tanpa menunggu menjadi kaya raya terlebih dahulu.",
+                    "Keberanian dalam mengambil risiko finansial demi mendapatkan pujian dari masyarakat sekitar.",
+                    "Ketekunan dalam mempelajari resep-resep kue modern agar dapat bersaing di pasar digital."
+                ],
+                answer: 1, // B
+                explanation: "Kata kunci dari sifat Ibu Aminah adalah: penghasilan kecil, tetap menyisihkan, tidak takut miskin karena berbagi.<br><br>Karakter ini disebut dengan <strong>Kedermawanan (gemar bersedekah) dan Keikhlasan (tanpa pamrih)</strong>. Ia memberi tanpa harus menunggu hartanya melimpah (<strong>Opsi B</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 19 dan 20.</strong><div class='quote-box'>Dalam rapat OSIS, terjadi perbedaan pendapat yang sangat tajam antara kubu ketua OSIS dan kubu wakil ketua mengenai tema kegiatan pentas seni. Suasana rapat menjadi panas dan beberapa anggota mulai saling berteriak menyalahkan satu sama lain.</div>Evaluasilah situasi rapat OSIS tersebut. Apa solusi paling demokratis yang relevan dengan kehidupan berorganisasi di sekolahmu?",
+                options: [
+                    "Ketua OSIS langsung mengambil keputusan sepihak karena ia memiliki kekuasaan tertinggi dalam organisasi.",
+                    "Membatalkan seluruh kegiatan pentas seni agar tidak terjadi perpecahan dan permusuhan yang lebih mendalam di antara anggota OSIS.",
+                    "Menenangkan suasana rapat, memberikan kesempatan kepada masing-masing kubu untuk menyampaikan argumen secara bergantian, lalu melakukan musyawarah mufakat atau voting.",
+                    "Meminta kepala sekolah untuk membubarkan kepengurusan OSIS periode tersebut dan melakukan pemilihan ulang segera."
+                ],
+                answer: 2, // C
+                explanation: "Konflik dalam rapat adalah hal biasa. Pertanyaannya, bagaimana menyelesaikannya secara <strong>demokratis</strong>?<br><br>Keputusan sepihak (A) itu diktator. Membatalkan (B) atau membubarkan (D) adalah tanda lari dari masalah. Solusi demokratis dan beradab sesuai Pancasila adalah: <strong>mendinginkan suasana, berdialog/musyawarah (mendengar argumen kedua pihak), dan memutuskannya secara bersama-sama (mufakat/voting) (Opsi C)</strong>."
+            },
+            {
+                text: "Sikap apa yang harus dihindari oleh setiap anggota rapat agar perbedaan pendapat tidak berujung pada konflik personal?",
+                options: [
+                    "Menghargai pendapat orang lain meskipun berbeda dengan pemikiran pribadi kita.",
+                    "Menyampaikan kritik secara santun dan disertai dengan alasan atau data yang logis.",
+                    "Mengedepankan ego pribadi, menyerang karakter personal orang lain, dan menolak mendengarkan penjelasan pihak lawan.",
+                    "Menerima keputusan bersama dengan lapang dada meskipun usulan pribadi tidak terpilih."
+                ],
+                answer: 2, // C
+                explanation: "Soal ini menanyakan sikap yang <strong>HARUS DIHINDARI (dilarang dilakukan)</strong>.<br><br>Opsi A, B, dan D adalah sikap-sikap yang baik. Yang harus dihindari adalah <strong>Opsi C</strong>, yaitu membiarkan ego berkuasa, tidak mau mendengar, dan apalagi menyerang masalah pribadi orang lain (<em>ad hominem</em>). Perdebatan harus fokus pada gagasan, bukan pada orangnya."
+            }
+        ];
+
+        function processContent(text) {
+            // Regex to find [GAMBAR: data:image/...] pattern and replace with img tag
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Referensi" class="img-responsive">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative group';
+            questionDiv.id = `question-block-${index}`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            // Loop untuk merender pilihan jawaban A, B, C, D
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            // Template HTML untuk Container Soal & Kotak Pembahasan (Hidden by default)
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg md:text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Pembahasan (Awalnya Disembunyikan) -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-lg md:text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}"></h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+            let answeredQuestions = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Animasi buka kotak penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Kunci (disable) semua form input radio agar tidak bisa diubah lagi
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    // Highlight jawaban yang benar (Kunci Jawaban) terlepas dari pilihan user
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-blue-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    answeredQuestions++;
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // User Menjawab Benar (Hijau)
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/70 border-l-[6px] md:border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali, Nalarnmu Hebat!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // User Menjawab Salah (Merah)
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/70 border-l-[6px] md:border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Kurang Tepat! Kunci yang benar: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Menandai jawaban salah yang dipilih user
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // User Melewati Soal (Kuning/Amber)
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/70 border-l-[6px] md:border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Dilewati! Kunci yang benar: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                // Masukkan teks penjelasan
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500; // Durasi animasi
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden'); // Sembunyikan tombol periksa
+            resultArea.classList.remove('hidden'); // Munculkan area hasil
+
+            // Animasi perhitungan angka (Counter Animation)
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Pesan Motivasi sesuai rentang skor
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Luar Biasa! 🎉 Nalar kritismu dan empatimu sangat tajam dan sempurna!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja yang bagus! 👏 Analisis masalah sosialmu sudah sangat baik.";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk pelajari bagian pembahasan agar logikamu semakin terasah. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Ayo baca langkah-langkah logika di bagian pembahasan dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            // Gulir layar ke bagian skor secara otomatis
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset Form (Mengosongkan semua radio button yang tercentang)
+            form.reset();
+
+            // Kembalikan UI Style ke keadaan semula
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                // Sembunyikan penjelasan
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                // Hapus border/ring status dari blok soal
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false; // Enable again
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    // Kembalikan style default tailwind pada label pilihan ganda
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors';
+                });
+            });
+
+            // Sembunyikan area hasil skor, dan munculkan kembali tombol periksa
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Gulir mulus kembali ke atas halaman (Header)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

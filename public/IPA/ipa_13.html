@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Lapisan Bumi, Gempa & Mitigasi Bencana</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        /* Kustomisasi scrollbar untuk pre/code ASCII art atau tabel */
+        pre::-webkit-scrollbar { height: 8px; }
+        pre::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        pre::-webkit-scrollbar-track { background: #f1f5f9; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar / Header -->
+    <header class="bg-emerald-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="p-2 bg-emerald-700 hover:bg-emerald-800 rounded-full transition duration-200" title="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div>
+                    <h1 class="text-xl font-bold">Latihan Soal Sains</h1>
+                    <p class="text-xs text-emerald-200">Struktur Bumi, Gempa & Mitigasi Bencana</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
+            <p class="text-sm text-gray-600">Pilihlah jawaban yang paling tepat. Anda tidak perlu mengisi semua soal terlebih dahulu; cukup tekan tombol <strong>Periksa Jawaban</strong> di bagian bawah untuk melihat skor skala 0–100 dan pembahasan lengkapnya secara instan.</p>
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="D" id="q1">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">1.</span>Bumi terdiri dari beberapa lapisan dengan karakteristik yang berbeda-beda. Lapisan bumi yang paling tipis, berbentuk padat, dan menjadi tempat kelangsungan hidup seluruh makhluk hidup adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q1" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Inti dalam</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q1" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Inti luar</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q1" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Mantel bumi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q1" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Kerak bumi</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Kerak bumi (crust) adalah lapisan terluar bumi yang paling tipis (ketebalan berkisar antara 5 hingga 70 km). Lapisan ini bersifat padat, dingin, kaku, dan menjadi tempat tinggal bagi seluruh makhluk hidup (daratan dan dasar samudera). Lapisan di bawahnya (seperti mantel dan inti) memiliki suhu sangat tinggi dan berwujud cair atau magma, sehingga tidak mungkin ditinggali makhluk hidup.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q2">
+                <p class="font-semibold text-lg mb-2"><span class="text-emerald-600 mr-2">2.</span>Perhatikan karakteristik lapisan bumi berikut!</p>
+                <div class="mb-4 pl-8 text-sm space-y-1">
+                    <p>1) Memiliki ketebalan sekitar 2.200 km.</p>
+                    <p>2) Tersusun atas besi dan nikel cair.</p>
+                    <p>3) Suhu mencapai 3.700 &deg;C hingga 4.300 &deg;C.</p>
+                </div>
+                <p class="font-semibold text-lg mb-4">Berdasarkan data di atas, lapisan bumi yang dimaksud adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q2" value="A" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Kerak bumi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q2" value="B" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Mantel bumi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q2" value="C" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Inti luar</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q2" value="D" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Inti dalam</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Inti bumi terbagi menjadi dua bagian, yaitu inti luar dan inti dalam. <strong>Inti luar</strong> (outer core) memiliki karakteristik khas berupa wujud cair yang tersusun atas leburan besi dan nikel dengan ketebalan sekitar 2.200 km serta suhu yang sangat ekstrem (3.700&deg;C hingga 4.300&deg;C). Sementara itu, inti dalam berwujud padat akibat tekanan yang jauh lebih besar meskipun suhunya lebih tinggi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q3">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">3.</span>Mantel bumi merupakan lapisan terbesar yang menyusun sebagian besar volume bumi. Di dalam mantel bumi terdapat arus konveksi yang terjadi karena adanya perbedaan suhu yang sangat tinggi. Dampak langsung dari adanya arus konveksi ini bagi permukaan bumi adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q3" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Terjadinya pasang surut air laut secara periodik</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q3" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Pergerakan lempeng tektonik yang memicu gempa bumi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q3" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Terbentuknya lapisan ozon pelindung radiasi ultraviolet</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q3" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Perubahan iklim global yang ekstrem secara mendadak</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Arus konveksi adalah perpindahan panas di dalam mantel bumi (khususnya bagian astenosfer). Magma panas yang berada di dekat inti bumi akan naik ke atas, sementara magma yang lebih dingin di dekat kerak bumi akan turun ke bawah. Perputaran arus panas ini bertindak layaknya "mesin penggerak" yang menyeret lempeng-lempeng tektonik di atasnya, sehingga lempeng saling mendekat, menjauh, atau bergesekan (memicu gempa bumi).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="A" id="q4">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">4.</span>Lempeng tektonik bumi terus bergerak secara dinamis. Ketika dua lempeng tektonik bergerak saling mendekat dan bertumbukan, batas lempeng tersebut dinamakan batas konvergen. Salah satu fenomena alam yang terbentuk akibat tumbukan lempeng samudera dengan lempeng benua adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q4" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Terbentuknya palung laut yang dalam dan jalur gunung api</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q4" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Terbentuknya lembah retakan (rift valley) yang luas</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q4" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Terjadinya pergeseran mendatar seperti Sesar San Andreas</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q4" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Terbentuknya pulau karang (atoll) di tengah samudera</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Pada batas konvergen antara lempeng samudera dan lempeng benua, lempeng samudera memiliki massa jenis yang lebih berat sehingga akan menunjam ke bawah lempeng benua (zona subduksi). Penunjaman ini menghasilkan cekungan raksasa di dasar laut yang disebut <strong>palung laut</strong>, serta melelehkan batuan menjadi magma yang naik ke permukaan membentuk jalur <strong>gunung api</strong> (vulkanik busur).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q5">
+                <p class="font-semibold text-lg mb-2"><span class="text-emerald-600 mr-2">5.</span>Perhatikan gambar pergerakan lempeng berikut!</p>
+                <div class="mb-4 bg-gray-50 border p-4 rounded-lg text-center font-mono">
+                    <p class="text-xs text-gray-500 mb-2">[Ilustrasi Gerakan Divergen]</p>
+                    <p>&larr; Lempeng A &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lempeng B &rarr;</p>
+                    <p class="text-xs text-emerald-600 mt-1">Magma naik ke atas mengisi celah</p>
+                </div>
+                <p class="font-semibold text-lg mb-4">Pergerakan lempeng yang saling menjauh (divergen) pada dasar samudera akan mengakibatkan...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q5" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Pembentukan pegunungan lipatan yang tinggi seperti Himalaya</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q5" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Peleburan lempeng benua menjadi magma baru</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q5" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Pembentukan kerak samudera baru akibat keluarnya magma ke permukaan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q5" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Terjadinya gempa bumi dalam tanpa adanya aktivitas vulkanik</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Batas divergen adalah gerakan lempeng yang saling merenggang atau menjauh. Ketika ini terjadi di dasar samudera (seperti di Pematang Tengah Samudera / <em>Mid-Oceanic Ridge</em>), celah kosong yang terbentuk akan segera diisi oleh magma dari dalam bumi. Magma tersebut membeku setelah bersentuhan dengan air laut dingin, sehingga membentuk <strong>kerak samudera yang baru</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q6">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">6.</span>Gempa bumi tektonik sering terjadi di Indonesia karena wilayahnya berada di pertemuan tiga lempeng aktif dunia. Titik di dalam bumi yang menjadi pusat terjadinya gempa bumi atau tempat pertama kali batuan pecah dinamakan...</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q6" value="A" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Episentrum</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q6" value="B" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Hiposentrum</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q6" value="C" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Seismogram</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q6" value="D" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Pleistoseista</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Pusat gempa dibagi menjadi dua istilah penting agar tidak tertukar:</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Hiposentrum:</strong> Titik pusat gempa yang berada di <em>dalam</em> perut bumi tempat batuan mengalami patahan atau pelepasan energi.</li>
+                            <li><strong>Episentrum:</strong> Titik di permukaan bumi yang berada tepat tegak lurus di atas hiposentrum.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q7">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">7.</span>Sebuah stasiun pencatat gempa mencatat gelombang primer (P) pada pukul 10.15'30" WIB dan gelombang sekunder (S) pada pukul 10.18'45" WIB. Berdasarkan data tersebut, jarak episentrum gempa dari stasiun pencatat adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q7" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. 1.250 km</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q7" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. 2.250 km</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q7" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. 3.250 km</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q7" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. 4.250 km</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Langkah Penyelesaian (Rumus Laska):</strong></p>
+                        <p>Formula menghitung jarak episentrum (&Delta;) menggunakan selisih waktu gelombang Sekunder dan Primer ($S - P$):</p>
+                        <p class="font-mono bg-white p-2 border rounded">&Delta; = [($S - P$) - 1 menit] &times; 1.000 km</p>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>Hitung selisih waktu: 10.18'45" - 10.15'30" = <strong>3 menit 15 detik</strong> ($3'15''$).</li>
+                            <li>Kurangi dengan 1 menit: $3'15'' - 1' = 2'15''$ (atau 2,25 menit).</li>
+                            <li>Kalikan dengan 1.000 km: $2,25 \times 1.000\text{ km} =$ <strong>2.250 km</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q8">
+                <p class="font-semibold text-lg mb-2"><span class="text-emerald-600 mr-2">8.</span>Perhatikan beberapa gejala alam berikut!</p>
+                <div class="mb-4 pl-8 text-sm space-y-1">
+                    <p>1) Suhu di sekitar gunung meningkat secara drastis.</p>
+                    <p>2) Sumber air di lereng gunung mulai mengering.</p>
+                    <p>3) Terdengar suara gemuruh dari dalam perut bumi.</p>
+                    <p>4) Terjadi hujan abu vulkanik yang sangat pekat.</p>
+                    <p>5) Hewan-hewan liar di puncak gunung bermigrasi turun ke lereng.</p>
+                </div>
+                <p class="font-semibold text-lg mb-4">Gejala awal (tanda-tanda) yang menunjukkan sebuah gunung api aktif akan meletus dalam waktu dekat ditunjukkan oleh nomor...</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q8" value="A" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. 1), 2), 3), dan 4)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q8" value="B" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. 1), 2), 3), dan 5)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q8" value="C" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. 1), 3), 4), dan 5)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q8" value="D" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. 2), 3), 4), dan 5)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Tanda-tanda pra-erupsi (sebelum gunung meletus) meliputi kenaikan suhu sekitar akibat desakan magma (1), mengeringnya mata air karena pemanasan air tanah (2), suara gemuruh pergerakan batuan/magma (3), serta insting hewan liar yang bermigrasi turun karena mendeteksi suhu panas dan getaran (5). Pernyataan nomor (4) yaitu hujan abu vulkanik merupakan peristiwa yang terjadi <em>pada saat</em> erupsi sedang berlangsung.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q9">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">9.</span>Letusan gunung api dapat mengeluarkan berbagai macam material. Material padat (eflata) yang dikeluarkan saat erupsi gunung api berupa batu-batu besar yang masih panas disebut...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q9" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Lapilli</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q9" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Bom vulkanik</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q9" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Lahar dingin</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q9" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Solfatar</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Material padat hasil letusan gunung (eflata) diklasifikasikan berdasarkan ukuran fisiknya:</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Bom Vulkanik:</strong> Batu-batu besar pijar yang terlontar saat erupsi.</li>
+                            <li><strong>Lapilli:</strong> Batuan berukuran kerikil kecil.</li>
+                            <li><strong>Abu Vulkanik:</strong> Serbuk batuan yang sangat halus.</li>
+                            <li>Solfatar adalah gas belerang, sedangkan lahar dingin adalah campuran lumpur/material sisa erupsi yang terbawa air hujan.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q10">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">10.</span>Indonesia dikenal sebagai negara yang berada di jalur "Ring of Fire" (Cincin Api Pasifik). Dampak positif dari kondisi geologis tersebut bagi sektor pertanian di Indonesia adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q10" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Sering terjadi gempa bumi yang menggemburkan tanah secara alami</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q10" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Abu vulkanik hasil erupsi kaya akan unsur hara yang menyuburkan tanah</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q10" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Terbentuknya banyak sungai baru akibat patahan tektonik</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q10" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Suhu udara menjadi lebih hangat sehingga tanaman tumbuh lebih cepat</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Meskipun aktivitas vulkanik mendatangkan bahaya saat terjadi erupsi, di balik itu material vulkanik seperti abu dan lava yang telah melapuk bertahun-tahun mengandung unsur hara mineral penting (seperti kalium, fosfat, dan zat besi). Mineral ini memperkaya kesuburan tanah (tanah andosol), menjadikan wilayah sekitar gunung berapi di Indonesia sangat produktif untuk lahan pertanian.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q11">
+                <p class="font-semibold text-lg mb-2"><span class="text-emerald-600 mr-2">11.</span>Perhatikan tabel skala intensitas gempa Modified Mercalli Intensity (MMI) berikut!</p>
+                <div class="mb-4 pl-4 border-l-4 border-emerald-500 text-sm space-y-1">
+                    <p>&bull; <strong>Skala II MMI:</strong> Getaran dirasakan oleh beberapa orang, benda ringan bergoyang.</p>
+                    <p>&bull; <strong>Skala V MMI:</strong> Getaran dirasakan hampir semua penduduk, barang besar bergoyang.</p>
+                    <p>&bull; <strong>Skala VIII MMI:</strong> Kerusakan ringan pada bangunan kuat, cerobong asap pabrik runtuh dan dinding retak.</p>
+                </div>
+                <p class="font-semibold text-lg mb-4">Jika suatu gempa mengakibatkan cerobong asap pabrik runtuh serta sebagian besar dinding rumah penduduk retak-retak, setara dengan skala...</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q11" value="A" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. II MMI</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q11" value="B" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. V MMI</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q11" value="C" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. VIII MMI</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q11" value="D" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. XI MMI</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Skala MMI (Modified Mercalli Intensity) mengukur dampak atau kerusakan yang dirasakan nyata di permukaan bumi berdasarkan observasi kerusakan bangunan dan kepanikan penduduk. Kerusakan seperti robohnya cerobong asap pabrik dan dinding retak secara luas merupakan indikator kerusakan struktur tingkat menengah ke atas yang dikategorikan dalam <strong>Skala VIII MMI</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q12">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">12.</span>Gelombang tsunami merupakan salah satu bencana sekunder yang dipicu oleh aktivitas tektonik di dasar laut. Syarat utama terjadinya tsunami akibat gempa bumi tektonik adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q12" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Gempa bumi berpusat di darat dengan kekuatan di atas 5,0 SR</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q12" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Gempa bumi berpusat di laut dengan hiposentrum dangkal dan kekuatan &gt; 7,0 SR serta terjadi dislokasi vertikal</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q12" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Gempa bumi berpusat di laut dengan hiposentrum dalam dan kekuatan &lt; 5,0 SR serta terjadi pergeseran horizontal</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q12" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Gempa bumi terjadi di daerah pantai saat air laut sedang mengalami pasang maksimum</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Tsunami tidak serta merta terjadi pada setiap gempa laut. Syarat mutlaknya meliputi: (1) pusat gempa berada di <strong>laut</strong>, (2) kekuatan gempa besar (biasanya &gt; 7,0 Magnitudo), (3) kedalaman pusat gempa (hiposentrum) tergolong <strong>dangkal</strong> (&lt; 70 km), dan (4) terjadi patahan naik atau turun (<strong>dislokasi vertikal</strong>) di dasar laut yang bertindak mendorong massa air laut secara masif ke atas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q13">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">13.</span>Saat terjadi gempa bumi berkekuatan besar, fenomena hilangnya kekuatan tanah sehingga tanah kehilangan kemampuannya untuk menopang beban di atasnya dan berperilaku seperti cairan disebut...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q13" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Tanah longsor</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q13" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Likuefaksi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q13" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Subsiden</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q13" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Erupsi efusif</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p><strong>Likuefaksi</strong> (pencairan tanah) adalah fenomena unik dan destruktif di mana tanah yang jenuh air (biasanya tanah pasir longgar) kehilangan daya dukungnya akibat getaran gempa yang kuat. Tekanan air pori meningkat drastis, mengubah padatan tanah menjadi seperti cairan lumpur yang mengalir, sehingga rumah atau kendaraan di atasnya dapat amblas atau bergeser jauh.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q14">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">14.</span>Anda sedang berada di lantai 3 sebuah gedung sekolah ketika tiba-tiba terjadi gempa bumi yang cukup kuat. Langkah mitigasi pertama dan paling tepat yang harus Anda lakukan adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q14" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Berlari secepat mungkin menuruni tangga darurat menuju halaman sekolah</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q14" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Langsung menuju lift terdekat agar bisa turun ke lantai dasar dengan cepat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q14" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Berlindung di bawah meja yang kokoh sambil melindungi kepala dengan tas atau tangan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q14" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Berdiri di dekat jendela kaca untuk memantau situasi di luar gedung</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Prinsip keselamatan gempa di dalam ruangan adalah <em>Drop, Cover, and Hold On</em> (Merunduk, Lindungi Kepala, dan Berpegangan). Saat guncangan terjadi di lantai atas, jangan mencoba berlari menuruni tangga karena Anda berisiko jatuh terpeleset atau tertimpa reruntuhan material. Jauhi lift dan kaca jendela. Setelah gempa mereda, barulah evakuasi teratur dilakukan lewat tangga darurat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q15">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">15.</span>Jika Anda sedang berada di pantai dan merasakan getaran gempa yang kuat, lalu melihat air laut tiba-tiba surut hingga menampakkan dasar laut yang cukup jauh, tindakan penyelamatan diri yang paling tepat adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q15" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Mendekati pantai untuk mengambil ikan-ikan yang terdampar di dasar laut</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q15" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Segera berlari menjauhi pantai menuju tempat yang lebih tinggi atau bukit terdekat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q15" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Naik ke atas perahu nelayan yang sedang bersandar di dermaga pantai</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q15" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Menunggu instruksi resmi dari petugas pantai sambil tetap berada di sekitar pantai</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Air laut yang surut secara drastis pasca gempa kuat adalah tanda alamiah (golden sign) bahwa gelombang tsunami sedang ditarik mundur sebelum menerjang daratan dengan kecepatan tinggi. Jangan pernah mendekati bibir pantai atau mengumpulkan ikan. Tindakan penyelamatan mutlak adalah segera berlari secepatnya menuju dataran tinggi, perbukitan, atau bangunan evakuasi vertikal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q16">
+                <p class="font-semibold text-lg mb-2"><span class="text-emerald-600 mr-2">16.</span>Perhatikan pernyataan-pernyataan berikut mengenai mitigasi bencana gunung meletus!</p>
+                <div class="mb-4 pl-8 text-sm space-y-1">
+                    <p>1) Selalu menggunakan masker dan kacamata saat di luar ruangan untuk menghindari abu.</p>
+                    <p>2) Memasuki wilayah zona bahaya untuk menyelamatkan barang berharga.</p>
+                    <p>3) Memantau informasi aktivitas gunung api dari lembaga resmi (PVMBG/BMKG).</p>
+                    <p>4) Mengikuti jalur evakuasi menuju pos pengungsian yang ditentukan.</p>
+                </div>
+                <p class="font-semibold text-lg mb-4">Pernyataan yang merupakan langkah mitigasi yang benar saat terjadi erupsi gunung api ditunjukkan oleh nomor...</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q16" value="A" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. 1), 2), dan 3)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q16" value="B" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. 1), 3), dan 4)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q16" value="C" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. 2), 3), dan 4)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q16" value="D" class="mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. 1), 2), dan 4)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Langkah mitigasi yang benar saat erupsi adalah memakai masker pelindung pernapasan dari abu vulkanik (1), memantau informasi valid dari PVMBG (3), dan patuh mengikuti jalur evakuasi resmi (4). Pernyataan nomor (2) sangat berbahaya dan dilarang keras karena memasuki zona bahaya mengancam keselamatan nyawa demi harta benda.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q17">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">17.</span>Pemerintah daerah di kawasan rawan gempa bumi berencana membangun fasilitas umum baru. Berdasarkan prinsip mitigasi bencana jangka panjang, tindakan evaluasi tata ruang yang paling tepat untuk meminimalkan risiko korban jiwa adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q17" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Melarang pembangunan gedung bertingkat di seluruh wilayah kota tanpa terkecuali</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q17" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Membangun fasilitas umum di dekat lereng curam agar mudah diakses dari perbukitan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q17" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Menerapkan standar konstruksi bangunan tahan gempa (retrofitting) dan menghindari jalur sesar aktif</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q17" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Memusatkan seluruh fasilitas umum di satu titik pusat kota agar mudah dievakuasi</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Mitigasi struktural dan non-struktural jangka panjang yang paling efektif dalam tata ruang wilayah rawan gempa adalah melarang pendirian bangunan di atas jalur sesar/patahan aktif, serta mewajibkan penerapan standar teknis bangunan tahan gempa (seperti struktur beton fleksibel / <em>retrofitting</em>) sehingga bangunan tidak mudah runtuh saat terjadi guncangan hebat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q18">
+                <p class="font-semibold text-lg mb-2"><span class="text-emerald-600 mr-2">18.</span>Perhatikan ilustrasi berikut!</p>
+                <div class="mb-4 pl-4 border-l-4 border-emerald-500 text-sm italic">
+                    "Sebuah desa terletak di lembah dekat gunung api aktif yang sedang mengalami erupsi. Hujan deras mengguyur puncak gunung tersebut selama beberapa jam."
+                </div>
+                <p class="font-semibold text-lg mb-4">Berdasarkan kondisi tersebut, ancaman bencana sekunder yang paling diwaspadai oleh warga desa di lembah adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q18" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Aliran awan panas (wedhus gembel) yang bergerak cepat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q18" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Gempa bumi tektonik susulan berkekuatan tinggi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q18" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Aliran lahar dingin (lahar hujan) yang mengalir melalui sungai-sungai</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q18" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Hujan abu vulkanik pekat yang merusak atap rumah</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Kombinasi antara material erupsi gunung berapi yang menumpuk di puncak dengan guyuran air hujan deras menciptakan bencana sekunder yang sangat destruktif, yaitu <strong>lahar dingin</strong> (lahar hujan). Aliran lumpur, pasir, dan batu vulkanik ini akan menyapu daerah aliran sungai (DAS) dan menerjang permukiman di lembah dengan daya rusak yang tinggi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q19">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">19.</span>Struktur bumi bagian dalam tidak dapat diamati secara langsung oleh manusia karena keterbatasan teknologi pengeboran. Para ilmuwan dapat menyimpulkan bahwa inti luar bumi berwujud cair berdasarkan analisis perilaku gelombang seismik, yaitu...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q19" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Gelombang Primer (P-wave) tidak dapat merambat melalui zat cair</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q19" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Gelombang Sekunder (S-wave) tidak dapat merambat melalui zat cair</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q19" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Gelombang Permukaan (L-wave) merambat lebih cepat di dalam zat cair</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q19" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Gelombang seismik akan berhenti sepenuhnya saat menyentuh batas mantel bumi</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Gelombang gempa (seismik) sangat membantu ilmuwan memetakan isi bumi. Karakteristik fisik <strong>Gelombang Sekunder (S-wave)</strong> adalah gelombang transversal yang hanya mampu merambat melalui medium zat padat dan akan teredam atau tidak dapat menembus zat cair. Saat stasiun seismograf mendeteksi adanya "bayangan" gelombang S di sisi bumi yang berlawanan, ilmuwan menyimpulkan ada lapisan cair di dalam bumi, yaitu inti luar.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="A" id="q20">
+                <p class="font-semibold text-lg mb-4"><span class="text-emerald-600 mr-2">20.</span>Di daerah perbukitan yang memiliki kemiringan lereng curam, aktivitas penebangan pohon secara liar sering kali memicu terjadinya bencana tanah longsor saat musim hujan. Upaya mitigasi struktural yang paling efektif untuk mencegah terjadinya bencana tersebut adalah...</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q20" value="A" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> A. Membuat dinding penahan tanah (retaining wall) dan melakukan reboisasi dengan tanaman berakar kuat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q20" value="B" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> B. Memasang sirine peringatan dini tsunami di sepanjang lereng bukit</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q20" value="C" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> C. Memindahkan seluruh penduduk bukit ke daerah pesisir pantai</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition"><input type="radio" name="q20" value="D" class="mt-1 mr-3 w-4 h-4 text-emerald-600 shrink-0"> D. Melakukan pengerukan tanah bukit secara berkala agar lereng menjadi landai</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Mitigasi struktural adalah upaya fisik untuk meredam risiko bencana. Pada lereng curam yang rawan longsor, pembangunan fisik berupa dinding penahan tanah (<em>retaining wall</em> / sengkedan) dikombinasikan dengan reboisasi (penanaman kembali vegetasi berakar dalam seperti pohon keras atau rumput vetiver) terbukti sangat efektif menahan erosi dan mengikat struktur lapisan tanah.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Area -->
+            <div class="flex justify-center mb-10 mt-8">
+                <button type="button" id="btnSubmit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-transform transform hover:scale-105 text-lg cursor-pointer">
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Container (Hidden Default) -->
+        <div id="resultContainer" class="hidden bg-white rounded-xl shadow-lg border-2 border-emerald-500 p-8 text-center mb-12 transform transition-all animate-fade-in">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Evaluasi Selesai!</h2>
+            <p class="text-gray-600 mb-8">Periksa rincian pembahasan di atas untuk memahami materi lebih dalam. Berikut adalah skor akhir Anda (0-100):</p>
+            
+            <div class="inline-block bg-emerald-50 border-4 border-emerald-200 rounded-full h-40 w-40 flex items-center justify-center mb-8 shadow-inner mx-auto">
+                <span id="scoreDisplay" class="text-5xl font-black text-emerald-600 drop-shadow-sm">0</span>
+            </div>
+            
+            <div class="flex justify-center">
+                <button type="button" id="btnReset" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition border border-gray-300 shadow-sm hover:shadow cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Ulangi Tes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-sm font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const quizForm = document.getElementById('quizForm');
+            const resultContainer = document.getElementById('resultContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-item');
+            
+            const TOTAL_QUESTIONS = questions.length; // 20 soal
+            const POINT_PER_QUESTION = 100 / TOTAL_QUESTIONS; // 5 poin per soal
+
+            // Mencegah submit default form
+            quizForm.addEventListener('submit', (e) => e.preventDefault());
+
+            btnSubmit.addEventListener('click', () => {
+                let currentScore = 0;
+
+                questions.forEach((q) => {
+                    const qId = q.id;
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const selectedOption = q.querySelector(`input[name="${qId}"]:checked`);
+                    
+                    const explanationBox = q.querySelector('.explanation');
+                    const statusText = explanationBox.querySelector('.status');
+
+                    // Reset kelas gaya dari pengecekan sebelumnya
+                    explanationBox.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'bg-red-50', 'border-red-300', 'text-emerald-800', 'text-red-800');
+                    q.classList.remove('border-emerald-300', 'border-red-300', 'bg-emerald-50/20', 'bg-red-50/20');
+
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        if (userAnswer === correctAnswer) {
+                            currentScore += POINT_PER_QUESTION;
+                            explanationBox.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-800');
+                            q.classList.add('border-emerald-300', 'bg-emerald-50/20'); 
+                            statusText.innerHTML = `✅ Pintar Sekali! Jawaban Anda Benar (Opsi ${userAnswer})`;
+                        } else {
+                            explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                            q.classList.add('border-red-300', 'bg-red-50/20');
+                            statusText.innerHTML = `❌ Kurang Tepat. Pilihan Anda: ${userAnswer} | Kunci Jawaban Benar: ${correctAnswer}`;
+                        }
+                    } else {
+                        // Jika tidak diisi (dibiarkan kosong)
+                        explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                        q.classList.add('border-red-300', 'bg-red-50/20');
+                        statusText.innerHTML = `⚠️ Anda belum menjawab soal ini. Kunci Jawaban Benar: ${correctAnswer}`;
+                    }
+                    
+                    explanationBox.style.display = 'block';
+                });
+
+                // Tampilkan total skor skala 0 - 100
+                scoreDisplay.innerText = Math.round(currentScore);
+                
+                // Sembunyikan tombol submit dan tampilkan box nilai akhir
+                btnSubmit.parentElement.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                
+                // Scroll animasi menuju bagian hasil
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 100);
+            });
+
+            btnReset.addEventListener('click', () => {
+                // Reset formulir radio
+                quizForm.reset();
+
+                // Sembunyikan kembali kotak pembahasan
+                questions.forEach(q => {
+                    const explanationBox = q.querySelector('.explanation');
+                    explanationBox.style.display = 'none';
+                    explanationBox.classList.add('hidden');
+                    explanationBox.classList.remove('bg-emerald-50', 'border-emerald-300', 'bg-red-50', 'border-red-300', 'text-emerald-800', 'text-red-800');
+                    q.classList.remove('border-emerald-300', 'border-red-300', 'bg-emerald-50/20', 'bg-red-50/20');
+                });
+
+                // Sembunyikan container hasil & tampilkan kembali tombol periksa
+                resultContainer.classList.add('hidden');
+                btnSubmit.parentElement.classList.remove('hidden');
+
+                // Bawa kembali layar ke posisi paling atas
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t13',
+          topicIndex: 13,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

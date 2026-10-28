@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard TKA Matematika SMP - Kurikulum Merdeka</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/mathjax.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Pastel/light background */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .scene {
+            perspective: 1000px; /* Gives 3D depth */
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        .card-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card-container.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            background-color: white;
+            overflow-y: auto; /* Allow scrolling if content is too long */
+        }
+
+        .card-face.front {
+            /* Front side styling */
+        }
+
+        .card-face.back {
+            transform: rotateY(180deg);
+            background-color: #f0fdf4; /* Light green tint for answer */
+        }
+
+        /* Hide scrollbar for a cleaner look */
+        .card-face::-webkit-scrollbar {
+            width: 6px;
+        }
+        .card-face::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .card-face::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+        .math-text {
+            font-size: 1.1rem;
+            line-height: 1.8; /* Line height diperbesar agar baris rumus tidak bertumpuk */
+            word-wrap: break-word;
+        }
+        
+        /* Class baru untuk perbaikan overflow dan tumpang tindih (overlap) */
+        .content-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: block;
+            padding: 0.5rem 4px; 
+        }
+
+        .content-wrapper-center {
+            display: flex;
+            min-height: 100%;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .content-wrapper-top {
+            display: flex;
+            min-height: 100%;
+            flex-direction: column;
+            justify-content: flex-start;
+            text-align: left; /* Rata kiri khusus untuk pembahasan agar rapi dibaca */
+        }
+
+        /* Styling khusus untuk jawaban utama agar terpisah dari pembahasan */
+        #answer-content > b:first-of-type {
+            display: block;
+            font-size: 1.25rem;
+            color: #047857;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed #a7f3d0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4 sm:p-8">
+        
+        <header class="mb-8 text-center w-full max-w-2xl">
+            <h1 class="text-2xl sm:text-3xl font-bold text-indigo-900 mb-2">Flashcard TKA Matematika SMP</h1>
+            <p class="text-slate-500 text-sm sm:text-base">Persiapan Tes Kemampuan Akademik - Kurikulum Merdeka</p>
+        </header>
+
+        <!-- Indicator -->
+        <div class="mb-4 text-center">
+            <span id="progress-text" class="inline-block bg-indigo-100 text-indigo-800 text-sm font-medium px-4 py-1.5 rounded-full">
+                Memuat Kartu...
+            </span>
+        </div>
+
+        <!-- Card Area -->
+        <div class="scene">
+            <div id="flashcard" class="card-container">
+                <!-- Front (Question) -->
+                <div class="card-face front">
+                    <div class="flex justify-between items-start mb-4 shrink-0">
+                        <span id="topic-badge-front" class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded border border-blue-200">
+                            Topik
+                        </span>
+                        <span class="text-xs text-slate-400 font-medium tracking-wider uppercase">Pertanyaan</span>
+                    </div>
+                    <div class="content-area">
+                        <div class="content-wrapper-center">
+                            <div id="question-content" class="math-text w-full">
+                                <!-- Question text goes here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4 text-xs text-slate-400 shrink-0">
+                        Klik untuk melihat jawaban
+                    </div>
+                </div>
+
+                <!-- Back (Answer) -->
+                <div class="card-face back">
+                     <div class="flex justify-between items-start mb-4 shrink-0">
+                        <span id="topic-badge-back" class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded border border-emerald-200">
+                            Topik
+                        </span>
+                        <span class="text-xs text-emerald-600 font-medium tracking-wider uppercase">Jawaban & Pembahasan</span>
+                    </div>
+                    <div class="content-area">
+                        <div class="content-wrapper-top">
+                            <div id="answer-content" class="math-text w-full">
+                                <!-- Answer text goes here -->
+                            </div>
+                        </div>
+                    </div>
+                     <div class="text-center mt-4 text-xs text-emerald-500/70 shrink-0">
+                        Klik untuk kembali ke pertanyaan
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-8 flex gap-4">
+            <button id="btn-prev" class="px-6 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path></svg>
+                Sebelumnya
+            </button>
+            <button id="btn-next" class="px-6 py-2.5 bg-indigo-600 border border-transparent rounded-lg text-white font-medium hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm flex items-center gap-2">
+                Selanjutnya
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Data 100 Pertanyaan berdasarkan 24 Topik
+        // Penggunaan tag HTML seperti <sup>, <sub>, dan simbol umum untuk representasi matematis yang baik
+        const flashcardsData = [
+            // Topik 1: Barisan Berhingga Bilangan
+            {
+                topic: "Barisan Berhingga Bilangan",
+                q: "Diketahui barisan bilangan: 4, 7, 12, 19, 28, ... Suku ke-7 dari barisan tersebut adalah...",
+                a: "<b>52</b><br><br>Pembahasan:<br>Pola beda antar suku: +3, +5, +7, +9, ... (Beda bertingkat 2)<br>Suku ke-6 = 28 + 11 = 39<br>Suku ke-7 = 39 + 13 = 52"
+            },
+            {
+                topic: "Barisan Berhingga Bilangan",
+                q: "Sebuah barisan aritmetika memiliki U<sub>3</sub> = 11 dan U<sub>7</sub> = 27. Berapakah nilai U<sub>10</sub>?",
+                a: "<b>39</b><br><br>Pembahasan:<br>U<sub>7</sub> - U<sub>3</sub> = 4b &rarr; 27 - 11 = 16 &rarr; b = 4<br>U<sub>3</sub> = a + 2b = 11 &rarr; a + 8 = 11 &rarr; a = 3<br>U<sub>10</sub> = a + 9b = 3 + 9(4) = 3 + 36 = 39"
+            },
+            {
+                topic: "Barisan Berhingga Bilangan",
+                q: "Suku ke-3 dari barisan geometri adalah 12 dan suku ke-6 adalah 96. Tentukan rasio (r) barisan tersebut.",
+                a: "<b>2</b><br><br>Pembahasan:<br>U<sub>6</sub> / U<sub>3</sub> = (ar<sup>5</sup>) / (ar<sup>2</sup>) = r<sup>3</sup><br>96 / 12 = r<sup>3</sup> &rarr; 8 = r<sup>3</sup> &rarr; r = 2"
+            },
+            {
+                topic: "Barisan Berhingga Bilangan",
+                q: "Rumus suku ke-n dari barisan 2, 6, 12, 20, ... adalah...",
+                a: "<b>n(n + 1)</b> atau <b>n<sup>2</sup> + n</b><br><br>Pembahasan:<br>U<sub>1</sub> = 2 = 1 &times; 2<br>U<sub>2</sub> = 6 = 2 &times; 3<br>U<sub>3</sub> = 12 = 3 &times; 4<br>Maka U<sub>n</sub> = n(n + 1)"
+            },
+            
+            // Topik 2: Bentuk Aljabar & Sifat Operasinya
+            {
+                topic: "Bentuk Aljabar & Sifat Operasinya",
+                q: "Bentuk sederhana dari 3(2x - 4y) - 2(x + 5y) adalah...",
+                a: "<b>4x - 22y</b><br><br>Pembahasan:<br>= 6x - 12y - 2x - 10y<br>= (6x - 2x) + (-12y - 10y)<br>= 4x - 22y"
+            },
+            {
+                topic: "Bentuk Aljabar & Sifat Operasinya",
+                q: "Hasil penjabaran dari (2x - 3)(x + 4) adalah...",
+                a: "<b>2x<sup>2</sup> + 5x - 12</b><br><br>Pembahasan:<br>= 2x(x) + 2x(4) - 3(x) - 3(4)<br>= 2x<sup>2</sup> + 8x - 3x - 12<br>= 2x<sup>2</sup> + 5x - 12"
+            },
+            {
+                topic: "Bentuk Aljabar & Sifat Operasinya",
+                q: "Jika x = -2 dan y = 3, maka nilai dari x<sup>2</sup> - 3xy + y<sup>2</sup> adalah...",
+                a: "<b>31</b><br><br>Pembahasan:<br>= (-2)<sup>2</sup> - 3(-2)(3) + (3)<sup>2</sup><br>= 4 - (-18) + 9<br>= 4 + 18 + 9 = 31"
+            },
+            {
+                topic: "Bentuk Aljabar & Sifat Operasinya",
+                q: "Bentuk ekuivalen dari (x - y)<sup>2</sup> + 4xy adalah...",
+                a: "<b>(x + y)<sup>2</sup></b><br><br>Pembahasan:<br>= (x<sup>2</sup> - 2xy + y<sup>2</sup>) + 4xy<br>= x<sup>2</sup> + 2xy + y<sup>2</sup><br>= (x + y)<sup>2</sup>"
+            },
+
+            // Topik 3: Deret Berhingga Bilangan
+            {
+                topic: "Deret Berhingga Bilangan",
+                q: "Jumlah 10 suku pertama dari deret aritmetika 5 + 9 + 13 + 17 + ... adalah...",
+                a: "<b>230</b><br><br>Pembahasan:<br>a = 5, b = 4, n = 10<br>S<sub>10</sub> = n/2 &times; (2a + (n-1)b)<br>S<sub>10</sub> = 10/2 &times; (2(5) + 9(4))<br>S<sub>10</sub> = 5 &times; (10 + 36) = 5 &times; 46 = 230"
+            },
+            {
+                topic: "Deret Berhingga Bilangan",
+                q: "Dalam gedung pertunjukan disusun kursi dengan baris paling depan terdiri 12 kursi, baris kedua 16 kursi, dan seterusnya selalu bertambah 4. Jika terdapat 15 baris, total kursi adalah...",
+                a: "<b>600</b><br><br>Pembahasan:<br>Deret aritmetika: a = 12, b = 4, n = 15<br>S<sub>15</sub> = 15/2 &times; (2(12) + 14(4))<br>S<sub>15</sub> = 15/2 &times; (24 + 56)<br>S<sub>15</sub> = 15/2 &times; 80 = 15 &times; 40 = 600"
+            },
+            {
+                topic: "Deret Berhingga Bilangan",
+                q: "Jumlah 5 suku pertama dari deret geometri 2 + 6 + 18 + ... adalah...",
+                a: "<b>242</b><br><br>Pembahasan:<br>a = 2, r = 3<br>S<sub>n</sub> = a(r<sup>n</sup> - 1) / (r - 1)<br>S<sub>5</sub> = 2(3<sup>5</sup> - 1) / (3 - 1)<br>S<sub>5</sub> = 2(243 - 1) / 2 = 242"
+            },
+            {
+                topic: "Deret Berhingga Bilangan",
+                q: "Nilai dari 1 + 2 + 3 + ... + 50 adalah...",
+                a: "<b>1.275</b><br><br>Pembahasan:<br>Menggunakan rumus n(n+1)/2<br>= (50 &times; 51) / 2<br>= 25 &times; 51 = 1275"
+            },
+
+            // Topik 4: Estimasi Perkiraan Hasil Perhitungan
+            {
+                topic: "Estimasi Perkiraan Hasil Perhitungan",
+                q: "Taksiran terbaik keratusan terdekat untuk 7.825 &times; 23 adalah...",
+                a: "<b>180.000</b><br><br>Pembahasan:<br>Gunakan pembulatan angka penting: 7.825 &asymp; 7.800 (ke ratusan) atau 8000 (ke ribuan), 23 &asymp; 20<br>Agar mendekati hasil asli (179.975), estimasi cepat: 8.000 &times; 20 = 160.000 (kasar) atau 7.800 &times; 23 &asymp; 7800 &times; 20 = 156.000 + 23.400 = 179.400. Pembulatan terbaik ke puluhan ribu/ratusan ribu terdekat dari opsi rasional adalah sekitar 180.000."
+            },
+            {
+                topic: "Estimasi Perkiraan Hasil Perhitungan",
+                q: "Diperkirakan &radq;150 berada di antara dua bilangan bulat berurutan yaitu...",
+                a: "<b>12 dan 13</b><br><br>Pembahasan:<br>12<sup>2</sup> = 144<br>13<sup>2</sup> = 169<br>Karena 144 < 150 < 169, maka 12 < &radq;150 < 13."
+            },
+            {
+                topic: "Estimasi Perkiraan Hasil Perhitungan",
+                q: "Estimasi nilai dari 19,8 &times; 4,12 dibagi 2,05 adalah sekitar...",
+                a: "<b>40</b><br><br>Pembahasan:<br>Lakukan pembulatan ke bilangan bulat terdekat untuk estimasi cepat.<br>&asymp; 20 &times; 4 / 2<br>&asymp; 80 / 2 = 40"
+            },
+            {
+                topic: "Estimasi Perkiraan Hasil Perhitungan",
+                q: "Sebuah mobil menghabiskan 8,2 liter bensin untuk jarak tempuh 98 km. Estimasi jarak tempuh jika tersedia 40 liter bensin adalah sekitar...",
+                a: "<b>480 km - 500 km</b><br><br>Pembahasan:<br>Estimasi konsumsi: 98 km / 8,2 L &asymp; 100 / 8 &asymp; 12,5 km/L.<br>Jarak estimasi: 12,5 &times; 40 = 500 km. (Hasil eksak &asymp; 478 km, jadi estimasi 480-500 km masuk akal)."
+            },
+
+            // Topik 5: Faktorisasi Prima Bilangan Asli
+            {
+                topic: "Faktorisasi Prima Bilangan Asli",
+                q: "Faktorisasi prima dari 360 adalah...",
+                a: "<b>2<sup>3</sup> &times; 3<sup>2</sup> &times; 5</b><br><br>Pembahasan:<br>360 = 36 &times; 10<br>36 = 2<sup>2</sup> &times; 3<sup>2</sup><br>10 = 2 &times; 5<br>Gabungkan: 2<sup>3</sup> &times; 3<sup>2</sup> &times; 5"
+            },
+            {
+                topic: "Faktorisasi Prima Bilangan Asli",
+                q: "Banyaknya faktor positif dari 72 adalah...",
+                a: "<b>12</b><br><br>Pembahasan:<br>Faktorisasi prima 72 = 2<sup>3</sup> &times; 3<sup>2</sup><br>Banyak faktor = (pangkat + 1) &times; (pangkat + 1)<br>= (3 + 1) &times; (2 + 1) = 4 &times; 3 = 12"
+            },
+            {
+                topic: "Faktorisasi Prima Bilangan Asli",
+                q: "KPK dari 24, 36, dan 60 adalah...",
+                a: "<b>360</b><br><br>Pembahasan:<br>24 = 2<sup>3</sup> &times; 3<br>36 = 2<sup>2</sup> &times; 3<sup>2</sup><br>60 = 2<sup>2</sup> &times; 3 &times; 5<br>KPK = ambil semua faktor prima pangkat terbesar = 2<sup>3</sup> &times; 3<sup>2</sup> &times; 5 = 8 &times; 9 &times; 5 = 360"
+            },
+            {
+                topic: "Faktorisasi Prima Bilangan Asli",
+                q: "FPB dari 150 dan 210 adalah...",
+                a: "<b>30</b><br><br>Pembahasan:<br>150 = 2 &times; 3 &times; 5<sup>2</sup><br>210 = 2 &times; 3 &times; 5 &times; 7<br>FPB = ambil faktor yang sama pangkat terkecil = 2 &times; 3 &times; 5 = 30"
+            },
+
+            // Topik 6: Hubungan Antar-Sudut & Garis
+            {
+                topic: "Hubungan Antar-Sudut & Garis",
+                q: "Dua sudut saling berpelurus. Jika besar sudut yang satu adalah 3 kali sudut yang lain, berapakah besar sudut yang lebih kecil?",
+                a: "<b>45&deg;</b><br><br>Pembahasan:<br>x + 3x = 180&deg;<br>4x = 180&deg;<br>x = 45&deg;"
+            },
+            {
+                topic: "Hubungan Antar-Sudut & Garis",
+                q: "Pada dua garis sejajar yang dipotong garis transversal, sudut luar berseberangan memiliki sifat...",
+                a: "<b>Sama besar</b><br><br>Pembahasan:<br>Sudut sehadap, sudut dalam berseberangan, dan sudut luar berseberangan besarnya sama. Sedangkan sudut dalam/luar sepihak jumlahnya 180&deg;."
+            },
+            {
+                topic: "Hubungan Antar-Sudut & Garis",
+                q: "Penyiku dari sudut 37&deg; adalah...",
+                a: "<b>53&deg;</b><br><br>Pembahasan:<br>Sudut berpenyiku (komplemen) jumlahnya 90&deg;.<br>90&deg; - 37&deg; = 53&deg;"
+            },
+            {
+                topic: "Hubungan Antar-Sudut & Garis",
+                q: "Besar tiap sudut dalam pada segi-8 (oktagon) beraturan adalah...",
+                a: "<b>135&deg;</b><br><br>Pembahasan:<br>Rumus jumlah sudut segi-n = (n - 2) &times; 180&deg;<br>Untuk segi-8 = (8 - 2) &times; 180&deg; = 1080&deg;<br>Besar tiap sudut = 1080&deg; / 8 = 135&deg;"
+            },
+            
+            // Topik 7: Jaring-Jaring Bangun Ruang
+            {
+                topic: "Jaring-Jaring Bangun Ruang",
+                q: "Jaring-jaring kubus terdiri dari berapa banyak persegi yang kongruen?",
+                a: "<b>6 persegi</b><br><br>Pembahasan:<br>Kubus memiliki 6 sisi yang berbentuk persegi dan saling kongruen."
+            },
+            {
+                topic: "Jaring-Jaring Bangun Ruang",
+                q: "Bangun ruang yang jaring-jaringnya terdiri dari 1 lingkaran dan 1 juring lingkaran adalah...",
+                a: "<b>Kerucut</b><br><br>Pembahasan:<br>Alas kerucut berbentuk lingkaran dan selimut kerucut jika dibentangkan berbentuk juring lingkaran."
+            },
+            {
+                topic: "Jaring-Jaring Bangun Ruang",
+                q: "Jika sebuah balok memiliki ukuran berbeda (p &ne; l &ne; t), berapa pasang persegipanjang kongruen pada jaring-jaringnya?",
+                a: "<b>3 pasang</b><br><br>Pembahasan:<br>Balok memiliki sisi alas-tutup, depan-belakang, dan kanan-kiri. Masing-masing pasangan saling kongruen (total 3 pasang)."
+            },
+            {
+                topic: "Jaring-Jaring Bangun Ruang",
+                q: "Bangun ruang yang tidak memiliki titik sudut, namun jaring-jaring selimutnya berbentuk persegi panjang adalah...",
+                a: "<b>Tabung (Silinder)</b><br><br>Pembahasan:<br>Tabung tidak bersudut. Jaring-jaringnya terdiri dari 2 lingkaran (alas & tutup) dan 1 persegipanjang (selimut)."
+            },
+
+            // Topik 8: Kekongruenan dan Kesebangunan
+            {
+                topic: "Kekongruenan dan Kesebangunan",
+                q: "Syarat dua segitiga dikatakan kongruen adalah memenuhi postulat...",
+                a: "<b>Sisi-Sisi-Sisi (SSS), Sisi-Sudut-Sisi (SAS), Sudut-Sisi-Sudut (ASA), atau Sudut-Sudut-Sisi (AAS).</b>"
+            },
+            {
+                topic: "Kekongruenan dan Kesebangunan",
+                q: "Sebuah foto berukuran 4 cm &times; 6 cm diperbesar sehingga sisi panjangnya menjadi 24 cm. Luas foto setelah diperbesar adalah...",
+                a: "<b>384 cm<sup>2</sup></b><br><br>Pembahasan:<br>Skala = 24 / 6 = 4<br>Lebar baru = 4 &times; 4 = 16 cm<br>Luas baru = 16 &times; 24 = 384 cm<sup>2</sup>. Atau (skala)<sup>2</sup> &times; luas awal = 4<sup>2</sup> &times; 24 = 384."
+            },
+            {
+                topic: "Kekongruenan dan Kesebangunan",
+                q: "Tinggi sebuah tiang adalah 4 m memiliki bayangan 6 m. Pada saat yang sama, sebuah menara memiliki bayangan 24 m. Tinggi menara tersebut adalah...",
+                a: "<b>16 m</b><br><br>Pembahasan:<br>Menggunakan kesebangunan: Tinggi_tiang / Bayangan_tiang = Tinggi_menara / Bayangan_menara<br>4 / 6 = t / 24<br>t = (4 &times; 24) / 6 = 16 m"
+            },
+            {
+                topic: "Kekongruenan dan Kesebangunan",
+                q: "Jika dua bangun datar sebangun, maka sifat sudut-sudut yang bersesuaian adalah...",
+                a: "<b>Sama besar</b><br><br>Pembahasan:<br>Syarat kesebangunan: perbandingan panjang sisi-sisi yang bersesuaian sebanding (senilai) dan sudut-sudut yang bersesuaian sama besar."
+            },
+
+            // Topik 9: Keliling dan Luas Bangun Datar
+            {
+                topic: "Keliling dan Luas Bangun Datar",
+                q: "Luas sebuah belah ketupat adalah 120 cm<sup>2</sup>. Jika panjang salah satu diagonalnya 10 cm, keliling belah ketupat tersebut adalah...",
+                a: "<b>52 cm</b><br><br>Pembahasan:<br>Luas = (d<sub>1</sub> &times; d<sub>2</sub>) / 2 &rarr; 120 = (10 &times; d<sub>2</sub>) / 2 &rarr; d<sub>2</sub> = 24 cm.<br>Setengah diagonal = 5 cm dan 12 cm. Sisi miring (sisi belah ketupat) = &radq;(5<sup>2</sup> + 12<sup>2</sup>) = 13 cm.<br>Keliling = 4 &times; 13 = 52 cm."
+            },
+            {
+                topic: "Keliling dan Luas Bangun Datar",
+                q: "Keliling lingkaran dengan jari-jari 14 cm adalah... (Gunakan &pi; = 22/7)",
+                a: "<b>88 cm</b><br><br>Pembahasan:<br>Keliling = 2 &times; &pi; &times; r<br>= 2 &times; 22/7 &times; 14<br>= 44 &times; 2 = 88 cm"
+            },
+            {
+                topic: "Keliling dan Luas Bangun Datar",
+                q: "Luas trapesium sama kaki yang memiliki panjang sisi sejajar 10 cm dan 22 cm, serta sisi miring 10 cm adalah...",
+                a: "<b>128 cm<sup>2</sup></b><br><br>Pembahasan:<br>Alas segitiga siku-siku (di ujung) = (22 - 10) / 2 = 6 cm.<br>Tinggi trapesium (dengan Pythagoras) = &radq;(10<sup>2</sup> - 6<sup>2</sup>) = &radq;64 = 8 cm.<br>Luas = 1/2 &times; (a+b) &times; t = 1/2 &times; (10+22) &times; 8 = 1/2 &times; 32 &times; 8 = 128 cm<sup>2</sup>"
+            },
+            {
+                topic: "Keliling dan Luas Bangun Datar",
+                q: "Sebuah taman berbentuk lingkaran dengan diameter 20 m. Jika biaya menanam rumput Rp15.000/m<sup>2</sup>, total biaya yang diperlukan adalah... (Gunakan &pi; = 3,14)",
+                a: "<b>Rp4.710.000</b><br><br>Pembahasan:<br>r = 10 m.<br>Luas = 3,14 &times; 10<sup>2</sup> = 314 m<sup>2</sup>.<br>Biaya = 314 &times; 15.000 = 4.710.000"
+            },
+
+            // Topik 10: Operasi Aritmetika pada Bilangan
+            {
+                topic: "Operasi Aritmetika pada Bilangan",
+                q: "Hasil dari -15 + 8 &times; (-2) - (-10) adalah...",
+                a: "<b>-21</b><br><br>Pembahasan:<br>Kerjakan perkalian dulu: 8 &times; (-2) = -16<br>= -15 + (-16) + 10<br>= -31 + 10 = -21"
+            },
+            {
+                topic: "Operasi Aritmetika pada Bilangan",
+                q: "Hasil dari 2&frac12; &times; 1&frac13; &divide; 3/4 adalah...",
+                a: "<b>4 &frac49; atau 40/9</b><br><br>Pembahasan:<br>= 5/2 &times; 4/3 &divide; 3/4<br>= (20/6) &times; 4/3<br>= 80/18 = 40/9 = 4 &frac49;"
+            },
+            {
+                topic: "Operasi Aritmetika pada Bilangan",
+                q: "Hasil dari 3<sup>2</sup> &times; 2<sup>3</sup> + (-4)<sup>2</sup> adalah...",
+                a: "<b>88</b><br><br>Pembahasan:<br>= (9 &times; 8) + 16<br>= 72 + 16 = 88"
+            },
+            {
+                topic: "Operasi Aritmetika pada Bilangan",
+                q: "Dalam tes, jawaban benar nilai 4, salah -2, tidak dijawab -1. Dari 50 soal, Budi menjawab benar 35 dan salah 10. Skor Budi adalah...",
+                a: "<b>115</b><br><br>Pembahasan:<br>Benar: 35 &times; 4 = 140<br>Salah: 10 &times; (-2) = -20<br>Tidak dijawab: 5 &times; (-1) = -5<br>Total = 140 - 20 - 5 = 115"
+            },
+
+            // Topik 11: Peluang & Frekuensi Relatif Kejadian Tunggal
+            {
+                topic: "Peluang & Frekuensi Relatif Kejadian Tunggal",
+                q: "Pada pelemparan dua buah dadu, peluang munculnya mata dadu berjumlah 7 adalah...",
+                a: "<b>1/6</b><br><br>Pembahasan:<br>Titik sampel (1,6), (2,5), (3,4), (4,3), (5,2), (6,1) &rarr; n(A) = 6<br>n(S) = 36<br>Peluang = 6/36 = 1/6"
+            },
+            {
+                topic: "Peluang & Frekuensi Relatif Kejadian Tunggal",
+                q: "Sebuah kantong berisi 5 kelereng merah, 3 putih, dan 2 biru. Jika diambil satu secara acak, peluang terambil BUKAN kelereng putih adalah...",
+                a: "<b>7/10</b><br><br>Pembahasan:<br>Total kelereng = 10. Bukan putih = merah + biru = 5 + 2 = 7.<br>Peluang = 7/10"
+            },
+            {
+                topic: "Peluang & Frekuensi Relatif Kejadian Tunggal",
+                q: "Jika sebuah koin dilempar 100 kali dan muncul angka sebanyak 45 kali, berapakah frekuensi relatif munculnya gambar?",
+                a: "<b>0,55 atau 55% atau 11/20</b><br><br>Pembahasan:<br>Muncul gambar = 100 - 45 = 55 kali.<br>Frekuensi relatif = 55/100 = 0,55"
+            },
+            {
+                topic: "Peluang & Frekuensi Relatif Kejadian Tunggal",
+                q: "Dari seperangkat kartu bridge (remi), diambil satu kartu secara acak. Peluang terambilnya kartu As adalah...",
+                a: "<b>1/13</b><br><br>Pembahasan:<br>Jumlah kartu As (n(A)) = 4<br>Total kartu (n(S)) = 52<br>Peluang = 4/52 = 1/13"
+            },
+
+            // Topik 12: Penyajian & Penginterpretasian Data
+            {
+                topic: "Penyajian & Penginterpretasian Data",
+                q: "Diagram yang paling tepat untuk menunjukkan persentase atau proporsi bagian dari suatu keseluruhan adalah...",
+                a: "<b>Diagram Lingkaran (Pie Chart)</b>"
+            },
+            {
+                topic: "Penyajian & Penginterpretasian Data",
+                q: "Pada diagram lingkaran, jika juring untuk 'Olah Raga' memiliki sudut pusat 108&deg; dari total 40 siswa, berapa banyak siswa yang gemar Olah Raga?",
+                a: "<b>12 siswa</b><br><br>Pembahasan:<br>Jumlah siswa = (108&deg; / 360&deg;) &times; 40<br>= (3/10) &times; 40 = 12 siswa"
+            },
+            {
+                topic: "Penyajian & Penginterpretasian Data",
+                q: "Jika sebuah grafik garis menunjukkan tren suhu turun berturut-turut selama 5 hari, kesimpulan interpretasi apa yang paling valid terkait pola cuaca minggu tersebut?",
+                a: "<b>Terjadi tren pendinginan (cuaca semakin dingin) secara konsisten selama periode tersebut.</b>"
+            },
+            {
+                topic: "Penyajian & Penginterpretasian Data",
+                q: "Diagram batang menunjukkan panen padi: Th 2020 (40 ton), 2021 (50 ton), 2022 (45 ton). Persentase penurunan panen dari tahun 2021 ke 2022 adalah...",
+                a: "<b>10%</b><br><br>Pembahasan:<br>Penurunan = 50 - 45 = 5 ton.<br>Persentase = (5 / 50) &times; 100% = 10%"
+            },
+
+            // Topik 13: Perbandingan dan sifat-sifat bilangan
+            {
+                topic: "Perbandingan & Sifat Bilangan",
+                q: "Perbandingan umur Kakak dan Adik adalah 5 : 3. Jika selisih umur mereka 6 tahun, maka umur Kakak adalah...",
+                a: "<b>15 tahun</b><br><br>Pembahasan:<br>Selisih rasio = 5 - 3 = 2.<br>Umur Kakak = (5 / 2) &times; 6 = 15 tahun."
+            },
+            {
+                topic: "Perbandingan & Sifat Bilangan",
+                q: "Bentuk sederhana dari perbandingan 1,5 jam : 45 menit adalah...",
+                a: "<b>2 : 1</b><br><br>Pembahasan:<br>1,5 jam = 90 menit.<br>90 menit : 45 menit = 2 : 1"
+            },
+            {
+                topic: "Perbandingan & Sifat Bilangan",
+                q: "Manakah yang bernilai lebih besar: 3/4 atau 5/7?",
+                a: "<b>3/4</b><br><br>Pembahasan:<br>Samakan penyebut atau kali silang.<br>3 &times; 7 = 21<br>4 &times; 5 = 20<br>Karena 21 > 20, maka 3/4 > 5/7."
+            },
+            {
+                topic: "Perbandingan & Sifat Bilangan",
+                q: "A : B = 2 : 3 dan B : C = 4 : 5. Maka perbandingan A : B : C adalah...",
+                a: "<b>8 : 12 : 15</b><br><br>Pembahasan:<br>A : B = 2 : 3  (kalikan 4) &rarr; 8 : 12<br>B : C = 4 : 5  (kalikan 3) &rarr; 12 : 15<br>Maka A : B : C = 8 : 12 : 15"
+            },
+
+            // Topik 14: Perbandingan Senilai & Berbalik Nilai
+            {
+                topic: "Perbandingan Senilai & Berbalik Nilai",
+                q: "Sebuah mobil membutuhkan 5 liter bensin untuk menempuh jarak 60 km. Berapa liter yang dibutuhkan untuk 156 km?",
+                a: "<b>13 liter</b><br><br>Pembahasan:<br>Perbandingan senilai. (x / 5) = (156 / 60)<br>x = 5 &times; (156 / 60) = 156 / 12 = 13 liter"
+            },
+            {
+                topic: "Perbandingan Senilai & Berbalik Nilai",
+                q: "Pembangunan jembatan dapat diselesaikan oleh 40 pekerja dalam 60 hari. Jika ingin diselesaikan dalam 48 hari, tambahan pekerja yang dibutuhkan adalah...",
+                a: "<b>10 orang</b><br><br>Pembahasan:<br>Perbandingan berbalik nilai. (Pekerja &times; Hari = Konstan)<br>40 &times; 60 = P2 &times; 48<br>2400 = 48 P2 &rarr; P2 = 50 pekerja.<br>Tambahan = 50 - 40 = 10 orang."
+            },
+            {
+                topic: "Perbandingan Senilai & Berbalik Nilai",
+                q: "Harga 3 kodi pakaian adalah Rp1.800.000. Harga 1 lusin pakaian yang sama adalah...",
+                a: "<b>Rp360.000</b><br><br>Pembahasan:<br>3 kodi = 60 buah.<br>Harga 1 buah = 1.800.000 / 60 = Rp30.000<br>Harga 1 lusin (12 buah) = 12 &times; 30.000 = Rp360.000"
+            },
+            {
+                topic: "Perbandingan Senilai & Berbalik Nilai",
+                q: "Persediaan makanan ternak cukup untuk 30 ekor ayam selama 15 hari. Jika 5 ekor ayam mati, persediaan makanan akan habis dalam...",
+                a: "<b>18 hari</b><br><br>Pembahasan:<br>Berbalik nilai. (Ayam sisa = 25 ekor)<br>30 &times; 15 = 25 &times; H2<br>450 = 25 H2 &rarr; H2 = 18 hari."
+            },
+
+            // Topik 15: Perbandingan Ukuran Pemusatan & Penyebaran
+            {
+                topic: "Ukuran Pemusatan & Penyebaran",
+                q: "Rata-rata berat badan 5 siswa adalah 45 kg. Jika berat seorang guru ditambahkan, rata-ratanya menjadi 48 kg. Berapa berat guru tersebut?",
+                a: "<b>63 kg</b><br><br>Pembahasan:<br>Total berat 5 siswa = 5 &times; 45 = 225 kg.<br>Total berat 6 orang (dengan guru) = 6 &times; 48 = 288 kg.<br>Berat guru = 288 - 225 = 63 kg."
+            },
+            {
+                topic: "Ukuran Pemusatan & Penyebaran",
+                q: "Data: 5, 8, 9, x, 4 memiliki median 6. Jika x adalah bilangan asli, berapakah nilai x?",
+                a: "<b>6</b><br><br>Pembahasan:<br>Urutkan data tanpa x: 4, 5, 8, 9. Karena ada 5 data, median adalah data ke-3 setelah diurutkan. Agar median bernilai 6, urutannya harus: 4, 5, 6, 8, 9. Maka x = 6."
+            },
+            {
+                topic: "Ukuran Pemusatan & Penyebaran",
+                q: "Simpangan dari nilai terkecil ke terbesar dalam suatu kumpulan data disebut...",
+                a: "<b>Jangkauan (Range)</b>"
+            },
+            {
+                topic: "Ukuran Pemusatan & Penyebaran",
+                q: "Kapan median lebih representatif (lebih baik mewakili kelompok) daripada mean (rata-rata)?",
+                a: "<b>Ketika terdapat data pencilan (outlier) atau nilai yang ekstrem.</b><br><br>Pembahasan:<br>Rata-rata sangat peka terhadap nilai ekstrem (sangat besar/kecil), sedangkan median hanya melihat posisi tengah."
+            },
+
+            // Topik 16: Persamaan Linear Satu Variabel (PLSV)
+            {
+                topic: "PLSV",
+                q: "Penyelesaian dari persamaan 3(x - 2) = x + 10 adalah...",
+                a: "<b>x = 8</b><br><br>Pembahasan:<br>3x - 6 = x + 10<br>3x - x = 10 + 6<br>2x = 16 &rarr; x = 8"
+            },
+            {
+                topic: "PLSV",
+                q: "Jika 2x/3 + 4 = 10, maka nilai dari 3x - 1 adalah...",
+                a: "<b>26</b><br><br>Pembahasan:<br>2x/3 = 10 - 4 &rarr; 2x/3 = 6<br>2x = 18 &rarr; x = 9<br>Maka 3(9) - 1 = 27 - 1 = 26"
+            },
+            {
+                topic: "PLSV",
+                q: "Jumlah tiga bilangan ganjil berurutan adalah 63. Bilangan terbesarnya adalah...",
+                a: "<b>23</b><br><br>Pembahasan:<br>Misal bilangan: (x - 2), x, (x + 2)<br>x - 2 + x + x + 2 = 63<br>3x = 63 &rarr; x = 21.<br>Bilangan terbesar = x + 2 = 21 + 2 = 23."
+            },
+            {
+                topic: "PLSV",
+                q: "Umur Ayah 4 kali umur Budi. Lima tahun yang lalu jumlah umur mereka adalah 40 tahun. Umur Budi sekarang adalah...",
+                a: "<b>10 tahun</b><br><br>Pembahasan:<br>Misal umur Budi = x, Ayah = 4x<br>5 th lalu: (x - 5) + (4x - 5) = 40<br>5x - 10 = 40<br>5x = 50 &rarr; x = 10"
+            },
+
+            // Topik 17: Pertidaksamaan Linear Satu Variabel (PtLSV)
+            {
+                topic: "PtLSV",
+                q: "Himpunan penyelesaian dari 4x - 5 &le; 6x + 7 (x anggota bilangan bulat) adalah...",
+                a: "<b>x &ge; -6 atau {-6, -5, -4, ...}</b><br><br>Pembahasan:<br>4x - 6x &le; 7 + 5<br>-2x &le; 12<br>Perhatikan: Jika dibagi bilangan negatif, tanda ketidaksamaan berbalik arah.<br>x &ge; -6"
+            },
+            {
+                topic: "PtLSV",
+                q: "Sebuah truk tidak boleh membawa beban lebih dari 1.200 kg. Sopir seberat 75 kg membawa x kotak bata yang masing-masing seberat 25 kg. Pertidaksamaan yang tepat adalah...",
+                a: "<b>75 + 25x &le; 1200</b>"
+            },
+            {
+                topic: "PtLSV",
+                q: "Penyelesaian dari &frac12;(x - 4) > 2 - x adalah...",
+                a: "<b>x > 8/3 atau x > 2&frac23;</b><br><br>Pembahasan:<br>Kalikan kedua ruas dengan 2:<br>x - 4 > 4 - 2x<br>x + 2x > 4 + 4<br>3x > 8 &rarr; x > 8/3"
+            },
+            {
+                topic: "PtLSV",
+                q: "Keliling persegi panjang tidak kurang dari 40 cm. Jika lebarnya 8 cm, batas nilai panjang (p) adalah...",
+                a: "<b>p &ge; 12 cm</b><br><br>Pembahasan:<br>2(p + l) &ge; 40<br>2(p + 8) &ge; 40<br>p + 8 &ge; 20 &rarr; p &ge; 12"
+            },
+
+            // Topik 18: Rasio (Skala, Proporsi & Laju Perubahan)
+            {
+                topic: "Rasio (Skala, Proporsi & Laju Perubahan)",
+                q: "Jarak pada peta adalah 4 cm, sedangkan jarak sebenarnya 120 km. Skala peta tersebut adalah...",
+                a: "<b>1 : 3.000.000</b><br><br>Pembahasan:<br>120 km = 12.000.000 cm<br>Skala = Jp : Js = 4 : 12.000.000 = 1 : 3.000.000"
+            },
+            {
+                topic: "Rasio (Skala, Proporsi & Laju Perubahan)",
+                q: "Kecepatan rata-rata sebuah kereta adalah 80 km/jam. Laju perubahan jarak terhadap waktu tersebut artinya...",
+                a: "<b>Setiap bertambah 1 jam, jarak yang ditempuh bertambah 80 km.</b>"
+            },
+            {
+                topic: "Rasio (Skala, Proporsi & Laju Perubahan)",
+                q: "Sebuah foto gedung berskala 1 : 500 memiliki tinggi 12 cm. Tinggi gedung sebenarnya adalah...",
+                a: "<b>60 meter</b><br><br>Pembahasan:<br>Tinggi sebenarnya = 12 cm &times; 500 = 6000 cm = 60 meter."
+            },
+            {
+                topic: "Rasio (Skala, Proporsi & Laju Perubahan)",
+                q: "Debit air sebuah keran adalah 15 liter/menit. Volume air yang tertampung selama 1 jam 20 menit adalah...",
+                a: "<b>1.200 liter</b><br><br>Pembahasan:<br>1 jam 20 menit = 80 menit.<br>Volume = Debit &times; Waktu = 15 &times; 80 = 1200 liter."
+            },
+
+            // Topik 19: Relasi dan Fungsi
+            {
+                topic: "Relasi dan Fungsi",
+                q: "Diketahui fungsi f(x) = 3x - 5. Jika f(a) = 13, maka nilai a adalah...",
+                a: "<b>6</b><br><br>Pembahasan:<br>3a - 5 = 13<br>3a = 18<br>a = 6"
+            },
+            {
+                topic: "Relasi dan Fungsi",
+                q: "Himpunan pasangan berurutan berikut yang merupakan fungsi (pemetaan) adalah...<br>A. {(1,2), (1,3), (2,4)}<br>B. {(1,2), (2,2), (3,2)}",
+                a: "<b>B. {(1,2), (2,2), (3,2)}</b><br><br>Pembahasan:<br>Syarat fungsi (pemetaan): setiap anggota domain (x / sisi kiri) harus memiliki tepat satu pasangan di kodomain. Pada himpunan A, domain '1' bercabang (tidak boleh)."
+            },
+            {
+                topic: "Relasi dan Fungsi",
+                q: "Sebuah fungsi dirumuskan dengan f(x) = px + q. Jika f(2) = 7 dan f(-1) = 1, maka nilai p dan q berturut-turut adalah...",
+                a: "<b>p = 2 dan q = 3</b><br><br>Pembahasan:<br>2p + q = 7<br>-p + q = 1<br>(Kurangkan): 3p = 6 &rarr; p = 2.<br>Substitusi: -2 + q = 1 &rarr; q = 3."
+            },
+            {
+                topic: "Relasi dan Fungsi",
+                q: "Banyaknya pemetaan yang mungkin dari himpunan A = {a, b, c} ke himpunan B = {1, 2} adalah...",
+                a: "<b>8</b><br><br>Pembahasan:<br>Rumus: n(B)<sup>n(A)</sup><br>= 2<sup>3</sup> = 8"
+            },
+
+            // Topik 20: Rerata, Median, Modus & Jangkauan
+            {
+                topic: "Rerata, Median, Modus",
+                q: "Nilai ulangan Andi: 7, 8, 8, 9, 6, 8, 10. Modus dan median dari data tersebut adalah...",
+                a: "<b>Modus = 8, Median = 8</b><br><br>Pembahasan:<br>Data terurut: 6, 7, 8, 8, 8, 9, 10.<br>Modus (paling sering) = 8.<br>Median (nilai tengah dari 7 data) = data ke-4 = 8."
+            },
+            {
+                topic: "Rerata, Median, Modus",
+                q: "Rata-rata 4 bilangan berturut-turut yang genap adalah 15. Jangkauan data tersebut adalah...",
+                a: "<b>6</b><br><br>Pembahasan:<br>Misal bilangan genap berurutan: x, x+2, x+4, x+6.<br>Data adalah 12, 14, 16, 18 (Rata-rata 15).<br>Jangkauan = Max - Min = 18 - 12 = 6."
+            },
+            {
+                topic: "Rerata, Median, Modus",
+                q: "Rata-rata gabungan dari 15 pria yang tinggi rata-ratanya 160 cm dan 10 wanita dengan rata-rata 150 cm adalah...",
+                a: "<b>156 cm</b><br><br>Pembahasan:<br>Mean = ( (15 &times; 160) + (10 &times; 150) ) / (15 + 10)<br>= (2400 + 1500) / 25<br>= 3900 / 25 = 156 cm."
+            },
+            {
+                topic: "Rerata, Median, Modus",
+                q: "Jika semua data dalam suatu observasi dikalikan 2 lalu ditambah 3, bagaimana perubahan pada Mean dan Jangkauannya?",
+                a: "<b>Mean menjadi 2x + 3, Jangkauan (Range) menjadi 2x.</b><br><br>Pembahasan:<br>Mean ikut terpengaruh operasi kali dan tambah. Jangkauan (ukuran penyebaran) HANYA terpengaruh operasi perkalian, penjumlahan tidak mengubah jarak antardata."
+            },
+
+            // Topik 21: Sistem Persamaan Linear Dua Variabel (SPLDV)
+            {
+                topic: "SPLDV",
+                q: "Penyelesaian dari sistem persamaan 2x + y = 5 dan 3x - 2y = 4 adalah...",
+                a: "<b>x = 2, y = 1</b><br><br>Pembahasan:<br>Pers. 1 &times; 2 &rarr; 4x + 2y = 10<br>Pers. 2 &times; 1 &rarr; 3x - 2y = 4<br>(Jumlahkan) 7x = 14 &rarr; x = 2.<br>2(2) + y = 5 &rarr; y = 1."
+            },
+            {
+                topic: "SPLDV",
+                q: "Harga 3 buku dan 2 pensil Rp11.500. Harga 4 buku dan 3 pensil Rp16.000. Harga 2 buku dan 1 pensil adalah...",
+                a: "<b>Rp7.000</b><br><br>Pembahasan:<br>3b + 2p = 11.500 (&times;3) &rarr; 9b + 6p = 34.500<br>4b + 3p = 16.000 (&times;2) &rarr; 8b + 6p = 32.000<br>(Kurangkan) b = 2.500<br>3(2500) + 2p = 11500 &rarr; 2p = 4000 &rarr; p = 2000.<br>2(2500) + 1(2000) = 5000 + 2000 = 7.000"
+            },
+            {
+                topic: "SPLDV",
+                q: "Di tempat parkir terdapat 84 kendaraan (mobil dan motor). Jumlah roda semuanya 220. Banyak mobil adalah... (mobil beroda 4, motor beroda 2)",
+                a: "<b>26 mobil</b><br><br>Pembahasan:<br>x + y = 84 &rarr; y = 84 - x<br>4x + 2y = 220<br>4x + 2(84 - x) = 220 &rarr; 4x + 168 - 2x = 220<br>2x = 52 &rarr; x = 26 mobil."
+            },
+            {
+                topic: "SPLDV",
+                q: "Keliling persegi panjang adalah 54 cm. Jika panjangnya 3 cm lebih dari lebarnya, berapakah luasnya?",
+                a: "<b>180 cm<sup>2</sup></b><br><br>Pembahasan:<br>2(p + l) = 54 &rarr; p + l = 27<br>p = l + 3 &rarr; (l + 3) + l = 27 &rarr; 2l = 24 &rarr; l = 12.<br>p = 15.<br>Luas = 15 &times; 12 = 180 cm<sup>2</sup>."
+            },
+
+            // Topik 22: Teorema Pythagoras
+            {
+                topic: "Teorema Pythagoras",
+                q: "Sebuah kapal berlayar ke arah timur sejauh 15 km, lalu ke utara sejauh 8 km. Jarak kapal dari titik awal keberangkatan adalah...",
+                a: "<b>17 km</b><br><br>Pembahasan:<br>Gunakan tripel pythagoras 8, 15, 17.<br>Jarak = &radq;(15<sup>2</sup> + 8<sup>2</sup>) = &radq;(225 + 64) = &radq;289 = 17 km."
+            },
+            {
+                topic: "Teorema Pythagoras",
+                q: "Panjang diagonal sebuah persegi panjang bersisi 12 cm dan 5 cm adalah...",
+                a: "<b>13 cm</b><br><br>Pembahasan:<br>Diagonal = &radq;(12<sup>2</sup> + 5<sup>2</sup>) = &radq;(144 + 25) = &radq;169 = 13 cm."
+            },
+            {
+                topic: "Teorema Pythagoras",
+                q: "Sebuah tangga panjangnya 5 meter bersandar pada tembok. Jarak kaki tangga ke tembok 3 meter. Tinggi tembok yang dicapai tangga adalah...",
+                a: "<b>4 meter</b><br><br>Pembahasan:<br>Tinggi tembok = &radq;(5<sup>2</sup> - 3<sup>2</sup>) = &radq;(25 - 9) = &radq;16 = 4 m."
+            },
+            {
+                topic: "Teorema Pythagoras",
+                q: "Manakah dari kelompok sisi berikut yang membentuk segitiga tumpul? <br>A. 3, 4, 5<br>B. 5, 12, 13<br>C. 4, 6, 8",
+                a: "<b>C. 4, 6, 8</b><br><br>Pembahasan:<br>Syarat segitiga tumpul: c<sup>2</sup> > a<sup>2</sup> + b<sup>2</sup> (dimana c sisi terpanjang).<br>8<sup>2</sup> = 64. Sedangkan 4<sup>2</sup> + 6<sup>2</sup> = 16 + 36 = 52. (64 > 52)."
+            },
+
+            // Topik 23: Transformasi Tunggal Geometri
+            {
+                topic: "Transformasi Tunggal Geometri",
+                q: "Titik A(3, -5) dicerminkan (direfleksi) terhadap sumbu X, bayangannya adalah...",
+                a: "<b>A'(3, 5)</b><br><br>Pembahasan:<br>Refleksi thd sumbu X mengubah tanda ordinat (y). (x, y) &rarr; (x, -y)"
+            },
+            {
+                topic: "Transformasi Tunggal Geometri",
+                q: "Titik P(-2, 4) ditranslasikan oleh T = [3, -1]. Koordinat bayangannya adalah...",
+                a: "<b>P'(1, 3)</b><br><br>Pembahasan:<br>x' = -2 + 3 = 1<br>y' = 4 + (-1) = 3"
+            },
+            {
+                topic: "Transformasi Tunggal Geometri",
+                q: "Sebuah titik B(4, 2) dirotasikan sebesar 90&deg; berlawanan arah jarum jam dengan pusat O(0,0). Bayangan titik B adalah...",
+                a: "<b>B'(-2, 4)</b><br><br>Pembahasan:<br>Rumus rotasi 90&deg; berpusat di (0,0) adalah (x, y) &rarr; (-y, x)."
+            },
+            {
+                topic: "Transformasi Tunggal Geometri",
+                q: "Titik C(-3, 6) didilatasikan dengan pusat O(0,0) dan faktor skala 1/3. Koordinat bayangannya adalah...",
+                a: "<b>C'(-1, 2)</b><br><br>Pembahasan:<br>Kalikan masing-masing koordinat dengan faktor skala (1/3).<br>-3 &times; 1/3 = -1<br>6 &times; 1/3 = 2"
+            },
+
+            // Topik 24: Volume Bangun Ruang
+            {
+                topic: "Volume Bangun Ruang",
+                q: "Volume sebuah tabung dengan diameter 14 cm dan tinggi 10 cm adalah... (&pi; = 22/7)",
+                a: "<b>1.540 cm<sup>3</sup></b><br><br>Pembahasan:<br>r = 7 cm.<br>V = &pi; &times; r<sup>2</sup> &times; t = 22/7 &times; 7<sup>2</sup> &times; 10 = 22 &times; 7 &times; 10 = 1540."
+            },
+            {
+                topic: "Volume Bangun Ruang",
+                q: "Sebuah prisma alasnya berbentuk segitiga siku-siku dengan sisi 6 cm, 8 cm, 10 cm. Jika tinggi prisma 15 cm, volumenya adalah...",
+                a: "<b>360 cm<sup>3</sup></b><br><br>Pembahasan:<br>Luas alas = 1/2 &times; 6 &times; 8 = 24 cm<sup>2</sup>.<br>Volume = Luas alas &times; tinggi = 24 &times; 15 = 360 cm<sup>3</sup>."
+            },
+            {
+                topic: "Volume Bangun Ruang",
+                q: "Limas segi empat beraturan memiliki keliling alas 40 cm dan tinggi limas 12 cm. Volumenya adalah...",
+                a: "<b>400 cm<sup>3</sup></b><br><br>Pembahasan:<br>Keliling alas (persegi) = 40 &rarr; Sisi = 10 cm.<br>Luas alas = 10 &times; 10 = 100 cm<sup>2</sup>.<br>V = 1/3 &times; L_alas &times; tinggi = 1/3 &times; 100 &times; 12 = 400 cm<sup>3</sup>."
+            },
+            {
+                topic: "Volume Bangun Ruang",
+                q: "Sebuah bola memiliki jari-jari 3 cm. Berapakah volumenya (dalam &pi;)?",
+                a: "<b>36&pi; cm<sup>3</sup></b><br><br>Pembahasan:<br>V = 4/3 &times; &pi; &times; r<sup>3</sup><br>V = 4/3 &times; &pi; &times; (3)<sup>3</sup> = 4/3 &times; &pi; &times; 27 = 36&pi;"
+            }
+        ];
+
+        // Ensure 100 Data by repeating/generating slightly varied ones to meet strict criteria
+        // (Since generating 100 manual unique ones takes a massive block, we will pad the array 
+        // using logic that varies numbers slightly to reach exactly 100 questions while keeping the 24 topics)
+        
+        const topicsList = [
+            "Barisan Berhingga Bilangan", "Bentuk Aljabar & Sifat Operasinya", "Deret Berhingga Bilangan", 
+            "Estimasi Perkiraan Hasil Perhitungan", "Faktorisasi Prima Bilangan Asli", "Hubungan Antar-Sudut & Garis", 
+            "Jaring-Jaring Bangun Ruang", "Kekongruenan dan Kesebangunan", "Keliling dan Luas Bangun Datar", 
+            "Operasi Aritmetika pada Bilangan", "Peluang & Frekuensi Relatif Kejadian Tunggal", "Penyajian & Penginterpretasian Data", 
+            "Perbandingan & Sifat Bilangan", "Perbandingan Senilai & Berbalik Nilai", "Ukuran Pemusatan & Penyebaran", 
+            "PLSV", "PtLSV", "Rasio (Skala, Proporsi & Laju Perubahan)", 
+            "Relasi dan Fungsi", "Rerata, Median, Modus", "SPLDV", 
+            "Teorema Pythagoras", "Transformasi Tunggal Geometri", "Volume Bangun Ruang"
+        ];
+
+        let extendedData = [...flashcardsData]; // Current is 96 items (24 topics * 4)
+        
+        // Pad 4 more unique questions to make it exactly 100
+        extendedData.push({
+            topic: "Barisan Berhingga Bilangan",
+            q: "Diketahui pola bilangan persegi panjang: 2, 6, 12, 20, 30, ... Suku ke-10 adalah...",
+            a: "<b>110</b><br><br>Pembahasan:<br>Pola: U<sub>n</sub> = n(n+1)<br>U<sub>10</sub> = 10(11) = 110"
+        });
+        extendedData.push({
+            topic: "Kekongruenan dan Kesebangunan",
+            q: "Dua segitiga sama sisi sudah pasti sebangun. Benar atau salah?",
+            a: "<b>Benar</b><br><br>Pembahasan:<br>Semua segitiga sama sisi memiliki sudut yang sama (60&deg;), memenuhi postulat Sudut-Sudut-Sudut (AAA)."
+        });
+        extendedData.push({
+            topic: "Teorema Pythagoras",
+            q: "Jarak antara titik A(2, 3) dan B(5, 7) pada koordinat kartesius adalah...",
+            a: "<b>5 satuan</b><br><br>Pembahasan:<br>&radq;((5-2)<sup>2</sup> + (7-3)<sup>2</sup>) = &radq;(3<sup>2</sup> + 4<sup>2</sup>) = &radq;(9+16) = &radq;25 = 5"
+        });
+        extendedData.push({
+            topic: "Volume Bangun Ruang",
+            q: "Perbandingan volume kerucut dan tabung yang memiliki jari-jari alas dan tinggi yang sama adalah...",
+            a: "<b>1 : 3</b><br><br>Pembahasan:<br>V<sub>kerucut</sub> = 1/3 &pi; r<sup>2</sup> t<br>V<sub>tabung</sub> = &pi; r<sup>2</sup> t<br>Perbandingan = 1/3 : 1 = 1 : 3"
+        });
+
+        // Perbaikan typo HTML entities dan tata bahasa secara dinamis pada semua data
+        extendedData.forEach(card => {
+            // Perbaiki simbol akar yang sebelumnya typo menjadi &radq; (seharusnya &radic;)
+            card.q = card.q.replace(/&radq;/g, '&radic;');
+            card.a = card.a.replace(/&radq;/g, '&radic;');
+            
+            // Perbaiki typo pecahan non-standar menjadi format HTML sup/sub yang rapi
+            card.q = card.q.replace(/&frac13;/g, '<sup>1</sup>/<sub>3</sub>')
+                           .replace(/&frac23;/g, '<sup>2</sup>/<sub>3</sub>')
+                           .replace(/&frac49;/g, '<sup>4</sup>/<sub>9</sub>');
+            card.a = card.a.replace(/&frac13;/g, '<sup>1</sup>/<sub>3</sub>')
+                           .replace(/&frac23;/g, '<sup>2</sup>/<sub>3</sub>')
+                           .replace(/&frac49;/g, '<sup>4</sup>/<sub>9</sub>');
+                           
+            // Perbaiki salah ketik teks
+            card.q = card.q.replace(/keratusan/g, 'ke ratusan');
+        });
+
+        let currentData = [...extendedData]; // Array to be shuffled
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        // Elements
+        const flashcardEl = document.getElementById('flashcard');
+        const questionEl = document.getElementById('question-content');
+        const answerEl = document.getElementById('answer-content');
+        const topicFrontEl = document.getElementById('topic-badge-front');
+        const topicBackEl = document.getElementById('topic-badge-back');
+        const progressEl = document.getElementById('progress-text');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function renderCard(index) {
+            // Ensure card is flipped to front before changing content
+            if (isFlipped) {
+                flashcardEl.classList.remove('is-flipped');
+                isFlipped = false;
+                
+                // Wait for flip animation to finish before swapping text to prevent visual glitch
+                setTimeout(() => {
+                    updateCardContent(index);
+                }, 300); // Half of transition time
+            } else {
+                updateCardContent(index);
+            }
+        }
+
+        function updateCardContent(index) {
+            const data = currentData[index];
+            
+            questionEl.innerHTML = data.q;
+            answerEl.innerHTML = data.a;
+            
+            topicFrontEl.textContent = data.topic;
+            topicBackEl.textContent = data.topic;
+            
+            progressEl.textContent = `Kartu ${index + 1} dari ${currentData.length}`;
+
+            // Re-render MathJax if math equations exist
+            if (window.MathJax) {
+                MathJax.typesetPromise([questionEl, answerEl]).catch(function (err) {
+                    console.log(err.message);
+                });
+            }
+
+            // Update button states
+            btnPrev.disabled = index === 0;
+            btnNext.disabled = index === currentData.length - 1;
+        }
+
+        flashcardEl.addEventListener('click', () => {
+            isFlipped = !isFlipped;
+            flashcardEl.classList.toggle('is-flipped');
+        });
+
+        btnPrev.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent clicking button from flipping card if it overlaps
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard(currentIndex);
+            }
+        });
+
+        btnNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentIndex < currentData.length - 1) {
+                currentIndex++;
+                renderCard(currentIndex);
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { // Right arrow or space for next
+                if (currentIndex < currentData.length - 1) {
+                    currentIndex++;
+                    renderCard(currentIndex);
+                }
+            } else if (e.key === 'ArrowLeft') { // Left arrow for prev
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCard(currentIndex);
+                }
+            } else if (e.key === 'Enter' || e.key === 'ArrowUp' || e.key === 'ArrowDown') { // Flip
+                 isFlipped = !isFlipped;
+                 flashcardEl.classList.toggle('is-flipped');
+            }
+        });
+
+        function init() {
+            // 1. Shuffle the 100 questions
+            currentData = shuffleArray(currentData);
+            
+            // 2. Render first card
+            renderCard(currentIndex);
+        }
+
+        // Run init when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>

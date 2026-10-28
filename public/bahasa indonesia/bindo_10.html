@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Evaluasi Teks & Analisis Logika - Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* scroll-behavior: auto; */
+        }
+        
+        /* Customizing radio inputs for better UI/UX */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Smooth transition for explanation boxes */
+        .explanation-box {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2500px; /* Increased for longer explanations */
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Styling for story/context quotes to make them stand out */
+        .quote-box {
+            border-left: 4px solid #3b82f6; /* blue-500 */
+            background-color: #f0f9ff; /* sky-50 */
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+            font-style: italic;
+            color: #1e3a8a; /* blue-900 */
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        /* Quote mark decorative element */
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #bae6fd; /* sky-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        /* Responsive images for base64 logic */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-2xl font-bold text-slate-800 text-center flex-1 px-2">Kuis Evaluasi Teks</h1>
+            <div class="w-24"></div> <!-- Spacer for flexbox centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6 text-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Asah Nalar Analitis & Kritis! 🧠</h2>
+                <p class="text-slate-600 text-[15px] md:text-lg leading-relaxed max-w-2xl mx-auto">
+                    Bacalah teks dengan saksama dan temukan hubungan logis antarteks. Kuis ini melatih kemampuanmu mengevaluasi informasi, mencari inferensi, dan menganalisis argumentasi. Kamu boleh melewati soal jika ragu dan langsung memeriksa jawaban.
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Soal akan di-render di sini oleh JavaScript -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message"></p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 1 dan 2.</strong><br><strong>Teks 1</strong><br>Penggunaan kantong plastik sekali pakai di Indonesia telah mencapai tahap yang mengkhawatirkan. Berdasarkan data Kementerian Lingkungan Hidup dan Kehutanan (KLHK), komposisi sampah plastik di Indonesia terus meningkat hingga mencapai 16% dari total timbulan sampah nasional. Pemerintah daerah di berbagai kota mulai menerapkan larangan penggunaan kantong plastik di pusat perbelanjaan modern untuk menekan angka ini.<br><br><strong>Teks 2</strong><br>Larangan kantong plastik di supermarket sebenarnya tidak terlalu efektif jika pasar tradisional diabaikan. Di pasar tradisional, hampir semua pedagang membungkus barang belanjaan dengan kantong plastik kiloan yang tipis dan murah. Jika pemerintah serius ingin mengurangi sampah plastik, edukasi dan penyediaan alternatif wadah ramah lingkungan di pasar tradisional harus menjadi prioritas utama, bukan sekadar melarang di ritel modern.<br><br>Berdasarkan perbandingan kedua teks tersebut, evaluasi yang paling tepat mengenai perbedaan fokus penyampaian informasi adalah...",
+                options: [
+                    "Teks 1 menyajikan data kuantitatif secara objektif, sedangkan Teks 2 memberikan kritik dan solusi alternatif atas kebijakan yang dinilai kurang menyeluruh.",
+                    "Teks 1 fokus pada dampak buruk sampah plastik bagi lingkungan, sedangkan Teks 2 fokus pada kerugian ekonomi yang dialami pedagang pasar tradisional.",
+                    "Teks 1 membahas peran pemerintah pusat dalam regulasi sampah, sedangkan Teks 2 membahas peran masyarakat dalam memilah sampah rumah tangga.",
+                    "Teks 1 menyajikan solusi praktis pengurangan sampah, sedangkan Teks 2 menyajikan teori ilmiah tentang proses penguraian plastik di alam."
+                ],
+                answer: 0, // A
+                explanation: "Halo Sobat Kritis! Mari kita amati kedua teks. <br><br>Teks 1 memaparkan angka pasti (16%) dan bersumber dari data resmi kementerian. Ini disebut menyajikan <strong>data kuantitatif yang objektif</strong>. <br><br>Di sisi lain, Teks 2 berpendapat bahwa larangan itu kurang pas (memberikan kritik) dan memberi saran agar pasar tradisional juga diperhatikan (memberikan solusi alternatif). Jadi, jawaban <strong>A</strong> adalah evaluasi yang paling tepat dan akurat menggambarkan perbedaan gaya penyampaian keduanya."
+            },
+            {
+                text: "Jika informasi pada Teks 1 dinilai akurat berdasarkan data KLHK, bagaimana kesesuaian argumen pada Teks 2 terhadap fakta tersebut?",
+                options: [
+                    "Teks 2 tidak sesuai karena mengabaikan fakta bahwa ritel modern adalah penyumbang terbesar sampah plastik nasional.",
+                    "Teks 2 mendukung fakta Teks 1 dengan memberikan analisis kritis bahwa kebijakan yang ada belum menyentuh sumber masalah yang lebih besar (pasar tradisional).",
+                    "Teks 2 bertentangan dengan Teks 1 karena menyatakan bahwa sampah plastik sebenarnya tidak mengalami peningkatan yang signifikan.",
+                    "Teks 2 tidak relevan dengan Teks 1 karena hanya membahas masalah ekonomi pedagang kecil tanpa memedulikan data lingkungan."
+                ],
+                answer: 1, // B
+                explanation: "Coba bayangkan alur logikanya: <br><br>Teks 1 bilang 'sampah plastik naik', lalu pemerintah merespons dengan melarang kantong di mal/supermarket. Apakah Teks 2 membantah data kenaikan sampah itu? <strong>Tidak.</strong> <br><br>Teks 2 justru <em>mendukung</em> dengan bersikap kritis: 'Hei, datanya benar plastik itu banyak, tapi kebijakan pemerintah salah sasaran karena sumber terbesarnya di pasar tradisional belum tersentuh lho!' Jadi, Teks 2 melengkapi dan mengkritisi kebijakannya, bukan membantah datanya. Jawaban <strong>B</strong> paling pas."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 3 dan 4.</strong><br><strong>Teks A</strong><br>Kecerdasan Buatan (AI) dalam dunia pendidikan menawarkan personalisasi pembelajaran yang luar biasa. Aplikasi berbasis AI dapat menganalisis kecepatan belajar tiap siswa dan menyajikan materi yang sesuai dengan kebutuhan individu mereka. Hal ini membantu guru mengidentifikasi kelemahan siswa secara cepat melalui analisis data otomatis, sehingga pembelajaran menjadi lebih efektif dan efisien.<br><br><strong>Teks B</strong><br>Ketergantungan pada teknologi AI di sekolah berisiko mengikis kemampuan berpikir kritis dan kemandirian siswa. Ketika AI memberikan jawaban instan untuk setiap pertanyaan, siswa kehilangan proses penting dalam mencari, menyaring, dan menganalisis informasi secara mandiri. Selain itu, interaksi sosial dan empati yang diajarkan oleh guru manusia tidak akan pernah bisa digantikan oleh algoritma secanggih apa pun.<br><br>Setelah membandingkan kedua teks di atas, kesimpulan evaluatif yang paling objektif mengenai keberadaan AI dalam pendidikan adalah...",
+                options: [
+                    "AI harus segera dilarang di sekolah karena merusak kemampuan berpikir kritis siswa secara permanen.",
+                    "AI adalah solusi tunggal terbaik yang dapat menggantikan peran guru di masa depan demi efisiensi belajar.",
+                    "AI memberikan manfaat besar dalam personalisasi belajar, namun penggunaannya harus dibatasi agar tidak menghilangkan proses berpikir kritis dan interaksi humanis.",
+                    "AI hanya bermanfaat bagi siswa yang memiliki kemampuan belajar lambat, sedangkan bagi siswa cerdas AI justru menghambat perkembangan mereka."
+                ],
+                answer: 2, // C
+                explanation: "Mari kita bersikap sebagai pengamat yang adil.<br><br>Kalau kita hanya berpatokan pada Teks A, AI itu seolah sempurna tanpa cacat (opsi B terlalu ekstrem). Kalau hanya melihat Teks B, AI itu seolah sangat buruk dan berbahaya (opsi A terlalu ekstrem). <br><br>Sebagai pemikir yang bijak, kita harus mengambil jalan tengah yang menggabungkan keduanya (sintesis). AI memang hebat untuk <strong>personalisasi dan efisiensi</strong> (Teks A), TAPI kita harus membatasi penggunaannya agar tidak merusak <strong>cara kita berpikir dan berinteraksi sosial</strong> (Teks B). Pilihan <strong>C</strong> adalah kesimpulan yang paling seimbang dan objektif."
+            },
+            {
+                text: "Dari segi kebahasaan, bagaimana perbandingan gaya penyajian atau nada (tone) penulis dalam kedua teks tersebut?",
+                options: [
+                    "Teks A bernada optimistis dan persuasif, sedangkan Teks B bernada skeptis dan penuh peringatan (warning).",
+                    "Teks A bernada subjektif dan emosional, sedangkan Teks B bernada objektif dan ilmiah.",
+                    "Teks A menggunakan bahasa informal sehari-hari, sedangkan Teks B menggunakan istilah teknis yang sangat rumit.",
+                    "Teks A menyajikan fakta tanpa opini, sedangkan Teks B menyajikan opini tanpa didasari realitas sosial."
+                ],
+                answer: 0, // A
+                explanation: "Nada (<em>tone</em>) tulisan itu ibarat ekspresi wajah seseorang saat berbicara. <br><br>Coba perhatikan pilihan kata di <strong>Teks A</strong>: 'luar biasa', 'membantu guru', 'lebih efektif'. Ini menunjukkan wajah yang cerah dan penuh harapan &rarr; ini namanya nada <strong>Optimistis</strong>. <br><br>Sedangkan di <strong>Teks B</strong>, penulis menggunakan kata: 'berisiko mengikis', 'kehilangan proses penting', 'tidak akan pernah bisa digantikan'. Ini menunjukkan wajah yang serius dan waspada &rarr; ini namanya nada <strong>Skeptis dan Penuh Peringatan</strong>. Perbedaannya sangat jelas tergambar pada pilihan <strong>A</strong>."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 5 dan 6.</strong><br><strong>Teks 1</strong><br>Permainan tradisional seperti egrang, gobak sodor, dan bentengan kini hampir punah digerus zaman. Padahal, permainan-permainan ini kaya akan nilai karakter, seperti kerja sama, sportivitas, kelincahan fisik, dan kebersamaan. Anak-anak zaman sekarang lebih memilih berdiam diri di kamar dengan gawai mereka, memainkan permainan daring yang cenderung individualistis dan minim interaksi fisik.<br><br><strong>Teks 2</strong><br>Sebuah penelitian terbaru menunjukkan bahwa permainan daring (online games) tidak sepenuhnya berdampak buruk. Beberapa gim daring bergenre strategi dan kerja sama tim (multiplayer) terbukti dapat meningkatkan kemampuan pemecahan masalah (problem solving), koordinasi motorik halus, serta kemampuan berbahasa asing anak. Yang terpenting adalah pengawasan orang tua dalam membatasi durasi bermain (screen time).<br><br>Evaluasi yang paling tepat mengenai keakuratan klaim Teks 1 tentang \"permainan daring cenderung individualistis\" jika dikonfrontasikan dengan informasi pada Teks 2 adalah...",
+                options: [
+                    "Klaim Teks 1 sepenuhnya akurat karena semua jenis gim daring melarang adanya interaksi antar-pemain.",
+                    "Klaim Teks 1 kurang akurat karena Teks 2 membuktikan bahwa ada jenis gim daring yang justru membutuhkan kerja sama tim dan interaksi sosial.",
+                    "Klaim Teks 1 sangat akurat karena permainan tradisional tidak membutuhkan koordinasi motorik seperti yang disebutkan di Teks 2.",
+                    "Klaim Teks 1 tidak dapat dinilai karena kedua teks membahas kelompok usia anak yang berbeda secara signifikan."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita lakukan konfrontasi (uji benturan fakta).<br><br>Teks 1 menuduh secara umum (generalisasi) bahwa <em>'permainan daring cenderung individualistis (main sendiri-sendiri)'</em>. Eh, tunggu dulu! Teks 2 datang membawa bukti penelitian bahwa ada lho game online bergenre <em>multiplayer</em> yang sangat membutuhkan kerja sama tim. <br><br>Berarti, tuduhan atau klaim Teks 1 itu <strong>kurang tepat atau 'kurang akurat'</strong> karena ia menyamaratakan semua jenis game. Jawaban <strong>B</strong> adalah evaluasi logis yang paling tepat."
+            },
+            {
+                text: "Manakah dari pernyataan berikut yang menunjukkan kesesuaian nilai karakter yang dapat diambil dari kedua teks tersebut?",
+                options: [
+                    "Baik permainan tradisional maupun permainan daring sama-sama tidak memiliki nilai positif bagi perkembangan sosial anak.",
+                    "Permainan tradisional melatih ketangkasan fisik dan sosial secara langsung, sementara permainan daring tertentu dapat melatih kemampuan kognitif dan kolaborasi digital.",
+                    "Permainan daring jauh lebih unggul dalam membentuk karakter anak dibandingkan dengan permainan tradisional yang sudah kuno.",
+                    "Permainan tradisional hanya melatih otot fisik, sedangkan permainan daring hanya merusak kesehatan mata anak tanpa melatih otak."
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita petakan nilai kebaikannya secara adil!<br><br>Berdasarkan Teks 1: Permainan tradisional bagus untuk melatih <strong>fisik (kelincahan) dan sosial langsung (kerja sama)</strong>. <br>Berdasarkan Teks 2: Permainan daring (yang dimainkan dengan benar) bagus untuk melatih <strong>otak/kognitif (problem solving) dan kerja sama di dunia maya (kolaborasi digital)</strong>. <br><br>Pilihan <strong>B</strong> berhasil merangkum dan mengakui sisi positif dari kedua jenis permainan tersebut secara adil dan sesuai dengan isi teks."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 7 dan 8.</strong><br><strong>Teks A</strong><br>Mengonsumsi buah dan sayur setiap hari sangat penting untuk menjaga kesehatan tubuh. Serat yang terkandung dalam sayur dan buah membantu melancarkan pencernaan dan mencegah berbagai penyakit kronis seperti kanker dan jantung. Oleh karena itu, pastikan piring makan Anda selalu diisi oleh porsi sayur dan buah yang cukup demi investasi kesehatan masa depan Anda.<br><br><strong>Teks B</strong><br>Banyak orang mengira bahwa mengonsumsi buah dalam jumlah besar selalu menyehatkan. Padahal, beberapa jenis buah memiliki kandungan gula (fruktosa) yang sangat tinggi. Bagi penderita diabetes atau orang yang sedang menjalani diet rendah gula, konsumsi buah-buahan manis seperti mangga, anggur, dan durian secara berlebihan justru dapat memicu lonjakan kadar gula darah yang berbahaya.<br><br>Evaluasi kesesuaian isi kedua teks tersebut menunjukkan bahwa...",
+                options: [
+                    "Teks B membantah seluruh isi Teks A bahwa buah-buahan itu menyehatkan bagi tubuh manusia.",
+                    "Teks B melengkapi informasi pada Teks A dengan memberikan peringatan atau pengecualian medis terkait konsumsi buah tertentu.",
+                    "Teks A dan Teks B bertentangan karena Teks A menyarankan makan buah sebanyak-banyaknya tanpa batas, sedangkan Teks B melarang makan buah sama sekali.",
+                    "Kedua teks tidak memiliki keterkaitan karena Teks A membahas kesehatan umum, sedangkan Teks B membahas penyakit diabetes secara khusus."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita baca pesan tersiratnya.<br><br>Teks A menyuruh kita makan sayur dan buah agar sehat. Datanglah Teks B memberikan 'lampu kuning': <em>'Hati-hati, tidak semua orang boleh makan buah manis banyak-banyak, contohnya penderita diabetes.'</em> <br><br>Teks B <strong>tidak menyalahkan</strong> Teks A, ia hanya memberikan rambu-rambu tambahan atau <strong>pengecualian medis</strong> (kualifikasi). Ibaratnya, 'Buah itu sehat, <em>kecuali</em> buah tertentu dimakan berlebihan oleh orang yang sakit gula.' Pilihan <strong>B</strong> mendeskripsikan hubungan ini dengan sangat akurat."
+            },
+            {
+                text: "Unsur kebahasaan yang membedakan Teks A dan Teks B dalam menyampaikan argumen adalah...",
+                options: [
+                    "Teks A menggunakan kalimat perintah/ajakan (persuasif), sedangkan Teks B menggunakan kalimat pernyataan ekspositoris yang bersifat memaparkan fakta klinis.",
+                    "Teks A didominasi oleh kata kerja mental, sedangkan Teks B didominasi oleh kata kerja imperatif.",
+                    "Teks A menggunakan konjungsi pertentangan, sedangkan Teks B menggunakan konjungsi kausalitas secara dominan.",
+                    "Teks A menggunakan sudut pandang orang ketiga, sedangkan Teks B menggunakan sudut pandang orang pertama (aku/kami)."
+                ],
+                answer: 0, // A
+                explanation: "Coba perhatikan kalimat penutup pada Teks A: <em>'Oleh karena itu, <strong>pastikan piring makan Anda selalu diisi...</strong>'</em>. Ini adalah gaya bahasa <strong>ajakan atau perintah (persuasif)</strong> untuk memengaruhi pembaca.<br><br>Sebaliknya, Teks B murni hanya membeberkan fakta ilmu pengetahuan (ekspositoris) seperti <em>'beberapa jenis buah memiliki kandungan gula tinggi'</em> tanpa ada kalimat suruhan kepada pembaca. Perbedaan unsur kebahasaan ini sangat jelas tertulis pada pilihan <strong>A</strong>."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 9 dan 10.</strong><br><strong>Teks 1</strong><br>Membaca buku fisik memberikan sensasi tak tergantikan yang mendukung pemahaman mendalam. Sentuhan kertas, aroma buku, dan kemampuan membalik halaman secara fisik membantu otak membuat peta kognitif dari teks yang dibaca. Hal ini membuat pembaca buku fisik cenderung memiliki daya ingat dan konsentrasi yang lebih baik dibandingkan mereka yang membaca melalui layar gawai.<br><br><strong>Teks 2</strong><br>Buku elektronik (e-book) menawarkan kepraktisan dan aksesibilitas yang luar biasa di era digital. Dalam satu gawai ringan, seseorang dapat menyimpan ribuan judul buku yang bisa dibaca kapan saja dan di mana saja. Fitur pencarian kata, penyesuaian ukuran huruf, dan kamus terintegrasi sangat membantu pembaca dalam memahami istilah-istilah sulit secara instan tanpa mengganggu alur membaca.<br><br>Berdasarkan perbandingan kedua teks, manakah penilaian yang paling tepat mengenai kelebihan masing-masing media baca?",
+                options: [
+                    "Buku fisik unggul dalam hal kepraktisan penyimpanan, sedangkan e-book unggul dalam membangun konsentrasi mendalam.",
+                    "Buku fisik unggul dalam mendukung pemahaman kognitif dan memori, sedangkan e-book unggul dalam hal kepraktisan akses dan fitur bantu membaca.",
+                    "Buku fisik lebih murah dan mudah didapatkan, sedangkan e-book lebih ramah lingkungan karena tidak menggunakan listrik sama sekali.",
+                    "Buku fisik hanya cocok untuk pembaca usia lanjut, sedangkan e-book adalah satu-satunya media yang cocok untuk generasi muda."
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita adu 'kekuatan super' keduanya berdasarkan teks!<br><br>Kekuatan buku fisik (Teks 1) adalah urusan otak: ia membantu kita mengingat dan berkonsentrasi lebih baik karena otak bisa membuat <strong>peta kognitif</strong> berkat sentuhan kertas. <br>Kekuatan e-book (Teks 2) adalah urusan kemudahan: ia sangat <strong>praktis dibawa</strong> (muat ribuan buku) dan canggih (punya fitur pencarian/kamus). <br><br>Pilihan <strong>B</strong> merangkum kekuatan super masing-masing secara terbalik? Oh tidak, Pilihan B merangkumnya dengan sempurna dan berurutan sesuai fakta teks!"
+            },
+            {
+                text: "Evaluasilah keakuratan simpulan berikut: <em>\"Membaca e-book lebih baik daripada membaca buku fisik dalam segala aspek.\"</em> Apakah simpulan tersebut akurat berdasarkan kedua teks di atas?",
+                options: [
+                    "Akurat, karena Teks 2 menjelaskan bahwa e-book memiliki fitur pencarian kata dan kamus terintegrasi yang tidak ada pada buku fisik.",
+                    "Akurat, karena di era digital buku fisik sudah tidak lagi diproduksi dan tidak diminati oleh masyarakat.",
+                    "Tidak akurat, karena Teks 1 menunjukkan bahwa buku fisik memiliki keunggulan psikologis dan kognitif (peta kognitif otak) yang tidak dimiliki oleh e-book.",
+                    "Tidak akurat, karena kedua teks tersebut sama-sama menyatakan bahwa membaca justru merusak konsentrasi jika dilakukan terlalu sering."
+                ],
+                answer: 2, // C
+                explanation: "Simpulan yang mengklaim bahwa e-book lebih baik <em>'dalam segala aspek'</em> itu terlalu sombong dan menyapu rata (generalisasi yang salah). <br><br>Kenapa salah? Karena Teks 1 jelas-jelas membela buku fisik. Buku fisik punya kekuatan magis yang tidak bisa ditiru layar digital, yaitu sensasi sentuhan yang membantu otak kita <strong>membangun peta kognitif dan ingatan yang kuat</strong>. Jadi, simpulan tersebut <strong>Tidak Akurat</strong>. Jawaban <strong>C</strong> memberikan penjelasan yang paling logis."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 11 dan 12.</strong><br><strong>Teks A</strong><br>Pemerintah kota mengumumkan proyek pelebaran jalan protokol guna mengatasi kemacetan yang kian parah setiap pagi dan sore hari. Proyek ini ditargetkan selesai dalam waktu enam bulan dengan anggaran sebesar 15 miliar rupiah. Selama proses pengerjaan, arus lalu lintas akan dialihkan ke beberapa jalur alternatif yang telah disiapkan oleh Dinas Perhubungan.<br><br><strong>Teks B</strong><br>Rencana pelebaran jalan protokol oleh pemerintah kota dinilai sebagai solusi jangka pendek yang tidak menyentuh akar permasalahan kemacetan. Pelebaran jalan justru akan merangsang masyarakat untuk membeli lebih banyak kendaraan pribadi (induced demand). Alih-alih membuang anggaran belasan miliar untuk jalan raya, pemerintah seharusnya mengalokasikannya untuk memperbaiki kualitas dan jangkauan transportasi publik.<br><br>Evaluasi yang paling kritis terhadap sudut pandang (perspektif) penulis pada Teks B adalah...",
+                options: [
+                    "Penulis Teks B bersikap subjektif karena membenci proyek pembangunan yang dilakukan oleh pemerintah kota.",
+                    "Penulis Teks B menggunakan pendekatan analisis kebijakan transportasi yang kritis dengan menawarkan solusi alternatif yang dinilai lebih berkelanjutan.",
+                    "Penulis Teks B tidak memahami kondisi lapangan karena kemacetan hanya bisa diatasi dengan memperlebar jalan raya.",
+                    "Penulis Teks B mendukung penuh langkah pemerintah kota namun meminta agar anggarannya ditambah agar proyek cepat selesai."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita selami cara berpikir penulis Teks B.<br><br>Penulis Teks B bukan sekadar marah-marah tanpa alasan (bukan subjektif). Ia menggunakan argumen logis dan teori yang cerdas (<em>induced demand</em>: jalan makin lebar, orang malah makin rajin beli mobil). Kemudian, ia tidak hanya mengkritik, tetapi juga menawarkan <strong>solusi jangka panjang yang jauh lebih baik (berkelanjutan)</strong>, yaitu memperbaiki transportasi publik. <br><br>Ini adalah contoh analisis kebijakan yang sangat kritis dan berbobot (Pilihan <strong>B</strong>)."
+            },
+            {
+                text: "Bagaimanakah hubungan logis antarteks tersebut jika dianalisis dari segi isi?",
+                options: [
+                    "Teks B merupakan sanggahan/kritik terhadap kebijakan atau rencana aksi yang dipaparkan dalam Teks A.",
+                    "Teks B merupakan penjelasan teknis dan rincian anggaran dari proyek yang disebutkan dalam Teks A.",
+                    "Teks B adalah kelanjutan kronologis (peristiwa lanjutan) setelah proyek pada Teks A selesai dikerjakan.",
+                    "Teks B merupakan bentuk promosi dari dinas terkait untuk mendukung kesuksesan program pada Teks A."
+                ],
+                answer: 0, // A
+                explanation: "Hubungan kedua teks ini ibarat aksi dan reaksi dalam sebuah debat.<br><br>Teks A memaparkan <strong>aksi</strong>: pemerintah punya rencana mau melebarkan jalan. Lalu muncullah Teks B sebagai <strong>reaksi</strong>: mengkritik bahwa rencana itu percuma dan buang-buang uang, lalu menyanggahnya dengan argumen ilmiah. <br><br>Jadi, hubungan logisnya jelas bahwa Teks B berfungsi sebagai <strong>sanggahan atau kritik</strong> terhadap isi Teks A (Pilihan <strong>A</strong>)."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 13 dan 14.</strong><br><strong>Teks 1</strong><br>Energi surya merupakan sumber energi terbarukan yang paling melimpah di Indonesia karena letak geografisnya di garis khatulistiwa. Pemasangan panel surya atap di rumah-rumah tangga dapat mengurangi ketergantungan pada listrik berbahan bakar batu bara. Meskipun investasi awalnya cukup tinggi, penggunaan panel surya mampu menghemat biaya listrik bulanan hingga 60% dalam jangka panjang.<br><br><strong>Teks 2</strong><br>Pemanfaatan energi surya di Indonesia masih menghadapi kendala besar, terutama masalah cuaca yang tidak menentu dan tingginya biaya perawatan baterai penyimpanan (accumulator). Pada musim hujan, efisiensi panel surya menurun drastis karena minimnya paparan sinar matahari. Tanpa teknologi baterai yang murah dan tahan lama, energi surya belum bisa dijadikan sebagai sumber listrik utama yang stabil bagi masyarakat.<br><br>Evaluasilah keakuratan informasi mengenai \"aspek ekonomi\" penggunaan panel surya berdasarkan perbandingan kedua teks tersebut!",
+                options: [
+                    "Panel surya sangat murah sejak awal pembelian hingga perawatan rutin bulannya.",
+                    "Panel surya menghemat biaya listrik bulanan dalam jangka panjang, namun membutuhkan biaya investasi awal yang tinggi serta biaya perawatan baterai yang tidak murah.",
+                    "Panel surya sama sekali tidak menghemat biaya karena biaya perawatannya jauh lebih mahal daripada tarif listrik PLN.",
+                    "Panel surya hanya menguntungkan bagi industri skala besar, sedangkan bagi rumah tangga justru merugikan secara finansial."
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita hitung untung ruginya dari sudut pandang ekonomi (keuangan)!<br><br>Fakta finansial Teks 1: Bisa menghemat tagihan bulanan sampai 60%, TAPI <strong>modal (investasi) awalnya mahal</strong>. <br>Fakta finansial Teks 2: Ada tambahan biaya lagi, yaitu <strong>perawatan baterai yang tinggi (mahal)</strong>.<br><br>Jika kita gabungkan kedua fakta tersebut secara utuh, kesimpulan ekonomi yang akurat adalah: Panel surya memang menghemat tagihan bulanan, tapi butuh modal awal dan biaya rawat baterai yang tinggi. Pilihan <strong>B</strong> merangkum semua fakta ini tanpa melebih-lebihkan."
+            },
+            {
+                text: "Unsur kebahasaan berupa konjungsi pertentangan yang digunakan untuk membatasi atau mengoreksi pernyataan sebelumnya dapat ditemukan pada kata...",
+                options: [
+                    "\"karena\" pada Teks 1 dan \"pada\" pada Teks 2.",
+                    "\"meskipun\" pada Teks 1 dan \"namun\" (tersirat dari makna pertentangan antarkalimat) / \"terutama\" pada Teks 2.",
+                    "\"dan\" pada Teks 1 dan \"yang\" pada Teks 2.",
+                    "\"hingga\" pada Teks 1 dan \"tanpa\" pada Teks 2."
+                ],
+                answer: 1, // B
+                explanation: "Konjungsi pertentangan (konsesif) adalah kata hubung yang dipakai untuk menunjukkan dua hal yang berlawanan arah.<br><br>Di Teks 1, ada kata <strong>'Meskipun'</strong> (Meskipun modalnya mahal, tapi akhirnya hemat). Di Teks 2, walaupun kata 'namun' tidak dituliskan secara nyata di awal kalimat, makna peralihan gagasan antarkalimatnya saling berbenturan atau bertentangan (membatasi klaim kehebatan panel surya karena adanya cuaca buruk dan baterai mahal). Jadi pilihan <strong>B</strong> adalah identifikasi yang paling tepat secara kebahasaan."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 15 dan 16.</strong><br><strong>Teks A</strong><br>Siswa yang aktif dalam organisasi sekolah (OSIS) terbukti memiliki keterampilan kepemimpinan dan komunikasi yang lebih baik. Mereka terbiasa memecahkan masalah kelompok, mengelola acara, dan bernegosiasi dengan pihak sekolah. Pengalaman non-akademis ini sangat berharga untuk mempersiapkan mereka memasuki dunia kerja dan perguruan tinggi kelak.<br><br><strong>Teks B</strong><br>Terlalu aktif berorganisasi di sekolah sering kali membuat fokus belajar siswa terpecah. Banyak anggota OSIS yang mengalami penurunan nilai akademis karena waktu belajar mereka tersita untuk rapat dan persiapan kegiatan. Sekolah didirikan terutama untuk membekali siswa dengan ilmu pengetahuan (akademis), sehingga kegiatan ekstrakurikuler seharusnya tidak boleh mengorbankan prestasi belajar utama siswa.<br><br>Jika seorang siswa ingin menjaga keseimbangan hidupnya di sekolah, evaluasi tindakan yang paling sesuai berdasarkan kompromi dari kedua teks tersebut adalah...",
+                options: [
+                    "Menolak bergabung dengan organisasi apa pun agar nilai akademisnya selalu sempurna tanpa gangguan.",
+                    "Bergabung dengan OSIS dan mengabaikan tugas sekolah karena pengalaman organisasi lebih dihargai di dunia kerja.",
+                    "Bergabung dengan organisasi sekolah dengan tetap membuat skala prioritas yang ketat agar kegiatan organisasi tidak menurunkan prestasi akademisnya.",
+                    "Meminta sekolah untuk menghapuskan semua kegiatan OSIS agar seluruh siswa fokus belajar di dalam kelas saja."
+                ],
+                answer: 2, // C
+                explanation: "Teks A menyatakan berorganisasi itu penting untuk bekal masa depan. Teks B mengingatkan jangan sampai organisasi bikin nilai ujian hancur. Bagaimana solusi jalan tengahnya (kompromi)?<br><br>Jalan tengah yang paling bijak adalah: <strong>Tetap ikut organisasi untuk melatih kepemimpinan, TAPI harus punya manajemen waktu yang tangguh (bikin skala prioritas)</strong>. Tugas sekolah diutamakan, kegiatan OSIS diatur menyesuaikan waktu senggang. Dengan begini, nilai akademis tetap bagus, *soft skills* juga didapat (Pilihan <strong>C</strong>)."
+            },
+            {
+                text: "Manakah pernyataan berikut yang paling akurat menilai keabsahan (validitas) argumen Teks B?",
+                options: [
+                    "Argumen Teks B tidak valid karena tidak ada siswa aktif organisasi yang nilai akademisnya turun.",
+                    "Argumen Teks B valid karena menyajikan realitas risiko manajemen waktu yang sering dihadapi siswa aktif jika tidak dikelola dengan baik.",
+                    "Argumen Teks B tidak valid karena organisasi adalah satu-satunya tempat siswa belajar di sekolah.",
+                    "Argumen Teks B valid karena menyarankan agar siswa tidak perlu bersekolah dan cukup belajar mandiri di rumah."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita uji apakah argumen di Teks B itu masuk akal (valid). <br><br>Apakah benar siswa yang sibuk berorganisasi berisiko nilainya turun? <strong>Ya, sangat masuk akal!</strong> Di dunia nyata, kegiatan rapat dan kepanitiaan memang menyita waktu belajar. Jika seorang siswa tidak pandai mengatur waktunya, prestasinya pasti akan terkorbankan. Karena Teks B menyajikan kenyataan pahit (risiko logis) yang memang sering terjadi, maka argumennya dinilai <strong>valid</strong> (Pilihan <strong>B</strong>)."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 17 dan 18.</strong><br><strong>Teks 1</strong><br>Susu kedelai merupakan alternatif terbaik pengganti susu sapi, terutama bagi penderita intoleransi laktosa. Susu kedelai kaya akan protein nabati, bebas kolesterol, dan mengandung lemak jenuh yang sangat rendah. Mengonsumsi susu kedelai secara rutin dapat membantu menjaga kesehatan jantung dan menurunkan kadar kolesterol jahat dalam darah.<br><br><strong>Teks 2</strong><br>Meskipun susu kedelai sehat, konsumsi secara berlebihan tidak dianjurkan karena mengandung fitoestrogen. Senyawa ini meniru hormon estrogen dalam tubuh manusia dan jika dikonsumsi dalam jumlah sangat besar, dikhawatirkan dapat mengganggu keseimbangan hormon, terutama pada anak-anak dalam masa pertumbuhan dan pria. Variasi konsumsi pangan tetap merupakan kunci gizi seimbang.<br><br>Berdasarkan perbandingan kedua teks tersebut, informasi manakah yang dinilai paling akurat mengenai batasan konsumsi susu kedelai?",
+                options: [
+                    "Susu kedelai bebas dikonsumsi dalam jumlah berapa pun tanpa efek samping karena berbahan dasar nabati.",
+                    "Susu kedelai sangat baik sebagai pengganti susu sapi, namun konsumsinya harus sewajarnya (tidak berlebihan) karena adanya kandungan fitoestrogen yang dapat memengaruhi hormon.",
+                    "Susu kedelai sama sekali tidak boleh dikonsumsi oleh anak-anak karena dapat menghentikan pertumbuhan fisik mereka secara total.",
+                    "Susu kedelai hanya boleh dikonsumsi oleh penderita penyakit jantung dan dilarang untuk orang sehat."
+                ],
+                answer: 1, // B
+                explanation: "Teks 1 memuji betapa sehatnya susu kedelai. Namun, Teks 2 datang bertindak sebagai pengingat batas aman. <br><br>Teks 2 mengatakan: <em>'Hati-hati lho, kalau minum terlalu banyak (berlebihan), kandungan fitoestrogennya bisa mengganggu hormon tubuh.'</em> Jadi, simpulan yang paling utuh dan akurat adalah: Susu kedelai itu sangat baik, asalkan dikonsumsi <strong>sewajarnya dan tidak berlebihan</strong>. Karena segala hal yang berlebihan itu tidak baik bagi tubuh (Pilihan <strong>B</strong>)."
+            },
+            {
+                text: "Bagaimana kesesuaian pesan moral/kesehatan yang ingin disampaikan oleh penulis Teks 2 terhadap pembaca?",
+                options: [
+                    "Penulis ingin pembaca beralih sepenuhnya menjadi vegetarian dan hanya mengonsumsi produk kedelai.",
+                    "Penulis ingin mengingatkan pembaca agar bersikap bijak dan tidak berlebihan dalam mengonsumsi satu jenis makanan tertentu (prinsip gizi seimbang).",
+                    "Penulis ingin menakut-nakuti pembaca agar menghindari susu kedelai karena sangat beracun bagi tubuh.",
+                    "Penulis ingin mempromosikan susu sapi sebagai satu-satunya susu yang aman bagi kesehatan manusia."
+                ],
+                answer: 1, // B
+                explanation: "Kunci jawaban tersembunyi di kalimat penutup Teks 2: <em>'Variasi konsumsi pangan tetap merupakan kunci gizi seimbang.'</em><br><br>Melalui kalimat ini, penulis sebenarnya ingin menyampaikan pesan moral kesehatan yang lebih luas: Jangan fanatik atau berlebihan (<em>over-consume</em>) pada satu jenis makanan saja, meskipun makanan itu sehat (seperti susu kedelai). Makanlah secara beraneka ragam agar tubuh mendapat nutrisi yang seimbang. Pilihan <strong>B</strong> menangkap pesan ini dengan sempurna."
+            },
+            {
+                text: "<strong>Teks berikut untuk menjawab soal nomor 19 dan 20.</strong><br><strong>Teks A</strong><br>Museum Nasional kini menyediakan pemandu wisata berbasis kode QR di setiap koleksi sejarahnya. Pengunjung cukup memindai kode tersebut menggunakan ponsel pintar untuk membaca atau mendengarkan penjelasan lengkap mengenai sejarah benda tersebut. Inovasi digital ini sangat diapresiasi karena membuat kunjungan museum menjadi lebih interaktif, mandiri, dan ramah lingkungan tanpa brosur kertas.<br><br><strong>Teks B</strong><br>Penerapan pemandu kode QR di museum dinilai mengurangi interaksi humanis dan nilai edukasi langsung. Banyak pengunjung, terutama anak-anak dan lansia, merasa kesulitan mengoperasikan teknologi tersebut atau kehilangan fokus karena asyik menatap layar ponsel alih-alih menikmati keindahan fisik benda bersejarah. Kehadiran pemandu wisata manusia (tour guide) yang komunikatif dan humoris tetap tidak bisa digantikan oleh gawai.<br><br>Evaluasi yang paling tepat mengenai kelemahan sistem kode QR di museum berdasarkan Teks B adalah...",
+                options: [
+                    "Sistem kode QR membutuhkan biaya perawatan yang sangat mahal bagi pengelola museum.",
+                    "Sistem kode QR berpotensi mengurangi interaksi humanis, menyulitkan kalangan non-teknis (lansia/anak-anak), dan mendistrasi fokus pengunjung dari objek fisik ke layar gawai.",
+                    "Sistem kode QR sering kali menyajikan informasi palsu yang tidak sesuai dengan sejarah aslinya.",
+                    "Sistem kode QR merusak fisik benda-benda bersejarah karena radiasi sinyal ponsel pintar pengunjung."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita buat daftar keluhan atau kelemahan dari sudut pandang Teks B!<br><br>1. Mengurangi interaksi antar manusia (kurang humanis).<br>2. Bikin repot pengunjung yang gaptek seperti lansia dan anak-anak.<br>3. Pengunjung malah sibuk menatap layar HP (distraksi) daripada memperhatikan benda sejarah di depannya.<br><br>Pilihan <strong>B</strong> menyebutkan ketiga keluhan ini dengan sangat lengkap dan pas sesuai dengan teks."
+            },
+            {
+                text: "Bagaimana solusi terbaik (sintesis) yang dapat direkomendasikan kepada pengelola museum setelah mengevaluasi pertentangan informasi pada Teks A dan Teks B?",
+                options: [
+                    "Menghapus sistem kode QR sepenuhnya dan kembali menggunakan brosur kertas tradisional demi kenyamanan lansia.",
+                    "Melarang pengunjung membawa ponsel pintar ke dalam museum agar mereka fokus mendengarkan penjelasan pemandu manusia.",
+                    "Menerapkan sistem hibrida (hybrid), yaitu tetap menyediakan kode QR untuk pengunjung mandiri/muda, sekaligus mempertahankan pemandu wisata manusia untuk kelompok atau pengunjung yang membutuhkan interaksi langsung.",
+                    "Menutup museum untuk umum dan mengubah seluruh koleksi menjadi format museum virtual yang hanya bisa diakses dari rumah."
+                ],
+                answer: 2, // C
+                explanation: "Bagaimana cara menyenangkan semua pihak? Anak muda suka yang praktis dan mandiri pakai kode QR (Teks A), tapi lansia dan rombongan keluarga butuh panduan langsung dari manusia agar lebih seru (Teks B).<br><br>Solusi pemecahan masalah (sintesis) paling jenius adalah dengan menerapkan sistem <strong>Hibrida (gabungan)</strong>. Sediakan teknologinya untuk yang suka, dan sediakan orangnya (<em>tour guide</em>) untuk yang butuh. Pilihan <strong>C</strong> mengakomodasi kepentingan kedua belah pihak dengan sangat sempurna!"
+            }
+        ];
+
+        function processContent(text) {
+            // Regex to find [GAMBAR: data:image/...] pattern and replace with img tag
+            // Adding specific styling as requested
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Soal" style="max-width:100%; border-radius:8px;" class="img-responsive shadow-sm border border-slate-200">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative group';
+            questionDiv.id = `question-block-${index}`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            // Note: HTML Entities (&times;, &divide;, etc) in the JSON text will naturally render correctly here.
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg md:text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Hidden Explanation Box -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-lg md:text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}"></h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                explanationBox.classList.remove('hidden-box');
+
+                // Disable radios and highlight the correct answer key unconditionally
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-blue-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // User is correct
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/70 border-l-[6px] md:border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali, Analisismu Tajam!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // User is incorrect
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/70 border-l-[6px] md:border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Kurang Tepat! Kunci yang benar: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Style the wrong choice picked by the user
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // User skipped the question
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/70 border-l-[6px] md:border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Dilewati! Kunci yang benar: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500; 
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Dynamic encouraging messages
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Nalar logis dan daya analisismu luar biasa tajam!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja Hebat! 👏 Pemahamanmu dalam mengevaluasi teks sudah sangat baik.";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup Baik! Yuk, baca bagian pembahasan agar logikamu makin terasah. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Ayo cermati cara berpikir di bagian pembahasan dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            // Auto-scroll to results
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            form.reset();
+
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                // Hide explanation and reset container rings
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                // Reset radios state and custom styling
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors';
+                });
+            });
+
+            // Toggle visibility
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Scroll back to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

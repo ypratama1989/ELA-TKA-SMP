@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Biologi Sel & Organisasi Kehidupan</title>
+    <style>
+        :root {
+            /* Palet Warna Modern */
+            --primary: #0284c7; /* Sky blue gelap */
+            --primary-hover: #0369a1;
+            --bg-color: #f0f9ff; /* Sky blue sangat muda */
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --correct-bg: #dcfce7;
+            --correct-border: #22c55e;
+            --correct-text: #166534;
+            --wrong-bg: #fee2e2;
+            --wrong-border: #ef4444;
+            --wrong-text: #991b1b;
+            --card-bg: #ffffff;
+            --border-light: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+            position: absolute;
+            left: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        /* Tabel Responsive */
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 500px; /* Mencegah tabel terlalu sempit di mobile */
+        }
+        
+        table, th, td {
+            border: 1px solid var(--border-light);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Gambar */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: block;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
+        }
+
+        .option-label:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .option-label input[type="radio"] {
+            margin-top: 4px;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Kelas Dinamis dari JavaScript */
+        .option-label.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: var(--correct-text);
+        }
+
+        .option-label.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: var(--wrong-text);
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none; /* Sembunyikan default */
+            animation: slideDown 0.4s ease;
+            line-height: 1.7;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box.bg-green {
+            background-color: #f0fdf4;
+            border-left: 5px solid var(--correct-border);
+            color: var(--correct-text);
+        }
+
+        .explanation-box.bg-red {
+            background-color: #fef2f2;
+            border-left: 5px solid var(--wrong-border);
+            color: var(--wrong-text);
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        /* Tombol Utama */
+        .btn-submit, .btn-retry {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-submit:hover, .btn-retry:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Area Hasil Akhir */
+        .result-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            display: none; /* Sembunyikan default */
+            animation: fadeIn 0.6s ease;
+            border-top: 6px solid var(--primary);
+        }
+
+        .score-display {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .score-message {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Animasi */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 600px) {
+            .header { flex-direction: column; padding: 15px; }
+            .btn-back { position: static; margin-bottom: 10px; width: 100%; justify-content: center;}
+            .container { margin: 15px auto; }
+            .question-card { padding: 20px 15px; }
+            .score-display { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button type="button" class="btn-back" onclick="history.back()">&#8592; Kembali</button>
+        <h1>Kuis Biologi: Sel & Organisasi Kehidupan</h1>
+    </div>
+
+    <div class="container">
+        <form id="quizForm">
+            
+            <div class="question-card" id="q1">
+                <div class="question-text">1. Robert Hooke pertama kali mengamati sel pada tahun 1665 menggunakan mikroskop sederhana. Bagian yang diamati oleh Hooke berupa ruangan kecil kosong yang sebenarnya merupakan...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q1" value="A"> <span class="option-text">A. Sel hidup dari daun tumbuhan <i>Elodea</i></span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"> <span class="option-text">B. Dinding sel mati dari jaringan gabus pohon ek</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"> <span class="option-text">C. Nukleus yang terisolasi dari sel hewan</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"> <span class="option-text">D. Membran sel bakteri yang sedang membelah</span></label>
+                </div>
+                <div class="explanation-box" id="exp1" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bayangkan kamu melihat sarang lebah yang kosong. Itulah yang dilihat Robert Hooke! Ia mengamati irisan sangat tipis dari <b>gabus kayu</b> (kulit pohon ek). Karena kayu gabus itu sudah mati, isinya (sitoplasma dan organel) sudah hilang/kering. Jadi, "kamar-kamar kecil" (yang ia sebut <i>cellula</i>) itu tidak lain adalah <b>Dinding Sel</b> yang tebal dan kaku yang tersisa.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q2">
+                <div class="question-text">2. Perhatikan beberapa karakteristik sel berikut!<br>
+                    1) Memiliki membran inti (karioteka)<br>
+                    2) Materi genetik (DNA) berada di sitoplasma<br>
+                    3) Memiliki organel bermembran seperti mitokondria<br>
+                    4) Contohnya adalah bakteri dan alga biru<br><br>
+                    Karakteristik yang tepat untuk mendefinisikan sel prokariotik ditunjukkan oleh nomor...
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q2" value="A"> <span class="option-text">A. 1) dan 3)</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"> <span class="option-text">B. 1) dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"> <span class="option-text">C. 2) dan 3)</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"> <span class="option-text">D. 2) dan 4)</span></label>
+                </div>
+                <div class="explanation-box" id="exp2" data-answer="D">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: D)</div>
+                    <div class="explanation-content">
+                        Ingat kunci ini: <b>Pro-kariotik</b> artinya "Sebelum punya Inti Sejati". <br>
+                        Karena tidak punya bungkus/membran inti, DNA mereka berenang bebas di cairan sel (sitoplasma) (Pernyataan 2). Sel ini sangat sederhana, tidak punya organel canggih seperti mitokondria. Siapa saja mereka? Seluruh keluarga <b>Bakteri</b> dan Alga Hijau Biru (Pernyataan 4).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q3">
+                <div class="question-text">3. Suatu organel sel berbentuk bulat lonjong dengan membran ganda. Membran dalamnya berlekuk-lekuk membentuk krista untuk memperluas permukaan. Organel ini berfungsi sebagai tempat respirasi seluler. Organel yang dimaksud adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q3" value="A"> <span class="option-text">A. Kloroplas</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"> <span class="option-text">B. Lisosom</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"> <span class="option-text">C. Mitokondria</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"> <span class="option-text">D. Badan Golgi</span></label>
+                </div>
+                <div class="explanation-box" id="exp3" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Kata kunci terpenting di sini adalah <b>"respirasi seluler"</b> (proses membuat energi/ATP) dan membran dalam yang <b>berlekuk-lekuk (krista)</b>. Bentuknya yang seperti sosis bergelombang di dalamnya adalah ciri khas dari <b>Mitokondria</b>, sang "Pabrik Energi" utama bagi sel tubuh kita!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q4">
+                <div class="question-text">4. Seorang siswa melakukan percobaan dengan merendam potongan kentang berbentuk kubus di dalam larutan garam dapur 10% selama 30 menit. Setelah ditimbang kembali, berat kentang tersebut berkurang dan teksturnya menjadi lembek. <br><br>Peristiwa yang terjadi pada sel kentang tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q4" value="A"> <span class="option-text">A. Plasmolisis karena air keluar dari sel secara osmosis</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"> <span class="option-text">B. Turgiditas karena air masuk ke dalam sel secara osmosis</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"> <span class="option-text">C. Lisis karena garam masuk ke dalam sel secara difusi</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"> <span class="option-text">D. Difusi terfasilitasi karena garam menarik air keluar dari sel</span></label>
+                </div>
+                <div class="explanation-box" id="exp4" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Mari kita pecahkan prosesnya:<br>
+                        Air selalu berpindah dari tempat yang encer (air murni) ke tempat yang pekat/asin. Larutan garam 10% sangat <b>pekat (hipertonis)</b>. Akibatnya, air murni yang ada <i>di dalam</i> sel kentang akan "tersedot" keluar menembus membran sel (Osmosis).<br>
+                        Karena airnya habis, sel kentang menyusut (kurus), beratnya turun, dan membran selnya terlepas dari dinding sel. Peristiwa lepasnya membran ini disebut <b>Plasmolisis</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q5">
+                <div class="question-text">5. Perhatikan tabel perbedaan sel hewan dan sel tumbuhan di bawah ini!
+                    <div class="table-container">
+                        <table>
+                            <tr>
+                                <th>No</th>
+                                <th>Karakteristik</th>
+                                <th>Sel Hewan</th>
+                                <th>Sel Tumbuhan</th>
+                            </tr>
+                            <tr><td>1</td><td>Dinding Sel</td><td>Tidak ada</td><td>Ada</td></tr>
+                            <tr><td>2</td><td>Plastida</td><td>Ada</td><td>Tidak ada</td></tr>
+                            <tr><td>3</td><td>Vakuola</td><td>Kecil/tidak ada</td><td>Besar</td></tr>
+                            <tr><td>4</td><td>Sentriol</td><td>Tidak ada</td><td>Ada</td></tr>
+                        </table>
+                    </div>
+                    Perbedaan yang benar antara sel hewan dan sel tumbuhan ditunjukkan oleh nomor...
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q5" value="A"> <span class="option-text">A. 1 dan 2</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"> <span class="option-text">B. 1 dan 3</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"> <span class="option-text">C. 2 dan 4</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"> <span class="option-text">D. 3 dan 4</span></label>
+                </div>
+                <div class="explanation-box" id="exp5" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ayo kita cek satu per satu:<br>
+                        1. <b>Benar.</b> Tumbuhan butuh dinding sel yang kaku agar bisa berdiri tegak, hewan tidak.<br>
+                        2. <i>Salah.</i> Plastida (Kloroplas/zat hijau daun) hanya dimiliki tumbuhan.<br>
+                        3. <b>Benar.</b> Vakuola tumbuhan sangat besar (menyimpan banyak cadangan air), sedangkan pada hewan kecil/nyaris tidak ada.<br>
+                        4. <i>Salah.</i> Sentriol (alat pembelahan sel) justru khas dimiliki oleh sel hewan, tumbuhan tingkat tinggi tidak punya.<br>
+                        Jadi yang tepat adalah 1 dan 3.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q6">
+                <div class="question-text">6. Di dalam sel, protein disintesis oleh organel kecil non-membran yang tersebar bebas di sitoplasma atau menempel pada Retikulum Endoplasma Kasar. Organel tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q6" value="A"> <span class="option-text">A. Ribosom</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"> <span class="option-text">B. Sentrosom</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"> <span class="option-text">C. Peroksisom</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"> <span class="option-text">D. Mikrotubulus</span></label>
+                </div>
+                <div class="explanation-box" id="exp6" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Kata kuncinya adalah <b>"sintesis protein"</b> (pembuat protein) dan bentuknya berupa bintik-bintik <b>kecil tak bermembran</b> yang menempel (membuatnya jadi Retikulum Endoplasma "Kasar"). Bintik-bintik ajaib pembuat protein ini dinamakan <b>Ribosom</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q7">
+                <div class="question-text">7. Perhatikan ilustrasi eksperimen berikut!<br>Dua buah sel tumbuhan diletakkan pada medium yang berbeda. Sel A diletakkan pada akuades (air murni), sedangkan Sel B diletakkan pada larutan gula pekat 30%. Pernyataan yang paling tepat mengenai kondisi kedua sel setelah beberapa saat adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q7" value="A"> <span class="option-text">A. Sel A akan mengalami lisis (pecah), sedangkan Sel B akan mengalami plasmolisis</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"> <span class="option-text">B. Sel A akan mengalami turgid (tegang), sedangkan Sel B akan mengalami plasmolisis</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"> <span class="option-text">C. Sel A akan mengalami plasmolisis, sedangkan Sel B akan mengalami turgid</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"> <span class="option-text">D. Kedua sel tidak mengalami perubahan karena memiliki dinding sel yang kaku</span></label>
+                </div>
+                <div class="explanation-box" id="exp7" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        - <b>Sel A (Air Murni):</b> Air masuk ke dalam sel. Karena sel tumbuhan dilindungi "tembok beton" (Dinding Sel), dia tidak akan pecah (lisis) seperti balon, melainkan hanya memompa kencang menjadi tegang dan keras. Kondisi ini disebut <b>Turgid</b>.<br>
+                        - <b>Sel B (Gula Pekat):</b> Kebalikannya, air di dalam sel malah tersedot keluar ke arah gula pekat. Akibatnya sel menyusut dan membrannya lepas dari dinding sel. Kondisi ini disebut <b>Plasmolisis</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q8">
+                <div class="question-text">8. Urutan tingkatan organisasi kehidupan pada tubuh organisme multiseluler dari yang paling sederhana hingga yang paling kompleks adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q8" value="A"> <span class="option-text">A. Sel - Organ - Jaringan - Sistem Organ - Organisme</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"> <span class="option-text">B. Sel - Jaringan - Organ - Sistem Organ - Organisme</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"> <span class="option-text">C. Jaringan - Sel - Organ - Sistem Organ - Organisme</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"> <span class="option-text">D. Organisme - Sistem Organ - Organ - Jaringan - Sel</span></label>
+                </div>
+                <div class="explanation-box" id="exp8" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bayangkan menyusun balok Lego:<br>
+                        1. Satu balok kecil = <b>Sel</b><br>
+                        2. Banyak balok disatukan jadi satu warna = <b>Jaringan</b><br>
+                        3. Beberapa jaringan membentuk satu bentuk tertentu (misal lambung) = <b>Organ</b><br>
+                        4. Lambung, usus, mulut bekerja sama = <b>Sistem Organ</b> (pencernaan)<br>
+                        5. Semua sistem bergabung membentuk dirimu = <b>Organisme</b> utuh!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q9">
+                <div class="question-text">9. Sel darah putih (leukosit) berperan penting dalam sistem pertahanan tubuh dengan cara menelan dan mencerna patogen (bakteri/virus) yang masuk ke dalam tubuh. Berdasarkan fungsi tersebut, sel darah putih kaya akan organel...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q9" value="A"> <span class="option-text">A. Mitokondria</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"> <span class="option-text">B. Lisosom</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"> <span class="option-text">C. Badan Golgi</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"> <span class="option-text">D. Retikulum Endoplasma Halus</span></label>
+                </div>
+                <div class="explanation-box" id="exp9" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Sel darah putih bertugas memakan bakteri jahat. Tapi setelah dimakan, bakteri itu harus dihancurkan! Untuk menghancurkannya, sel butuh organel yang berisi "cairan asam mematikan" (enzim hidrolitik). Organel penghancur/pencerna di dalam sel ini dinamakan <b>Lisosom</b> (<i>Lysis</i> = menghancurkan, <i>Soma</i> = badan).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q10">
+                <div class="question-text">10. Jaringan pada tumbuhan yang sel-selnya aktif membelah diri untuk pertumbuhan tinggi dan diameter tumbuhan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q10" value="A"> <span class="option-text">A. Jaringan epidermis</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"> <span class="option-text">B. Jaringan meristem</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"> <span class="option-text">C. Jaringan parenkim</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"> <span class="option-text">D. Jaringan sklerenkim</span></label>
+                </div>
+                <div class="explanation-box" id="exp10" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bagaimana pohon mangga bisa tumbuh dari biji kecil menjadi pohon besar? Karena ada jaringan "bayi" di pucuk akar, pucuk daun, dan kambium batang yang tugasnya membelah diri terus-menerus tanpa henti. Jaringan muda yang selalu aktif membelah (memperbanyak diri) ini disebut <b>Jaringan Meristem</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q11">
+                <div class="question-text">11. Sel darah merah (eritrosit) manusia dewasa tidak memiliki nukleus dan mitokondria. Analisis yang paling tepat mengenai hubungan antara struktur tersebut dengan fungsi eritrosit adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q11" value="A"> <span class="option-text">A. Ketiadaan nukleus membatasi pembelahan sel sehingga eritrosit dapat mengangkut oksigen lebih efisien tanpa gangguan pembelahan</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"> <span class="option-text">B. Ketiadaan organel tersebut memaksimalkan ruang untuk hemoglobin mengikat oksigen dan mencegah eritrosit mengonsumsi oksigen yang diangkutnya</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"> <span class="option-text">C. Tanpa mitokondria, eritrosit tidak dapat menghasilkan energi sehingga pergerakannya sepenuhnya bergantung pada pompa jantung</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"> <span class="option-text">D. Tanpa nukleus, eritrosit dapat dengan mudah berubah bentuk saat melewati pembuluh kapiler yang sempit tanpa merusak materi genetiknya</span></label>
+                </div>
+                <div class="explanation-box" id="exp11" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Desain sel darah merah sangat cerdas!<br>
+                        - Mengapa inti sel (Nukleus) dibuang? Agar ruang di dalam sel jadi lebih luas, sehingga <b>zat pengikat oksigen (Hemoglobin) bisa masuk lebih banyak</b>.<br>
+                        - Mengapa mitokondria (organel bernapas) dibuang? Karena mitokondria menggunakan oksigen untuk bekerja. Jika darah merah punya mitokondria, oksigen yang seharusnya diantar ke otak malah "dimakan" habis di jalan oleh mitokondria darah merah itu sendiri!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q12">
+                <div class="question-text">12. Bagian sel yang berfungsi mengatur seluruh aktivitas sel serta mengandung informasi genetik yang diturunkan kepada keturunannya adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q12" value="A"> <span class="option-text">A. Sitoplasma</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"> <span class="option-text">B. Nukleus</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"> <span class="option-text">C. Membran sel</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"> <span class="option-text">D. Dinding sel</span></label>
+                </div>
+                <div class="explanation-box" id="exp12" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Setiap sel memiliki "otak" pengatur layaknya balai kota. Pengendali utama seluruh kegiatan ini adalah <b>Nukleus (Inti Sel)</b>. Di dalamnya tersimpan brankas rahasia berupa pita DNA (kromosom) yang mewariskan ciri khas (sifat keturunan) dari orang tua kepada anaknya.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q13">
+                <div class="question-text">13. Sel otot jantung memiliki aktivitas metabolisme yang sangat tinggi untuk terus memompa darah tanpa henti sepanjang hidup manusia. Berdasarkan kebutuhan energinya, sel otot jantung memiliki jumlah organel ... yang jauh lebih banyak dibandingkan sel kulit.</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q13" value="A"> <span class="option-text">A. Ribosom</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"> <span class="option-text">B. Mitokondria</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"> <span class="option-text">C. Badan Golgi</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"> <span class="option-text">D. Sentrosom</span></label>
+                </div>
+                <div class="explanation-box" id="exp13" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Jantung memompa darah berdegup setiap detik dari kita lahir hingga tua, tanpa istirahat! Kerja ekstrem ini membutuhkan pasokan energi yang luar biasa besar (ATP). Mesin pembuat energi di dalam sel adalah <b>Mitokondria</b>. Karena itu, jumlah mitokondria di sel otot jantung sangat banyak dibandingkan sel tubuh lain yang kerjanya santai (seperti sel kulit).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q14">
+                <div class="question-text">14. Organel sel yang berbentuk kantong pipih bertumpuk-tumpuk dan berfungsi dalam modifikasi, penyortiran, serta pengemasan protein untuk disekresikan ke luar sel adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q14" value="A"> <span class="option-text">A. Retikulum Endoplasma</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"> <span class="option-text">B. Badan Golgi</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"> <span class="option-text">C. Lisosom</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"> <span class="option-text">D. Vakuola</span></label>
+                </div>
+                <div class="explanation-box" id="exp14" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ibaratkan organel ini sebagai <b>"Kantor Pos"</b> sel. Setelah barang (protein) dibuat, barang itu dikirim ke Badan Golgi. Di sini, Badan Golgi akan membungkus protein tersebut, merapikannya, menempelkan label alamat, lalu mengirimkannya (ekskresi/sekresi) ke tempat yang membutuhkan (bisa ke dalam atau ke luar sel).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q15">
+                <div class="question-text">15. Penyakit Tay-Sachs merupakan kelainan genetik mematikan di mana penderitanya mengalami penumpukan lipid (lemak) di sel-sel otak karena ketiadaan enzim hidrolitik tertentu. Kelainan ini disebabkan oleh disfungsi pada organel...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q15" value="A"> <span class="option-text">A. Lisosom</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"> <span class="option-text">B. Peroksisom</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"> <span class="option-text">C. Mitokondria</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"> <span class="option-text">D. Ribosom</span></label>
+                </div>
+                <div class="explanation-box" id="exp15" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Kata kunci: ketiadaan <b>"enzim hidrolitik"</b> (cairan pencerna/penghancur). <br>
+                        Seperti yang dibahas sebelumnya, organel tempat penyimpanan cairan asam penghancur adalah <b>Lisosom</b>. Karena lisosomnya cacat (tidak punya cairan enzim ini), lemak jahat di otak gagal dihancurkan, akhirnya lemak menumpuk terus dan merusak sistem saraf otak.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q16">
+                <div class="question-text">16. Sebuah herbisida baru dirancang untuk membasmi gulma dengan cara merusak pembentukan dinding sel pada sel-sel baru tumbuhan. Evaluasi dampak langsung penggunaan herbisida ini pada tingkat seluler tumbuhan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q16" value="A"> <span class="option-text">A. Sel tumbuhan akan kehilangan kemampuan menghasilkan energi karena kloroplas rusak</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"> <span class="option-text">B. Sel tumbuhan baru tidak memiliki pelindung dan kekuatan mekanis sehingga sel mudah pecah akibat tekanan turgor</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"> <span class="option-text">C. Transportasi aktif zat makanan dari akar ke daun akan langsung terhenti karena rusaknya membran sel</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"> <span class="option-text">D. Proses sintesis protein pada ribosom akan terhambat karena ketiadaan bahan baku asam amino</span></label>
+                </div>
+                <div class="explanation-box" id="exp16" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Fungsi utama Dinding Sel tumbuhan adalah sebagai jaket pelindung keras (kekuatan mekanis). Saat tumbuhan menyerap air dari tanah, air masuk ke dalam sel (menciptakan tekanan turgor). Jika jaket keras ini (dinding sel) tidak terbentuk karena dirusak oleh racun herbisida, sel yang lembek seperti balon air itu akan <b>menggelembung dan mudah meledak/pecah (lisis)</b>, membuat gulma cepat mati.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q17">
+                <div class="question-text">17. Perbedaan mendasar antara organ dan sistem organ adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q17" value="A"> <span class="option-text">A. Organ tersusun atas berbagai jaringan yang bekerja sama, sedangkan sistem organ tersusun atas berbagai organ yang saling berinteraksi untuk fungsi tertentu</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"> <span class="option-text">B. Organ merupakan bagian terkecil dari makhluk hidup, sedangkan sistem organ adalah kumpulan dari makhluk hidup sejenis</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"> <span class="option-text">C. Organ hanya ditemukan pada hewan, sedangkan sistem organ hanya ditemukan pada tumbuhan</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"> <span class="option-text">D. Organ memiliki fungsi yang sangat luas, sedangkan sistem organ memiliki fungsi yang sangat spesifik</span></label>
+                </div>
+                <div class="explanation-box" id="exp17" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Kembali ke tingkatan sel (Lego):<br>
+                        - <b>Organ</b> (Contoh: Mata) disusun oleh banyak gabungan jaringan otot, jaringan epitel, jaringan saraf (Jaringan $\rightarrow$ Organ).<br>
+                        - <b>Sistem Organ</b> (Contoh: Sistem Pencernaan) adalah kumpulan gabungan dari organ Mulut, Kerongkongan, Lambung, dan Usus yang membentuk kerja tim yang hebat (Organ $\rightarrow$ Sistem Organ).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q18">
+                <div class="question-text">18. Jaringan pada hewan yang berfungsi untuk menerima rangsang dari lingkungan dan meneruskannya ke pusat saraf serta memberikan tanggapan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q18" value="A"> <span class="option-text">A. Jaringan epitel</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"> <span class="option-text">B. Jaringan otot</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"> <span class="option-text">C. Jaringan saraf</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"> <span class="option-text">D. Jaringan ikat</span></label>
+                </div>
+                <div class="explanation-box" id="exp18" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Saat tanganmu tidak sengaja menyentuh panci panas, kamu seketika menarik tanganmu mundur! Jaringan yang bekerja luar biasa cepat mengantarkan "Pesan Panas" ke otak, lalu mengantarkan perintah "Tarik Tangan" ke otot dalam hitungan milidetik adalah fungsi khusus dari <b>Jaringan Saraf</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q19">
+                <div class="question-text">19. Pada kasus gagal ginjal kronis, pasien disarankan melakukan transplantasi ginjal. Namun, tubuh penerima seringkali melakukan penolakan terhadap organ baru tersebut. Evaluasi penyebab penolakan ini pada tingkat seluler adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q19" value="A"> <span class="option-text">A. Sel-sel ginjal donor tidak memiliki mitokondria yang kompatibel dengan tubuh penerima</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"> <span class="option-text">B. Glikoprotein pada membran sel ginjal donor dikenali sebagai antigen asing oleh sistem imun (sel darah putih) penerima</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"> <span class="option-text">C. Dinding sel ginjal donor terlalu tebal sehingga menghambat penyerapan nutrisi oleh tubuh penerima</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"> <span class="option-text">D. Nukleus sel ginjal donor melakukan pembelahan yang tidak terkendali di dalam tubuh penerima</span></label>
+                </div>
+                <div class="explanation-box" id="exp19" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Setiap sel dalam tubuh kita ibarat memiliki "KTP" (berupa tonjolan Glikoprotein di kulit/membran selnya). Ketika ginjal dari orang lain (donor) dimasukkan, sel darah putih penerima akan mengecek "KTP" tersebut. Karena KTP-nya berbeda, tubuh menganggap ginjal itu sebagai musuh/penyusup (antigen asing). Akibatnya, tentara tubuh langsung menyerang organ baru tersebut (reaksi penolakan).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q20">
+                <div class="question-text">20. Sel penjaga (guard cell) pada stomata daun tumbuhan dapat berubah bentuk untuk membuka dan menutup celah stomata. Mekanisme ini sangat penting untuk mengatur transpirasi. Perubahan bentuk sel penjaga ini sangat dipengaruhi oleh...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q20" value="A"> <span class="option-text">A. Sintesis protein yang cepat di dalam ribosom sel penjaga</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"> <span class="option-text">B. Keluar masuknya air secara osmosis pada vakuola sel penjaga</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"> <span class="option-text">C. Pembelahan sel meristem secara cepat di sekitar stomata</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"> <span class="option-text">D. Aktivitas pencernaan intraseluler oleh lisosom sel penjaga</span></label>
+                </div>
+                <div class="explanation-box" id="exp20" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Stomata mirip seperti dua bibir yang bisa membuka dan menutup. <br>
+                        - Jika tumbuhan banyak <b>menyerap air</b> (osmosis), air mengisi vakuola, bibir sel penjaga membengkak melengkung, maka stomata <b>Membuka</b>.<br>
+                        - Sebaliknya jika musim panas, tumbuhan <b>kehilangan air</b>, bibir sel menjadi kempes lemas, maka celah stomata <b>Menutup</b> agar tidak kekeringan.
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btn-submit" class="btn-submit" onclick="checkAnswers()">Periksa Jawaban</button>
+            
+            <div id="result" class="result-container">
+                <h2>Nilai Akhir Anda</h2>
+                <div class="score-display" id="score-display">0</div>
+                <p class="score-message" id="score-message">Terus semangat belajar, kamu pasti bisa!</p>
+                <button type="button" class="btn-retry" onclick="resetTest()">Ulangi Tes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer-text">
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </div>
+
+    <script>
+        const totalQuestions = 20;
+        const maxScore = 100;
+        const scorePerQuestion = maxScore / totalQuestions; // 5 Poin per soal
+
+        function checkAnswers() {
+            let totalScore = 0;
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Jawaban Telah Diperiksa";
+
+            // Loop untuk mengevaluasi tiap soal
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                const correctAnswer = expBox.getAttribute('data-answer');
+                const radios = document.getElementsByName(`q${i}`);
+                
+                let isAnswered = false;
+                
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    // Reset class untuk keamanan saat evaluate ulang
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderStyle = "";
+                    label.style.borderColor = "";
+
+                    if (radio.checked) {
+                        isAnswered = true;
+                        // Evaluasi Jawaban Terpilih
+                        if (radio.value === correctAnswer) {
+                            totalScore += scorePerQuestion;
+                            label.classList.add('correct');
+                            expBox.classList.add('bg-green');
+                            expBox.classList.remove('bg-red');
+                        } else {
+                            label.classList.add('wrong');
+                            expBox.classList.add('bg-red');
+                            expBox.classList.remove('bg-green');
+                        }
+                    }
+
+                    // Selalu tunjukkan mana opsi yang SEHARUSNYA benar jika user salah / tidak menjawab
+                    if (radio.value === correctAnswer) {
+                        if(!radio.checked) {
+                             label.style.borderStyle = "dashed";
+                             label.style.borderColor = "var(--correct-border)";
+                        }
+                    }
+                }
+
+                // Jika user me-skip soal (tidak dijawab sama sekali), tandai kotak penjelasan merah (dianggap salah)
+                if (!isAnswered) {
+                    expBox.classList.add('bg-red');
+                    expBox.classList.remove('bg-green');
+                }
+
+                // Tampilkan kotak pembahasan dengan animasi
+                expBox.classList.add('show');
+            }
+
+            // Update UI Nilai Akhir
+            const resultDiv = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            
+            scoreDisplay.innerText = totalScore;
+            
+            // Pesan motivasi bertingkat
+            if (totalScore === 100) {
+                scoreMessage.innerText = "Sempurna! Kamu adalah calon ilmuwan Biologi hebat masa depan!";
+            } else if (totalScore >= 80) {
+                scoreMessage.innerText = "Luar biasa! Pemahaman Biologi Sel-mu sangat mantap. Pertahankan!";
+            } else if (totalScore >= 60) {
+                scoreMessage.innerText = "Bagus! Kamu sudah memahami konsep dasarnya. Yuk baca lagi pembahasannya supaya makin paham.";
+            } else {
+                scoreMessage.innerText = "Jangan menyerah! Biologi itu asyik, pelajari pelan-pelan pembahasannya dan coba lagi ya.";
+            }
+
+            // Munculkan Result Div
+            resultDiv.style.display = 'block';
+
+            // Auto scroll ke bagian bawah dengan mulus
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        }
+
+        function resetTest() {
+            // 1. Reset Form Input
+            const form = document.getElementById('quizForm');
+            form.reset();
+
+            // 2. Sembunyikan dan bersihkan styling di semua soal
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                expBox.classList.remove('show', 'bg-green', 'bg-red'); // Sembunyikan penjelasan
+
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong'); // Hapus warna merah/hijau background
+                    label.style.borderStyle = ""; // Hapus border dashed
+                    label.style.borderColor = "";
+                }
+            }
+
+            // 3. Sembunyikan Kotak Hasil
+            document.getElementById('result').style.display = 'none';
+            
+            // 4. Kembalikan kondisi Tombol Submit
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Periksa Jawaban";
+
+            // 5. Scroll kembali ke ujung paling atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t7',
+          topicIndex: 7,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

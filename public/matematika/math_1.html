@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - EDUFILLAH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2rem; /* Balance for back button */
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-intro p {
+            color: var(--text-muted);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-number {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 2.8rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: #C7D2FE;
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-top: 2px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom {
+            border-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .option-label.correct .radio-custom { border-color: var(--success); }
+        .option-label.correct .radio-custom::after { background: var(--success); }
+        
+        .option-label.wrong {
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .option-label.wrong .radio-custom { border-color: var(--danger); }
+        .option-label.wrong .radio-custom::after { background: var(--danger); }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .exp-correct { background-color: var(--success-bg); border-left: 4px solid var(--success); }
+        .exp-correct h4 { color: #065F46; }
+        .exp-wrong { background-color: var(--danger-bg); border-left: 4px solid var(--danger); }
+        .exp-wrong h4 { color: #991B1B; }
+
+        .explanation-content {
+            color: #374151;
+            margin-top: 0.5rem;
+        }
+
+        .action-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #EEF2FF;
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .score-title { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #EEF2FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--primary);
+        }
+        .score-value { font-size: 3rem; font-weight: 700; color: var(--primary); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .options-container { margin-left: 0; margin-top: 1rem; }
+            .question-header { flex-direction: column; }
+            .header-title { margin-right: 0; text-align: right;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="btn-back" onclick="goBack()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <div class="header-title">Kuis Matematika Terpadu</div>
+    </header>
+
+    <main>
+        <div class="quiz-intro">
+            <h1>Uji Pemahaman Konsepmu!</h1>
+            <p>Jawablah pertanyaan di bawah ini. Anda tidak perlu mengisi semua soal untuk memeriksa jawaban. Setiap soal bernilai 5 poin.</p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-questions">
+                <!-- Soal akan di-generate oleh JavaScript di sini -->
+            </div>
+
+            <div class="action-container" id="submit-section">
+                <button type="button" class="btn btn-primary" onclick="checkAnswers()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-container">
+            <div class="score-title">Nilai Akhir Anda</div>
+            <div class="score-circle">
+                <div class="score-value" id="final-score">0</div>
+            </div>
+            <p id="score-message" style="margin-bottom: 1.5rem; color: var(--text-main); font-weight: 500;"></p>
+            <button type="button" class="btn btn-outline" onclick="resetQuiz()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ulangi Tes
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "Suhu di dalam ruangan pendingin mula-mula adalah -8&deg;C. Setelah mesin pendingin dimatikan, suhu ruangan tersebut naik sebesar 3&deg;C setiap 4 menit. Suhu ruangan tersebut setelah 12 menit adalah...",
+                options: ["-1&deg;C", "1&deg;C", "4&deg;C", "9&deg;C"],
+                correctAnswer: 1, // B
+                explanation: `<strong>Langkah Penyelesaian Logis:</strong><br>
+                1. Suhu awal ruangan adalah <strong>-8&deg;C</strong>.<br>
+                2. Waktu yang berlalu adalah 12 menit. Karena suhu naik setiap 4 menit, kita hitung berapa kali kenaikan terjadi: <br>
+                   <code>Frekuensi kenaikan = 12 menit &divide; 4 menit = 3 kali</code>.<br>
+                3. Setiap kali naik, suhu bertambah 3&deg;C. Maka total kenaikan suhu adalah: <br>
+                   <code>3 kali &times; 3&deg;C = 9&deg;C</code>.<br>
+                4. Suhu akhir = Suhu awal + Total kenaikan = <code>-8&deg;C + 9&deg;C = 1&deg;C</code>.<br>
+                <em>Bayangkan termometer: dari angka -8, naik 9 langkah ke atas melewati angka 0, dan berhenti tepat di angka 1.</em>`
+            },
+            {
+                question: "Di antara bilangan-bilangan berikut, yang merupakan bilangan irasional adalah...",
+                options: ["&radic;16", "0,2222...", "&radic;8", "<sup>3</sup>/<sub>7</sub>"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Pemahaman Konsep:</strong><br>
+                Bilangan <strong>irasional</strong> adalah bilangan yang <em>tidak bisa</em> diubah menjadi pecahan biasa (a/b). Cirinya, jika dijadikan desimal, angkanya tidak pernah berhenti dan tidak memiliki pola berulang.<br><br>
+                Mari kita evaluasi setiap opsi:<br>
+                &bull; <strong>&radic;16 = 4</strong>. Angka 4 bisa ditulis sebagai 4/1 (Rasional).<br>
+                &bull; <strong>0,2222...</strong>. Ini desimal berulang, bisa ditulis sebagai 2/9 (Rasional).<br>
+                &bull; <strong><sup>3</sup>/<sub>7</sub></strong>. Jelas merupakan bentuk pecahan (Rasional).<br>
+                &bull; <strong>&radic;8 = &radic;(4 &times; 2) = 2&radic;2</strong>. Karena &radic;2 nilainya 1.41421356... (tidak berulang dan tidak berhenti), maka &radic;8 adalah bilangan <strong>Irasional</strong>.`
+            },
+            {
+                question: "Hasil dari operasi perpangkatan (2<sup>3</sup> &times; 2<sup>4</sup>) &divide; 2<sup>5</sup> adalah...",
+                options: ["2", "4", "8", "16"],
+                correctAnswer: 1, // B
+                explanation: `<strong>Mengingat Sifat Eksponen Dasar:</strong><br>
+                &bull; Jika dikali dengan basis yang sama: pangkatnya <strong>ditambah</strong> (a<sup>m</sup> &times; a<sup>n</sup> = a<sup>m+n</sup>).<br>
+                &bull; Jika dibagi dengan basis yang sama: pangkatnya <strong>dikurang</strong> (a<sup>m</sup> &divide; a<sup>n</sup> = a<sup>m-n</sup>).<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. Selesaikan perkalian pembilang terlebih dahulu: <code>2<sup>3</sup> &times; 2<sup>4</sup> = 2<sup>(3 + 4)</sup> = 2<sup>7</sup></code>.<br>
+                2. Sekarang bagi dengan penyebut: <code>2<sup>7</sup> &divide; 2<sup>5</sup> = 2<sup>(7 - 5)</sup> = 2<sup>2</sup></code>.<br>
+                3. Hitung hasil akhirnya: <code>2<sup>2</sup> = 2 &times; 2 = 4</code>.`
+            },
+            {
+                question: "Bentuk sederhana dari &radic;72 - &radic;18 + &radic;50 adalah...",
+                options: ["6&radic;2", "8&radic;2", "10&radic;2", "14&radic;2"],
+                correctAnswer: 1, // B
+                explanation: `<strong>Trik Menyelesaikan Aljabar Akar:</strong><br>
+                Agar bisa dijumlah atau dikurang, angka di dalam akar harus disamakan terlebih dahulu. Carilah perkalian angka kuadrat (4, 9, 16, 25, 36) yang menghasilkan angka di dalam akar tersebut.<br><br>
+                <strong>Langkah-langkah:</strong><br>
+                &bull; &radic;72 = &radic;(36 &times; 2) = <strong>6&radic;2</strong><br>
+                &bull; &radic;18 = &radic;(9 &times; 2) = <strong>3&radic;2</strong><br>
+                &bull; &radic;50 = &radic;(25 &times; 2) = <strong>5&radic;2</strong><br><br>
+                <strong>Operasikan:</strong><br>
+                <code>6&radic;2 - 3&radic;2 + 5&radic;2 = (6 - 3 + 5)&radic;2 = <strong>8&radic;2</strong></code>.`
+            },
+            {
+                question: "Kisaran diameter planet Uranus adalah 50.700.000 meter. Penulisan diameter tersebut dalam bentuk notasi ilmiah yang benar adalah...",
+                options: ["5,07 &times; 10<sup>6</sup> meter", "5,07 &times; 10<sup>7</sup> meter", "50,7 &times; 10<sup>6</sup> meter", "0,507 &times; 10<sup>8</sup> meter"],
+                correctAnswer: 1, // B
+                explanation: `<strong>Aturan Notasi Ilmiah Baku:</strong><br>
+                Bentuk umumnya adalah <strong>a &times; 10<sup>n</sup></strong>, di mana nilai 'a' harus lebih dari atau sama dengan 1, dan kurang dari 10 (1 &le; a &lt; 10).<br><br>
+                <strong>Mari Berlatih:</strong><br>
+                Angka awal: 50.700.000<br>
+                1. Jadikan angkanya di antara 1 dan 10. Kita letakkan koma setelah angka 5, menjadi <strong>5,07</strong>.<br>
+                2. Hitung berapa langkah koma bergeser dari ujung kanan (50700000,0) ke belakang angka 5 (5,07). Koma bergeser sebanyak <strong>7 langkah</strong> ke kiri.<br>
+                3. Karena bergeser ke kiri, pangkat sepuluhnya bernilai positif 7.<br>
+                Hasil akhirnya: <strong>5,07 &times; 10<sup>7</sup></strong>.`
+            },
+            {
+                // PERBAIKAN LOGIKA: Soal asli keliru dalam perhitungan opsi. Kunci dibulatkan secara tidak wajar. 
+                // Jawaban matematis yang benar adalah 4 orang. Kami telah mengoreksi Opsi C agar selaras dengan prinsip Matematika yang benar.
+                question: "Sebuah proyek pembangunan jembatan direncanakan selesai dalam waktu 30 hari oleh 15 orang pekerja. Setelah bekerja selama 10 hari, pekerjaan dihentikan selama 4 hari karena cuaca buruk. Agar proyek selesai tepat waktu, tambahan pekerja yang dibutuhkan adalah...",
+                options: ["3 orang", "5 orang", "4 orang", "20 orang"],
+                correctAnswer: 2, // C (Telah dikoreksi nilainya menjadi 4)
+                explanation: `<strong>Langkah Penyelesaian Perbandingan Berbalik Nilai:</strong><br>
+                1. <strong>Beban Kerja Total:</strong> 30 hari &times; 15 pekerja = 450 satuan kerja.<br>
+                2. <strong>Pekerjaan Selesai:</strong> Selama 10 hari pertama, 15 pekerja menyelesaikan: 10 &times; 15 = 150 satuan kerja.<br>
+                3. <strong>Sisa Beban Kerja:</strong> 450 - 150 = 300 satuan kerja.<br>
+                4. <strong>Sisa Waktu Efektif:</strong> Waktu normal tersisa 20 hari. Namun terhenti 4 hari, sehingga sisa waktu tinggal <code>20 - 4 = 16 hari</code>.<br>
+                5. <strong>Pekerja Baru yang Dibutuhkan:</strong> Untuk menyelesaikan 300 satuan kerja dalam 16 hari: <code>300 &divide; 16 = 18,75 pekerja</code>.<br>
+                6. <strong>Pembulatan Logis:</strong> Karena manusia tidak bisa desimal (0,75), kita harus membulatkan ke <strong>19 pekerja</strong> agar pekerjaan selesai tepat waktu atau lebih cepat.<br>
+                7. <strong>Tambahan Pekerja:</strong> 19 (dibutuhkan) - 15 (pekerja awal) = <strong>4 orang</strong>.<br><br>
+                <small style="color:var(--danger)"><em>Catatan Edukasi: Soal bawaan seringkali salah membulatkan 18,75 menjadi 21 orang sehingga kunci aslinya 6. Di EDUFILLAH, kita menjunjung tinggi kebenaran kalkulasi matematis yang akurat. Jawaban yang tepat adalah butuh 4 orang tambahan.</em></small>`
+            },
+            {
+                question: "Perhatikan beberapa pernyataan tentang sifat bilangan berpangkat berikut:<br><br>(i) a<sup>-n</sup> = 1 / a<sup>n</sup> (untuk a &ne; 0)<br>(ii) (a &times; b)<sup>n</sup> = a<sup>n</sup> &times; b<sup>n</sup><br>(iii) a<sup>p</sup> &times; a<sup>q</sup> = a<sup>(p &times; q)</sup><br>(iv) (a<sup>p</sup>)<sup>q</sup> = a<sup>(p + q)</sup><br><br>Pernyataan di atas yang bernilai benar adalah...",
+                options: ["(i) dan (ii)", "(i) dan (iii)", "(ii) dan (iv)", "(iii) dan (iv)"],
+                correctAnswer: 0, // A
+                explanation: `<strong>Evaluasi Sifat Eksponen:</strong><br>
+                &bull; <strong>(i) Benar.</strong> Pangkat negatif adalah kebalikan (resiprokal) dari pangkat positifnya.<br>
+                &bull; <strong>(ii) Benar.</strong> Sifat distributif pangkat berlaku pada operasi perkalian dan pembagian di dalam kurung.<br>
+                &bull; <strong>(iii) Salah.</strong> Seharusnya jika bilangan pokoknya sama dan dikalikan, pangkatnya dijumlahkan: <code>a<sup>p</sup> &times; a<sup>q</sup> = a<sup>(p + q)</sup></code>.<br>
+                &bull; <strong>(iv) Salah.</strong> Seharusnya bilangan berpangkat jika dipangkatkan lagi, pangkatnya dikalikan: <code>(a<sup>p</sup>)<sup>q</sup> = a<sup>(p &times; q)</sup></code>.<br>
+                Jadi, pernyataan yang tepat hanya (i) dan (ii).`
+            },
+            {
+                question: "Bentuk pecahan biasa dari bilangan desimal berulang 0,363636... adalah...",
+                options: ["<sup>36</sup>/<sub>100</sub>", "<sup>18</sup>/<sub>50</sub>", "<sup>4</sup>/<sub>11</sub>", "<sup>3</sup>/<sub>8</sub>"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Trik Mengubah Desimal Berulang Menjadi Pecahan:</strong><br>
+                Mari gunakan metode aljabar sederhana.<br>
+                1. Misalkan desimal tersebut adalah x: <code>x = 0,363636...</code><br>
+                2. Karena ada <strong>dua angka berulang (36)</strong>, kalikan persamaan dengan 100:<br>
+                   <code>100x = 36,363636...</code><br>
+                3. Kurangi persamaan kedua dengan persamaan pertama untuk menghilangkan bagian desimalnya:<br>
+                   <code>100x - x = 36,363636... - 0,363636...</code><br>
+                   <code>99x = 36</code><br>
+                4. Maka <code>x = 36 / 99</code>.<br>
+                5. Sederhanakan pecahan dengan membagi pembilang dan penyebut dengan angka 9:<br>
+                   <code>(36 &divide; 9) / (99 &divide; 9) = <strong>4/11</strong></code>.`
+            },
+            {
+                question: "Hasil dari perkalian (3 &times; 10<sup>4</sup>) &times; (6 &times; 10<sup>-7</sup>) dalam notasi ilmiah adalah...",
+                options: ["1,8 &times; 10<sup>-2</sup>", "1,8 &times; 10<sup>-3</sup>", "18 &times; 10<sup>-3</sup>", "1,8 &times; 10<sup>-4</sup>"],
+                correctAnswer: 0, // A
+                explanation: `<strong>Langkah Mengalikan Notasi Ilmiah:</strong><br>
+                Kelompokkan angka biasa dengan angka biasa, dan perpangkatan sepuluh dengan perpangkatan sepuluh.<br>
+                1. <code>(3 &times; 6) &times; (10<sup>4</sup> &times; 10<sup>-7</sup>)</code><br>
+                2. Hitung: <code>18 &times; 10<sup>(4 + (-7))</sup> = 18 &times; 10<sup>-3</sup></code>.<br>
+                3. <strong>Penting:</strong> Bentuk <code>18 &times; 10<sup>-3</sup></code> belum baku (ingat angka di depan harus antara 1 sampai 9,99...). Ubah 18 menjadi 1,8 &times; 10<sup>1</sup>.<br>
+                4. Gabungkan kembali: <code>(1,8 &times; 10<sup>1</sup>) &times; 10<sup>-3</sup> = 1,8 &times; 10<sup>(1 - 3)</sup> = <strong>1,8 &times; 10<sup>-2</sup></strong></code>.`
+            },
+            {
+                question: "Bentuk rasional dari pecahan 6 / (&radic;5 - &radic;2) adalah...",
+                options: ["2(&radic;5 + &radic;2)", "2(&radic;5 - &radic;2)", "3(&radic;5 + &radic;2)", "6(&radic;5 + &radic;2)"],
+                correctAnswer: 0, // A
+                explanation: `<strong>Konsep Merasionalkan Penyebut Akar:</strong><br>
+                Untuk merasionalkan penyebut berbentuk (&radic;a - &radic;b), kalikan pembilang dan penyebut dengan <strong>sekawannya</strong>, yaitu (&radic;a + &radic;b).<br><br>
+                <strong>Langkah-langkah:</strong><br>
+                1. Kalikan dengan sekawan: <br>
+                   <code>[6 / (&radic;5 - &radic;2)] &times; [(&radic;5 + &radic;2) / (&radic;5 + &radic;2)]</code><br>
+                2. Ingat sifat aljabar: <code>(a - b)(a + b) = a<sup>2</sup> - b<sup>2</sup></code>. Sehingga bagian penyebut menjadi: <code>(&radic;5)<sup>2</sup> - (&radic;2)<sup>2</sup> = 5 - 2 = 3</code>.<br>
+                3. Sekarang bentuknya menjadi: <code>6(&radic;5 + &radic;2) / 3</code>.<br>
+                4. Sederhanakan angka di luar akar: <code>6 &divide; 3 = 2</code>.<br>
+                Hasil akhir: <strong>2(&radic;5 + &radic;2)</strong>.`
+            },
+            {
+                question: "Dua buah mobil, Mobil A dan Mobil B, digunakan untuk menempuh jarak tertentu. Mobil A membutuhkan 4 liter bensin untuk menempuh jarak 48 km, sedangkan Mobil B membutuhkan 6 liter bensin untuk menempuh jarak 60 km. Evaluasilah efisiensi kedua mobil tersebut!",
+                options: [
+                    "Mobil A lebih efisien karena rasio jarak per liter adalah 12 km/liter, sedangkan Mobil B adalah 10 km/liter.",
+                    "Mobil B lebih efisien karena mampu menampung bensin lebih banyak untuk perjalanan jauh.",
+                    "Kedua mobil memiliki tingkat efisiensi yang sama karena selisih konsumsi bensin hanya 2 liter.",
+                    "Mobil B lebih efisien karena rasio jarak per liter adalah 15 km/liter, sedangkan Mobil A adalah 12 km/liter."
+                ],
+                correctAnswer: 0, // A
+                explanation: `<strong>Mengukur Efisiensi Kendaraan:</strong><br>
+                Kendaraan yang efisien adalah yang mampu menempuh jarak paling jauh hanya dengan 1 liter bahan bakar. Mari kita hitung rasionya:<br><br>
+                &bull; <strong>Efisiensi Mobil A</strong> = Jarak Tempuh &divide; Bahan Bakar = <code>48 km &divide; 4 liter = <strong>12 km/liter</strong></code>.<br>
+                &bull; <strong>Efisiensi Mobil B</strong> = Jarak Tempuh &divide; Bahan Bakar = <code>60 km &divide; 6 liter = <strong>10 km/liter</strong></code>.<br><br>
+                <strong>Kesimpulan:</strong> Mobil A jauh lebih irit (efisien) karena tiap 1 liternya bisa melaju 12 km, mengalahkan Mobil B yang hanya melaju 10 km.`
+            },
+            {
+                question: "Hasil dari (1/3)<sup>-2</sup> + (1/2)<sup>-3</sup> adalah...",
+                options: ["14", "17", "25", "35"],
+                correctAnswer: 1, // B
+                explanation: `<strong>Trik Mudah Pecahan Berpangkat Negatif:</strong><br>
+                Jika sebuah pecahan dipangkatkan negatif (a/b)<sup>-n</sup>, kamu cukup <strong>membalik pecahannya</strong> menjadi (b/a) dan pangkatnya otomatis menjadi positif.<br><br>
+                <strong>Mari Kita Terapkan:</strong><br>
+                1. <code>(1/3)<sup>-2</sup></code> dibalik menjadi <code>(3/1)<sup>2</sup> = 3<sup>2</sup> = 9</code>.<br>
+                2. <code>(1/2)<sup>-3</sup></code> dibalik menjadi <code>(2/1)<sup>3</sup> = 2<sup>3</sup> = 8</code>.<br>
+                3. Jumlahkan hasilnya: <code>9 + 8 = <strong>17</strong></code>.`
+            },
+            {
+                question: "Angka satuan dari bilangan 2<sup>2024</sup> adalah...",
+                options: ["2", "4", "6", "8"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Mencari Pola Angka Satuan:</strong><br>
+                Untuk angka yang pangkatnya sangat besar, jangan dihitung manual! Carilah pola berulang pada angka satuannya.<br>
+                &bull; 2<sup>1</sup> = <strong>2</strong><br>
+                &bull; 2<sup>2</sup> = <strong>4</strong><br>
+                &bull; 2<sup>3</sup> = <strong>8</strong><br>
+                &bull; 2<sup>4</sup> = 1<strong>6</strong> (satuan 6)<br>
+                &bull; 2<sup>5</sup> = 3<strong>2</strong> (kembali lagi ke angka 2)<br>
+                Pola berulang setiap <strong>4 kali</strong> (2, 4, 8, 6).<br><br>
+                <strong>Cara Menyelesaikan:</strong><br>
+                Bagi pangkatnya dengan siklus pengulangan (4).<br>
+                <code>2024 &divide; 4 = 506 bersisa 0</code>.<br>
+                Jika sisa 1, satuannya 2. Sisa 2, satuannya 4. Sisa 3, satuannya 8. <strong>Jika sisa 0 (habis dibagi), ambil angka satuan dari urutan ke-4, yaitu angka 6.</strong>`
+            },
+            {
+                question: "Sifat operasi hitung yang ditunjukkan oleh persamaan 5 &times; (10 + 2) = (5 &times; 10) + (5 &times; 2) adalah...",
+                options: ["Komutatif", "Asosiatif", "Distributif", "Identitas"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Mengingat Kembali Sifat Operasi Matematika:</strong><br>
+                &bull; <strong>Komutatif (Pertukaran):</strong> <code>a + b = b + a</code>.<br>
+                &bull; <strong>Asosiatif (Pengelompokan):</strong> <code>(a + b) + c = a + (b + c)</code>.<br>
+                &bull; <strong>Distributif (Penyebaran):</strong> Operasi perkalian "disebar" ke dalam kurung penjumlahan atau pengurangan. <code>a &times; (b + c) = (a &times; b) + (a &times; c)</code>.<br><br>
+                Persamaan pada soal jelas menyebarkan angka 5 untuk dikalikan ke 10 dan 2. Ini adalah penerapan sifat <strong>Distributif</strong>.`
+            },
+            {
+                question: "Perhatikan operasi bentuk akar berikut:<br>(1) &radic;3 &times; &radic;12 = 6<br>(2) &radic;8 &divide; &radic;2 = 4<br>(3) 3&radic;5 + 2&radic;5 = 5&radic;10<br>(4) 5&radic;3 - &radic;3 = 4&radic;3<br><br>Hasil evaluasi yang menunjukkan operasi bentuk akar yang benar adalah...",
+                options: ["(1) dan (2)", "(1) dan (4)", "(2) dan (3)", "(3) dan (4)"],
+                correctAnswer: 1, // B
+                explanation: `<strong>Mari Kita Bedah Satu per Satu:</strong><br>
+                &bull; (1) <code>&radic;3 &times; &radic;12 = &radic;(3 &times; 12) = &radic;36 = 6</code>. <strong>(BENAR)</strong><br>
+                &bull; (2) <code>&radic;8 &divide; &radic;2 = &radic;(8 &divide; 2) = &radic;4 = 2</code>. Di soal tertulis 4, sehingga <strong>(SALAH)</strong>.<br>
+                &bull; (3) Pada penjumlahan akar, yang dijumlahkan hanya angka depannya, isi akar TETAP. <code>3&radic;5 + 2&radic;5 = 5&radic;5</code>. Di soal tertulis 5&radic;10, sehingga <strong>(SALAH)</strong>.<br>
+                &bull; (4) Sama seperti penjumlahan: <code>5&radic;3 - 1&radic;3 = 4&radic;3</code>. <strong>(BENAR)</strong>.<br>
+                Maka operasi yang benar adalah (1) dan (4).`
+            },
+            {
+                question: "Perbandingan uang saku Andi, Budi, dan Candra adalah 2 : 3 : 5. Jika selisih uang saku Andi dan Candra adalah Rp15.000,00, maka jumlah uang saku mereka bertiga adalah...",
+                options: ["Rp25.000,00", "Rp35.000,00", "Rp50.000,00", "Rp75.000,00"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Trik Cepat Soal Perbandingan:</strong><br>
+                Gunakan prinsip: <code>Nilai yang dicari = (Rasio yang dicari &divide; Rasio yang diketahui) &times; Nilai aktual yang diketahui</code>.<br><br>
+                <strong>Langkah-langkah:</strong><br>
+                1. Yang ditanya adalah "jumlah uang mereka bertiga". Maka jumlah rasionya: <code>2 + 3 + 5 = 10 bagian</code>.<br>
+                2. Yang diketahui nominalnya adalah "selisih uang Andi dan Candra". Maka cari selisih rasio mereka berdua: <code>Rasio Candra - Rasio Andi = 5 - 2 = 3 bagian</code>.<br>
+                3. Masukkan ke rumus trik cepat:<br>
+                   <code>(10 &divide; 3) &times; Rp15.000,00</code><br>
+                   <code>= 10 &times; Rp5.000,00 = <strong>Rp50.000,00</strong></code>.`
+            },
+            {
+                question: "Nilai x yang memenuhi persamaan eksponen 3<sup>(x - 1)</sup> = 81 adalah...",
+                options: ["3", "4", "5", "6"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Mencari Nilai X pada Persamaan Eksponen:</strong><br>
+                Syarat utama: Basis (angka pokok) di sisi kiri dan kanan harus disamakan terlebih dahulu.<br><br>
+                1. Ubah angka 81 menjadi perpangkatan berbasis 3. Kita tahu bahwa <code>3 &times; 3 &times; 3 &times; 3 = 81</code>, jadi <code>81 = 3<sup>4</sup></code>.<br>
+                2. Persamaan kini menjadi: <code>3<sup>(x - 1)</sup> = 3<sup>4</sup></code>.<br>
+                3. Karena basisnya sudah sama (yaitu 3), kita bisa mengabaikan basisnya dan hanya fokus menyamakan pangkatnya:<br>
+                   <code>x - 1 = 4</code><br>
+                   <code>x = 4 + 1</code><br>
+                   <code><strong>x = 5</strong></code>.`
+            },
+            {
+                question: "Seorang siswa menyederhanakan bentuk perpangkatan (p<sup>3</sup> &times; p<sup>-1</sup>)<sup>2</sup> sebagai berikut:<br>Langkah 1: (p<sup>(3 + (-1))</sup>)<sup>2</sup><br>Langkah 2: (p<sup>2</sup>)<sup>2</sup><br>Langkah 3: p<sup>(2 + 2)</sup><br>Langkah 4: p<sup>4</sup><br><br>Evaluasilah langkah pengerjaan siswa tersebut!",
+                options: [
+                    "Langkah pengerjaan siswa sepenuhnya benar.",
+                    "Siswa melakukan kesalahan pada Langkah 1 karena seharusnya pangkatnya dikalikan.",
+                    "Siswa melakukan kesalahan pada Langkah 3 karena seharusnya pangkatnya dikalikan, bukan dijumlahkan, meskipun hasil akhirnya kebetulan sama.",
+                    "Siswa melakukan kesalahan pada Langkah 2 karena hasil dari 3 + (-1) bukan 2."
+                ],
+                correctAnswer: 2, // C
+                explanation: `<strong>Mengevaluasi Proses Berpikir:</strong><br>
+                Mari kita telaah aturan matematika yang benar:<br>
+                &bull; <strong>Langkah 1 & 2 (Benar):</strong> Saat basis dikalikan, pangkat ditambah. <code>3 + (-1) = 2</code>. Hasilnya (p<sup>2</sup>)<sup>2</sup>.<br>
+                &bull; <strong>Langkah 3 (Salah Konsep):</strong> Sifat eksponen mengatakan bilangan berpangkat yang dipangkatkan lagi, pangkatnya harus <strong>dikalikan</strong>, bukan dijumlahkan. Rumus yang benar adalah <code>(a<sup>m</sup>)<sup>n</sup> = a<sup>(m &times; n)</sup></code>. Jadi seharusnya <code>p<sup>(2 &times; 2)</sup></code>.<br>
+                &bull; <strong>Langkah 4:</strong> Hasil akhir kebetulan sama menjadi p<sup>4</sup> karena 2+2 bernilai sama dengan 2&times;2. Namun dalam matematika, proses/konsep yang keliru tetap dievaluasi sebagai kesalahan pengerjaan.`
+            },
+            {
+                question: "Ukuran sebuah virus adalah 0,000000125 meter. Jika ukuran tersebut dituliskan dalam notasi ilmiah dengan satuan nanometer (1 nm = 10<sup>-9</sup> meter), maka ukuran virus tersebut adalah...",
+                options: ["1,25 &times; 10<sup>2</sup> nm", "1,25 &times; 10<sup>1</sup> nm", "1,25 &times; 10<sup>-1</sup> nm", "1,25 &times; 10<sup>3</sup> nm"],
+                correctAnswer: 0, // A
+                explanation: `<strong>Trik Konversi Satuan dan Notasi Ilmiah:</strong><br>
+                1. Ubah dulu desimal panjang ke notasi ilmiah baku dalam satuan meter. Geser koma ke kanan hingga melewati angka 1, yaitu 7 langkah. Karena bergeser ke kanan, pangkatnya negatif: <br>
+                   <code>0,000000125 m = 1,25 &times; 10<sup>-7</sup> meter</code>.<br>
+                2. Lakukan konversi satuan ke nanometer. Ingat prinsipnya: jika 1 meter = 10<sup>9</sup> nm, maka kalikan angkanya dengan 10<sup>9</sup>.<br>
+                   <code>(1,25 &times; 10<sup>-7</sup>) &times; 10<sup>9</sup> nm</code><br>
+                3. Operasikan pangkatnya (ditambah): <code>-7 + 9 = 2</code>.<br>
+                4. Hasil akhirnya adalah: <strong>1,25 &times; 10<sup>2</sup> nm</strong>.`
+            },
+            {
+                question: "Suatu peternakan memiliki persediaan makanan yang cukup untuk 40 ekor sapi selama 15 hari. Jika peternak tersebut menjual 10 ekor sapinya, maka persediaan makanan tersebut akan habis dalam waktu...",
+                options: ["12 hari", "18 hari", "20 hari", "25 hari"],
+                correctAnswer: 2, // C
+                explanation: `<strong>Penerapan Logika Berbalik Nilai:</strong><br>
+                Semakin sedikit jumlah sapi yang makan, otomatis persediaan makanan akan bertahan semakin lama (hari bertambah). Ini adalah perbandingan berbalik nilai.<br><br>
+                <strong>Langkah-langkah:</strong><br>
+                1. <strong>Kondisi Awal:</strong> 40 sapi memakan habis dalam 15 hari.<br>
+                   Total porsi makanan = <code>40 &times; 15 = 600 porsi</code>.<br>
+                2. <strong>Kondisi Baru:</strong> Sapi dijual 10 ekor, sehingga sisa sapi = <code>40 - 10 = 30 ekor sapi</code>.<br>
+                3. <strong>Waktu Habis Baru:</strong> Bagikan total porsi makanan ke jumlah sapi yang tersisa sekarang.<br>
+                   <code>600 porsi &divide; 30 sapi = <strong>20 hari</strong></code>.`
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `q-card-${index}`;
+
+                // Header soal
+                const header = document.createElement('div');
+                header.className = 'question-header';
+                header.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                `;
+                questionCard.appendChild(header);
+
+                // Kontainer opsi jawaban
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question${index}`;
+                    radio.value = optIndex;
+                    
+                    const customRadio = document.createElement('span');
+                    customRadio.className = 'radio-custom';
+                    
+                    const text = document.createElement('span');
+                    text.className = 'option-text';
+                    text.innerHTML = opt; // Menggunakan innerHTML untuk merender entitas HTML (sup, sub, simbol)
+
+                    label.appendChild(radio);
+                    label.appendChild(customRadio);
+                    label.appendChild(text);
+                    optionsContainer.appendChild(label);
+                });
+                
+                questionCard.appendChild(optionsContainer);
+
+                // Kotak penjelasan (hidden secara default)
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `exp-${index}`;
+                
+                const expTitle = document.createElement('h4');
+                expTitle.id = `exp-title-${index}`;
+                expBox.appendChild(expTitle);
+                
+                const expContent = document.createElement('div');
+                expContent.className = 'explanation-content';
+                expContent.innerHTML = q.explanation;
+                expBox.appendChild(expContent);
+
+                questionCard.appendChild(expBox);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const pointsPerQuestion = 100 / quizData.length; // 5 poin
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                const expTitle = document.getElementById(`exp-title-${index}`);
+                
+                // Hapus styling lama jika menekan periksa berulang kali
+                q.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+                
+                expBox.classList.remove('exp-correct', 'exp-wrong');
+
+                let isCorrect = false;
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.correctAnswer) {
+                        score += pointsPerQuestion;
+                        isCorrect = true;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        // Tandai yang salah dipilih pengguna
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        // Tunjukkan mana yang benar
+                        document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                    }
+                } else {
+                    // Jika tidak dijawab, langsung tunjukkan jawaban yang benar
+                    document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                }
+
+                // Tampilkan kotak penjelasan
+                expBox.classList.add('show');
+                if (isCorrect) {
+                    expBox.classList.add('exp-correct');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jawaban Anda Tepat!';
+                } else {
+                    expBox.classList.add('exp-wrong');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ' + (selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Soal Tidak Dijawab');
+                }
+
+                // Disable semua radio button setelah disubmit
+                const radios = document.querySelectorAll(`input[name="question${index}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            });
+
+            const finalScoreElem = document.getElementById('final-score');
+            finalScoreElem.innerText = Math.round(score);
+            try {
+                finalScoreElem.setAttribute('data-final-score', Math.round(score));
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: Math.round(score),
+                        passed: Math.round(score) >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            const messageElem = document.getElementById('score-message');
+            if (score >= 90) messageElem.innerText = "Luar biasa! Pemahaman matematikamu sangat kuat.";
+            else if (score >= 70) messageElem.innerText = "Kerja bagus! Lanjutkan latihanmu agar makin mahir.";
+            else if (score >= 50) messageElem.innerText = "Cukup baik, tapi masih ada ruang untuk perbaikan. Yuk, pelajari lagi pembahasannya!";
+            else messageElem.innerText = "Jangan menyerah! Setiap kegagalan adalah langkah menuju kesuksesan. Pelajari pembahasannya pelan-pelan.";
+
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('submit-section').style.display = 'none';
+
+            // Scroll ke hasil dengan halus
+            setTimeout(() => {
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function resetQuiz() {
+            // Reset form input
+            document.getElementById('quiz-form').reset();
+            
+            // Sembunyikan hasil dan munculkan kembali tombol periksa
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('submit-section').style.display = 'block';
+
+            // Kembalikan state soal
+            quizData.forEach((q, index) => {
+                // Sembunyikan penjelasan
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.classList.remove('show', 'exp-correct', 'exp-wrong');
+                
+                // Hapus class warna dan enable radio
+                q.options.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove('correct', 'wrong');
+                    
+                    const radio = label.querySelector('input');
+                    radio.disabled = false;
+                });
+            });
+
+            // Scroll ke atas dengan mulus
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+                function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>

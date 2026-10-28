@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz: Telling Time & Dates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive image styling for base64 or general images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Animation for result showing */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-2 py-1 rounded-md hover:bg-blue-50">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-center text-slate-800 flex-1">Quiz: Telling Time, Dates & Schedules</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for perfect centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-900 mb-1">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).</li>
+                        <li>Sistem skoring menggunakan skala <strong>0 - 100</strong>.</li>
+                        <li>Kamu <strong>tidak perlu</strong> mengisi semua soal untuk memeriksa jawaban.</li>
+                        <li>Soal yang terlewat akan tetap ditampilkan pembahasannya di akhir untuk bahan belajar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Soal dan Pembahasan akan di-render di sini oleh JavaScript -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <!-- Decorative background element -->
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <!-- Result Area (Hidden by Default) -->
+                    <div id="result-area" class="hidden mb-8 py-4 border-b border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <p id="score-message" class="text-lg font-bold px-4 py-2 rounded-lg inline-block"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                <span>By EDUFILLAH</span> 
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span> 
+                <span class="text-slate-400">Unlock The Secret Of Curious Minds</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rian:</strong> "What time does the library close today?"<br>
+                    <strong>Sita:</strong> "It closes at a quarter to five in the afternoon."
+                </div>`,
+                question: "What time does the library close?",
+                options: {
+                    A: "04:15 PM",
+                    B: "04:45 PM",
+                    C: "05:15 PM",
+                    D: "05:45 PM"
+                },
+                correct: "B",
+                explanation: "Mari kita bedah frasa waktunya: <strong>\"a quarter to five\"</strong>.<br>• <em>Quarter</em> = seperempat (15 menit)<br>• <em>To</em> = menuju / kurang<br>• <em>Five</em> = jam 5<br>Jadi, artinya adalah <strong>jam 5 kurang 15 menit</strong>, atau sama dengan pukul <strong>04:45</strong>. Karena waktunya sore hari (<em>afternoon</em>), maka kita menggunakan <strong>PM</strong> (04:45 PM)."
+            },
+            {
+                id: 2,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Teacher:</strong> "When was the Proclamation of Indonesian Independence?"<br>
+                    <strong>Student:</strong> "It was on August 17th, 1945."
+                </div>`,
+                question: "How do we write and say the date correctly?",
+                options: {
+                    A: "The seventeenth of August, nineteen forty-five",
+                    B: "The seventy of August, nineteen forty-five",
+                    C: "August seventeen, nineteen four five",
+                    D: "August seventeenth, nineteen fourteen-five"
+                },
+                correct: "A",
+                explanation: "Dalam bahasa Inggris, tanggal dibaca menggunakan <em>Ordinal Number</em> (angka bertingkat seperti ke-1, ke-2, ke-17).<br>• 17th dibaca <strong>the seventeenth</strong>.<br>• Bulan dibaca <strong>of August</strong>.<br>• Untuk tahun sebelum 2000, kita membaginya menjadi 2 digit: 1945 dipisah menjadi 19 (<strong>nineteen</strong>) dan 45 (<strong>forty-five</strong>).<br>Jadi kalimat lengkapnya: <em>The seventeenth of August, nineteen forty-five</em>."
+            },
+            {
+                id: 3,
+                context: `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Read the schedule below!</strong><br>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li><strong>Monday:</strong> English (08:00 - 09:30), Math (10:00 - 11:30)</li>
+                        <li><strong>Tuesday:</strong> Science (08:00 - 09:30), Art (10:00 - 11:30)</li>
+                    </ul>
+                </div>`,
+                question: "Based on the schedule, which statement is correct?",
+                options: {
+                    A: "Math class starts thirty minutes after English class ends.",
+                    B: "Science class is held in the afternoon.",
+                    C: "Art class starts earlier than Science class.",
+                    D: "There is no break between English and Math classes."
+                },
+                correct: "A",
+                explanation: "Mari kita hitung rentang waktunya (<em>time duration</em>).<br>Kelas <strong>English selesai pada pukul 09:30</strong>. Kemudian, kelas <strong>Math dimulai pada pukul 10:00</strong>.<br>Jarak waktu dari pukul 09:30 ke 10:00 adalah tepat <strong>30 menit</strong>. Jadi, pernyataan A benar: kelas matematika dimulai 30 menit setelah kelas bahasa Inggris berakhir."
+            },
+            {
+                id: 4,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Dani:</strong> "My father was born in 1978."
+                </div>`,
+                question: "How should Dani say the year \"1978\"?",
+                options: {
+                    A: "Nineteen seventy-eight",
+                    B: "Nineteen seventeen-eight",
+                    C: "One thousand nine hundred seventy-eight",
+                    D: "Ninety-nine seventy-eight"
+                },
+                correct: "A",
+                explanation: "Cara paling umum membaca tahun di bawah tahun 2000 adalah dengan <strong>membaginya menjadi dua bagian (dua digit depan dan dua digit belakang)</strong>.<br>Tahun <strong>1978</strong> dibagi menjadi:<br>• 19 dibaca <strong>Nineteen</strong><br>• 78 dibaca <strong>Seventy-eight</strong><br>Digabungkan menjadi: <em>Nineteen seventy-eight</em>."
+            },
+            {
+                id: 5,
+                context: `<div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-sm md:text-base text-slate-800 mb-3 overflow-x-auto shadow-sm">
+                    <strong>Look at the table of activities below!</strong><br>
+                    <table class="w-full mt-2 border-collapse bg-white">
+                        <tr class="bg-yellow-100 border-b border-yellow-200">
+                            <th class="p-2 text-left">Name</th>
+                            <th class="p-2 text-left">Activity</th>
+                            <th class="p-2 text-left">Day & Time</th>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="p-2">Andi</td><td class="p-2">Swimming</td><td class="p-2">Wednesday at 04:00 PM</td>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="p-2">Budi</td><td class="p-2">Football</td><td class="p-2">Friday at 03:30 PM</td>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="p-2">Cici</td><td class="p-2">Piano Lesson</td><td class="p-2">Wednesday at 03:30 PM</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2">Dera</td><td class="p-2">English Club</td><td class="p-2">Friday at 04:00 PM</td>
+                        </tr>
+                    </table>
+                </div>`,
+                question: "If Andi wants to invite Cici to watch a movie on Wednesday afternoon at 03:45 PM, is it possible?",
+                options: {
+                    A: "Yes, because Cici has no activity on Wednesday.",
+                    B: "No, because Cici is still in her piano lesson at that time.",
+                    C: "Yes, because Cici's piano lesson ends before 03:45 PM.",
+                    D: "No, because Andi is swimming at that time."
+                },
+                correct: "B",
+                explanation: "Kita harus teliti melihat jam! Andi mengajak Cici pada hari Rabu jam <strong>03:45 PM</strong>. <br>• Jadwal Cici: Les piano mulai jam <strong>03:30 PM</strong>. Berarti jam 03:45 Cici <strong>masih sedang les piano</strong>.<br>• Kenapa opsi D salah? Karena jadwal renang Andi baru mulai pukul 04:00 PM, jadi jam 03:45 Andi belum mulai berenang.<br>Jawaban paling logis adalah B."
+            },
+            {
+                id: 6,
+                question: "Complete the sentence with the correct prepositions of time!<br><br>\"Our school anniversary will be held ____ October 28th ____ exactly 08:00 AM.\"",
+                options: {
+                    A: "in / on",
+                    B: "on / at",
+                    C: "at / on",
+                    D: "on / in"
+                },
+                correct: "B",
+                explanation: "Konsep dasar <em>Prepositions of Time</em> (Kata Depan Penunjuk Waktu):<br>1. Gunakan <strong>ON</strong> untuk hari dan <strong>tanggal spesifik</strong> (contoh: <em>on Monday, on October 28th</em>).<br>2. Gunakan <strong>AT</strong> untuk <strong>jam yang spesifik</strong> atau tepat (contoh: <em>at 08:00 AM, at noon</em>).<br>3. Gunakan <em>IN</em> untuk bulan, tahun, atau musim (tanpa tanggal, contoh: <em>in October, in 2024</em>)."
+            },
+            {
+                id: 7,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Aris:</strong> "Today is Thursday. My project is due in three days."<br>
+                    <strong>Bima:</strong> "So, you must submit it on...."
+                </div>`,
+                question: "Complete the dialogue!",
+                options: {
+                    A: "Saturday",
+                    B: "Sunday",
+                    C: "Monday",
+                    D: "Tuesday"
+                },
+                correct: "B",
+                explanation: "Hari ini adalah hari Kamis (<strong>Thursday</strong>). Proyek harus dikumpulkan dalam tiga hari ke depan (<em>in three days</em>).<br>Mari kita hitung maju 3 hari:<br>• 1 hari kemudian = Jumat (<em>Friday</em>)<br>• 2 hari kemudian = Sabtu (<em>Saturday</em>)<br>• 3 hari kemudian = Minggu (<strong>Sunday</strong>)."
+            },
+            {
+                id: 8,
+                context: `<div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Look at the time zone difference below:</strong><br>
+                    Jakarta (WIB) is 7 hours ahead of London (GMT).
+                </div>`,
+                question: "If a virtual meeting is scheduled at 02:00 PM London time, what time should a student in Jakarta join the meeting?",
+                options: {
+                    A: "07:00 AM WIB",
+                    B: "09:00 PM WIB",
+                    C: "08:00 PM WIB",
+                    D: "09:00 AM WIB"
+                },
+                correct: "B",
+                explanation: "Pertanyaan zona waktu (<em>Time Zones</em>)!<br>Diketahui Jakarta <strong>lebih cepat 7 jam</strong> (+7) dari London.<br>Waktu London = 02:00 PM (atau pukul 14:00 siang).<br>Untuk mencari waktu Jakarta, tambahkan 7 jam: 14:00 + 7 jam = <strong>21:00</strong>.<br>Pukul 21:00 sama dengan jam 9 malam, yang ditulis sebagai <strong>09:00 PM WIB</strong>."
+            },
+            {
+                id: 9,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 mb-3">
+                    <strong>Read the formal invitation excerpt below:</strong><br>
+                    <em class="font-serif">"We cordially invite you to the Graduation Ceremony on the 2nd of June 2024."</em>
+                </div>`,
+                question: "Which of the following is the most appropriate way to write the date in American English style?",
+                options: {
+                    A: "June 2nd, 2024",
+                    B: "2 June 2024",
+                    C: "June the second, 2024",
+                    D: "Second of June, 2024"
+                },
+                correct: "A",
+                explanation: "Terdapat dua gaya utama penulisan tanggal:<br>1. <strong>American Style (AS):</strong> Urutannya adalah <strong>Bulan - Tanggal - Tahun</strong> (Month - Day - Year). Contoh: <em>June 2nd, 2024</em> atau <em>June 2, 2024</em>.<br>2. <strong>British Style (Inggris):</strong> Urutannya adalah <strong>Tanggal - Bulan - Tahun</strong> (Day - Month - Year). Contoh: <em>2nd June 2024</em>."
+            },
+            {
+                id: 10,
+                context: `<div class="bg-green-50 p-4 rounded-lg border border-green-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Look at the calendar information:</strong><br>
+                    The first day of the month is Sunday.
+                </div>`,
+                question: "What day of the week is the 22nd day of that same month?",
+                options: {
+                    A: "Sunday",
+                    B: "Monday",
+                    C: "Tuesday",
+                    D: "Wednesday"
+                },
+                correct: "A",
+                explanation: "Ini adalah soal matematika kalender sederhana. Hari akan selalu berulang (siklus) setiap kelipatan 7 hari.<br>• Tanggal 1 = Minggu (<em>Sunday</em>)<br>• Tambah 7 hari (Tanggal 8) = Minggu<br>• Tambah 7 hari (Tanggal 15) = Minggu<br>• Tambah 7 hari (Tanggal 22) = <strong>Minggu (Sunday)</strong>."
+            },
+            {
+                id: 11,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Mother:</strong> "Don't forget to wake up early tomorrow. The train leaves at 05:15 AM."<br>
+                    <strong>Son:</strong> "Alright, Mom. I will set my alarm for..."
+                </div>`,
+                question: "Which of the following is the correct digital representation of the train's departure?",
+                options: {
+                    A: "A quarter past five in the morning",
+                    B: "A quarter to five in the morning",
+                    C: "Fifteen minutes to five in the morning",
+                    D: "Half past five in the morning"
+                },
+                correct: "A",
+                explanation: "Waktunya adalah <strong>05:15 AM</strong>.<br>• Menit ke-15 dalam bahasa Inggris disebut <em>a quarter</em>.<br>• Karena menitnya berada di antara menit 1-30, kita gunakan kata <strong>past</strong> (lewat/lebih).<br>• Jadi, 05:15 dibaca <strong>\"a quarter past five\"</strong>.<br>Karena AM berarti pagi hari, kita tambahkan frasa <em>\"in the morning\"</em>."
+            },
+            {
+                id: 12,
+                context: `<div class="bg-rose-50 p-4 rounded-lg border border-rose-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Evaluate the following schedules of four students who want to study together:</strong><br>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Rina is free only on weekends.</li>
+                        <li>Tono is free on Saturdays all day.</li>
+                        <li>Santi is free on Saturdays from 08:00 AM to 12:00 PM.</li>
+                        <li>Dedi is free on Sundays all day.</li>
+                    </ul>
+                </div>`,
+                question: "When is the best time for them to have a group study?",
+                options: {
+                    A: "Saturday afternoon",
+                    B: "Saturday morning",
+                    C: "Sunday morning",
+                    D: "Friday evening"
+                },
+                correct: "B",
+                explanation: "Kita harus mencari irisan waktu (waktu di mana semua anak bisa hadir). Mari eliminasi:<br>• <strong>Jumat/Friday</strong>: Salah, karena Rina, Tono, Santi, Dedi tidak ada jadwal hari Jumat.<br>• <strong>Minggu/Sunday</strong>: Salah, karena Tono dan Santi tidak disebutkan bisa di hari Minggu.<br>• <strong>Sabtu/Saturday</strong>: Santi HANYA bisa jam 08:00 AM - 12:00 PM (<strong>Pagi hari / Morning</strong>).<br>Karena Tono dan Rina bisa akhir pekan (termasuk Sabtu), maka waktu terbaik untuk mereka berkumpul (minimal 3 orang) adalah <strong>Saturday morning (Sabtu Pagi)</strong>."
+            },
+            {
+                id: 13,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Teacher:</strong> "When do we celebrate National Education Day in Indonesia?"<br>
+                    <strong>Student:</strong> "It is on the second of May."
+                </div>`,
+                question: "How do we write \"the second of May\" in a short date format?",
+                options: {
+                    A: "May 1st",
+                    B: "May 2nd",
+                    C: "May 3rd",
+                    D: "May 22nd"
+                },
+                correct: "B",
+                explanation: "Ingat kembali format *Ordinal Number* (Angka Bertingkat) untuk tanggal!<br>• ke-1 = First (ditulis 1st)<br>• ke-2 = Second (ditulis <strong>2nd</strong>)<br>• ke-3 = Third (ditulis 3rd)<br>Jadi \"the second of May\" ditulis ringkas sebagai <strong>May 2nd</strong>."
+            },
+            {
+                id: 14,
+                context: `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Read the text below:</strong><br>
+                    <em class="text-blue-900">My family always goes to the beach on the last Sunday of every month. In 2024, October ends on a Thursday.</em>
+                </div>`,
+                question: "If October 31st, 2024 is a Thursday, what is the date of the last Sunday of that month?",
+                options: {
+                    A: "October 26th",
+                    B: "October 27th",
+                    C: "October 28th",
+                    D: "October 29th"
+                },
+                correct: "B",
+                explanation: "Diketahui hari terakhir bulan Oktober adalah tanggal 31 (hari Kamis / <em>Thursday</em>). Mari berhitung mundur untuk mencari hari Minggu terakhir:<br>• Tanggal 31 = Kamis<br>• Tanggal 30 = Rabu<br>• Tanggal 29 = Selasa<br>• Tanggal 28 = Senin<br>• <strong>Tanggal 27 = Minggu (Sunday)</strong><br>Jadi hari minggu terakhirnya jatuh pada tanggal 27 Oktober."
+            },
+            {
+                id: 15,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Read the announcement:</strong><br>
+                    <em class="font-serif italic">"The English speaking contest will start at 09:30 AM and will last for 150 minutes."</em>
+                </div>`,
+                question: "What time will the contest end?",
+                options: {
+                    A: "11:00 AM",
+                    B: "11:30 AM",
+                    C: "12:00 PM",
+                    D: "12:00 AM"
+                },
+                correct: "C",
+                explanation: "Langkah pertama, ubah menit menjadi jam. 150 menit = <strong>2 jam 30 menit</strong> (karena 1 jam = 60 menit, jadi 2 jam = 120 menit).<br>Lomba mulai pukul <strong>09:30 AM</strong>.<br>• Tambah 2 jam = 11:30 AM.<br>• Tambah lagi sisa 30 menit = 12:00 (tepat tengah hari).<br>Jam 12 siang dalam standar internasional disebut <strong>12:00 PM (Post Meridiem)</strong>. <em>Jangan sampai tertukar, 12:00 AM itu tengah malam ya!</em>"
+            },
+            {
+                id: 16,
+                context: `<div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Look at the flight ticket details:</strong><br>
+                    <ul class="list-none mt-2 space-y-1">
+                        <li><i class="fas fa-plane-departure text-indigo-500 mr-2"></i><strong>Departure:</strong> Jakarta (CGK) - 08:15 AM (WIB)</li>
+                        <li><i class="fas fa-plane-arrival text-indigo-500 mr-2"></i><strong>Arrival:</strong> Singapore (SIN) - 11:00 AM (SGT)</li>
+                    </ul>
+                    <div class="mt-2 text-xs italic text-indigo-600 bg-indigo-100 p-2 rounded">Note: Singapore time (SGT) is 1 hour ahead of Jakarta time (WIB).</div>
+                </div>`,
+                question: "How long is the actual flight duration?",
+                options: {
+                    A: "2 hours 45 minutes",
+                    B: "1 hour 45 minutes",
+                    C: "3 hours 45 minutes",
+                    D: "2 hours 15 minutes"
+                },
+                correct: "B",
+                explanation: "(Soal HOTS) Untuk mencari durasi terbang (<em>flight duration</em>) yang asli, kita harus <strong>menyamakan zona waktunya</strong> terlebih dahulu.<br>• Tiba pukul 11:00 SGT. Karena Singapura 1 jam lebih cepat, maka 11:00 SGT sama dengan <strong>10:00 WIB</strong>.<br>• Waktu berangkat = 08:15 WIB.<br>• Waktu tiba (WIB) = 10:00 WIB.<br>Dari jam 08:15 ke 10:00 berjarak <strong>1 jam 45 menit</strong>."
+            },
+            {
+                id: 17,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Jane:</strong> "When is your birthday, Mike?"<br>
+                    <strong>Mike:</strong> "It is on the ninth of November."
+                </div>`,
+                question: "How does Mike write his birthday in numbers?",
+                options: {
+                    A: "11/09",
+                    B: "09/11",
+                    C: "19/11",
+                    D: "09/12"
+                },
+                correct: "B",
+                explanation: "Ucapan Mike adalah <em>\"ninth of November\"</em> (9 November).<br>Format penulisan angka pendek yang umum secara internasional (Inggris/UK style) adalah <strong>DD/MM (Tanggal/Bulan)</strong>.<br>• Tanggal 9 = 09<br>• Bulan November (bulan ke-11) = 11<br>Jadi penulisannya adalah <strong>09/11</strong>."
+            },
+            {
+                id: 18,
+                context: `<div class="bg-orange-50 p-4 rounded-lg border border-orange-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Analyze the following sentence:</strong><br>
+                    <em class="font-serif">"The school committee decided to postpone the meeting from Friday, 12th April to the next Monday."</em>
+                </div>`,
+                question: "What is the date of the rescheduled meeting?",
+                options: {
+                    A: "13th April",
+                    B: "14th April",
+                    C: "15th April",
+                    D: "16th April"
+                },
+                correct: "C",
+                explanation: "Rapat ditunda (<em>postpone</em>) dari hari Jumat, 12 April ke <strong>hari Senin berikutnya (next Monday)</strong>.<br>Mari kita hitung hari dan tanggalnya secara urut:<br>• Jumat (<em>Friday</em>) = Tanggal 12<br>• Sabtu (<em>Saturday</em>) = Tanggal 13<br>• Minggu (<em>Sunday</em>) = Tanggal 14<br>• <strong>Senin (Monday) = Tanggal 15</strong>.<br>Maka rapat dijadwalkan ulang pada 15th April."
+            },
+            {
+                id: 19,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Doctor:</strong> "Take this medicine twice a day, every twelve hours."<br>
+                    <strong>Patient:</strong> "If I take the first one at 07:30 AM, when should I take the second one?"<br>
+                    <strong>Doctor:</strong> "You should take it at..."
+                </div>`,
+                question: "Complete the dialogue above!",
+                options: {
+                    A: "07:30 PM",
+                    B: "05:30 PM",
+                    C: "07:30 AM the next day",
+                    D: "09:30 PM"
+                },
+                correct: "A",
+                explanation: "Pasien harus meminum obat setiap <strong>12 jam sekali</strong>. <br>Sistem waktu kita menggunakan putaran 12 jam (AM/PM).<br>Jika ia minum obat jam <strong>07:30 AM</strong> (Pagi hari), maka tepat 12 jam kemudian jamnya tetap sama, hanya periode waktunya berubah menjadi malam hari, yaitu <strong>07:30 PM (Post Meridiem)</strong>."
+            },
+            {
+                id: 20,
+                context: `<div class="bg-teal-50 p-4 rounded-lg border border-teal-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Read the situation:</strong><br>
+                    The school library is open from Monday to Friday, from 08:00 AM to 03:30 PM. On Saturday, it is open from 08:00 AM to 12:00 PM. It is closed on Sunday.
+                </div>`,
+                question: "Which of the following students cannot visit the library?",
+                options: {
+                    A: "Dina who goes there on Monday at 02:00 PM.",
+                    B: "Roni who goes there on Saturday at 11:30 AM.",
+                    C: "Susi who goes there on Friday at 04:00 PM.",
+                    D: "Budi who goes there on Wednesday at 09:00 AM."
+                },
+                correct: "C",
+                explanation: "Mari kita cocokkan jadwal masing-masing siswa dengan jam buka perpustakaan:<br>• A (Dina): Senin 02:00 PM (Bisa, tutup jam 03:30 PM)<br>• B (Roni): Sabtu 11:30 AM (Bisa, tutup jam 12:00 PM)<br>• D (Budi): Rabu 09:00 AM (Bisa, buka jam 08:00 AM)<br>• <strong>C (Susi): Jumat 04:00 PM (TIDAK BISA)</strong>, karena pada hari biasa (Senin-Jumat) perpustakaan <strong>sudah tutup pada pukul 03:30 PM</strong>."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:p-7 relative group hover:border-blue-300 transition-colors duration-300">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                ${item.context ? item.context : ''}
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+                
+                // Render Options
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                // Explanation Container
+                htmlContent += `
+                                </div>
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                // Reset styling classes
+                expContainer.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'bg-rose-50', 'border-rose-500', 'text-rose-900', 'bg-amber-50', 'border-amber-500', 'text-amber-900');
+
+                if (!selected) {
+                    // Unanswered handling
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Kamu belum menjawab soal ini!";
+                    expText.innerHTML = `Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-1"><i class="fas fa-book-open mr-1"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                } else if (selected.value === item.correct) {
+                    // Correct answer
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Hebat! Jawaban Kamu Benar.";
+                    expText.innerHTML = item.explanation;
+                } else {
+                    // Incorrect answer
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat. Jawaban yang benar adalah ${item.correct}.`;
+                    expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-1"><i class="fas fa-book-open mr-1"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                }
+                
+                // Lock inputs
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            // Score Calculation
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Score Counter Animation
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Conditional Messaging based on Score
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Sempurna! Pemahamanmu sangat luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Keren! Kamu sudah menguasai materi ini dengan baik.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Pelajari lagi pembahasan di atas ya.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Terus Semangat! Yuk baca pembahasannya dan coba lagi!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2";
+            }
+
+            // Buttons state toggling
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Scroll gently to result
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); // easeOut quad
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset Form Data
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable and reset questions UI
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false;
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+            });
+
+            // Hide Results Panel
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Toggle Action Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll to Top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize App
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

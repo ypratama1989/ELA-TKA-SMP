@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Short Functional Texts</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideInUp 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-3 py-2 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 font-medium text-sm sm:text-base">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-800 flex-1 text-center tracking-tight">Kuis: Short Functional Texts</h1>
+            <div class="w-16 sm:w-24"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shadow-inner">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-blue-900 mb-1.5">Petunjuk Mengerjakan</h3>
+                    <ul class="text-sm text-blue-800 space-y-1.5 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D) untuk setiap pertanyaan berdasarkan teks fungsional pendek yang disediakan.</li>
+                        <li>Kamu bisa langsung klik tombol <strong>"Periksa Jawaban"</strong> di bawah kapan saja tanpa harus mengisi semua soal terlebih dahulu. Soal yang kosong akan otomatis bernilai 0.</li>
+                        <li>Perhatikan pembahasan mendalam yang muncul setelah jawaban diperiksa untuk memperkuat pemahamanmu!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Soal dan teks akan dirender secara dinamis oleh JavaScript -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <div id="result-area" class="hidden mb-8 py-6 border-b border-slate-100 relative z-10">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <br>
+                        <p id="score-message" class="text-lg md:text-xl font-bold px-5 py-2 rounded-lg inline-block shadow-sm"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10 pt-2">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span>By EDUFILLAH</span>
+                <span class="hidden sm:inline w-1.5 h-1.5 rounded-full bg-slate-300 mx-1"></span> 
+                <span>Unlock The Secret Of Curious Minds</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                readingText: "To: All Teachers and Staff of SMP Gemilang<br>You are cordially invited to attend the Annual Educational Seminar:<br>\"Integrating Technology in Modern Classrooms\"<br>Day/Date : Saturday, October 14th, 2023<br>Time : 09:00 AM – 12:30 PM<br>Venue : School Main Auditorium, 2nd Floor<br>Speaker : Dr. Sarah Wijaya (EdTech Expert)<br>Please confirm your attendance by October 10th, 2023, via WhatsApp at 0812-3456-7890 (Mr. Andi).<br>Your presence and active participation will be highly appreciated.<br>Sincerely,<br>The Organizing Committee",
+                question: "What is the primary purpose of the text above?",
+                options: {
+                    A: "To persuade teachers to buy new educational technology.",
+                    B: "To invite school staff to participate in an educational seminar.",
+                    C: "To announce a change in the school's weekend schedule.",
+                    D: "To congratulate Dr. Sarah Wijaya on her presentation."
+                },
+                correct: "B",
+                explanation: "<strong>Analisis Tujuan Teks (Social Function):</strong><br>Teks tersebut diawali dengan sapaan <em>'To: All Teachers and Staff...'</em> dan frasa undangan formal <em>'You are cordially invited to attend the Annual Educational Seminar...'</em>. Ini menunjukkan bahwa teks tersebut adalah surat undangan resmi (*formal invitation*) yang bertujuan mengajak guru dan staf untuk menghadiri seminar pendidikan. Oleh karena itu, opsi B adalah jawaban yang paling tepat."
+            },
+            {
+                id: 2,
+                readingText: null,
+                question: "What should the recipients do if they plan to attend the seminar?",
+                options: {
+                    A: "Contact Mr. Andi before October 10th, 2023.",
+                    B: "Meet Dr. Sarah Wijaya at the auditorium.",
+                    C: "Register on the day of the event at 09:00 AM.",
+                    D: "Send a formal letter to the Organizing Committee."
+                },
+                correct: "A",
+                explanation: "<strong>Mencari Informasi Tersurat (Explicit Information):</strong><br>Perhatikan kalimat instruksi pada teks: <em>'Please confirm your attendance by October 10th, 2023, via WhatsApp at 0812-3456-7890 (Mr. Andi).'</em> Artinya, bagi yang ingin hadir, mereka wajib mengonfirmasi kehadirannya kepada Mr. Andi sebelum tanggal 10 Oktober 2023 melalui WhatsApp."
+            },
+            {
+                id: 3,
+                readingText: null,
+                question: "\"You are *cordially* invited...\"<br>The underlined word is closest in meaning to ....",
+                options: {
+                    A: "strictly",
+                    B: "warmly",
+                    C: "casually",
+                    D: "temporarily"
+                },
+                correct: "B",
+                explanation: "<strong>Analisis Kosakata (Synonym):</strong><br>Kata <em>'cordially'</em> dalam konteks undangan formal berarti dengan hormat, dengan tulus, atau dengan hangat. Sinonim yang paling tepat di antara pilihan yang ada adalah <strong>'warmly'</strong> (dengan hangat/ramah)."
+            },
+            {
+                id: 4,
+                readingText: "Hey Brenda!<br>Guess what? I'm finally turning 15!<br>I’m throwing a backyard BBQ party and I really want you to be there.<br>Where: My house (12 Bluebell Street)<br>When : Sunday, November 5th at 4:00 PM<br>Wear something casual and bring your favorite board game!<br>Let me know if you can make it by Friday so I can buy enough burgers.<br>Hugs,<br>Rian",
+                question: "Why did Rian write the message to Brenda?",
+                options: {
+                    A: "To ask Brenda to buy some burgers for him.",
+                    B: "To invite Brenda to celebrate his 15th birthday.",
+                    C: "To tell Brenda about his new house on Bluebell Street.",
+                    D: "To challenge Brenda to play a board game."
+                },
+                correct: "B",
+                explanation: "<strong>Analisis Pesan Pribadi (Personal Letter/Invitation):</strong><br>Rian membuka pesannya dengan kalimat <em>'I'm finally turning 15! I’m throwing a backyard BBQ party and I really want you to be there.'</em> Ini jelas menunjukkan bahwa tujuan utama pesannya adalah mengundang Brenda untuk merayakan ulang tahunnya yang ke-15 (opsi B)."
+            },
+            {
+                id: 5,
+                readingText: null,
+                question: "Based on the text, we can infer that ....",
+                options: {
+                    A: "the party will be held in an indoor restaurant",
+                    B: "Brenda must wear formal attire to the party",
+                    C: "Rian needs a head count to prepare the food",
+                    D: "the party will last until late Monday morning"
+                },
+                correct: "C",
+                explanation: "<strong>Menarik Kesimpulan (Inference):</strong><br>Rian menulis: <em>'Let me know if you can make it by Friday so I can buy enough burgers.'</em> Dari kalimat ini dapat disimpulkan bahwa Rian memerlukan kepastian jumlah tamu (*head count*) agar ia bisa membeli jumlah burger yang pas untuk acara tersebut (opsi C)."
+            },
+            {
+                id: 6,
+                readingText: null,
+                question: "\"Let me know if you can *make it*...\"<br>The phrase \"make it\" in the sentence means ....",
+                options: {
+                    A: "cook the food",
+                    B: "buy the game",
+                    C: "attend the event",
+                    D: "host the party"
+                },
+                correct: "C",
+                explanation: "<strong>Pemahaman Idiom Informal:</strong><br>Dalam konteks undangan, frasa <em>'make it'</em> adalah ungkapan/idiom sehari-hari yang bermakna \"bisa hadir\" atau \"menghadiri suatu acara\" (*attend the event*)."
+            },
+            {
+                id: 7,
+                readingText: "Dear Amanda,<br>Congratulations on winning the National English Storytelling Competition!<br>Your dedication, hard work, and beautiful expression have finally paid off.<br>We are incredibly proud of you!<br>Keep shining and inspiring everyone around you.<br>With love,<br>Your classmates of Class 9B",
+                question: "What is the writers' intention in sending the card?",
+                options: {
+                    A: "To support Amanda during her storytelling preparation.",
+                    B: "To express their pride and congratulate Amanda on her victory.",
+                    C: "To invite Amanda to a celebration party with Class 9B.",
+                    D: "To announce the winners of the national competition."
+                },
+                correct: "B",
+                explanation: "<strong>Fungsi Kartu Ucapan Selamat (Greeting Card - Congratulation):</strong><br>Teks tersebut dibuka dengan kalimat <em>'Congratulations on winning...'</em> dan <em>'We are incredibly proud of you!'</em>. Tujuannya adalah mengucapkan selamat atas kemenangan Amanda sekaligus mengungkapkan rasa bangga dari teman sekelasnya."
+            },
+            {
+                id: 8,
+                readingText: null,
+                question: "What is the relationship between the sender and the receiver?",
+                options: {
+                    A: "Teacher and student.",
+                    B: "Siblings.",
+                    C: "Peers at school.",
+                    D: "Competitors in a contest."
+                },
+                correct: "C",
+                explanation: "<strong>Analisis Hubungan Tokoh:</strong><br>Pengirim kartu ditandatangani oleh <em>'Your classmates of Class 9B'</em> (teman-teman sekelas di kelas 9B). Ini berarti pengirim dan penerima adalah sesama pelajar atau teman sebaya di sekolah (*peers at school*)."
+            },
+            {
+                id: 9,
+                readingText: null,
+                question: "\"Your dedication, hard work, and beautiful expression have finally *paid off*.\"<br>What does the phrase \"paid off\" imply?",
+                options: {
+                    A: "Amanda had to pay a lot of money to win.",
+                    B: "Amanda's efforts resulted in a successful outcome.",
+                    C: "The classmates gave Amanda a cash prize.",
+                    D: "The competition was very expensive to join."
+                },
+                correct: "B",
+                explanation: "<strong>Makna Idiom 'Paid Off':</strong><br>Frasa *'paid off'* dalam konteks usaha/kerja keras berarti membuahkan hasil atau menghasilkan kesuksesan (*yielded good results / resulted in a successful outcome*)."
+            },
+            {
+                id: 10,
+                readingText: "Dear Mr. Baskara,<br>Please accept our deepest condolences on the passing of your beloved mother.<br>Our thoughts and prayers are with you and your family during this difficult time.<br>May her soul rest in eternal peace.<br>From:<br>The Board of Directors and Staff of PT Mahakarya",
+                question: "What is the social function of the text?",
+                options: {
+                    A: "To wish someone a speedy recovery from an illness.",
+                    B: "To express sympathy and comfort to someone who is grieving.",
+                    C: "To congratulate someone on their professional promotion.",
+                    D: "To invite a colleague to a funeral ceremony."
+                },
+                correct: "B",
+                explanation: "<strong>Fungsi Sosial Kartu Duka Cita (Condolence Card):</strong><br>Ungkapan <em>'deepest condolences on the passing of...'</em> menunjukkan bahwa teks ini adalah kartu ucapan duka cita. Fungsi sosialnya adalah untuk menunjukkan simpati, rasa duka, dan memberikan penghiburan kepada seseorang yang sedang berduka (*to express sympathy and comfort*)."
+            },
+            {
+                id: 11,
+                readingText: null,
+                question: "Why did PT Mahakarya send this card to Mr. Baskara?",
+                options: {
+                    A: "Because Mr. Baskara's mother has passed away.",
+                    B: "Because Mr. Baskara is leaving the company.",
+                    C: "Because Mr. Baskara's mother is sick in the hospital.",
+                    D: "Because Mr. Baskara won an award from the directors."
+                },
+                correct: "A",
+                explanation: "<strong>Analisis Alasan Pengiriman Kartu:</strong><br>Perusahaan mengirimkan kartu tersebut karena ibu tercinta dari Mr. Baskara telah meninggal dunia (*'on the passing of your beloved mother'*)."
+            },
+            {
+                id: 12,
+                readingText: null,
+                question: "Which of the following actions is the most appropriate response for Mr. Baskara after receiving this card?",
+                options: {
+                    A: "Sending a party invitation back to the Board of Directors.",
+                    B: "Writing a short note of appreciation for their kind thoughts.",
+                    C: "Ignoring the card as it is not related to business.",
+                    D: "Asking the company for financial compensation."
+                },
+                correct: "B",
+                explanation: "<strong>Evaluasi Etika Sosial:</strong><br>Berdasarkan etika sosial yang baik, respons yang paling tepat ketika seseorang menerima kartu ucapan duka cita dan dukungan dari rekan kerja/perusahaan adalah mengirimkan catatan kecil berisi ucapan terima kasih atas perhatian dan doa yang telah diberikan."
+            },
+            {
+                id: 13,
+                readingText: "Mr. & Mrs. Hermawan<br>request the honor of your presence<br>at the marriage of their daughter<br>Arini Hermawan<br>to<br>Danish Pratama<br>Saturday, the sixteenth of December<br>two thousand and twenty-three<br>at five o'clock in the afternoon<br>Grand Ballroom, Mulia Hotel<br>Jakarta<br>RSVP by December 1st, 2023<br>to Shinta (0813-9999-8888)<br>Dress Code: Pastel Formal",
+                question: "Where will the wedding ceremony take place?",
+                options: {
+                    A: "At Arini Hermawan's residence.",
+                    B: "At the Grand Ballroom of Mulia Hotel.",
+                    C: "At the office of Mr. & Mrs. Hermawan.",
+                    D: "At Danish Pratama's house."
+                },
+                correct: "B",
+                explanation: "<strong>Mencari Informasi Tempat (Venue):</strong><br>Berdasarkan rincian pada undangan pernikahan tersebut, acara dilangsungkan di <em>'Grand Ballroom, Mulia Hotel, Jakarta'</em> (opsi B)."
+            },
+            {
+                id: 14,
+                readingText: null,
+                question: "What is the significance of the date \"December 1st, 2023\" in the invitation?",
+                options: {
+                    A: "It is the date when the wedding takes place.",
+                    B: "It is the deadline for the guests to confirm their attendance.",
+                    C: "It is the day when the dress code is announced.",
+                    D: "It is the first day of the wedding rehearsal."
+                },
+                correct: "B",
+                explanation: "<strong>Makna Batas Waktu RSVP:</strong><br>Tanggal 1 Desember 2023 tertera di bawah keterangan <em>'RSVP by...'</em>. Dalam undangan formal, RSVP (*Répondez s'il vous plaît*) menandakan batas waktu bagi tamu untuk memberikan konfirmasi apakah mereka bisa hadir atau tidak."
+            },
+            {
+                id: 15,
+                readingText: null,
+                question: "Why is it important for the guests to follow the \"RSVP\" instruction?",
+                options: {
+                    A: "To help the hosts estimate the number of guests for catering and seating arrangements.",
+                    B: "To ensure that the guests receive free gifts at the end of the wedding.",
+                    C: "To let the hosts know what kind of wedding gift they will bring.",
+                    D: "To choose their own seats and menu during the party."
+                },
+                correct: "A",
+                explanation: "<strong>Evaluasi Fungsi RSVP dalam Acara:</strong><br>Tujuan utama penyelenggara meminta konfirmasi RSVP pada acara besar seperti pernikahan di hotel adalah agar mereka dapat memperkirakan jumlah tamu secara akurat untuk kebutuhan katering makanan dan penataan kursi (*catering and seating arrangements*)."
+            },
+            {
+                id: 16,
+                readingText: "Dear Mrs. Kartika,<br>Thank you for being more than just a teacher.<br>You have been a mentor, a guide, and a source of inspiration.<br>Your patience and kindness have shaped my journey this year.<br>Happy Teacher's Day!<br>I wish you joy, health, and happiness always.<br>Warmest regards,<br>Rendra (Class 9A)",
+                question: "What is the main message of Rendra's card?",
+                options: {
+                    A: "To ask Mrs. Kartika for extra guidance before the final exam.",
+                    B: "To apologize for his bad behavior during class.",
+                    C: "To express gratitude and appreciation on Teacher's Day.",
+                    D: "To invite Mrs. Kartika to a class reunion party."
+                },
+                correct: "C",
+                explanation: "<strong>Analisis Pesan Utama Kartu Ucapan Hari Guru:</strong><br>Rendra menulis <em>'Happy Teacher's Day!'</em> dan <em>'Thank you for being more than just a teacher...'</em>. Pesan utamanya adalah menyampaikan rasa terima kasih dan apresiasi kepada guru pada momen Hari Guru (opsi C)."
+            },
+            {
+                id: 17,
+                readingText: null,
+                question: "How does Rendra view Mrs. Kartika's role in his life?",
+                options: {
+                    A: "As a strict examiner who demands high scores.",
+                    B: "As an inspiring figure who has positively influenced his journey.",
+                    C: "As a temporary substitute teacher who rarely smiles.",
+                    D: "As a family relative who helps him with homework."
+                },
+                correct: "B",
+                explanation: "<strong>Analisis Peran Tokoh:</strong><br>Rendra mendeskripsikan gurunya sebagai <em>'a mentor, a guide, and a source of inspiration'</em> yang membimbing perjalanannya tahun ini. Ini berarti ia memandangnya sebagai figur inspiratif yang membawa pengaruh positif."
+            },
+            {
+                id: 18,
+                readingText: null,
+                question: "\"Your patience and kindness have *shaped* my journey...\"<br>The word \"shaped\" in this context is best replaced by ....",
+                options: {
+                    A: "built",
+                    B: "influenced",
+                    C: "forced",
+                    D: "decorated"
+                },
+                correct: "B",
+                explanation: "<strong>Analisis Kosakata Kontekstual:</strong><br>Kata *'shaped'* (membentuk) dalam kalimat tentang perjalanan hidup atau karakter bermakna membimbing, mengarahkan, atau mempengaruhi perkembangan seseorang secara positif (*influenced*)."
+            },
+            {
+                id: 19,
+                readingText: "<strong>Text A</strong><br>To: All Class Captains of SMP Nusantara<br>You are invited to attend the coordination meeting for the upcoming School Art Festival.<br>Date : Monday, November 20th, 2023<br>Time : 02:00 PM – 03:30 PM<br>Venue: Student Council Room<br>Agenda: Budgeting and Event Schedule<br>Please arrive on time. Your ideas are highly valued.<br>OSIS Chairperson, Bintang Pratama<br><br><strong>Text B</strong><br>Hey guys!<br>Don't forget our group study session tomorrow afternoon at my place!<br>We need to finish the English project before Friday.<br>I'll prepare some snacks. See you at 3 PM! - Devan",
+                question: "Which of the following statements best evaluates the difference in the social function of Text A and Text B?",
+                options: {
+                    A: "Text A aims to organize a formal school event, while Text B aims to coordinate a casual peer study session.",
+                    B: "Text A is meant to entertain class captains, while Text B is meant to instruct students to do homework.",
+                    C: "Text A is used to cancel a meeting, while Text B is used to invite someone to a birthday party.",
+                    D: "Text A aims to persuade teachers to join a festival, while Text B aims to invite classmates to a cinema."
+                },
+                correct: "A",
+                explanation: "<strong>Evaluasi Perbandingan Fungsi Sosial:</strong><br>Text A adalah pengumuman/undangan rapat resmi dari OSIS untuk ketua kelas (*formal school event*), sedangkan Text B adalah pesan singkat informal dari teman untuk kerja kelompok (*casual peer study session*). Pilihan A membandingkannya dengan sangat tepat."
+            },
+            {
+                id: 20,
+                readingText: null,
+                question: "What is the main difference in the linguistic features (language style) used in Text A and Text B?",
+                options: {
+                    A: "Text A uses informal and slang language, while Text B uses very formal and academic language.",
+                    B: "Text A uses objective and formal language, while Text B uses casual, direct, and personal language.",
+                    C: "Text A uses poetic metaphors, while Text B uses strict commands and passive voice.",
+                    D: "Text A has no clear sender, while Text B uses an official organizational signature."
+                },
+                correct: "B",
+                explanation: "<strong>Evaluasi Perbandingan Fitur Kebahasaan (Linguistic Features):</strong><br>Text A menggunakan gaya bahasa resmi, objektif, dan terstruktur (*'You are invited to attend...', 'OSIS Chairperson'*). Sebaliknya, Text B menggunakan gaya bahasa yang santai, langsung, akrab, dan personal (*'Hey guys!', 'at my place!'*). Pilihan B merangkum perbedaan gaya bahasa ini dengan akurat."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-6 transition-all hover:shadow-md">
+                `;
+
+                if (item.readingText) {
+                    htmlContent += `
+                        <div class="mb-6 p-5 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 font-normal leading-relaxed text-sm md:text-base shadow-inner">
+                            <div class="flex items-center text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">
+                                <i class="fas fa-book-open mr-2"></i> Bacaan Soal
+                            </div>
+                            ${item.readingText}
+                        </div>
+                    `;
+                }
+
+                htmlContent += `
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                htmlContent += `
+                                </div>
+                                
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-xl text-sm border-l-4 shadow-sm">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5 flex-shrink-0"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90 text-[15px]"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                expContainer.className = 'mt-6 p-4 md:p-5 rounded-xl text-sm border-l-4 animate-slide-up shadow-sm';
+
+                if (!selected) {
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Soal belum dijawab";
+                    expText.innerHTML = `Kamu tidak memilih opsi jawaban.<br>Kunci jawaban yang benar adalah <strong>${item.correct}</strong>.<br><br><div class="p-3 bg-white bg-opacity-60 rounded-lg mt-2 border border-amber-200">${item.explanation}</div>`;
+                } else if (selected.value === item.correct) {
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Benar Sekali!";
+                    expText.innerHTML = `<div class="p-3 bg-white bg-opacity-60 rounded-lg mt-2 border border-emerald-200">${item.explanation}</div>`;
+                } else {
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat.`;
+                    expText.innerHTML = `Pilihan kamu (${selected.value}) belum tepat. Kunci jawaban yang benar adalah <strong>${item.correct}</strong>.<br><br><div class="p-3 bg-white bg-opacity-60 rounded-lg mt-2 border border-rose-200">${item.explanation}</div>`;
+                }
+                
+                expContainer.classList.remove('hidden');
+
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-slide-up');
+            
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Sempurna! Kemampuan membaca teks fungsionalmu luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-emerald-200";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Sangat Baik! Pemahaman teks undangan dan kartumu sudah mantap.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-blue-200";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Bagus! Perhatikan lagi detail instruksi pada soal ya.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-indigo-200";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Jangan Menyerah! Ayo pelajari kembali pembahasan di setiap soal.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-rose-200";
+            }
+
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); 
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false;
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+                expContainer.classList.remove('animate-slide-up');
+            });
+
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

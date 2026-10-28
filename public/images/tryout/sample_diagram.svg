@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gridGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="400" height="240" rx="16" fill="url(#gridGrad)" stroke="#334155" stroke-width="2"/>
+
+  <!-- Triangle ABC -->
+  <polygon points="80,180 320,180 320,60" fill="rgba(99, 102, 241, 0.15)" stroke="url(#lineGrad)" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- Right Angle Symbol at C (320, 180) -->
+  <path d="M 300 180 L 300 160 L 320 160" fill="none" stroke="#38bdf8" stroke-width="2"/>
+
+  <!-- Vertex Points -->
+  <circle cx="80" cy="180" r="5" fill="#818cf8"/>
+  <circle cx="320" cy="180" r="5" fill="#38bdf8"/>
+  <circle cx="320" cy="60" r="5" fill="#a855f7"/>
+
+  <!-- Labels -->
+  <text x="60" y="195" fill="#cbd5e1" font-family="sans-serif" font-size="14" font-weight="bold">A</text>
+  <text x="330" y="195" fill="#cbd5e1" font-family="sans-serif" font-size="14" font-weight="bold">C</text>
+  <text x="330" y="60" fill="#cbd5e1" font-family="sans-serif" font-size="14" font-weight="bold">B</text>
+
+  <!-- Dimension Labels -->
+  <text x="200" y="202" fill="#94a3b8" font-family="sans-serif" font-size="13" text-anchor="middle">AC = 12 cm</text>
+  <text x="345" y="125" fill="#94a3b8" font-family="sans-serif" font-size="13">BC = 5 cm</text>
+  <text x="185" y="110" fill="#a5b4fc" font-family="sans-serif" font-size="14" font-weight="bold">AB = ?</text>
+</svg>

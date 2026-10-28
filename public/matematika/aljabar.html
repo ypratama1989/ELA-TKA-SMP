@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .radio-custom:checked + div {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .radio-custom:checked + div .dot {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
+
+    <!-- Header & Back Button -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 hidden sm:block">Kuis Aljabar & Aritmetika</h1>
+            <div class="w-20"></div> <!-- Spacer for flex balance -->
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-2">Tes Kemampuan Matematika</h2>
+            <p class="text-slate-600">Jawablah pertanyaan-pertanyaan di bawah ini. Anda dapat langsung menekan tombol "Periksa Jawaban" di akhir halaman meskipun belum mengisi semuanya.</p>
+        </div>
+
+        <form id="quiz-form" onsubmit="event.preventDefault();">
+            <div id="quiz-container" class="space-y-6">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <!-- Action Area (Bawah) -->
+            <div class="mt-10 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                
+                <button id="btn-submit" type="button" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:scale-105">
+                    Periksa Jawaban
+                </button>
+
+                <div id="score-container" class="hidden mt-6">
+                    <h3 class="text-xl font-medium text-slate-500 mb-2">Nilai Akhir Anda:</h3>
+                    <div class="text-6xl font-black text-indigo-700 mb-4" id="final-score">100</div>
+                    <div id="score-message" class="text-lg font-medium mb-6"></div>
+                    
+                    <button id="btn-reset" type="button" class="w-full sm:w-auto px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2 -mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12">
+        <div class="text-center px-4">
+            <p class="font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Soal, Opsi, Kunci Jawaban, dan Pembahasan Edukatif
+        const quizData = [
+            {
+                q: "Manakah di antara bentuk matematika berikut yang merupakan Persamaan Linear Satu Variabel (PLSV)?",
+                options: ["2x + 3y = 8", "x<sup>2</sup> - 4 = 0", "3x - 5 = 10", "2x + 5 &lt; 9"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 3x - 5 = 10</b><br><br>Mari kita bedah artinya:<br>&bull; <b>Persamaan:</b> Wajib menggunakan tanda sama dengan ( = ). Ini menggugurkan opsi D.<br>&bull; <b>Linear:</b> Pangkat tertinggi hurufnya (variabel) harus 1. Ini menggugurkan opsi B yang berpangkat 2.<br>&bull; <b>Satu Variabel:</b> Hanya boleh ada 1 jenis huruf. Ini menggugurkan opsi A yang punya x dan y.<br>Jadi, 3x - 5 = 10 adalah satu-satunya PLSV yang tepat!"
+            },
+            {
+                q: "Pada persamaan linear 4y - 7 = 13, yang bertindak sebagai variabel adalah...",
+                options: ["4", "y", "-7", "13"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: y</b><br><br>Dalam aljabar, <b>variabel (peubah)</b> ibarat 'wadah misterius' yang nilainya belum kita ketahui, dan selalu disimbolkan dengan huruf (seperti x, y, a, b, dll).<br>Angka 4 adalah koefisien (angka yang menempel pada variabel), sedangkan -7 dan 13 adalah konstanta (angka yang berdiri sendiri tanpa huruf)."
+            },
+            {
+                q: "Nilai x yang memenuhi persamaan linear x - 8 = 12 adalah...",
+                options: ["4", "10", "16", "20"],
+                ans: 3,
+                exp: "<b>Jawaban Benar: 20</b><br><br>Bayangkan kamu punya sejumlah permen (x). Setelah dikurangi 8 permen, sisa permenmu ada 12. Berapa permenmu di awal?<br>Penyelesaian secara matematika:<br>x - 8 = 12<br>x = 12 + 8 (angka -8 pindah ruas menyeberangi '=' menjadi +8)<br><b>x = 20</b>"
+            },
+            {
+                q: "Manakah di antara bentuk berikut yang merupakan Pertidaksamaan Linear Satu Variabel (PtLSV)?",
+                options: ["2a + 3b &gt; 5", "x<sup>2</sup> + 2x &le; 0", "4y - 3 &ge; 9", "3x + 6 = 12"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 4y - 3 &ge; 9</b><br><br>Aturan PtLSV sangat sederhana:<br>1. Harus pakai tanda pertidaksamaan (&lt;, &gt;, &le;, atau &ge;). Opsi D salah karena pakai (=).<br>2. Hurufnya cuma boleh 1 macam. Opsi A salah karena ada <i>a</i> dan <i>b</i>.<br>3. Pangkat tertinggi hurufnya harus 1. Opsi B salah karena ada pangkat 2.<br>Maka, bentuk 4y - 3 &ge; 9 adalah yang paling tepat."
+            },
+            {
+                q: "Simbol pertidaksamaan yang menunjukkan arti &quot;kurang dari atau sama dengan&quot; adalah...",
+                options: ["&lt;", "&gt;", "&le;", "&ge;"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: &le;</b><br><br>Mari kita ingat kembali simbol matematika dasar:<br>&bull; <b>&lt;</b> : Kurang dari<br>&bull; <b>&gt;</b> : Lebih dari<br>&bull; <b>&le;</b> : Kurang dari <b>atau sama dengan</b> (ada garis di bawahnya)<br>&bull; <b>&ge;</b> : Lebih dari atau sama dengan"
+            },
+            {
+                q: "Himpunan penyelesaian dari pertidaksamaan x + 4 &gt; 7 untuk x anggota bilangan bulat adalah...",
+                options: ["{4, 5, 6, ...}", "{3, 4, 5, ...}", "{2, 3, 4, ...}", "{1, 2, 3, ...}"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: {4, 5, 6, ...}</b><br><br>Langkah-langkahnya:<br>1. Tulis persamaannya: x + 4 &gt; 7<br>2. Pindahkan +4 ke kanan: x &gt; 7 - 4<br>3. Hitung hasilnya: <b>x &gt; 3</b><br>Karena x adalah bilangan bulat yang <b>lebih besar dari 3</b> (angka 3 tidak diikutkan karena tidak ada tanda sama dengan), maka jawabannya dimulai dari angka 4, yaitu {4, 5, 6, dst}."
+            },
+            {
+                q: "Koefisien dari variabel y pada bentuk aljabar 3x<sup>2</sup> - 6y + 8 adalah...",
+                options: ["3", "6", "-6", "8"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: -6</b><br><br><b>Koefisien</b> adalah angka pendamping yang &quot;menempel&quot; tepat di depan suatu variabel (huruf). <br>Kita diminta mencari koefisien untuk huruf <b>y</b>. Jika kita lihat bentuk <b>-6y</b>, angka di depannya adalah 6 beserta tanda minus di depannya. Tanda minus ( - ) selalu ikut dengan angka di belakangnya!"
+            },
+            {
+                q: "Konstanta pada bentuk aljabar 2x<sup>2</sup> - 5x - 12 adalah...",
+                options: ["2", "-5", "5", "-12"],
+                ans: 3,
+                exp: "<b>Jawaban Benar: -12</b><br><br><b>Konstanta</b> (berasal dari kata konstan/tetap) adalah bagian dari aljabar berupa angka saja, yang berdiri sendiri tanpa ditemani huruf apapun. Pada 2x<sup>2</sup> - 5x - 12, angka yang 'jomblo' tanpa variabel adalah -12."
+            },
+            {
+                q: "Suku-suku yang sejenis dari bentuk aljabar 4a<sup>2</sup> - 3ab + 2a<sup>2</sup> + b<sup>2</sup> adalah...",
+                options: ["4a<sup>2</sup> dan -3ab", "4a<sup>2</sup> dan 2a<sup>2</sup>", "-3ab dan b<sup>2</sup>", "2a<sup>2</sup> dan b<sup>2</sup>"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 4a<sup>2</sup> dan 2a<sup>2</sup></b><br><br><b>Suku Sejenis</b> itu ibarat buah yang identik. Syaratnya: <b>Hurufnya harus sama persis, dan pangkatnya juga harus sama persis.</b><br>Di soal ini, 4a<sup>2</sup> dan 2a<sup>2</sup> sama-sama memiliki variabel <b>a</b> dan sama-sama berpangkat <b>2</b>, sehingga mereka sejenis."
+            },
+            {
+                q: "Hasil penyederhanaan dari bentuk aljabar 7x + 2y - 3x + 5y adalah...",
+                options: ["4x + 7y", "10x + 7y", "4x - 3y", "10x - 3y"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: 4x + 7y</b><br><br>Dalam aljabar, kita hanya bisa menjumlahkan atau mengurangkan suku yang sejenis. Mari kita kelompokkan:<br>&bull; Kelompok variabel x: 7x - 3x = <b>4x</b><br>&bull; Kelompok variabel y: 2y + 5y = <b>7y</b><br>Jika digabungkan, hasilnya menjadi 4x + 7y."
+            },
+            {
+                q: "Hasil perkalian dari bentuk aljabar 4(3a - 2) adalah...",
+                options: ["12a - 2", "12a - 8", "7a - 8", "7a - 2"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 12a - 8</b><br><br>Gunakan sifat distributif (biasa disebut aturan capit kepiting atau air mancur). Angka di luar kurung harus dikalikan ke semua yang ada di dalam kurung:<br>1. 4 dikali 3a = 12a<br>2. 4 dikali (-2) = -8<br>Gabungkan hasilnya: <b>12a - 8</b>."
+            },
+            {
+                q: "Aturan yang menghubungkan setiap anggota himpunan asal (domain) ke himpunan kawan (kodomain) disebut...",
+                options: ["Fungsi", "Relasi", "Korespondensi", "Pemetaan"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Relasi</b><br><br>Secara bahasa, <b>relasi</b> artinya 'hubungan'. Dalam matematika, relasi adalah aturan dasar yang menghubungkan anggota himpunan satu dengan yang lain tanpa syarat ketat (satu orang boleh punya banyak teman, atau tidak punya teman sama sekali)."
+            },
+            {
+                q: "Sebuah relasi khusus yang memasangkan setiap anggota himpunan A dengan tepat satu anggota himpunan B disebut...",
+                options: ["Relasi biasa", "Fungsi atau Pemetaan", "Himpunan bagian", "Diagram Venn"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Fungsi atau Pemetaan</b><br><br>Fungsi adalah relasi yang lebih disiplin/spesial. Syarat utama fungsi: Semua anggota daerah asal (A) harus punya pasangan, dan <b>TIDAK BOLEH</b> selingkuh (pasangannya harus TEPAT SATU di B). Jika syarat ini terpenuhi, disebut Fungsi atau Pemetaan."
+            },
+            {
+                q: "Pada fungsi f: A &rarr; B, daerah asal atau himpunan A disebut dengan istilah...",
+                options: ["Domain", "Kodomain", "Range", "Notasi"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Domain</b><br><br>Istilah penting dalam fungsi:<br>&bull; <b>Domain</b> = Daerah asal (Himpunan A)<br>&bull; <b>Kodomain</b> = Daerah kawan (Himpunan B)<br>&bull; <b>Range</b> = Daerah hasil (Anggota B yang benar-benar terpilih/mendapat panah dari A)"
+            },
+            {
+                q: "Pada fungsi f: A &rarr; B, daerah kawan atau himpunan B disebut dengan istilah...",
+                options: ["Domain", "Kodomain", "Range", "Bayangan"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Kodomain</b><br><br>Himpunan B secara keseluruhan (baik yang punya pasangan dari A maupun yang tidak) disebut sebagai <b>Kodomain</b> atau daerah kawan tempat tujuan panah relasi."
+            },
+            {
+                q: "Diketahui fungsi f(x) = 3x - 2 dengan daerah asal {1, 2, 3}. Daerah hasil (range) dari fungsi tersebut adalah...",
+                options: ["{1, 4, 7}", "{1, 3, 5}", "{2, 4, 6}", "{3, 6, 9}"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: {1, 4, 7}</b><br><br>Untuk mencari Range (daerah hasil), kita ibaratkan f(x) = 3x - 2 adalah sebuah mesin. Kita masukkan bahan baku x ke dalam mesin:<br>&bull; Masukkan x=1 &rarr; f(1) = 3(1) - 2 = 3 - 2 = <b>1</b><br>&bull; Masukkan x=2 &rarr; f(2) = 3(2) - 2 = 6 - 2 = <b>4</b><br>&bull; Masukkan x=3 &rarr; f(3) = 3(3) - 2 = 9 - 2 = <b>7</b><br>Maka daerah hasilnya terkumpul menjadi {1, 4, 7}."
+            },
+            {
+                q: "Manakah di bawah ini yang merupakan bentuk Sistem Persamaan Linear Dua Variabel (SPLDV)?",
+                options: ["2x + 5 = 11 dan y - 3 = 4", "x<sup>2</sup> + y = 10 dan 2x - y = 3", "3x + 2y = 12 dan x - y = 3", "3x - y &gt; 5 dan x + 2y &le; 8"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 3x + 2y = 12 dan x - y = 3</b><br><br>Kunci memahami SPLDV:<br>&bull; <b>Sistem:</b> Artinya ada pasangan persamaan yang saling terikat (minimal 2 baris persamaan).<br>&bull; <b>Persamaan:</b> Wajib pakai tanda ( = ). Menggugurkan opsi D (Pertidaksamaan).<br>&bull; <b>Dua Variabel & Linear:</b> Harus ada 2 huruf yang berbeda (seperti x dan y) dalam satu persamaan dan pangkat tertingginya 1. Opsi B salah karena ada pangkat 2."
+            },
+            {
+                q: "Metode penyelesaian SPLDV yang dilakukan dengan cara mengganti salah satu variabel dengan variabel dari persamaan lainnya disebut metode...",
+                options: ["Eliminasi", "Substitusi", "Grafik", "Campuran"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Substitusi</b><br><br>Seperti dalam olahraga sepak bola, <i>substitusi</i> artinya 'pergantian pemain'. Dalam matematika, metode substitusi menyelesaikan persamaan dengan cara 'menggantikan' satu variabel dengan persamaan dari variabel lainnya agar lebih mudah dihitung."
+            },
+            {
+                q: "Jika diketahui sistem persamaan x + y = 6 dan x - y = 2, maka nilai x yang memenuhi adalah...",
+                options: ["2", "3", "4", "5"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 4</b><br><br>Cara termudah menyelesaikannya adalah menggunakan metode Eliminasi (menjumlahkan ke bawah untuk menghilangkan y):<br>x + y = 6<br>x - y = 2<br>------------- +<br>2x = 8<br><b>x = 4</b><br>(Pembuktian: jika x=4, maka 4 + y = 6, berarti y=2). Jawaban x yang tepat adalah 4."
+            },
+            {
+                q: "Urutan bilangan-bilangan yang disusun berdasarkan aturan atau pola tertentu disebut...",
+                options: ["Barisan bilangan", "Deret bilangan", "Notasi sigma", "Operasi bilangan"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Barisan bilangan</b><br><br>Definisi sederhananya: Jika kumpulan bilangan berjejer rapi dan dipisahkan dengan tanda koma (contoh: 2, 4, 6, 8, ...), serta memiliki pola teratur, itu disebut <b>Barisan Bilangan</b>. (Jika dipisahkan tanda tambah seperti 2+4+6+8, baru disebut Deret)."
+            },
+            {
+                q: "Pada barisan bilangan 3, 7, 11, 15, ..., suku pertama (a) dan beda (b) berturut-turut adalah...",
+                options: ["3 dan 3", "3 dan 4", "4 dan 3", "7 dan 4"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 3 dan 4</b><br><br>&bull; <b>Suku pertama (a)</b> adalah angka yang paling awal muncul, yaitu <b>3</b>.<br>&bull; <b>Beda (b)</b> adalah selisih atau lompatan angka dari suku satu ke suku berikutnya. Jarak dari 3 ke 7 adalah +4. Jarak 7 ke 11 juga +4. Maka bedanya adalah <b>4</b>."
+            },
+            {
+                q: "Dua suku berikutnya dari barisan bilangan 2, 5, 8, 11, ... adalah...",
+                options: ["13 dan 15", "14 dan 17", "14 dan 16", "15 dan 18"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 14 dan 17</b><br><br>Mari amati polanya!<br>Dari 2 ke 5 = loncat +3.<br>Dari 5 ke 8 = loncat +3.<br>Dari 8 ke 11 = loncat +3.<br>Karena polanya selalu ditambah 3, maka setelah angka 11 adalah (11 + 3 = <b>14</b>), dan angka setelahnya adalah (14 + 3 = <b>17</b>)."
+            },
+            {
+                q: "Barisan bilangan yang memiliki selisih (beda) yang selalu tetap atau konstan antara dua suku yang berurutan disebut...",
+                options: ["Barisan Geometri", "Barisan Aritmetika", "Barisan Fibonacci", "Barisan Kuadrat"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Barisan Aritmetika</b><br><br>Kata kuncinya ada pada 'Selisih (Beda) yang selalu tetap'. Entah itu selalu bertambah 5, atau selalu berkurang 2. Jika perubahannya adalah tambah/kurang, itu dinamakan <b>Barisan Aritmetika</b>. (Jika perubahannya adalah dikali/dibagi, itu barisan Geometri)."
+            },
+            {
+                q: "Rumus umum suku ke-n (Un) dari barisan aritmetika adalah...",
+                options: ["Un = a + (n - 1)b", "Un = a + nb", "Un = a &times; r<sup>(n-1)</sup>", "Un = n/2 &times; (a + Un)"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Un = a + (n - 1)b</b><br><br>Ini adalah rumus ajaib penemuan matematika! Untuk mencari suku ke berapapun (Un) dalam barisan Aritmetika tanpa harus mengurutkan satu per satu secara manual, kita menggunakan formula: Un = a + (n - 1)b, dengan <b>a</b> adalah suku awal dan <b>b</b> adalah jarak/beda antar angka."
+            },
+            {
+                q: "Jumlah dari suku-suku pada barisan aritmetika disebut...",
+                options: ["Barisan aritmetika", "Deret aritmetika", "Barisan geometri", "Deret geometri"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Deret aritmetika</b><br><br>Bedakan dua kata ini:<br>&bull; <b>Barisan:</b> Angka dijejerkan pakai koma (U1, U2, U3, ...)<br>&bull; <b>Deret:</b> Penjumlahan dari jejeran angka tersebut (U1 + U2 + U3 + ...)<br>Karena ini berkaitan dengan penambahan suku barisan aritmetika, maka disebut sebagai <b>Deret Aritmetika</b>."
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitBtn = document.getElementById('btn-submit');
+        const resetBtn = document.getElementById('btn-reset');
+        const form = document.getElementById('quiz-form');
+        const scoreContainer = document.getElementById('score-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessageEl = document.getElementById('score-message');
+
+        // Render Questions
+        function initQuiz() {
+            quizContainer.innerHTML = '';
+            quizData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 transition-all';
+                qDiv.id = `question-box-${index}`;
+
+                let optionsHTML = '';
+                item.options.forEach((opt, optIndex) => {
+                    const letters = ['A', 'B', 'C', 'D'];
+                    optionsHTML += `
+                        <label class="relative flex items-center cursor-pointer group">
+                            <input type="radio" name="q${index}" value="${optIndex}" class="radio-custom sr-only peer" />
+                            <div class="w-full flex items-center p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-200 bg-slate-50 hover:bg-slate-100 transition-all peer-focus-visible:ring-2 ring-indigo-500">
+                                <div class="w-6 h-6 flex-shrink-0 rounded-full border-2 border-slate-300 mr-4 flex items-center justify-center bg-white transition-colors">
+                                    <div class="dot w-2 h-2 rounded-full transition-colors"></div>
+                                </div>
+                                <span class="font-semibold text-slate-500 mr-3">${letters[optIndex]}.</span>
+                                <span class="text-slate-700 font-medium">${opt}</span>
+                            </div>
+                        </label>
+                    `;
+                });
+
+                qDiv.innerHTML = `
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+                            ${index + 1}
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-800 leading-snug">${item.q}</h3>
+                    </div>
+                    <div class="space-y-3 pl-0 md:pl-12">
+                        ${optionsHTML}
+                    </div>
+                    <div id="explanation-${index}" class="hidden mt-6 pl-0 md:pl-12">
+                        <div class="p-5 rounded-xl text-sm md:text-base border-l-4"></div>
+                    </div>
+                `;
+                quizContainer.appendChild(qDiv);
+            });
+        }
+
+        // Logic Periksa Jawaban
+        submitBtn.addEventListener('click', () => {
+            let correctCount = 0;
+
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const expDiv = document.getElementById(`explanation-${index}`);
+                const expBox = expDiv.querySelector('div');
+                const qBox = document.getElementById(`question-box-${index}`);
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+
+                // Disable all inputs after submit
+                inputs.forEach(input => input.disabled = true);
+
+                let isCorrect = false;
+                if (selectedOption) {
+                    if (parseInt(selectedOption.value) === item.ans) {
+                        isCorrect = true;
+                        correctCount++;
+                    }
+                }
+
+                // Show Explanation Box with dynamic coloring
+                expDiv.classList.remove('hidden');
+                
+                if (isCorrect) {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-green-50 border-green-500 text-green-900';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-green-700 font-bold mb-2">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Tepat Sekali!
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-green-200');
+                } else {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-red-50 border-red-500 text-red-900';
+                    let headerText = selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Anda Belum Menjawab';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-red-700 font-bold mb-2">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            ${headerText}
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-red-200');
+                }
+            });
+
+            // Hitung Skor (Skala 100)
+            const finalScore = Math.round((correctCount / quizData.length) * 100);
+            finalScoreEl.textContent = finalScore;
+
+            if (finalScore === 100) {
+                scoreMessageEl.textContent = "Luar biasa! Kamu menguasai materi ini dengan sempurna! 🌟";
+                scoreMessageEl.className = "text-lg font-medium mb-6 text-green-600";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.textContent = "Kerja bagus! Sedikit lagi menuju sempurna. Pertahankan belajarnya! 🔥";
+                scoreMessageEl.className = "text-lg font-medium mb-6 text-indigo-600";
+            } else if (finalScore >= 60) {
+                scoreMessageEl.textContent = "Lumayan! Pelajari lagi pembahasannya ya agar lebih paham. 💪";
+                scoreMessageEl.className = "text-lg font-medium mb-6 text-yellow-600";
+            } else {
+                scoreMessageEl.textContent = "Jangan menyerah! Ayo baca lagi pembahasannya dan coba lagi. Buktikan kamu bisa! 🚀";
+                scoreMessageEl.className = "text-lg font-medium mb-6 text-red-500";
+            }
+
+            // UI Changes
+            submitBtn.classList.add('hidden');
+            scoreContainer.classList.remove('hidden');
+            
+            // Scroll to score
+            setTimeout(() => {
+                document.getElementById('score-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        // Logic Ulangi Tes
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            
+            // Hapus style warna kotak & sembunyikan pembahasan
+            quizData.forEach((item, index) => {
+                const expDiv = document.getElementById(`explanation-${index}`);
+                expDiv.classList.add('hidden');
+                
+                const qBox = document.getElementById(`question-box-${index}`);
+                qBox.classList.remove('border-green-200', 'border-red-200');
+
+                // Enable kembali inputs
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+                inputs.forEach(input => input.disabled = false);
+            });
+
+            // UI Changes
+            scoreContainer.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Inisialisasi Kuis saat pertama dimuat
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

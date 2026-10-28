@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* scroll-behavior: auto; */
+        }
+        /* Kustomisasi gaya untuk radio button yang disembunyikan */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff; /* blue-50 */
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .explanation-box {
+            transition: all 0.3s ease-in-out;
+        }
+        .quote-box {
+            border-left: 4px solid #cbd5e1;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #475569;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col relative pb-20">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center flex-1">Kuis Latihan Kosakata & Istilah</h1>
+            <div class="w-24"></div> <!-- Spacer untuk menyeimbangkan posisi judul di tengah -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10 mb-8 border border-gray-100">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Selamat Mengerjakan! &#x2728;</h2>
+                <p class="text-gray-600">Pilihlah jawaban yang paling tepat. Kamu tidak perlu menjawab semua soal untuk memeriksa hasil, namun soal yang tidak dijawab akan bernilai 0.</p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Area Hasil (Tersembunyi secara default) -->
+                    <div id="result-area" class="hidden mt-8 p-6 bg-gradient-to-br from-indigo-50 to-blue-100 rounded-xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Nilai Akhir Kamu</h3>
+                        <div class="text-6xl font-extrabold text-blue-600 mb-4" id="final-score">0</div>
+                        <p class="text-gray-700 mb-6 font-medium text-lg" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-gray-800 text-white py-6 text-center">
+        <p class="font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Opsi, Jawaban Benar, dan Penjelasan Edukatif yang sudah dikembangkan
+        const quizData = [
+            {
+                id: 1,
+                text: "Bacalah paragraf berikut!<div class='quote-box'>Pemerintah daerah sedang menggalakkan program penanaman kembali hutan gundul untuk mencegah terjadinya tanah longsor dan banjir bandang. Program ini diharapkan dapat mengembalikan fungsi hutan sebagai daerah resapan air.</div>Istilah bidang geografi/lingkungan yang tepat untuk menggantikan frasa <strong>\"penanaman kembali hutan gundul\"</strong> pada teks di atas adalah ....",
+                options: ["reboisasi", "konservasi", "rehabilitasi", "suaka margasatwa"],
+                answer: 0, // A
+                explanation: "Hutan yang gundul ibarat tanah yang kehilangan 'payung' dan 'spons' penahan air hujan. Ketika hujan turun, air langsung meluncur deras membawa tanah sehingga terjadi longsor. Nah, kegiatan menanam kembali pohon-pohon di hutan yang botak ini disebut <strong>Reboisasi</strong>. Akar pohon-pohon baru inilah yang nantinya akan bekerja menyerap dan menahan air hujan!"
+            },
+            {
+                id: 2,
+                text: "Bacalah kalimat berikut!<div class='quote-box'>Dokter menyarankan agar pasien tersebut segera mendapatkan isolasi agar penyakit menularnya tidak menyebar ke pasien lain di rumah sakit.</div>Makna istilah <strong>isolasi</strong> dalam bidang kedokteran pada kalimat di atas adalah ....",
+                options: [
+                    "pemberian obat dosis tinggi untuk membunuh virus",
+                    "pemisahan penderita penyakit dari orang sehat untuk mencegah penularan",
+                    "pemeriksaan laboratorium secara intensif terhadap sampel darah",
+                    "perawatan khusus di ruang gawat darurat dengan peralatan lengkap"
+                ],
+                answer: 1, // B
+                explanation: "Coba bayangkan kamu punya sekeranjang apel sehat, tapi ada satu apel yang mulai membusuk. Supaya apel yang lain tidak ikut membusuk, apel yang busuk itu harus <em>dipisahkan</em>, kan? Dalam dunia medis, proses memisahkan pasien berpenyakit menular agar tidak menularkan penyakitnya kepada orang sehat disebut <strong>Isolasi</strong>."
+            },
+            {
+                id: 3,
+                text: "Bacalah teks berikut!<div class='quote-box'>Perkembangan teknologi informasi saat ini memungkinkan kita untuk mengirimkan data dalam jumlah besar secara cepat. Proses mengirimkan data atau berkas dari komputer pribadi ke jaringan internet disebut dengan istilah ....</div>",
+                options: ["mengunduh", "mengunggah", "memindai", "meretas"],
+                answer: 1, // B
+                explanation: "Ingat saja arah panahnya! Kalau kita memindahkan foto atau file dari HP/Laptop kita (di bawah) NAIK ke internet (ke atas, seperti memposting ke media sosial), itu namanya <strong>Mengunggah</strong> (Upload). Sebaliknya, kalau kita mengambil gambar dari internet TURUN ke HP kita, itu namanya <strong>Mengunduh</strong> (Download)."
+            },
+            {
+                id: 4,
+                text: "Bacalah paragraf berikut!<div class='quote-box'>Bank Indonesia memutuskan untuk menaikkan suku bunga acuan guna menekan laju peningkatan harga barang secara umum dan terus-menerus yang dapat menurunkan nilai mata uang rupiah.</div>Istilah bidang ekonomi yang tepat untuk menggambarkan fenomena <strong>\"peningkatan harga barang secara umum dan terus-menerus\"</strong> adalah ....",
+                options: ["deflasi", "inflasi", "devaluasi", "depresiasi"],
+                answer: 1, // B
+                explanation: "Pernahkah kamu perhatikan harga permen atau jajan di warung yang dulu harganya Rp500, tapi sekarang jadi Rp1.000? Saat harga barang-barang naik terus-menerus di pasar dan membuat uang jajan kita terasa makin kecil nilainya, kondisi ini di dalam ilmu ekonomi disebut <strong>Inflasi</strong>."
+            },
+            {
+                id: 5,
+                text: "Cermati paragraf berikut!<div class='quote-box'>(1) Petani di desa itu mulai beralih menggunakan sistem pertanian modern. (2) Mereka menggunakan teknik bercocok tanam tanpa tanah, melainkan menggunakan media air yang mengandung nutrisi. (3) Teknik ini dinilai lebih hemat lahan dan menghasilkan sayuran yang lebih higienis. (4) Pemerintah memberikan apresiasi atas inovasi ini.</div>Istilah bidang pertanian yang tepat untuk menggambarkan teknik bercocok tanam pada kalimat (2) adalah ....",
+                options: ["tumpang sari", "hortikultura", "hidroponik", "terasering"],
+                answer: 2, // C
+                explanation: "Kata kuncinya ada pada kata 'air'. Dalam bahasa Yunani, <em>'Hydro'</em> artinya air. Jadi, <strong>Hidroponik</strong> adalah cara bertani modern di mana tanaman (seperti selada atau kangkung) tidak ditanam di atas tanah cokelat yang kotor, melainkan menggunakan air yang sudah dicampur vitamin dan nutrisi tanaman."
+            },
+            {
+                id: 6,
+                text: "Bacalah teks berikut!<div class='quote-box'>Terumbu karang di kawasan Taman Nasional Bunaken mengalami kerusakan akibat aktivitas penangkapan ikan menggunakan bahan peledak. Upaya pemulihan ekosistem laut tersebut memerlukan waktu puluhan tahun agar karang dapat tumbuh kembali seperti semula.</div>Istilah bidang biologi yang merujuk pada <strong>\"hubungan timbal balik antara makhluk hidup dengan lingkungannya\"</strong> pada teks di atas adalah ....",
+                options: ["habitat", "populasi", "ekosistem", "komunitas"],
+                answer: 2, // C
+                explanation: "Di alam, tidak ada makhluk yang bisa hidup sendirian. Ikan butuh air laut, butuh oksigen, dan butuh terumbu karang sebagai rumah. Interaksi atau hubungan timbal balik antara makhluk hidup (biotik) dengan benda tak hidup (abiotik) di sekitarnya ini disebut sebuah <strong>Ekosistem</strong>."
+            },
+            {
+                id: 7,
+                text: "Bacalah paragraf berikut!<div class='quote-box'>Sidang kasus sengketa lahan itu akhirnya ditunda karena salah satu pihak mengajukan bukti baru yang belum pernah disampaikan pada persidangan sebelumnya. Hakim meminta jaksa untuk memeriksa keabsahan dokumen tersebut.</div>Istilah bidang hukum yang berarti <strong>\"bukti baru\"</strong> dalam proses peradilan adalah ....",
+                options: ["alibi", "vonis", "novum", "pledoi"],
+                answer: 2, // C
+                explanation: "Dalam bahasa Latin, kata <em>'novus'</em> berarti 'baru'. Dari kata inilah muncul istilah hukum <strong>Novum</strong>, yang artinya adalah bukti-bukti baru yang sangat penting dan belum pernah ditunjukkan di meja pengadilan sebelumnya."
+            },
+            {
+                id: 8,
+                text: "Bacalah teks berikut!<div class='quote-box'>Sebelum melakukan pertunjukan teater, para pemain melakukan latihan membaca naskah secara bersama-sama untuk memahami karakter tokoh dan alur cerita secara mendalam.</div>Istilah bidang seni teater yang tepat untuk menggambarkan aktivitas <strong>\"membaca naskah bersama\"</strong> adalah ....",
+                options: ["monolog", "improvisasi", "reading", "blocking"],
+                answer: 2, // C
+                explanation: "Kata <strong>'Reading'</strong> berasal dari bahasa Inggris yang artinya 'membaca'. Dalam dunia akting atau teater, <em>reading</em> adalah tahapan awal di mana semua aktor duduk melingkar dan membaca naskah bersama-sama. Tujuannya supaya mereka hafal dialog dan meresapi emosi tokoh sebelum bergerak di atas panggung."
+            },
+            {
+                id: 9,
+                text: "Cermati paragraf berikut!<div class='quote-box'>Gunung Merapi kembali menunjukkan aktivitas vulkanik yang meningkat. Badan Penyelamat dan Penanggulangan Bencana daerah segera melakukan tindakan penyelamatan untuk mengurangi risiko bencana, termasuk mengevakuasi warga yang tinggal di lereng gunung.</div>Istilah yang tepat untuk menggambarkan <strong>\"tindakan mengurangi risiko bencana\"</strong> adalah ....",
+                options: ["mitigasi", "adaptasi", "evakuasi", "rekonstruksi"],
+                answer: 0, // A
+                explanation: "Sedia payung sebelum hujan! Upaya persiapan, pencegahan, dan pengurangan dampak buruk sebelum atau saat bencana benar-benar terjadi dinamakan <strong>Mitigasi</strong>. Contoh mitigasi adalah memasang alat pendeteksi gempa, atau membangun jalur evakuasi."
+            },
+            {
+                id: 10,
+                text: "Bacalah paragraf berikut!<div class='quote-box'>Perusahaan rintisan (startup) teknologi itu berhasil mendapatkan suntikan dana dari investor asing. Dana tersebut akan digunakan untuk memperluas jaringan pasar dan meningkatkan kualitas produk digital mereka.</div>Istilah bidang bisnis/ekonomi yang tepat untuk menggantikan frasa <strong>\"suntikan dana\"</strong> adalah ....",
+                options: ["investasi", "likuiditas", "portofolio", "divestasi"],
+                answer: 0, // A
+                explanation: "Ketika seseorang atau sebuah perusahaan memberikan uangnya ke perusahaan lain dengan harapan perusahaan itu membesar dan nantinya menghasilkan keuntungan balik, uang yang ditanamkan itu disebut <strong>Investasi</strong> (penanaman modal)."
+            },
+            {
+                id: 11,
+                text: "Bacalah teks berikut!<div class='quote-box'>Pasien yang mengalami kecelakaan itu kehilangan banyak darah sehingga dokter harus segera melakukan tindakan pemindahan darah dari pendonor kepada pasien tersebut untuk menyelamatkan nyawanya.</div>Istilah bidang kedokteran yang tepat untuk tindakan <strong>\"pemindahan darah\"</strong> adalah ....",
+                options: ["transmisi", "transfusi", "transplantasi", "transportasi"],
+                answer: 1, // B
+                explanation: "Proses mengalirkan atau memasukkan darah dari orang yang sehat (pendonor) langsung ke dalam pembuluh darah orang yang sedang sakit atau kekurangan darah dinamakan <strong>Transfusi</strong> darah."
+            },
+            {
+                id: 12,
+                text: "Cermati kalimat berikut!<div class='quote-box'>Penulis novel itu sangat mahir menggunakan kata-kata kiasan untuk menggambarkan keindahan alam pedesaan, sehingga pembaca seolah-olah dapat melihat langsung pemandangan tersebut.</div>Istilah bidang sastra yang merujuk pada <strong>\"kata-kata kiasan atau gaya bahasa\"</strong> adalah ....",
+                options: ["majas", "rima", "diksi", "alur"],
+                answer: 0, // A
+                explanation: "Untuk membuat puisi atau cerita menjadi lebih hidup dan indah, penulis sering menggunakan bahasa kiasan. Misalnya, 'wajahnya bersinar seperti rembulan' atau 'angin berbisik di telinga'. Gaya bahasa kiasan yang memperindah kalimat ini disebut <strong>Majas</strong>."
+            },
+            {
+                id: 13,
+                text: "Bacalah paragraf berikut!<div class='quote-box'>(1) Pemerintah kota sedang merancang sistem transportasi massal yang terintegrasi. (2) Proyek ini diharapkan dapat mengurangi kemacetan lalu lintas secara signifikan. (3) Namun, beberapa pengamat menilai pembangunan fisik sarana dan prasarana pendukungnya masih lambat. (4) Hal ini disebabkan oleh kendala pembebasan lahan warga.</div>Istilah bidang pembangunan/teknik yang tepat untuk menggantikan frasa <strong>\"sarana dan prasarana pendukung\"</strong> pada kalimat (3) adalah ....",
+                options: ["suprastruktur", "infrastruktur", "arsitektur", "konstruksi"],
+                answer: 1, // B
+                explanation: "Fasilitas umum besar yang berbentuk fisik (seperti jalan tol, jembatan, rel kereta api, stasiun, hingga tiang listrik) yang dibangun pemerintah untuk memperlancar kegiatan masyarakat disebut dengan <strong>Infrastruktur</strong>."
+            },
+            {
+                id: 14,
+                text: "Bacalah teks berikut!<div class='quote-box'>Pertemuan bilateral antara kedua kepala negara tersebut menghasilkan kesepakatan kerja sama di bidang energi terbarukan. Kedua negara berkomitmen untuk mengurangi ketergantungan pada bahan bakar fosil.</div>Makna istilah <strong>bilateral</strong> pada teks di atas adalah ....",
+                options: [
+                    "melibatkan banyak negara",
+                    "dilakukan oleh satu negara secara mandiri",
+                    "melibatkan dua belah pihak atau dua negara",
+                    "mencakup wilayah regional tertentu saja"
+                ],
+                answer: 2, // C
+                explanation: "Dalam bahasa, awalan <em>'Bi'</em> selalu berarti 'Dua' (seperti Bipedal/hewan berkaki dua). Jadi, hubungan atau perjanjian <strong>Bilateral</strong> adalah kerja sama khusus yang HANYA melibatkan dan mengikat dua belah pihak (dua negara) saja."
+            },
+            {
+                id: 15,
+                text: "Bacalah paragraf berikut!<div class='quote-box'>Di era digital ini, penyebaran informasi palsu yang sengaja dibuat untuk menyesatkan masyarakat sangat marak terjadi di media sosial. Kita harus cerdas dalam menyaring informasi sebelum membagikannya.</div>Istilah bidang komunikasi/informasi yang tepat untuk <strong>\"informasi palsu yang sengaja dibuat untuk menyesatkan\"</strong> adalah ....",
+                options: ["misinformasi", "disinformasi", "malinformasi", "konfirmasi"],
+                answer: 1, // B
+                explanation: "Ini perbedaan penting! Kalau orang membagikan berita salah karena dia tidak tahu kebenarannya, itu <em>Misinformasi</em>. Tapi, kalau seseorang sejak awal TAHU bahwa itu berita bohong dan SENGAJA membagikannya untuk menipu orang lain, tindakan jahat itu disebut <strong>Disinformasi</strong>."
+            },
+            {
+                id: 16,
+                text: "Bacalah teks berikut!<div class='quote-box'>(1) Candi Borobudur merupakan salah satu peninggalan sejarah yang sangat berharga. (2) Pemerintah terus berupaya melakukan pemeliharaan dan perlindungan agar bangunan candi tidak mengalami kerusakan akibat pelapukan alami maupun ulah manusia. (3) Upaya ini penting dilakukan demi menjaga kelestarian warisan budaya bangsa.</div>Evaluasilah penggunaan istilah bidang sejarah dan cagar budaya pada kalimat (2). Istilah yang paling tepat untuk menggantikan frasa <strong>\"pemeliharaan dan perlindungan\"</strong> agar sesuai dengan konteks pelestarian cagar budaya adalah ....",
+                options: ["renovasi", "restorasi", "konservasi", "rekonstruksi"],
+                answer: 2, // C
+                explanation: "Merawat benda-benda bersejarah seperti candi, keris, atau lukisan kuno membutuhkan teknik khusus supaya keasliannya tetap terjaga dan tidak hancur ditelan waktu. Upaya pemeliharaan dan perlindungan yang sangat hati-hati ini disebut <strong>Konservasi</strong>."
+            },
+            {
+                id: 17,
+                text: "Bacalah teks opini berikut!<div class='quote-box'>Penggunaan gawai pada anak usia dini harus dibatasi. Banyak anak yang mengalami gangguan konsentrasi akibat terlalu sering menatap layar gawai. Selain itu, interaksi sosial mereka dengan lingkungan sekitar menjadi berkurang karena mereka asyik dengan dunia mayanya sendiri. Hal ini dapat menghambat perkembangan kejiwaan dan sosial anak.</div>Evaluasilah teks di atas. Istilah bidang psikologi yang tepat untuk menggambarkan <strong>\"perkembangan kejiwaan\"</strong> anak adalah perkembangan ....",
+                options: ["kognitif", "motorik", "psikologis", "fisiologis"],
+                answer: 2, // C
+                explanation: "Manusia tidak hanya tumbuh fisiknya (tinggi badan), tapi juga mental, pikiran, dan perasaannya. Hal-hal yang berkaitan dengan kejiwaan, kecerdasan emosional, mental, dan cara seseorang merespons lingkungan sekitarnya disebut sebagai hal yang <strong>Psikologis</strong>."
+            },
+            {
+                id: 18,
+                text: "Bacalah paragraf rumpang berikut!<div class='quote-box'>Untuk mengatasi masalah sampah plastik yang semakin menumpuk, komunitas peduli lingkungan mengampanyekan gerakan [...], yaitu proses mengolah kembali barang bekas menjadi barang baru yang memiliki nilai guna dan nilai ekonomi.</div>Istilah bidang lingkungan yang paling tepat untuk melengkapi paragraf rumpang di atas adalah ....",
+                options: ["daur ulang (recycle)", "guna ulang (reuse)", "kurangi (reduce)", "ganti (replace)"],
+                answer: 0, // A
+                explanation: "Botol plastik bekas yang dihancurkan lalu dilebur untuk dicetak menjadi ember atau pot bunga baru, proses ini disebut <strong>Daur Ulang (Recycle)</strong>. Ini berbeda dengan <em>Reuse</em> (Guna Ulang) di mana botol bekas hanya dicuci lalu diisi air kembali tanpa diubah bentuknya."
+            },
+            {
+                id: 19,
+                text: "Bacalah teks berikut!<div class='quote-box'>(1) Penyakit diabetes melitus terjadi karena tubuh tidak mampu memproduksi atau menggunakan hormon insulin secara efektif. (2) Akibatnya, kadar gula dalam darah menjadi sangat tinggi. (3) Penderita disarankan untuk mengatur pola makan dan melakukan olahraga secara teratur. (4) Pemeriksaan kadar gula darah secara berkala juga sangat dianjurkan.</div>Evaluasilah hubungan istilah pada teks di atas. Istilah bidang biologi/kedokteran yang merujuk pada <strong>\"proses pengaturan keseimbangan zat di dalam tubuh\"</strong> (seperti kadar gula darah oleh insulin) disebut ....",
+                options: ["metabolisme", "homeostasis", "fotosintesis", "osmosis"],
+                answer: 1, // B
+                explanation: "Tubuh kita itu sangat pintar! Ia punya alarm dan sistem pengatur otomatis. Misalnya, saat kita kepanasan, tubuh mengeluarkan keringat agar suhu turun. Atau saat gula darah naik, insulin keluar untuk menurunkannya. Kemampuan super tubuh menjaga keseimbangan internal ini disebut <strong>Homeostasis</strong>."
+            },
+            {
+                id: 20,
+                text: "Bacalah teks berikut!<div class='quote-box'>Dalam dunia kerja saat ini, kemampuan bekerja sama dalam tim sangat dihargai. Seseorang tidak hanya dituntut memiliki keahlian teknis yang mumpuni, tetapi juga harus memiliki keterampilan interpersonal yang baik seperti komunikasi, empati, dan kepemimpinan.</div>Evaluasilah penggunaan istilah dalam teks di atas. Istilah yang tepat untuk menggambarkan <strong>\"keterampilan interpersonal, komunikasi, dan kepemimpinan\"</strong> (non-teknis) dalam dunia kerja adalah ....",
+                options: ["hard skills", "soft skills", "life skills", "job skills"],
+                answer: 1, // B
+                explanation: "<em>Hard skills</em> adalah keahlian teknis yang dipelajari di sekolah (seperti merakit komputer atau memasak). Tapi, kemampuan untuk sabar, bisa mendengarkan pendapat orang lain, bekerja dalam kelompok, dan memimpin rapat tanpa bikin orang kesal, disebut dengan <strong>Soft Skills</strong> (keterampilan lunak/karakter)."
+            }
+        ];
+
+        // Fungsi untuk menangani Base64 Gambar dan memastikan entitas HTML berfungsi
+        function processText(text) {
+            // Regex mencari pola [GAMBAR: data:image/...] dan mengubahnya jadi tag <img>
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Soal" class="w-full max-w-lg mx-auto rounded-lg shadow-md my-4 border border-gray-200">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        // Render seluruh soal ke dalam DOM
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-block bg-gray-50 p-5 md:p-6 rounded-xl border border-gray-100 shadow-sm transition-all duration-300';
+            questionDiv.id = `question-block-${index}`;
+
+            // Menyusun Pilihan Ganda (A, B, C, D)
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 peer-focus:ring-2 peer-focus:ring-blue-500">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold mr-3 text-sm">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-gray-700 font-medium pt-1">${processText(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="flex items-start mb-4">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-md font-bold mr-4 mt-1">${index + 1}</span>
+                    <div class="text-gray-800 text-lg md:text-xl font-medium leading-relaxed w-full">
+                        ${processText(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-3 ml-0 md:ml-12">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Pembahasan (Awalnya disembunyikan) -->
+                <div id="explanation-${index}" class="explanation-box hidden mt-5 ml-0 md:ml-12 p-5 rounded-lg border">
+                    <h4 class="font-bold mb-2 flex items-center" id="status-title-${index}">
+                        <!-- Ikon Benar/Salah akan masuk di sini -->
+                    </h4>
+                    <div class="text-sm md:text-base leading-relaxed" id="explanation-text-${index}"></div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Tampilkan kotak pembahasan
+                explanationBox.classList.remove('hidden');
+
+                // Mengunci opsi agar tidak bisa diubah setelah dicek
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    // Highlight jawaban yang benar terlepas dari pilihan user
+                    if (parseInt(radio.value) === q.answer) {
+                        radio.nextElementSibling.classList.add('ring-2', 'ring-green-400', 'bg-green-50');
+                    }
+                });
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // JAWABAN BENAR
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-5 ml-0 md:ml-12 p-5 rounded-lg border border-green-200 bg-green-50 text-green-900 block';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Jawaban Tepat!`;
+                        qBlock.classList.add('border-green-300');
+                    } else {
+                        // JAWABAN SALAH
+                        explanationBox.className = 'explanation-box mt-5 ml-0 md:ml-12 p-5 rounded-lg border border-red-200 bg-red-50 text-red-900 block';
+                        const labels = ['A', 'B', 'C', 'D'];
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Jawaban Kurang Tepat (Seharusnya: ${labels[q.answer]})`;
+                        qBlock.classList.add('border-red-300');
+                        
+                        // Menandai opsi salah yang dipilih user dengan warna merah
+                        selectedOption.nextElementSibling.classList.add('border-red-500', 'bg-red-100');
+                    }
+                } else {
+                    // TIDAK DIJAWAB
+                    explanationBox.className = 'explanation-box mt-5 ml-0 md:ml-12 p-5 rounded-lg border border-orange-200 bg-orange-50 text-orange-900 block';
+                    const labels = ['A', 'B', 'C', 'D'];
+                    statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Kamu tidak menjawab soal ini (Jawaban: ${labels[q.answer]})`;
+                    qBlock.classList.add('border-orange-300');
+                }
+
+                // Masukkan teks pembahasan (Penjelasan edukatif)
+                explanationText.innerHTML = processText(q.explanation);
+            });
+
+            const totalQuestions = quizData.length;
+            const finalScore = Math.round((correctAnswersCount / totalQuestions) * 100);
+            
+            // Animasi nilai counter
+            let startScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1000;
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            resultArea.classList.remove('hidden');
+            btnCheck.classList.add('hidden'); // Sembunyikan tombol cek jawaban
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    startScore += 1;
+                    finalScoreEl.innerText = startScore;
+                    if (startScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Atur pesan penyemangat berdasarkan nilai
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Luar Biasa! Sempurna! 🎉 Kamu menguasai semua istilah dengan sangat baik!";
+                scoreMessage.className = "text-green-600 mb-6 font-bold text-xl";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Hebat! Pertahankan prestasimu dan pelajari sedikit lagi yang salah. 💪";
+                scoreMessage.className = "text-blue-600 mb-6 font-bold text-xl";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca pembahasannya supaya lebih paham. 📚";
+                scoreMessage.className = "text-orange-600 mb-6 font-bold text-lg";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Semua orang hebat mulai dari belajar. Yuk ulangi lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-6 font-bold text-lg";
+            }
+
+            // Scroll mulus ke area hasil
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset isi form
+            form.reset();
+
+            // Sembunyikan dan bersihkan styling visual
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                explanationBox.classList.add('hidden');
+                explanationBox.className = 'explanation-box hidden mt-5 ml-0 md:ml-12 p-5 rounded-lg border';
+                
+                qBlock.classList.remove('border-green-300', 'border-red-300', 'border-orange-300');
+                
+                // Kembalikan radio button ke kondisi bisa diklik dan hilangkan styling benar/salah
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    label.className = 'option-label flex items-start p-4 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 peer-focus:ring-2 peer-focus:ring-blue-500';
+                });
+            });
+
+            // Sembunyikan hasil dan munculkan tombol periksa kembali
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Scroll kembali ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

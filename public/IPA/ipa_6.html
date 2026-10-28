@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Tata Surya & Fenomena Alam</title>
+    <style>
+        :root {
+            --primary: #2563EB; /* Biru elegan */
+            --primary-hover: #1D4ED8;
+            --bg-color: #F8FAFC;
+            --text-main: #334155;
+            --text-muted: #64748B;
+            --correct-bg: #ECFCCB;
+            --correct-border: #65A30D;
+            --wrong-bg: #FEE2E2;
+            --wrong-border: #EF4444;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1E3A8A 0%, var(--primary) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #0F172A;
+        }
+
+        /* Styling spesifik untuk gambar/tabel di dalam soal */
+        .question-text img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        
+        table, th, td {
+            border: 1px solid #CBD5E1;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #F1F5F9;
+            font-weight: 600;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 18px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #F8FAFC;
+        }
+
+        .option-label:hover {
+            background-color: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+
+        .option-label input {
+            margin-top: 5px;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .option-label.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: #3F6212;
+        }
+
+        .option-label.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: #991B1B;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            line-height: 1.7;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box.bg-green {
+            background-color: #F7FEE7;
+            border-left: 5px solid var(--correct-border);
+        }
+
+        .explanation-box.bg-red {
+            background-color: #FEF2F2;
+            border-left: 5px solid var(--wrong-border);
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .btn-submit, .btn-retry {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 35px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-submit:hover, .btn-retry:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-submit:disabled {
+            background-color: #94A3B8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+            border-top: 5px solid var(--primary);
+        }
+
+        .result-container h2 {
+            color: #1E293B;
+            font-size: 1.8rem;
+        }
+
+        .score-display {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .score-message {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container { margin: 15px auto; }
+            .question-card { padding: 20px; }
+            .btn-submit { font-size: 1.05rem; padding: 14px; }
+            .score-display { font-size: 4rem; }
+            table { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Kuis Tata Surya & Fenomena Alam</h1>
+        <button class="btn-back" onclick="history.back()">&#8592; Kembali</button>
+    </div>
+
+    <div class="container">
+        <form id="quizForm">
+            
+            <!-- Soal 1 -->
+            <div class="question-card" id="q1">
+                <div class="question-text">1. Perhatikan beberapa karakteristik benda langit berikut!<br>
+                    1) Memiliki orbit yang sangat lonjong.<br>
+                    2) Terdiri atas debu, batuan, dan es.<br>
+                    3) Mengorbit matahari di antara planet Mars dan Jupiter.<br>
+                    4) Ekornya selalu menjauhi matahari karena dorongan angin surya.<br><br>
+                    Karakteristik yang tepat untuk mendeskripsikan komet ditunjukkan oleh nomor ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q1" value="A"> <span class="option-text">A. 1), 2), dan 3)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"> <span class="option-text">B. 1), 2), dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"> <span class="option-text">C. 1), 3), dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"> <span class="option-text">D. 2), 3), dan 4)</span></label>
+                </div>
+                <div class="explanation-box" id="exp1" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Komet sering disebut "bintang berekor". Ciri utamanya: (1) Orbitnya berbentuk elips yang sangat lonjong mendekati dan menjauhi Matahari. (2) Terbuat dari gumpalan es, debu, dan batuan beku. (4) Saat mendekati Matahari, esnya menguap membentuk ekor gas yang selalu terdorong menjauhi Matahari karena tertiup angin surya (solar wind). Adapun pernyataan (3) adalah ciri-ciri <b>Asteroid</b>.</div>
+                </div>
+            </div>
+
+            <!-- Soal 2 -->
+            <div class="question-card" id="q2">
+                <div class="question-text">2. Planet Venus dikenal sebagai planet terpanas di tata surya, meskipun Merkurius adalah planet yang paling dekat dengan Matahari. Fenomena ini terjadi karena ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q2" value="A"> <span class="option-text">A. Venus memiliki medan magnet yang sangat kuat sehingga menahan panas matahari</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"> <span class="option-text">B. Venus mengalami rotasi yang sangat cepat sehingga menghasilkan energi panas internal</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"> <span class="option-text">C. atmosfer Venus kaya akan gas karbon dioksida (CO<sub>2</sub>) yang memicu efek rumah kaca ekstrem</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"> <span class="option-text">D. permukaan Venus ditutupi oleh lautan magma aktif yang terus-menerus memancarkan panas</span></label>
+                </div>
+                <div class="explanation-box" id="exp2" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Merkurius memang paling dekat, tapi atmosfernya sangat tipis sehingga panas mudah lepas. Sebaliknya, <b>Venus diselimuti atmosfer super tebal</b> yang isinya 96% gas karbon dioksida (CO<sub>2</sub>). Gas ini berfungsi seperti "selimut perangkap panas" (Efek Rumah Kaca). Panas matahari bisa masuk ke Venus, tapi tidak bisa keluar lagi, membuat suhunya mendidih hingga 460&deg;C!</div>
+                </div>
+            </div>
+
+            <!-- Soal 3 -->
+            <div class="question-card" id="q3">
+                <div class="question-text">3. Perhatikan gambar pembagian wilayah planet dalam tata surya berikut!<br><br>
+                    <i>Matahari &rarr; Merkurius &rarr; Venus &rarr; Bumi &rarr; Mars &rarr; <b>[Pembatas X]</b> &rarr; Jupiter &rarr; Saturnus &rarr; Uranus &rarr; Neptunus</i><br><br>
+                    Benda langit yang mengisi wilayah [Pembatas X] dan memisahkan kelompok planet dalam dengan planet luar adalah ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q3" value="A"> <span class="option-text">A. sabuk meteoroid</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"> <span class="option-text">B. cincin planet</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"> <span class="option-text">C. sabuk asteroid</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"> <span class="option-text">D. awan Oort</span></label>
+                </div>
+                <div class="explanation-box" id="exp3" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Tata surya kita dibagi dua: <b>Planet Dalam</b> (berbatuan: Merkurius sampai Mars) dan <b>Planet Luar</b> (raksasa gas/es: Jupiter sampai Neptunus). Tepat di antara Mars dan Jupiter, terdapat ribuan bongkahan batu luar angkasa yang mengorbit Matahari bersama-sama. Cincin batuan raksasa ini disebut <b>Sabuk Asteroid</b>.</div>
+                </div>
+            </div>
+
+            <!-- Soal 4 -->
+            <div class="question-card" id="q4">
+                <div class="question-text">4. Kota A terletak pada garis bujur 120&deg; BT. Jika waktu di Greenwich (GMT) menunjukkan pukul 05.00 pagi, maka waktu lokal di Kota A adalah pukul ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q4" value="A"> <span class="option-text">A. 11.00</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"> <span class="option-text">B. 12.00</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"> <span class="option-text">C. 13.00</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"> <span class="option-text">D. 14.00</span></label>
+                </div>
+                <div class="explanation-box" id="exp4" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Bumi berputar 360&deg; dalam 24 jam. Artinya, setiap perbedaan <b>15&deg; garis bujur = beda waktu 1 jam</b> (360&divide;24=15).<br>
+                    - Jarak Kota A dari Greenwich (0&deg;) adalah 120&deg;.<br>
+                    - Beda jam = 120&deg; &divide; 15&deg; = 8 jam.<br>
+                    - Karena Kota A berada di sebelah Timur (BT), waktunya lebih cepat/ditambah.<br>
+                    - Waktu di Kota A = Pukul 05.00 + 8 jam = <b>Pukul 13.00</b> (siang).</div>
+                </div>
+            </div>
+
+            <!-- Soal 5 -->
+            <div class="question-card" id="q5">
+                <div class="question-text">5. Perhatikan beberapa fenomena alam berikut!<br>
+                    1) Perbedaan lamanya waktu siang dan malam.<br>
+                    2) Pergantian siang dan malam secara bergantian.<br>
+                    3) Perubahan rasi bintang yang tampak di langit malam.<br>
+                    4) Pembelokan arah angin (efek Coriolis).<br>
+                    5) Perubahan musim di belahan bumi utara dan selatan.<br><br>
+                    Fenomena alam yang terjadi akibat dari revolusi Bumi ditunjukkan oleh nomor ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q5" value="A"> <span class="option-text">A. 1), 2), dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"> <span class="option-text">B. 1), 3), dan 5)</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"> <span class="option-text">C. 2), 3), dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"> <span class="option-text">D. 2), 4), dan 5)</span></label>
+                </div>
+                <div class="explanation-box" id="exp5" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Ingat perbedaannya:<br>
+                    - <b>Rotasi Bumi</b> (berputar di tempat harian): menyebabkan pergantian siang-malam (2), gerak semu harian matahari, dan angin berbelok (4).<br>
+                    - <b>Revolusi Bumi</b> (mengelilingi matahari tahunan): menyebabkan durasi siang malam bisa panjang/pendek (1), rasi bintang berubah tiap bulan (3), dan pergantian 4 musim di negara subtropis (5).</div>
+                </div>
+            </div>
+
+            <!-- Soal 6 -->
+            <div class="question-card" id="q6">
+                <div class="question-text">6. Seorang petani di daerah beriklim sedang (subtropis) ingin merencanakan masa tanam gandum yang membutuhkan suhu hangat dan curah hujan cukup di awal pertumbuhannya. Berdasarkan posisi Bumi saat belahan bumi utara condong ke arah Matahari (terjadi sekitar bulan Juni), keputusan terbaik yang harus diambil petani di belahan bumi utara adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q6" value="A"> <span class="option-text">A. segera menanam gandum karena belahan bumi utara sedang memasuki musim panas</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"> <span class="option-text">B. menunda penanaman karena belahan bumi utara akan segera mengalami musim dingin</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"> <span class="option-text">C. menanam tanaman alternatif karena musim gugur akan segera tiba dalam beberapa minggu</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"> <span class="option-text">D. melakukan irigasi besar-besaran karena matahari berada pada posisi paling jauh dari bumi</span></label>
+                </div>
+                <div class="explanation-box" id="exp6" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">Saat belahan bumi utara "menunduk/condong" mendekati Matahari (sekitar bulan Juni-Agustus), daerah tersebut mendapat sinar matahari lebih langsung. Artinya, mereka sedang mengalami <b>Musim Panas</b> (suhu hangat dan siang lebih panjang). Ini adalah kondisi yang sangat ideal untuk menanam gandum! Sebaliknya, saat itu belahan selatan sedang mengalami musim dingin.</div>
+                </div>
+            </div>
+
+            <!-- Soal 7 -->
+            <div class="question-card" id="q7">
+                <div class="question-text">7. Pasang surut air laut yang paling besar (pasang purnama) terjadi ketika posisi Matahari, Bumi, dan Bulan berada pada satu garis lurus. Fase bulan yang terjadi pada saat fenomena tersebut adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q7" value="A"> <span class="option-text">A. bulan sabit dan bulan cembung</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"> <span class="option-text">B. bulan baru dan bulan purnama</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"> <span class="option-text">C. bulan paruh awal dan paruh akhir</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"> <span class="option-text">D. bulan susut dan bulan sabit</span></label>
+                </div>
+                <div class="explanation-box" id="exp7" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Pasang air laut tertinggi (Pasang Purnama/Spring Tide) terjadi karena tenaga tarikan gravitasi Bulan dan Matahari <b>bergabung</b> menarik Bumi dari garis yang sama. Kondisi garis lurus ini (Bumi-Bulan-Matahari atau Bulan-Bumi-Matahari) hanya terjadi pada dua fase, yaitu saat gelap total (<b>Bulan Baru</b>) dan saat terang benderang (<b>Bulan Purnama</b>).</div>
+                </div>
+            </div>
+
+            <!-- Soal 8 -->
+            <div class="question-card" id="q8">
+                <div class="question-text">8. Perhatikan tabel data rata-rata jarak planet dari Matahari dan periode revolusinya berikut!<br>
+                    <table>
+                        <tr>
+                            <th>Nama Planet</th>
+                            <th>Jarak Rata-rata dari Matahari (SA)</th>
+                            <th>Periode Revolusi</th>
+                        </tr>
+                        <tr><td>Planet P</td><td>0,39</td><td>88 hari</td></tr>
+                        <tr><td>Planet Q</td><td>1,00</td><td>365 hari</td></tr>
+                        <tr><td>Planet R</td><td>5,20</td><td>11,8 tahun</td></tr>
+                        <tr><td>Planet S</td><td>30,07</td><td>164,8 tahun</td></tr>
+                    </table>
+                    Berdasarkan data di atas, analisis hubungan antara jarak planet dari Matahari dengan periode revolusinya yang paling tepat adalah ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q8" value="A"> <span class="option-text">A. semakin jauh jarak planet dari Matahari, periode revolusinya semakin lambat karena pengaruh gravitasi Matahari yang semakin kuat</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"> <span class="option-text">B. semakin dekat jarak planet dari Matahari, periode revolusinya semakin lama karena lintasan orbitnya berbentuk lingkaran sempurna</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"> <span class="option-text">C. semakin jauh jarak planet dari Matahari, periode revolusinya semakin lama karena lintasan orbitnya semakin panjang dan gaya gravitasi Matahari melemah</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"> <span class="option-text">D. jarak planet dari Matahari tidak memengaruhi periode revolusi karena revolusi hanya dipengaruhi oleh massa planet itu sendiri</span></label>
+                </div>
+                <div class="explanation-box" id="exp8" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Lihat tabelnya: makin besar angka jaraknya, makin lama tahunnya (periode revolusi). Mengapa? Pertama, karena orbit/jalan yang harus dikelilinginya <b>jauh lebih panjang dan luas</b>. Kedua, semakin jauh dari Matahari, tarikan gravitasi Matahari semakin lemah, sehingga planet tersebut berputar <b>lebih lambat</b> santai di jalurnya (Sesuai Hukum Kepler III).</div>
+                </div>
+            </div>
+
+            <!-- Soal 9 -->
+            <div class="question-card" id="q9">
+                <div class="question-text">9. Sebuah misi luar angkasa direncanakan untuk mengirimkan robot penjelajah ke permukaan sebuah planet. Ilmuwan harus mendesain robot yang mampu menahan tekanan atmosfer luar biasa tinggi (sekitar 90 kali tekanan bumi) dan suhu ekstrem mencapai 460&deg;C. Berdasarkan karakteristik tersebut, planet tujuan misi ini adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q9" value="A"> <span class="option-text">A. Merkurius</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"> <span class="option-text">B. Venus</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"> <span class="option-text">C. Mars</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"> <span class="option-text">D. Jupiter</span></label>
+                </div>
+                <div class="explanation-box" id="exp9" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Kondisi bagai "neraka" ini (suhu mendidih 460&deg;C dan tekanan udara seberat lautan dalam) adalah ciri khas planet <b>Venus</b> akibat efek rumah kacanya yang ekstrem. Jika robot biasa dikirim ke sana, ia akan langsung meleleh dan remuk tertindih tekanan udara dalam hitungan menit!</div>
+                </div>
+            </div>
+
+            <!-- Soal 10 -->
+            <div class="question-card" id="q10">
+                <div class="question-text">10. Ketika Bulan bergerak mengelilingi Bumi, ia juga berputar pada porosnya sendiri. Uniknya, kita di Bumi selalu melihat permukaan Bulan yang sama sepanjang waktu. Evaluasi yang paling tepat mengenai penyebab fenomena ini adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q10" value="A"> <span class="option-text">A. Bulan tidak melakukan rotasi pada porosnya, melainkan hanya berevolusi mengelilingi Bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"> <span class="option-text">B. kala rotasi Bulan sama persis dengan kala revolusi Bumi mengelilingi Matahari</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"> <span class="option-text">C. kala rotasi Bulan sama persis dengan kala revolusi Bulan mengelilingi Bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"> <span class="option-text">D. gravitasi Bumi mengunci posisi Bulan sehingga Bulan berhenti berputar secara perlahan</span></label>
+                </div>
+                <div class="explanation-box" id="exp10" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Bulan sebenarnya berputar (berotasi) bagaikan gasing. Namun, waktu yang dia butuhkan untuk berputar 1x putaran penuh (<b>rotasi</b>) sama persis dengan waktu yang dia butuhkan untuk berkeliling Bumi 1x (<b>revolusi</b>), yaitu sekitar 27,3 hari. Akibat "sinkronisasi" yang sempurna ini (disebut <i>Tidal Locking</i>), wajah Bulan yang menghadap Bumi selalu bagian yang itu-itu saja.</div>
+                </div>
+            </div>
+
+            <!-- Soal 11 -->
+            <div class="question-card" id="q11">
+                <div class="question-text">11. Perhatikan ilustrasi posisi matahari (M), bumi (B), dan lintasan bulan berikut!<br>
+                    <i>(Bulan berada di dalam bayang-bayang inti/umbra bumi yang menghalangi cahaya matahari sepenuhnya)</i><br><br>
+                    Ketika posisi Bulan berada tepat di daerah umbra Bumi, peristiwa yang terjadi adalah ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q11" value="A"> <span class="option-text">A. Gerhana Matahari Total</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"> <span class="option-text">B. Gerhana Matahari Sebagian</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"> <span class="option-text">C. Gerhana Bulan Total</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"> <span class="option-text">D. Gerhana Bulan Penumbra</span></label>
+                </div>
+                <div class="explanation-box" id="exp11" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Urutannya adalah Matahari - Bumi - Bulan. Bumi menghalangi cahaya Matahari sehingga Bulan tertutup oleh bayangan sangat gelap (Umbra) milik Bumi. Karena wujud Bulan menjadi gelap gulita (seringkali tampak merah darah karena pembiasan atmosfer Bumi), peristiwa ini dinamakan <b>Gerhana Bulan Total</b>.</div>
+                </div>
+            </div>
+
+            <!-- Soal 12 -->
+            <div class="question-card" id="q12">
+                <div class="question-text">12. Kalender Hijriah (Komariah) didasarkan pada periode revolusi Bulan mengelilingi Bumi, sedangkan Kalender Masehi (Syamsiah) didasarkan pada periode revolusi Bumi mengelilingi Matahari. Perbedaan ini menyebabkan ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q12" value="A"> <span class="option-text">A. jumlah hari dalam satu tahun Kalender Hijriah lebih banyak sekitar 11 hari dibanding Kalender Masehi</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"> <span class="option-text">B. jumlah hari dalam satu tahun Kalender Hijriah lebih sedikit sekitar 11 hari dibanding Kalender Masehi</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"> <span class="option-text">C. perayaan hari besar keagamaan umat Islam selalu jatuh pada tanggal dan musim yang sama setiap tahunnya</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"> <span class="option-text">D. panjang bulan pada Kalender Hijriah berkisar antara 30 sampai 31 hari secara bergantian</span></label>
+                </div>
+                <div class="explanation-box" id="exp12" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Satu tahun Masehi = 365 hari. Sementara satu tahun Hijriah = 12 x 29,5 hari (siklus bulan purnama) = sekitar 354 hari. Terlihat jelas bahwa tahun Hijriah <b>lebih cepat habis (lebih sedikit) 11 hari</b> daripada Masehi. Inilah sebabnya puasa Ramadhan selalu maju 11 hari setiap tahunnya jika dilihat dari kalender biasa (Masehi).</div>
+                </div>
+            </div>
+
+            <!-- Soal 13 -->
+            <div class="question-card" id="q13">
+                <div class="question-text">13. Jika poros Bumi tegak lurus terhadap bidang ekliptika (tidak miring 23,5&deg;), maka dampak yang akan terjadi pada kehidupan di Bumi adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q13" value="A"> <span class="option-text">A. tidak ada pergantian siang dan malam di seluruh permukaan Bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"> <span class="option-text">B. seluruh wilayah Bumi akan mengalami durasi siang dan malam yang sama sepanjang tahun, yaitu masing-masing 12 jam</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"> <span class="option-text">C. daerah kutub akan mengalami siang terus-menerus tanpa ada malam sepanjang tahun</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"> <span class="option-text">D. perubahan musim di daerah subtropis akan menjadi lebih ekstrem dari biasanya</span></label>
+                </div>
+                <div class="explanation-box" id="exp13" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Saat ini, Bumi kita agak miring 23,5&deg;. Kemiringan inilah yang menciptakan Musim (dingin/panas) dan perbedaan waktu siang (kadang siang lama sekali, kadang malam cepat). Jika Bumi berdiri tegak sempurna 0&deg;, sinar matahari akan membelah Bumi 50:50 dengan adil setiap hari. Akibatnya, <b>seluruh dunia akan selalu siang 12 jam dan malam 12 jam</b>, dan tidak akan ada lagi pergantian musim!</div>
+                </div>
+            </div>
+
+            <!-- Soal 14 -->
+            <div class="question-card" id="q14">
+                <div class="question-text">14. Perhatikan pernyataan-pernyataan berikut terkait pemanfaatan teknologi satelit buatan!<br>
+                    1) Memetakan potensi sumber daya alam dan prediksi cuaca.<br>
+                    2) Membantu sistem navigasi global (GPS) untuk transportasi darat, laut, dan udara.<br>
+                    3) Memancarkan sinyal komunikasi televisi dan internet ke daerah terpencil.<br>
+                    4) Mengubah orbit Bumi agar terhindar dari tabrakan asteroid berbahaya.<br><br>
+                    Pemanfaatan satelit buatan yang benar bagi kehidupan manusia di Bumi ditunjukkan oleh nomor ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q14" value="A"> <span class="option-text">A. 1), 2), dan 3)</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"> <span class="option-text">B. 1), 2), dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"> <span class="option-text">C. 1), 3), dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"> <span class="option-text">D. 2), 3), dan 4)</span></label>
+                </div>
+                <div class="explanation-box" id="exp14" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">Manusia menggunakan satelit untuk melihat Bumi dari atas (cuaca/peta/nomor 1), memandu arah (Google Maps/GPS/nomor 2), dan memantulkan sinyal internet/TV (nomor 3). Pernyataan nomor 4 hanya ada di film fiksi ilmiah! Teknologi kita belum bisa mengubah lintasan planet Bumi yang luar biasa berat ini.</div>
+                </div>
+            </div>
+
+            <!-- Soal 15 -->
+            <div class="question-card" id="q15">
+                <div class="question-text">15. Gaya gravitasi Bulan memiliki pengaruh yang lebih besar terhadap pasang surut air laut di Bumi dibandingkan dengan gaya gravitasi Matahari. Evaluasi yang paling logis terhadap fakta tersebut adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q15" value="A"> <span class="option-text">A. massa Bulan jauh lebih besar daripada massa Matahari sehingga tarikannya lebih kuat</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"> <span class="option-text">B. jarak Bulan ke Bumi jauh lebih dekat dibandingkan jarak Matahari ke Bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"> <span class="option-text">C. Bulan memancarkan cahayanya sendiri yang membawa energi termal ke lautan Bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"> <span class="option-text">D. orbit Bulan mengelilingi Bumi berbentuk elips yang sangat lonjong dibanding orbit Bumi</span></label>
+                </div>
+                <div class="explanation-box" id="exp15" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Matahari ukurannya jutaan kali lipat lebih berat dari Bulan. Seharusnya Matahari yang menang. Namun, Matahari terletak sangat-sangat-sangat jauh dari kita (150 juta km), sedangkan Bulan layaknya "tetangga sebelah rumah" yang sangat dekat (384 ribu km). Dalam ilmu fisika, <b>jarak yang dekat</b> menang melawan benda besar yang sangat jauh. Itulah mengapa tarikan Bulan lebih kuat menarik air laut kita.</div>
+                </div>
+            </div>
+
+            <!-- Soal 16 -->
+            <div class="question-card" id="q16">
+                <div class="question-text">16. Fenomena "Gerak Semu Harian Matahari" membuat Matahari seolah-olah terbit di timur dan tenggelam di barat. Analisis fisis yang benar mengenai fenomena ini adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q16" value="A"> <span class="option-text">A. Matahari bergerak mengelilingi Bumi dari arah timur ke barat</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"> <span class="option-text">B. Bumi berotasi pada porosnya dari arah barat ke timur</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"> <span class="option-text">C. Bumi berevolusi mengelilingi Matahari dari arah barat ke timur</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"> <span class="option-text">D. poros Bumi mengalami kemiringan sebesar 23,5&deg; saat mengitari Matahari</span></label>
+                </div>
+                <div class="explanation-box" id="exp16" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Sama seperti saat kita naik kereta maju ke depan, pohon-pohon di luar jendela terlihat bergerak mundur ke belakang (gerak semu). Matahari sebenarnya diam di tengah. Matahari terlihat bergerak dari Timur ke Barat <i>hanya karena</i> <b>Bumi kita berputar berlawanan arah, yaitu dari Barat ke Timur (rotasi)</b>.</div>
+                </div>
+            </div>
+
+            <!-- Soal 17 -->
+            <div class="question-card" id="q17">
+                <div class="question-text">17. Pada belahan bumi utara, rasi bintang Orion terlihat jelas pada bulan-bulan tertentu dan digunakan oleh pelaut zaman dahulu sebagai petunjuk arah barat. Perubahan penampakan rasi bintang dari bulan ke bulan ini disebabkan oleh ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q17" value="A"> <span class="option-text">A. rotasi Bumi pada porosnya</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"> <span class="option-text">B. revolusi Bulan mengelilingi Bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"> <span class="option-text">C. revolusi Bumi mengelilingi Matahari</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"> <span class="option-text">D. pergerakan rasi bintang itu sendiri mengelilingi galaksi</span></label>
+                </div>
+                <div class="explanation-box" id="exp17" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Bayangkan Bumi sedang mengelilingi api unggun besar (Matahari). Saat malam hari, kita menatap menjauhi api unggun ke arah luar. Karena posisi kita selalu berpindah-pindah <b>mengelilingi Matahari (revolusi Bumi) selama setahun</b>, pemandangan bintang di kegelapan angkasa yang kita lihat tiap bulannya pasti akan berbeda-beda (seolah rasi bintang berganti).</div>
+                </div>
+            </div>
+
+            <!-- Soal 18 -->
+            <div class="question-card" id="q18">
+                <div class="question-text">18. Di bawah ini adalah tabel karakteristik dua planet dalam Tata Surya:<br>
+                    <table>
+                        <tr>
+                            <th>Karakteristik</th>
+                            <th>Planet X</th>
+                            <th>Planet Y</th>
+                        </tr>
+                        <tr><td>Komposisi Utama</td><td>Batuan dan Logam</td><td>Gas Hidrogen dan Helium</td></tr>
+                        <tr><td>Keberadaan Cincin</td><td>Tidak Ada</td><td>Memiliki Cincin yang Sangat Jelas</td></tr>
+                        <tr><td>Jumlah Satelit</td><td>2 Satelit (Phobos & Deimos)</td><td>Lebih dari 80 Satelit</td></tr>
+                    </table>
+                    Berdasarkan data tersebut, identifikasi yang tepat untuk Planet X dan Planet Y adalah ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q18" value="A"> <span class="option-text">A. Planet X adalah Merkurius, Planet Y adalah Jupiter</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"> <span class="option-text">B. Planet X adalah Mars, Planet Y adalah Saturnus</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"> <span class="option-text">C. Planet X adalah Venus, Planet Y adalah Uranus</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"> <span class="option-text">D. Planet X adalah Mars, Planet Y adalah Neptunus</span></label>
+                </div>
+                <div class="explanation-box" id="exp18" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Sangat mudah jika kita melihat petunjuk utamanya. Satelit bernama "Phobos dan Deimos" adalah milik planet merah <b>Mars</b> (Planet X). Sedangkan planet bola gas raksasa yang terkenal karena "Cincin yang Sangat Jelas" menawan adalah <b>Saturnus</b> (Planet Y).</div>
+                </div>
+            </div>
+
+            <!-- Soal 19 -->
+            <div class="question-card" id="q19">
+                <div class="question-text">19. Perhatikan skenario fiktif berikut: "Sebuah kekuatan kosmik misterius tiba-tiba menghentikan rotasi Bumi secara instan, namun atmosfer Bumi tetap bergerak dengan kecepatan rotasi awalnya (sekitar 1.600 km/jam di khatulistiwa)."<br><br>
+                    Evaluasi dampak mekanis yang paling tepat terjadi pada permukaan Bumi sesaat setelah peristiwa tersebut adalah ....
+                </div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q19" value="A"> <span class="option-text">A. semua benda dan makhluk hidup di permukaan bumi akan terlempar ke arah timur dengan kecepatan sangat tinggi akibat inersia</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"> <span class="option-text">B. air laut di seluruh dunia akan langsung membeku seketika karena hilangnya gaya sentrifugal bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"> <span class="option-text">C. atmosfer bumi akan langsung lenyap ke luar angkasa sehingga bumi menjadi hampa udara seketika</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"> <span class="option-text">D. gravitasi bumi akan hilang sepenuhnya sehingga semua benda melayang bebas ke angkasa</span></label>
+                </div>
+                <div class="explanation-box" id="exp19" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">Pernahkah kamu naik mobil yang melaju kencang, lalu tiba-tiba mobil itu direm mendadak? Tubuhmu pasti akan terlempar ke depan (Sifat Inersia). Sama halnya dengan Bumi. Kita saat ini sedang bergerak ke arah Timur dengan kecepatan ribuan km/jam bersama rotasi Bumi tanpa kita sadari. Jika Bumi "direm" tiba-tiba, semua yang tidak menancap kuat di tanah (manusia, mobil, air laut) akan <b>terlempar dahsyat ke arah Timur</b>!</div>
+                </div>
+            </div>
+
+            <!-- Soal 20 -->
+            <div class="question-card" id="q20">
+                <div class="question-text">20. Fenomena supermoon terjadi ketika Bulan berada pada fase bulan purnama dan berada pada titik terdekatnya dengan Bumi (perige). Dampak langsung dari fenomena supermoon ini terhadap lingkungan pesisir pantai di Bumi adalah ....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q20" value="A"> <span class="option-text">A. terjadinya badai laut dan tsunami di sepanjang garis pantai khatulistiwa</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"> <span class="option-text">B. peningkatan tinggi pasang air laut maksimum yang lebih tinggi dari pasang purnama biasa</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"> <span class="option-text">C. penurunan suhu air laut secara drastis akibat bayangan bulan yang sangat besar</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"> <span class="option-text">D. terhentinya arus laut global selama beberapa hari karena tarikan gravitasi yang seimbang</span></label>
+                </div>
+                <div class="explanation-box" id="exp20" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Orbit Bulan bentuknya sedikit elips/lonjong. Saat <i>Supermoon</i>, Bulan kebetulan sedang berada di posisi paling dekat dengan kita, sehingga terlihat sangat besar dan terang. Jarak yang lebih dekat ini membuat tarikan gravitasinya semakin kuat menyedot air laut, sehingga menimbulkan efek <b>pasang air laut yang lebih tinggi (banjir rob yang lebih parah)</b> dibanding saat purnama biasa.</div>
+                </div>
+            </div>
+
+            <button type="button" id="btn-submit" class="btn-submit" onclick="checkAnswers()">Periksa Jawaban</button>
+            
+            <div id="result" class="result-container">
+                <h2>Nilai Akhir Anda</h2>
+                <div class="score-display" id="score-display">0</div>
+                <p class="score-message" id="score-message">Terus semangat belajar, kamu pasti bisa!</p>
+                <button type="button" class="btn-retry" onclick="resetTest()">Ulangi Tes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer-text">
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </div>
+
+    <script>
+        const totalQuestions = 20;
+        const scorePerQuestion = 5; // Total max score = 100
+
+        function checkAnswers() {
+            let totalScore = 0;
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Jawaban Telah Diperiksa";
+
+            // Loop untuk memeriksa setiap soal
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                const correctAnswer = expBox.getAttribute('data-answer');
+                const radios = document.getElementsByName(`q${i}`);
+                
+                let isAnswered = false;
+                
+                // Evaluasi setiap opsi radio pada soal ke-i
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    // Reset class untuk berjaga-jaga
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderColor = "";
+                    label.style.borderStyle = "";
+
+                    if (radio.checked) {
+                        isAnswered = true;
+                        if (radio.value === correctAnswer) {
+                            totalScore += scorePerQuestion;
+                            label.classList.add('correct');
+                            expBox.classList.add('bg-green');
+                            expBox.classList.remove('bg-red');
+                        } else {
+                            label.classList.add('wrong');
+                            expBox.classList.add('bg-red');
+                            expBox.classList.remove('bg-green');
+                        }
+                    }
+
+                    // Selalu beri tahu mana jawaban yang sebenarnya benar (berupa border dashed jika tidak dipilih)
+                    if (radio.value === correctAnswer) {
+                        label.style.borderColor = "var(--correct-border)";
+                        if(!radio.checked) {
+                             label.style.borderStyle = "dashed";
+                             label.style.borderWidth = "2px";
+                        }
+                    }
+                }
+
+                // Jika user me-skip / tidak menjawab soal ini, tandai pembahasan dengan warna merah
+                if (!isAnswered) {
+                    expBox.classList.add('bg-red');
+                }
+
+                // Tampilkan kotak pembahasan
+                expBox.classList.add('show');
+            }
+
+            // Memperbarui UI Hasil Akhir
+            const resultDiv = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            
+            scoreDisplay.innerText = totalScore;
+            
+            // Logika pesan motivasi
+            if(totalScore >= 90) {
+                scoreMessage.innerText = "Luar biasa! Pemahaman Astronomi-mu setara ilmuwan NASA!";
+            } else if (totalScore >= 70) {
+                scoreMessage.innerText = "Bagus sekali! Pertahankan dan perbanyak membaca fakta tata surya.";
+            } else {
+                scoreMessage.innerText = "Jangan menyerah, baca pelan-pelan pembahasannya, kamu pasti bisa!";
+            }
+
+            resultDiv.style.display = 'block';
+
+            // Auto scroll ke bagian hasil akhir dengan mulus
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        }
+
+        function resetTest() {
+            const form = document.getElementById('quizForm');
+            form.reset();
+
+            // Sembunyikan semua pembahasan dan reset styling opsi
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                expBox.classList.remove('show', 'bg-green', 'bg-red');
+
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderColor = "";
+                    label.style.borderStyle = "";
+                }
+            }
+
+            // Sembunyikan kotak hasil
+            document.getElementById('result').style.display = 'none';
+            
+            // Kembalikan status tombol periksa
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Periksa Jawaban";
+
+            // Gulir kembali ke bagian paling atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t6',
+          topicIndex: 6,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

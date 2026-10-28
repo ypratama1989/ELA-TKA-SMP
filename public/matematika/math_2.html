@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - EDUFILLAH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2rem; /* Balance for back button */
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-intro p {
+            color: var(--text-muted);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-number {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 2.8rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: #C7D2FE;
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-top: 2px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom {
+            border-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .option-label.correct .radio-custom { border-color: var(--success); }
+        .option-label.correct .radio-custom::after { background: var(--success); }
+        
+        .option-label.wrong {
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .option-label.wrong .radio-custom { border-color: var(--danger); }
+        .option-label.wrong .radio-custom::after { background: var(--danger); }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .exp-correct { background-color: var(--success-bg); border-left: 4px solid var(--success); }
+        .exp-correct h4 { color: #065F46; }
+        .exp-wrong { background-color: var(--danger-bg); border-left: 4px solid var(--danger); }
+        .exp-wrong h4 { color: #991B1B; }
+
+        .explanation-content {
+            color: #374151;
+            margin-top: 0.5rem;
+        }
+
+        .action-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #EEF2FF;
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .score-title { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #EEF2FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--primary);
+        }
+        .score-value { font-size: 3rem; font-weight: 700; color: var(--primary); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .options-container { margin-left: 0; margin-top: 1rem; }
+            .question-header { flex-direction: column; }
+            .header-title { margin-right: 0; text-align: right;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="btn-back" onclick="goBack()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <div class="header-title">Kuis Matematika Terpadu</div>
+    </header>
+
+    <main>
+        <div class="quiz-intro">
+            <h1>Uji Pemahaman Konsepmu!</h1>
+            <p>Jawablah pertanyaan di bawah ini. Anda tidak perlu mengisi semua soal untuk memeriksa jawaban. Setiap soal bernilai 5 poin.</p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-questions">
+                <!-- Soal akan di-generate oleh JavaScript di sini -->
+            </div>
+
+            <div class="action-container" id="submit-section">
+                <button type="button" class="btn btn-primary" onclick="checkAnswers()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-container">
+            <div class="score-title">Nilai Akhir Anda</div>
+            <div class="score-circle">
+                <div class="score-value" id="final-score">0</div>
+            </div>
+            <p id="score-message" style="margin-bottom: 1.5rem; color: var(--text-main); font-weight: 500;"></p>
+            <button type="button" class="btn btn-outline" onclick="resetQuiz()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ulangi Tes
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "Dalam suatu kompetensi matematika, aturan penilaian yang digunakan adalah: skor 4 untuk setiap jawaban benar, skor -2 untuk setiap jawaban salah, dan skor -1 untuk soal yang tidak dijawab. Dari 40 soal yang diberikan, Budi menjawab 32 soal dengan 28 di antaranya bernilai benar. Skor total yang diperoleh Budi adalah...",
+                options: ["104", "96", "92", "88"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian Logis:</strong><br>
+                Mari kita kelompokkan soal berdasarkan status jawabannya terlebih dahulu.<br>
+                1. <strong>Soal Benar:</strong> Budi menjawab 28 soal dengan benar. <br>
+                   <code>Skor = 28 &times; 4 = 112</code>.<br>
+                2. <strong>Soal Salah:</strong> Dari total 32 soal yang dijawab, jika 28 benar, sisanya salah. <br>
+                   <code>Soal salah = 32 - 28 = 4 soal</code>. <br>
+                   <code>Skor = 4 &times; (-2) = -8</code>.<br>
+                3. <strong>Soal Tidak Dijawab:</strong> Dari total 40 soal, yang dijawab hanya 32. <br>
+                   <code>Tidak dijawab = 40 - 32 = 8 soal</code>. <br>
+                   <code>Skor = 8 &times; (-1) = -8</code>.<br>
+                4. <strong>Total Skor Budi:</strong> <br>
+                   <code>112 + (-8) + (-8) = 112 - 16 = <strong>96</strong></code>.`
+            },
+            {
+                question: "Suhu di dalam lemari es sebelum dihidupkan adalah 25&deg;C. Setelah dihidupkan, suhu di dalam lemari es turun 3&deg;C setiap 4 menit. Jika lemari es tersebut telah dihidupkan selama 32 menit, maka suhu di dalam lemari es sekarang adalah...",
+                options: ["1&deg;C", "-1&deg;C", "4&deg;C", "-4&deg;C"],
+                correctAnswer: 0, 
+                explanation: `<strong>Langkah Penyelesaian Logis:</strong><br>
+                1. <strong>Suhu awal</strong> = 25&deg;C.<br>
+                2. <strong>Waktu berjalan</strong> = 32 menit. Karena suhu turun setiap 4 menit, kita hitung berapa kali penurunan terjadi: <br>
+                   <code>Frekuensi penurunan = 32 menit &divide; 4 menit = 8 kali</code>.<br>
+                3. <strong>Total penurunan suhu:</strong> Setiap kali turun sebesar 3&deg;C. <br>
+                   <code>8 kali &times; 3&deg;C = 24&deg;C</code>.<br>
+                4. <strong>Suhu Akhir:</strong> <br>
+                   <code>Suhu awal - Total penurunan = 25&deg;C - 24&deg;C = <strong>1&deg;C</strong></code>.<br><br>
+                <small style="color:var(--danger)"><em>Catatan Edukasi: Kunci jawaban asli pada soal menyebutkan opsi B, namun hasil perhitungannya secara logis adalah 1&deg;C. Kami telah mengoreksi kunci ke Opsi A (1&deg;C) secara otomatis untuk memastikan kebenaran matematis.</em></small>`
+            },
+            {
+                question: "Perhatikan empat pernyataan operasi hitung bilangan bulat di bawah ini:<br>(i) -12 &times; 4 + 18 &divide; (-3) = -54<br>(ii) (-8 - (-12)) &times; (-5) = -20<br>(iii) 24 &divide; (-6) - (-10) &times; 2 = 16<br>(iv) -15 - (-27) &divide; 3 + (-4) = -10<br><br>Pernyataan di atas yang bernilai benar adalah...",
+                options: ["(i), (ii), dan (iii)", "(i) dan (iii) saja", "(ii) dan (iv) saja", "Semua pernyataan benar"],
+                correctAnswer: 3, 
+                explanation: `<strong>Mari Kita Uji Satu per Satu:</strong><br>
+                Ingat aturan <strong>KaBaTaKu</strong> (Kali Bagi Tambah Kurang)! Dahulukan perkalian & pembagian.<br>
+                &bull; <strong>(i)</strong> <code>(-12 &times; 4) + (18 &divide; -3) = -48 + (-6) = -54</code> <strong>(BENAR)</strong><br>
+                &bull; <strong>(ii)</strong> <code>(-8 + 12) &times; (-5) = 4 &times; (-5) = -20</code> <strong>(BENAR)</strong><br>
+                &bull; <strong>(iii)</strong> <code>(24 &divide; -6) - (-10 &times; 2) = -4 - (-20) = -4 + 20 = 16</code> <strong>(BENAR)</strong><br>
+                &bull; <strong>(iv)</strong> <code>-15 - (-27 &divide; 3) + (-4) = -15 - (-9) - 4 = -15 + 9 - 4 = -10</code> <strong>(BENAR)</strong><br><br>
+                <small style="color:var(--danger)"><em>Catatan Edukasi: Karena keempat pernyataan bernilai benar setelah diuji, maka jawaban yang paling tepat adalah "Semua pernyataan benar". Kunci jawaban bawaan (A) telah dikoreksi secara otomatis.</em></small>`
+            },
+            {
+                question: "Hasil dari operasi hitung (-18 + 30) &divide; (-3 - 1) adalah...",
+                options: ["-4", "-3", "3", "4"],
+                correctAnswer: 1, 
+                explanation: `<strong>Langkah Penyelesaian Logis:</strong><br>
+                Berdasarkan aturan operasi hitung campuran, selesaikan dulu operasi yang ada di dalam tanda kurung.<br>
+                1. Selesaikan kurung pertama: <code>(-18 + 30) = 12</code>.<br>
+                2. Selesaikan kurung kedua: <code>(-3 - 1) = -4</code>.<br>
+                3. Operasikan pembagiannya: <code>12 &divide; -4 = <strong>-3</strong></code>.`
+            },
+            {
+                question: "Di antara bilangan-bilangan berikut, manakah yang merupakan kelompok bilangan irasional?",
+                options: ["&radic;4, &radic;9, &radic;16", "0,333... , <sup>2</sup>/<sub>3</sub>, 0,125", "&radic;2, &radic;3, &pi; (3,14159...)", "-5, 0, <sup>22</sup>/<sub>7</sub>"],
+                correctAnswer: 2, 
+                explanation: `<strong>Pengingat Konsep Dasar:</strong><br>
+                <strong>Bilangan Irasional</strong> adalah bilangan real yang <em>tidak dapat</em> diubah menjadi bentuk pecahan biasa (a/b). Cirinya adalah desimalnya panjang tak berujung dan tak berpola.<br><br>
+                Mari evaluasi opsinya:<br>
+                &bull; Opsi A: &radic;4=2, &radic;9=3, &radic;16=4. Semuanya bilangan bulat (Rasional).<br>
+                &bull; Opsi B: Mengandung pecahan dan desimal yang teratur (Rasional).<br>
+                &bull; Opsi D: Terdiri dari bilangan bulat dan bentuk pecahan (Rasional).<br>
+                &bull; Opsi C: <strong>&radic;2, &radic;3, dan &pi;</strong>. Ketiganya memiliki nilai desimal yang tidak pernah berhenti dan tidak memiliki pola berulang, sehingga sah disebut kelompok <strong>Irasional</strong>.`
+            },
+            {
+                question: "Bentuk pecahan biasa dari bilangan desimal berulang 0,545454... adalah...",
+                options: ["<sup>54</sup>/<sub>100</sub>", "<sup>6</sup>/<sub>11</sub>", "<sup>5</sup>/<sub>9</sub>", "<sup>18</sup>/<sub>33</sub>"],
+                correctAnswer: 1, 
+                explanation: `<strong>Trik Mengubah Desimal Berulang Menjadi Pecahan:</strong><br>
+                Gunakan metode aljabar linier.<br>
+                1. Misalkan desimal tersebut adalah x: <code>x = 0,545454...</code><br>
+                2. Karena ada <strong>dua angka berulang (54)</strong>, maka kalikan persamaan dengan 100:<br>
+                   <code>100x = 54,545454...</code><br>
+                3. Kurangi persamaan kedua dengan persamaan pertama untuk menghabiskan angka di belakang koma:<br>
+                   <code>100x - x = 54,545454... - 0,545454...</code><br>
+                   <code>99x = 54</code><br>
+                4. Maka <code>x = 54 / 99</code>.<br>
+                5. Sederhanakan pecahan dengan membagi pembilang dan penyebut dengan angka 9:<br>
+                   <code>(54 &divide; 9) / (99 &divide; 9) = <strong>6/11</strong></code>.`
+            },
+            {
+                question: "Diketahui x = 3 + &radic;2 dan y = 3 - &radic;2. Hasil dari operasi (x &times; y) + (x + y) adalah...",
+                options: ["11", "13", "7 + 2&radic;2", "13 - 2&radic;2"],
+                correctAnswer: 1, 
+                explanation: `<strong>Langkah Penyelesaian Substitusi Aljabar:</strong><br>
+                Selesaikan perkalian dan penjumlahannya secara terpisah sebelum digabung.<br>
+                1. <strong>Operasi Perkalian (x &times; y):</strong><br>
+                   Ini adalah bentuk perkalian sekawan: <code>(a + b)(a - b) = a<sup>2</sup> - b<sup>2</sup></code>.<br>
+                   <code>(3 + &radic;2)(3 - &radic;2) = 3<sup>2</sup> - (&radic;2)<sup>2</sup> = 9 - 2 = 7</code>.<br>
+                2. <strong>Operasi Penjumlahan (x + y):</strong><br>
+                   <code>(3 + &radic;2) + (3 - &radic;2)</code><br>
+                   Angka akarnya saling menghilangkan (+&radic;2 bertemu -&radic;2). Sehingga <code>3 + 3 = 6</code>.<br>
+                3. <strong>Gabungkan Hasil Akhir:</strong><br>
+                   <code>(x &times; y) + (x + y) = 7 + 6 = <strong>13</strong></code>.`
+            },
+            {
+                question: "Diberikan beberapa pernyataan mengenai sifat bilangan rasional dan irasional:<br>(i) Jumlah dari dua bilangan irasional selalu menghasilkan bilangan irasional.<br>(ii) Hasil kali antara bilangan rasional bukan nol dengan bilangan irasional adalah bilangan irasional.<br>(iii) Jumlah dari bilangan rasional dan bilangan irasional adalah bilangan irasional.<br>(iv) Hasil bagi dua bilangan irasional selalu menghasilkan bilangan irasional.<br><br>Pernyataan yang selalu benar adalah...",
+                options: ["(i) dan (ii)", "(ii) dan (iii)", "(iii) dan (iv)", "(i) dan (iv)"],
+                correctAnswer: 1, 
+                explanation: `<strong>Evaluasi Logis Sifat Bilangan:</strong><br>
+                &bull; <strong>(i) Salah</strong>. Jika kita menjumlahkan &radic;2 (irasional) dengan -&radic;2 (irasional), hasilnya adalah 0 (rasional). Tidak <em>selalu</em> irasional.<br>
+                &bull; <strong>(ii) Benar</strong>. Bilangan rasional (misal: 3) dikali irasional (misal: &radic;2) akan menjadi 3&radic;2 (tetap irasional).<br>
+                &bull; <strong>(iii) Benar</strong>. Bilangan rasional (misal: 2) ditambah irasional (misal: &radic;3) akan menjadi 2+&radic;3, yang tidak akan pernah bisa jadi rasional murni.<br>
+                &bull; <strong>(iv) Salah</strong>. Jika &radic;8 (irasional) dibagi &radic;2 (irasional), hasilnya adalah &radic;4 = 2 (rasional).<br><br>
+                Oleh karena itu, yang secara absolut selalu benar hanyalah pernyataan (ii) dan (iii).`
+            },
+            {
+                question: "Hasil dari (2<sup>3</sup> &times; 2<sup>4</sup>) &divide; 2<sup>5</sup> adalah...",
+                options: ["2", "4", "8", "16"],
+                correctAnswer: 1, 
+                explanation: `<strong>Mengingat Sifat Eksponen Dasar:</strong><br>
+                &bull; Jika dikali dengan basis yang sama: pangkatnya <strong>ditambah</strong> (a<sup>m</sup> &times; a<sup>n</sup> = a<sup>m+n</sup>).<br>
+                &bull; Jika dibagi dengan basis yang sama: pangkatnya <strong>dikurang</strong> (a<sup>m</sup> &divide; a<sup>n</sup> = a<sup>m-n</sup>).<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. Selesaikan perkalian pada pembilang: <code>2<sup>3</sup> &times; 2<sup>4</sup> = 2<sup>(3 + 4)</sup> = 2<sup>7</sup></code>.<br>
+                2. Lakukan pembagian: <code>2<sup>7</sup> &divide; 2<sup>5</sup> = 2<sup>(7 - 5)</sup> = 2<sup>2</sup></code>.<br>
+                3. Hitung hasil akhirnya: <code>2<sup>2</sup> = 2 &times; 2 = <strong>4</strong></code>.`
+            },
+            {
+                question: "Nilai dari (1/3)<sup>-2</sup> + 2<sup>-1</sup> - 5<sup>0</sup> adalah...",
+                options: ["8,5", "9,5", "10", "11,5"],
+                correctAnswer: 0, 
+                explanation: `<strong>Membedah Aturan Pangkat Beragam:</strong><br>
+                Mari selesaikan satu demi satu elemen pangkatnya:<br>
+                1. <strong>Pecahan pangkat negatif:</strong> <code>(1/3)<sup>-2</sup></code>. Balik pecahannya agar pangkatnya positif menjadi <code>(3/1)<sup>2</sup> = 3<sup>2</sup> = 9</code>.<br>
+                2. <strong>Bilangan pangkat negatif:</strong> <code>2<sup>-1</sup></code>. Ini artinya 1 dibagi bilangannya sendiri, yaitu <code>1/2 = 0,5</code>.<br>
+                3. <strong>Pangkat nol:</strong> <code>5<sup>0</sup></code>. Ingat, angka berapa pun (kecuali nol) jika dipangkatkan 0 hasilnya pasti 1. Jadi, bernilai <code>1</code>.<br><br>
+                <strong>Operasikan:</strong><br>
+                <code>9 + 0,5 - 1 = 9,5 - 1 = <strong>8,5</strong></code>.`
+            },
+            {
+                question: "Jika diketahui persamaan 3<sup>(x + 2)</sup> = 81, maka nilai dari x<sup>2</sup> - 2x adalah...",
+                options: ["0", "3", "8", "15"],
+                correctAnswer: 0, 
+                explanation: `<strong>Langkah Menyelesaikan Persamaan Eksponen:</strong><br>
+                Tugas pertama adalah mencari nilai <code>x</code> dengan cara menyamakan basis di kedua ruas (kiri dan kanan).<br>
+                1. Ubah 81 menjadi bilangan berbasis 3. Kita tahu bahwa <code>81 = 3<sup>4</sup></code>.<br>
+                2. Persamaan menjadi: <code>3<sup>(x + 2)</sup> = 3<sup>4</sup></code>.<br>
+                3. Karena basis sama, kita turunkan pangkatnya saja: <br>
+                   <code>x + 2 = 4</code><br>
+                   <code>x = 4 - 2 = 2</code>.<br>
+                4. Substitusi nilai x ke pertanyaan: <code>x<sup>2</sup> - 2x</code><br>
+                   <code>(2)<sup>2</sup> - 2(2) = 4 - 4 = <strong>0</strong></code>.`
+            },
+            {
+                question: "Di antara empat bilangan berpangkat berikut, manakah yang memiliki nilai paling besar?",
+                options: ["2<sup>300</sup>", "3<sup>200</sup>", "5<sup>100</sup>", "8<sup>100</sup>"],
+                correctAnswer: 1, 
+                explanation: `<strong>Trik Membandingkan Angka Pangkat Besar:</strong><br>
+                Kita tidak bisa menghitung manual nilai pangkat ratusan! Triknya adalah <strong>menyamakan nilai pangkatnya</strong>. Mari kita ubah semuanya menjadi pangkat 100.<br><br>
+                &bull; <code>2<sup>300</sup> = (2<sup>3</sup>)<sup>100</sup> = <strong>8<sup>100</sup></strong></code>.<br>
+                &bull; <code>3<sup>200</sup> = (3<sup>2</sup>)<sup>100</sup> = <strong>9<sup>100</sup></strong></code>.<br>
+                &bull; <code>5<sup>100</sup></code> tetap <strong>5<sup>100</sup></strong>.<br>
+                &bull; <code>8<sup>100</sup></code> tetap <strong>8<sup>100</sup></strong>.<br><br>
+                Sekarang karena semua pangkat luarnya sudah sama (100), kita tinggal melihat basis terbesarnya. Jelas angka terbesar adalah 9, sehingga <code>9<sup>100</sup></code> (yang setara dengan <strong>3<sup>200</sup></strong>) adalah bilangan paling besar.`
+            },
+            {
+                question: "Bentuk sederhana dari &radic;72 adalah...",
+                options: ["2&radic;6", "3&radic;8", "6&radic;2", "8&radic;3"],
+                correctAnswer: 2, 
+                explanation: `<strong>Konsep Menyederhanakan Bentuk Akar:</strong><br>
+                Untuk menyederhanakan akar, carilah faktor pengali dari angka di dalam akar yang salah satunya merupakan <strong>bilangan kuadrat sempurna</strong> terbesar (seperti 4, 9, 16, 25, 36, 49, dll).<br><br>
+                1. Faktor pengali dari 72 adalah 36 &times; 2 (36 adalah bilangan kuadrat).<br>
+                2. Jabarkan: <code>&radic;72 = &radic;(36 &times; 2)</code>.<br>
+                3. Keluarkan dari akar: <code>&radic;36 &times; &radic;2 = <strong>6&radic;2</strong></code>.`
+            },
+            {
+                question: "Hasil dari operasi bentuk akar 3&radic;2 + &radic;50 - &radic;8 adalah...",
+                options: ["6&radic;2", "8&radic;2", "10&radic;2", "12&radic;2"],
+                correctAnswer: 0, 
+                explanation: `<strong>Menyamakan Bentuk Akar:</strong><br>
+                Bentuk akar tidak dapat langsung dijumlahkan/dikurangkan jika angka di dalamnya tidak sama. Mari sederhanakan terlebih dahulu.<br>
+                &bull; <code>3&radic;2</code> sudah sederhana.<br>
+                &bull; <code>&radic;50 = &radic;(25 &times; 2) = 5&radic;2</code>.<br>
+                &bull; <code>&radic;8 = &radic;(4 &times; 2) = 2&radic;2</code>.<br><br>
+                <strong>Operasikan:</strong><br>
+                <code>3&radic;2 + 5&radic;2 - 2&radic;2</code><br>
+                Karena akarnya sudah seragam (&radic;2), cukup operasikan angka di depannya: <code>(3 + 5 - 2)&radic;2 = <strong>6&radic;2</strong></code>.`
+            },
+            {
+                question: "Bentuk rasional dari pecahan 6 / (&radic;5 - &radic;2) adalah...",
+                options: ["2(&radic;5 + &radic;2)", "3(&radic;5 + &radic;2)", "2(&radic;5 - &radic;2)", "6(&radic;5 + &radic;2)"],
+                correctAnswer: 0, 
+                explanation: `<strong>Konsep Merasionalkan Penyebut:</strong><br>
+                Penyebut berbentuk <code>(&radic;a - &radic;b)</code> dirasionalkan dengan mengalikannya menggunakan "sekawannya", yaitu <code>(&radic;a + &radic;b)</code>.<br><br>
+                <strong>Langkah-langkah:</strong><br>
+                1. Kalikan pembilang dan penyebut dengan sekawan: <br>
+                   <code>[6 / (&radic;5 - &radic;2)] &times; [(&radic;5 + &radic;2) / (&radic;5 + &radic;2)]</code><br>
+                2. Penyebutnya akan menjadi <code>(&radic;5)<sup>2</sup> - (&radic;2)<sup>2</sup> = 5 - 2 = 3</code>.<br>
+                3. Bentuk pecahannya menjadi: <code>6(&radic;5 + &radic;2) / 3</code>.<br>
+                4. Sederhanakan angka luarnya: <code>6 &divide; 3 = 2</code>.<br>
+                5. Hasil akhirnya adalah <strong>2(&radic;5 + &radic;2)</strong>.`
+            },
+            {
+                question: "Sebuah taman berbentuk persegi panjang memiliki panjang (5 + &radic;3) meter dan lebar (5 - &radic;3) meter. Evaluasilah pernyataan berikut:<br>(i) Luas taman tersebut adalah 22 meter persegi.<br>(ii) Keliling taman tersebut adalah 20 meter.<br>(iii) Panjang diagonal taman tersebut adalah &radic;56 meter.<br><br>Pernyataan yang benar adalah...",
+                options: ["(i) dan (ii) saja", "(ii) dan (iii) saja", "(i) dan (iii) saja", "(i), (ii), dan (iii)"],
+                correctAnswer: 3, 
+                explanation: `<strong>Mari Kita Uji Setiap Pernyataan Matematis:</strong><br>
+                &bull; <strong>(i) Luas (p &times; l):</strong> <br>
+                  <code>(5 + &radic;3)(5 - &radic;3) = 5<sup>2</sup> - (&radic;3)<sup>2</sup> = 25 - 3 = 22 m<sup>2</sup></code>. <strong>(BENAR)</strong><br>
+                &bull; <strong>(ii) Keliling 2(p + l):</strong> <br>
+                  <code>2 &times; [(5 + &radic;3) + (5 - &radic;3)] = 2 &times; (10) = 20 m</code>. <strong>(BENAR)</strong><br>
+                &bull; <strong>(iii) Diagonal (&radic;(p<sup>2</sup> + l<sup>2</sup>)):</strong> <br>
+                  <code>&radic;[(5+&radic;3)<sup>2</sup> + (5-&radic;3)<sup>2</sup>]</code><br>
+                  Jabarkan p<sup>2</sup>: <code>25 + 10&radic;3 + 3 = 28 + 10&radic;3</code>.<br>
+                  Jabarkan l<sup>2</sup>: <code>25 - 10&radic;3 + 3 = 28 - 10&radic;3</code>.<br>
+                  Jumlahkan: <code>&radic;[28 + 10&radic;3 + 28 - 10&radic;3] = &radic;56 m</code>. <strong>(BENAR)</strong>.<br>
+                Karena semua benar, jawabannya adalah (i), (ii), dan (iii).`
+            },
+            {
+                question: "Massa planet Bumi diperkirakan adalah 5.970.000.000.000.000.000.000.000 kg. Bentuk notasi ilmiah yang tepat untuk menuliskan massa Bumi tersebut adalah...",
+                options: ["59,7 &times; 10<sup>23</sup> kg", "5,97 &times; 10<sup>24</sup> kg", "5,97 &times; 10<sup>25</sup> kg", "0,597 &times; 10<sup>25</sup> kg"],
+                correctAnswer: 1, 
+                explanation: `<strong>Aturan Notasi Ilmiah Baku:</strong><br>
+                Ditulis dalam format <code>a &times; 10<sup>n</sup></code>, dengan syarat angka awalan (a) harus berada di rentang <strong>1 hingga kurang dari 10</strong>.<br><br>
+                1. Angka penting yang kita ambil adalah 5,97.<br>
+                2. Letakkan koma imajiner di ujung belakang bilangan besar tersebut, lalu hitung lompatannya ke arah kiri hingga berada tepat di belakang angka 5.<br>
+                3. Total lompatannya adalah 24 digit (22 digit nol + 2 digit angka 97).<br>
+                4. Karena koma bergeser ke kiri, pangkat dari angka 10 bernilai positif 24.<br>
+                Maka notasi ilmiah yang benar adalah <strong>5,97 &times; 10<sup>24</sup> kg</strong>.`
+            },
+            {
+                question: "Ukuran sebuah virus influenza adalah sekitar 0,00000012 meter. Jika dituliskan dalam bentuk notasi ilmiah, ukuran virus tersebut adalah...",
+                options: ["1,2 &times; 10<sup>-7</sup> meter", "1,2 &times; 10<sup>-8</sup> meter", "12 &times; 10<sup>-8</sup> meter", "0,12 &times; 10<sup>-6</sup> meter"],
+                correctAnswer: 0, 
+                explanation: `<strong>Notasi Ilmiah untuk Bilangan Desimal Kecil:</strong><br>
+                Sekali lagi, format awalan (a) haruslah bernilai antara 1 sampai kurang dari 10.<br>
+                1. Angka penting di atas adalah 1 dan 2, sehingga kita bentuk awalan <strong>1,2</strong>.<br>
+                2. Pada bilangan asli <code>0,00000012</code>, kita menggeser komanya ke <strong>kanan</strong> hingga berada di belakang angka 1.<br>
+                3. Kita melakukan 7 langkah pergeseran ke arah kanan.<br>
+                4. Karena bergeser ke arah membesar (kanan), pangkatnya otomatis bernilai negatif (-7).<br>
+                Sehingga bentuk bakunya menjadi <strong>1,2 &times; 10<sup>-7</sup> meter</strong>.`
+            },
+            {
+                question: "Hasil perkalian dari (3,2 &times; 10<sup>4</sup>) &times; (2,0 &times; 10<sup>-7</sup>) dalam notasi ilmiah yang benar adalah...",
+                options: ["6,4 &times; 10<sup>-3</sup>", "6,4 &times; 10<sup>-11</sup>", "64 &times; 10<sup>-4</sup>", "0,64 &times; 10<sup>-2</sup>"],
+                correctAnswer: 0, 
+                explanation: `<strong>Trik Perkalian Notasi Ilmiah:</strong><br>
+                Kelompokkan angka utama dan pangkat eksponennya agar mudah dihitung.<br>
+                1. <strong>Kalikan angka utama:</strong> <code>3,2 &times; 2,0 = 6,4</code>.<br>
+                2. <strong>Kalikan pangkat:</strong> Sesuai sifat eksponen perkalian, jumlahkan pangkatnya. <br>
+                   <code>10<sup>4</sup> &times; 10<sup>-7</sup> = 10<sup>(4 + (-7))</sup> = 10<sup>-3</sup></code>.<br>
+                3. <strong>Gabungkan hasil:</strong> <code>6,4 &times; 10<sup>-3</sup></code>.<br>
+                Hasil penggabungan sudah sesuai standar baku notasi ilmiah (angka awal berada di rentang 1 hingga 10). Maka selesai.`
+            },
+            {
+                question: "Dua buah bintang berjarak d<sub>1</sub> = 4,5 &times; 10<sup>12</sup> meter dan d<sub>2</sub> = 1,5 &times; 10<sup>10</sup> meter dari bumi. Berdasarkan data tersebut, seorang astronom mengevaluasi perbandingan jarak kedua bintang tersebut. Perbandingan jarak d<sub>1</sub> terhadap d<sub>2</sub> adalah...",
+                options: ["3 &times; 10<sup>2</sup> kali lebih jauh", "3 &times; 10<sup>1</sup> kali lebih jauh", "300 &times; 10<sup>2</sup> kali lebih jauh", "3 &times; 10<sup>-2</sup> kali lebih jauh"],
+                correctAnswer: 0, 
+                explanation: `<strong>Operasi Pembagian Notasi Ilmiah:</strong><br>
+                Untuk mencari perbandingan (seberapa kali lipat), kita membagi jarak terbesar dengan jarak terkecil.<br>
+                1. Buat dalam bentuk rasio: <code>(4,5 &times; 10<sup>12</sup>) &divide; (1,5 &times; 10<sup>10</sup>)</code>.<br>
+                2. <strong>Bagikan angka utama:</strong> <code>4,5 &divide; 1,5 = 3</code>.<br>
+                3. <strong>Bagikan pangkat:</strong> Sesuai sifat eksponen pembagian, kurangkan pangkatnya.<br>
+                   <code>10<sup>12</sup> &divide; 10<sup>10</sup> = 10<sup>(12 - 10)</sup> = 10<sup>2</sup></code>.<br>
+                4. <strong>Gabungkan hasil:</strong> <code>3 &times; 10<sup>2</sup></code>.<br>
+                Bintang d<sub>1</sub> secara eksak berjarak 3 &times; 10<sup>2</sup> kali (atau 300 kali) lebih jauh dibandingkan bintang d<sub>2</sub>.`
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `q-card-${index}`;
+
+                // Header soal
+                const header = document.createElement('div');
+                header.className = 'question-header';
+                header.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                `;
+                questionCard.appendChild(header);
+
+                // Kontainer opsi jawaban
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question${index}`;
+                    radio.value = optIndex;
+                    
+                    const customRadio = document.createElement('span');
+                    customRadio.className = 'radio-custom';
+                    
+                    const text = document.createElement('span');
+                    text.className = 'option-text';
+                    text.innerHTML = opt; // Menggunakan innerHTML untuk merender entitas HTML (sup, sub, simbol)
+
+                    label.appendChild(radio);
+                    label.appendChild(customRadio);
+                    label.appendChild(text);
+                    optionsContainer.appendChild(label);
+                });
+                
+                questionCard.appendChild(optionsContainer);
+
+                // Kotak penjelasan (hidden secara default)
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `exp-${index}`;
+                
+                const expTitle = document.createElement('h4');
+                expTitle.id = `exp-title-${index}`;
+                expBox.appendChild(expTitle);
+                
+                const expContent = document.createElement('div');
+                expContent.className = 'explanation-content';
+                expContent.innerHTML = q.explanation;
+                expBox.appendChild(expContent);
+
+                questionCard.appendChild(expBox);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const pointsPerQuestion = 100 / quizData.length; // 5 poin
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                const expTitle = document.getElementById(`exp-title-${index}`);
+                
+                // Hapus styling lama jika menekan periksa berulang kali
+                q.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+                
+                expBox.classList.remove('exp-correct', 'exp-wrong');
+
+                let isCorrect = false;
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.correctAnswer) {
+                        score += pointsPerQuestion;
+                        isCorrect = true;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        // Tandai yang salah dipilih pengguna
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        // Tunjukkan mana yang benar
+                        document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                    }
+                } else {
+                    // Jika tidak dijawab, langsung tunjukkan jawaban yang benar
+                    document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                }
+
+                // Tampilkan kotak penjelasan
+                expBox.classList.add('show');
+                if (isCorrect) {
+                    expBox.classList.add('exp-correct');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jawaban Anda Tepat!';
+                } else {
+                    expBox.classList.add('exp-wrong');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ' + (selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Soal Tidak Dijawab');
+                }
+
+                // Disable semua radio button setelah disubmit
+                const radios = document.querySelectorAll(`input[name="question${index}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            });
+
+            const finalScoreElem = document.getElementById('final-score');
+            finalScoreElem.innerText = Math.round(score);
+            try {
+                finalScoreElem.setAttribute('data-final-score', Math.round(score));
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: Math.round(score),
+                        passed: Math.round(score) >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            const messageElem = document.getElementById('score-message');
+            if (score >= 90) messageElem.innerText = "Luar biasa! Pemahaman matematikamu sangat kuat.";
+            else if (score >= 70) messageElem.innerText = "Kerja bagus! Lanjutkan latihanmu agar makin mahir.";
+            else if (score >= 50) messageElem.innerText = "Cukup baik, tapi masih ada ruang untuk perbaikan. Yuk, pelajari lagi pembahasannya!";
+            else messageElem.innerText = "Jangan menyerah! Setiap kegagalan adalah langkah menuju kesuksesan. Pelajari pembahasannya pelan-pelan.";
+
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('submit-section').style.display = 'none';
+
+            // Scroll ke hasil dengan halus
+            setTimeout(() => {
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function resetQuiz() {
+            // Reset form input
+            document.getElementById('quiz-form').reset();
+            
+            // Sembunyikan hasil dan munculkan kembali tombol periksa
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('submit-section').style.display = 'block';
+
+            // Kembalikan state soal
+            quizData.forEach((q, index) => {
+                // Sembunyikan penjelasan
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.classList.remove('show', 'exp-correct', 'exp-wrong');
+                
+                // Hapus class warna dan enable radio
+                q.options.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove('correct', 'wrong');
+                    
+                    const radio = label.querySelector('input');
+                    radio.disabled = false;
+                });
+            });
+
+            // Scroll ke atas dengan mulus
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+                function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>

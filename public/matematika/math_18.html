@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Transformasi Geometri</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        
+        /* Animasi masuk (fade-in) yang halus untuk elemen baru */
+        .fade-in {
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Menyembunyikan radio button asli agar UI dapat dikustomisasi */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling untuk wadah opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.125rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e2e8f0; /* slate-200 */
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            position: relative;
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9; /* slate-100 */
+            border-color: #cbd5e1; /* slate-300 */
+            transform: translateY(-1px);
+        }
+
+        /* Styling saat opsi dipilih (Checked) */
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Desain lingkaran kustom untuk radio button */
+        .radio-circle {
+            width: 1.35rem;
+            height: 1.35rem;
+            border: 2px solid #94a3b8; /* slate-400 */
+            border-radius: 50%;
+            margin-right: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        /* Efek titik tengah saat lingkaran dipilih */
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.65rem;
+            height: 0.65rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-200">
+
+    <!-- Header dengan Tombol Kembali -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 transition px-3 py-1.5 rounded-lg font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[95px]"></div> <!-- Spacer agar judul tepat berada di tengah -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-10">
+        <!-- Judul Kuis -->
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-indigo-100 text-indigo-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block tracking-wide">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Transformasi Geometri</h2>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto">Uji pemahamanmu tentang Translasi, Refleksi, Rotasi, dan Dilatasi. Tekan tombol periksa jawaban kapan saja untuk melihat pembahasan lengkapnya.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer Soal (Akan dirender via JavaScript) -->
+            </div>
+
+            <!-- Area Aksi (Tombol Cek & Skor) -->
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center sticky bottom-4 z-40">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <!-- Area Hasil Evaluasi -->
+                <div id="resultArea" class="hidden mt-2 fade-in">
+                    <p class="text-lg font-semibold text-slate-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8 drop-shadow-sm">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-slate-200 hover:border-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-12 border-t-4 border-blue-500">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-1 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Titik A(3, -2) ditranslasikan oleh T(4, 5). Koordinat bayangan titik A adalah...",
+                options: [
+                    "A. A'(7, 3)",
+                    "B. A'(7, -3)",
+                    "C. A'(-1, 3)",
+                    "D. A'(-1, -7)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Translasi (Pergeseran):</strong><br>Translasi itu sangat sederhana, kita hanya perlu <strong>menjumlahkan</strong> koordinat titik awal (x, y) dengan nilai pergeserannya (a, b).<br><br>Rumus: A(x, y) ditranslasi T(a, b) &rarr; A'(x + a, y + b).<br><br><strong>Mari kita hitung:</strong><br>Titik A(3, -2) ditranslasi oleh T(4, 5):<br>&bull; x baru = 3 + 4 = <strong>7</strong><br>&bull; y baru = -2 + 5 = <strong>3</strong><br><br>Jadi, koordinat bayangannya adalah <strong>A'(7, 3)</strong>."
+            },
+            {
+                question: "Bayangan titik B(-1, 4) jika direfleksikan terhadap sumbu X adalah...",
+                options: [
+                    "A. B'(1, 4)",
+                    "B. B'(-1, -4)",
+                    "C. B'(4, -1)",
+                    "D. B'(-4, 1)"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Konsep Refleksi (Pencerminan):</strong><br>Jika sebuah titik dicerminkan terhadap <strong>Sumbu X</strong> (garis mendatar), maka posisi titik tersebut hanya akan berpindah ke atas atau ke bawah. Artinya, nilai x (kiri-kanan) tetap, yang berubah tanda hanyalah nilai y-nya (atas-bawah).<br><br>Rumus: (x, y) &rarr; (x, <strong>-y</strong>)<br><br><strong>Mari kita terapkan:</strong><br>Titik awal B(-1, 4).<br>Nilai x tetap: -1<br>Nilai y dibalik tandanya: 4 menjadi -4<br>Jadi, bayangannya adalah <strong>B'(-1, -4)</strong>."
+            },
+            {
+                question: "Titik C(2, 5) dirotasikan sebesar 90&deg; berlawanan arah jarum jam dengan pusat O(0, 0). Koordinat bayangan titik C adalah...",
+                options: [
+                    "A. C'(-5, 2)",
+                    "B. C'(5, -2)",
+                    "C. C'(-2, -5)",
+                    "D. C'(2, -5)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Rotasi 90&deg; Berlawanan Arah Jarum Jam (+90&deg;):</strong><br>Rumus cepat untuk putaran 90&deg; berlawanan jarum jam dari pusat (0,0) adalah menukar posisi x dan y, lalu <strong>memberi tanda negatif pada nilai yang berada di depan (yaitu nilai y yang baru berpindah).</strong><br><br>Rumus: (x, y) &rarr; <strong>(-y, x)</strong><br><br><strong>Langkah penyelesaian:</strong><br>Titik awal C(2, 5).<br>1. Tukar posisi: (5, 2)<br>2. Beri minus di angka depan: <strong>(-5, 2)</strong><br><br>Jadi, bayangannya adalah <strong>C'(-5, 2)</strong>."
+            },
+            {
+                question: "Titik D(-3, 6) didilatasikan dengan pusat O(0, 0) dan faktor skala -2. Koordinat bayangan titik D adalah...",
+                options: [
+                    "A. D'(6, -12)",
+                    "B. D'(-6, 12)",
+                    "C. D'(6, 12)",
+                    "D. D'(-6, -12)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Dilatasi (Perkalian Ukuran):</strong><br>Dilatasi dengan pusat asal (0,0) adalah proses yang paling mudah. Kita cukup <strong>mengalikan</strong> setiap titik koordinat (x dan y) dengan faktor skalanya (k). Jika k negatif, arahnya akan berbalik.<br><br>Rumus: (x, y) didilatasi (k) &rarr; (k &times; x, k &times; y)<br><br><strong>Mari kita hitung:</strong><br>Titik awal D(-3, 6) dengan k = -2.<br>&bull; x baru = -2 &times; (-3) = <strong>6</strong><br>&bull; y baru = -2 &times; 6 = <strong>-12</strong><br><br>Jadi, bayangannya adalah <strong>D'(6, -12)</strong>."
+            },
+            {
+                question: "Persamaan garis y = 2x + 3 ditranslasikan oleh T(1, -2). Persamaan bayangan garis tersebut adalah...",
+                options: [
+                    "A. y = 2x - 1",
+                    "B. y = 2x + 1",
+                    "C. y = 2x - 3",
+                    "D. y = 2x - 5"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Trik Jitu Translasi Garis:</strong><br>Jika translasi titik ditambah, maka untuk persamaan garis kita membalik logikanya (dimasukkan sebagai <em>lawan</em> atau substitusi invers).<br>Translasi T(a, b) = (1, -2).<br>Ganti <strong>x</strong> pada persamaan dengan <strong>(x - a)</strong> &rarr; <strong>(x - 1)</strong><br>Ganti <strong>y</strong> pada persamaan dengan <strong>(y - b)</strong> &rarr; (y - (-2)) = <strong>(y + 2)</strong><br><br><strong>Mari kita masukkan ke persamaan awal:</strong><br>y = 2x + 3<br>(y + 2) = 2(x - 1) + 3<br>y + 2 = 2x - 2 + 3<br>y + 2 = 2x + 1<br>y = 2x + 1 - 2<br><strong>y = 2x - 1</strong>."
+            },
+            {
+                question: "Bayangan garis x - 2y = 4 jika direfleksikan terhadap garis y = x adalah...",
+                options: [
+                    "A. y - 2x = 4",
+                    "B. y + 2x = 4",
+                    "C. x - 2y = -4",
+                    "D. 2x - y = 4"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Pencerminan Garis y = x:</strong><br>Berdasarkan cermin miring y = x, posisi sumbu mendatar (x) dan tegak (y) akan sepenuhnya bertukar peran.<br>Artinya, semua huruf <strong>x berubah menjadi y</strong>, dan semua huruf <strong>y berubah menjadi x</strong>.<br><br><strong>Langkah penyelesaian:</strong><br>Persamaan awal: <strong>x</strong> - 2<strong>y</strong> = 4<br>Tukar hurufnya langsung: <strong>y</strong> - 2<strong>x</strong> = 4.<br><br>Selesai! Sesederhana itu. Jawabannya adalah <strong>y - 2x = 4</strong>."
+            },
+            {
+                question: "Persamaan garis y = 3x - 1 dirotasikan sebesar 180&deg; dengan pusat O(0, 0). Persamaan bayangan garis tersebut adalah...",
+                options: [
+                    "A. y = 3x + 1",
+                    "B. y = -3x + 1",
+                    "C. y = -3x - 1",
+                    "D. y = 3x - 1"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Rotasi 180&deg; (Setengah Putaran):</strong><br>Berputar 180&deg; sama persis dengan bercermin pada titik pusat (0,0). Posisinya hanya berbalik arah. Huruf x menjadi -x, dan huruf y menjadi -y.<br><br><strong>Langkah penyelesaian:</strong><br>Persamaan awal: y = 3x - 1<br>Substitusi (ganti) y menjadi <strong>(-y)</strong> dan x menjadi <strong>(-x)</strong>:<br>(-y) = 3(-x) - 1<br>-y = -3x - 1<br><br>Agar persamaan menjadi bentuk 'y=' yang indah, kalikan semua ruas dengan <strong>-1</strong> (balik semua tandanya):<br><strong>y = 3x + 1</strong>."
+            },
+            {
+                question: "Garis 2x - y = 5 didilatasikan dengan pusat O(0, 0) dan faktor skala 3. Persamaan bayangan garis tersebut adalah...",
+                options: [
+                    "A. 2x - y = 15",
+                    "B. 6x - 3y = 5",
+                    "C. 2x - y = 5/3",
+                    "D. 6x - y = 15"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Trik Kilat Dilatasi Garis dari Pusat (0,0):</strong><br>Jika sebuah garis <em>Ax + By = C</em> didilatasi dari pusat (0,0) dengan faktor skala <em>k</em>, garis bayangannya akan tetap sejajar dengan garis asli (gradiennya sama), hanya bergeser menjauh/mendekat. Rumus cepatnya adalah <strong>cukup mengalikan nilai konstantanya (C) dengan k</strong>, biarkan bagian x dan y tetap.<br><br>Atau cara substitusi resmi:<br>Ganti x dengan <strong>(x/3)</strong> dan y dengan <strong>(y/3)</strong>.<br>2(x/3) - (y/3) = 5<br><br>Kalikan seluruh persamaan dengan 3 untuk menghilangkan pecahan:<br><strong>2x - y = 15</strong>."
+            },
+            {
+                question: "Titik P(2, -3) direfleksikan terhadap garis x = 3. Koordinat bayangan titik P adalah...",
+                options: [
+                    "A. P'(4, -3)",
+                    "B. P'(1, -3)",
+                    "C. P'(5, -3)",
+                    "D. P'(8, -3)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Refleksi terhadap Garis Vertikal (x = h):</strong><br>Jika dicerminkan terhadap garis x = h, maka posisi ketinggiannya (y) akan tetap, tetapi posisi kiri-kanannya (x) akan berpindah menyeberangi cermin.<br><br>Rumus: (x, y) &rarr; <strong>(2h - x, y)</strong><br><br><strong>Mari berhitung:</strong><br>Titik P(2, -3) dicerminkan pada x = 3 (maka h = 3).<br>&bull; x baru = (2 &times; 3) - 2 = 6 - 2 = <strong>4</strong>.<br>&bull; y baru tetap = <strong>-3</strong>.<br><br>Jadi, bayangannya adalah <strong>P'(4, -3)</strong>."
+            },
+            {
+                question: "Titik Q(-4, 1) direfleksikan terhadap garis y = -2. Koordinat bayangan titik Q adalah...",
+                options: [
+                    "A. Q'(-4, -5)",
+                    "B. Q'(-4, -3)",
+                    "C. Q'(-4, -4)",
+                    "D. Q'(-4, -6)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Refleksi terhadap Garis Horizontal (y = k):</strong><br>Jika dicerminkan terhadap garis y = k, maka posisi mendatarnya (x) akan tetap, tetapi posisinya akan melompat atas-bawah menyeberangi cermin y.<br><br>Rumus: (x, y) &rarr; <strong>(x, 2k - y)</strong><br><br><strong>Mari berhitung:</strong><br>Titik Q(-4, 1) dicerminkan pada y = -2 (maka k = -2).<br>&bull; x baru tetap = <strong>-4</strong>.<br>&bull; y baru = (2 &times; -2) - 1 = -4 - 1 = <strong>-5</strong>.<br><br>Jadi, bayangannya adalah <strong>Q'(-4, -5)</strong>."
+            },
+            {
+                question: "Segitiga ABC dengan koordinat titik sudut A(1, 1), B(4, 1), dan C(1, 3) ditranslasikan oleh T(2, 3). Luas bayangan segitiga ABC adalah...",
+                options: [
+                    "A. 3 satuan luas",
+                    "B. 6 satuan luas",
+                    "C. 12 satuan luas",
+                    "D. 24 satuan luas"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Sifat Penting Transformasi:</strong><br>Translasi (pergeseran) adalah sebuah <strong>Isometri</strong>. Artinya, ia hanya memindahkan posisi benda tanpa mengubah bentuk maupun ukurannya. Jadi, <strong>Luas bayangan PASTI SAMA dengan luas aslinya</strong>.<br><br><strong>Hitung luas segitiga asli:</strong><br>Bentuk segitiganya siku-siku di titik A(1,1).<br>&bull; Alas (dari A ke B): x-nya dari 1 ke 4, berarti panjangnya = <strong>3</strong>.<br>&bull; Tinggi (dari A ke C): y-nya dari 1 ke 3, berarti panjangnya = <strong>2</strong>.<br>&bull; Luas = &frac12; &times; alas &times; tinggi = &frac12; &times; 3 &times; 2 = <strong>3 satuan luas</strong>.<br><br>Karena luasnya tidak berubah saat digeser, maka luas bayangannya tetap <strong>3 satuan luas</strong>."
+            },
+            {
+                question: "Sebuah persegi panjang PQRS memiliki luas 12 satuan luas. Jika persegi panjang tersebut didilatasikan dengan pusat O(0, 0) dan faktor skala k = 3, maka luas bayangan persegi panjang tersebut adalah...",
+                options: [
+                    "A. 36 satuan luas",
+                    "B. 48 satuan luas",
+                    "C. 108 satuan luas",
+                    "D. 144 satuan luas"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Ingat Aturan Luas pada Dilatasi!</strong><br>Saat sebuah bangun datar diperbesar/diperkecil (dilatasi) sebesar <em>k</em>, maka panjang dan lebarnya masing-masing akan membesar sebanyak <em>k</em> kali. Akibatnya, Luas totalnya akan membesar sebanyak <strong>k<sup>2</sup></strong> (k kuadrat).<br><br>Rumus: Luas Bayangan = k<sup>2</sup> &times; Luas Awal<br><br><strong>Hitung:</strong><br>Luas Awal = 12.<br>Faktor Skala (k) = 3 &rarr; k<sup>2</sup> = 3<sup>2</sup> = 9.<br>Luas Bayangan = 9 &times; 12 = <strong>108 satuan luas</strong>."
+            },
+            {
+                question: "Titik R(3, -4) dirotasikan sebesar 90&deg; searah jarum jam dengan pusat O(0, 0). Koordinat bayangan titik R adalah...",
+                options: [
+                    "A. R'(-4, -3)",
+                    "B. R'(-4, 3)",
+                    "C. R'(4, 3)",
+                    "D. R'(-3, -4)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Rotasi 90&deg; Searah Jarum Jam (-90&deg;):</strong><br>Rumus cepat untuk rotasi 90&deg; searah jarum jam adalah menukar posisi x dan y, lalu <strong>memberi tanda negatif pada nilai yang berada di belakang (yaitu nilai x yang baru berpindah).</strong><br><br>Rumus: (x, y) &rarr; <strong>(y, -x)</strong><br><br><strong>Langkah penyelesaian:</strong><br>Titik awal R(3, -4).<br>1. Tukar posisi: (-4, 3)<br>2. Beri minus (atau balik tanda) di angka belakang: angka 3 menjadi -3.<br>Hasil akhir: <strong>R'(-4, -3)</strong>."
+            },
+            {
+                question: "Bayangan titik S(5, 2) jika direfleksikan terhadap titik asal O(0, 0) adalah...",
+                options: [
+                    "A. S'(-5, -2)",
+                    "B. S'(5, -2)",
+                    "C. S'(-5, 2)",
+                    "D. S'(-2, -5)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Refleksi Titik Pusat O(0,0):</strong><br>Bercermin pada titik pusat (0,0) memberikan hasil yang persis sama dengan <strong>Rotasi 180&deg;</strong>. Posisinya akan menyeberang langsung ke kuadran yang berlawanan. Kita hanya perlu <strong>membalik kedua tanda</strong> (positif jadi negatif, negatif jadi positif) tanpa menukar posisinya.<br><br>Rumus: (x, y) &rarr; <strong>(-x, -y)</strong><br><br><strong>Mari terapkan:</strong><br>Titik awal S(5, 2) &rarr; Keduanya positif, jadikan negatif.<br>Bayangannya: <strong>S'(-5, -2)</strong>."
+            },
+            {
+                question: "Titik T(2, 1) direfleksikan terhadap sumbu Y, kemudian dilanjutkan dengan translasi oleh T(-3, 4). Koordinat bayangan akhir titik T adalah...",
+                options: [
+                    "A. T''(-5, 5)",
+                    "B. T''(-1, 5)",
+                    "C. T''(1, 5)",
+                    "D. T''(-5, -3)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Ini adalah soal <strong>Transformasi Ganda</strong> (beruntun). Kita kerjakan satu per satu secara berurutan.<br><br><strong>Langkah 1: Refleksi Sumbu Y</strong><br>Ingat, cermin sumbu Y (tegak) membuat nilai x (kiri-kanan) terbalik, tapi tingginya (y) tetap. (x, y) &rarr; (-x, y).<br>Titik T(2, 1) &rarr; Bayangan ke-1: <strong>T'(-2, 1)</strong>.<br><br><strong>Langkah 2: Translasi T(-3, 4)</strong><br>Jumlahkan bayangan ke-1 dengan nilai translasinya.<br>&bull; x baru = -2 + (-3) = -5.<br>&bull; y baru = 1 + 4 = 5.<br>Bayangan Akhir: <strong>T''(-5, 5)</strong>."
+            },
+            {
+                question: "Titik U(-1, 3) didilatasikan dengan pusat O(0, 0) dan faktor skala 2, kemudian dirotasikan sebesar 90&deg; berlawanan arah jarum jam dengan pusat O(0, 0). Koordinat bayangan akhir titik U adalah...",
+                options: [
+                    "A. U''(-6, -2)",
+                    "B. U''(6, -2)",
+                    "C. U''(-6, 2)",
+                    "D. U''(6, 2)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Kita kerjakan secara berurutan dua transformasi ini!<br><br><strong>Langkah 1: Dilatasi k = 2</strong><br>Kalikan titik awal dengan angka 2. (x, y) &rarr; (2x, 2y).<br>U(-1, 3) &rarr; U'(-2, 6).<br><br><strong>Langkah 2: Rotasi +90&deg; (Berlawanan Jarum Jam)</strong><br>Rumusnya: Tukar posisi, lalu beri minus di angka depan. (x, y) &rarr; <strong>(-y, x)</strong>.<br>Terapkan pada U'(-2, 6):<br>1. Tukar posisi &rarr; (6, -2).<br>2. Beri minus di depan &rarr; <strong>(-6, -2)</strong>.<br>Bayangan Akhir: <strong>U''(-6, -2)</strong>."
+            },
+            {
+                question: "Perhatikan beberapa transformasi berikut:<br>(1) Translasi oleh T(2, -3)<br>(2) Refleksi terhadap garis y = -x<br>(3) Rotasi sebesar 90&deg; dengan pusat O(0, 0)<br>(4) Dilatasi dengan pusat O(0, 0) dan faktor skala k = -1<br><br>Transformasi di atas yang merupakan isometri (transformasi yang mempertahankan jarak/ukuran objek asli) adalah...",
+                options: [
+                    "A. (1), (2), dan (3) saja",
+                    "B. (1) dan (3) saja",
+                    "C. (2) dan (4) saja",
+                    "D. (1), (2), (3), dan (4)"
+                ],
+                correctAnswer: 3, // D
+                explanation: "<strong>Apa itu Isometri?</strong><br>Isometri adalah jenis transformasi yang mengubah posisi sebuah bangun tetapi <strong>TIDAK MENGUBAH ukuran maupun bentuknya</strong> (luas, keliling, panjang sisi, dan sudut tetap sama).<br><br>Mari kita bedah:<br>&bull; Translasi (Geser) = Ukuran tetap &rarr; <em>Isometri</em>.<br>&bull; Refleksi (Cermin) = Ukuran tetap &rarr; <em>Isometri</em>.<br>&bull; Rotasi (Putar) = Ukuran tetap &rarr; <em>Isometri</em>.<br>&bull; Dilatasi (Perkalian) dengan <strong>k = -1</strong>. Walaupun namanya dilatasi, karena skalanya bernilai 1 (abaikan minusnya karena itu hanya penunjuk arah balikan), maka ukurannya tidak membesar atau mengecil alias tetap. Ini ekuivalen dengan rotasi 180&deg;. &rarr; <em>Isometri!</em><br><br>Jadi, semuanya <strong>(1, 2, 3, dan 4)</strong> adalah Isometri."
+            },
+            {
+                question: "Sebuah segitiga KLM didilatasikan dengan faktor skala k. Jika keliling bayangan segitiga tersebut menjadi 4 kali keliling semula, maka luas bayangan segitiga tersebut menjadi...",
+                options: [
+                    "A. 4 kali luas semula",
+                    "B. 8 kali luas semula",
+                    "C. 16 kali luas semula",
+                    "D. 64 kali luas semula"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep Dimensi 1D vs 2D pada Skala:</strong><br>&bull; Keliling adalah ukuran panjang garis (1 Dimensi). Jadi, perubahan keliling sama persis dengan besar nilai faktor skalanya (k). Karena keliling membesar 4 kali, maka <strong>k = 4</strong>.<br>&bull; Luas adalah ukuran ruang (2 Dimensi). Jadi, perubahan luas ditentukan oleh <strong>k<sup>2</sup></strong> (faktor skala dikuadratkan).<br><br>Jika k = 4, maka perubahan luasnya adalah 4<sup>2</sup> = 4 &times; 4 = <strong>16 kali luas semula</strong>."
+            },
+            {
+                question: "Titik A(2, 3) didilatasikan menjadi A'(5, 6) dengan pusat P(a, b) dan faktor skala 2. Nilai dari a + b adalah...",
+                options: [
+                    "A. -1",
+                    "B. 0",
+                    "C. 1",
+                    "D. 2"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Rumus Lengkap Dilatasi dengan Pusat (a, b):</strong><br>x' - a = k(x - a)<br>y' - b = k(y - b)<br><br><strong>Mari kita selesaikan untuk x (mencari a):</strong><br>Titik x awal = 2, x bayangan = 5, k = 2.<br>5 - a = 2(2 - a)<br>5 - a = 4 - 2a<br>Pindahkan huruf ke kiri, angka ke kanan:<br>2a - a = 4 - 5<br><strong>a = -1</strong>.<br><br><strong>Mari kita selesaikan untuk y (mencari b):</strong><br>Titik y awal = 3, y bayangan = 6, k = 2.<br>6 - b = 2(3 - b)<br>6 - b = 6 - 2b<br>Pindahkan huruf ke kiri, angka ke kanan:<br>2b - b = 6 - 6<br><strong>b = 0</strong>.<br><br>Ditanya nilai a + b = -1 + 0 = <strong>-1</strong>."
+            },
+            {
+                question: "Di sebuah studio animasi, seorang desainer ingin membuat efek bayangan cermin dari sebuah karakter kartun di atas permukaan air yang tenang. Konsep transformasi geometri yang paling tepat digunakan oleh desainer tersebut adalah...",
+                options: [
+                    "A. Translasi",
+                    "B. Refleksi",
+                    "C. Rotasi",
+                    "D. Dilatasi"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Pemahaman Konseptual Kehidupan Sehari-hari:</strong><br>Bayangan yang terbentuk di atas genangan air, cermin rias, atau kaca mobil merupakan peristiwa fisika pemantulan cahaya yang dalam matematika direpresentasikan oleh <strong>Refleksi (Pencerminan)</strong>.<br><br>Ciri khasnya adalah gambar yang dihasilkan terbalik secara simetris (atas menjadi bawah, atau kiri menjadi kanan, tergantung posisi cerminnya), tetapi dengan jarak ke permukaan air yang sama persis antara gambar asli dan bayangannya."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 relative overflow-hidden group hover:border-blue-300 transition-colors">
+                        <!-- Aksen Garis Biru -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl opacity-80"></div>
+                        
+                        <!-- Soal -->
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.5rem] h-10 rounded-xl bg-blue-50 text-blue-700 font-bold mr-4 text-base border border-blue-100 shadow-sm">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-[1.1rem] font-medium text-slate-800 leading-relaxed pt-1 w-full">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <!-- Opsi Jawaban -->
+                        <div class="space-y-3 ml-0 md:ml-14">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-[0.95rem] md:text-base text-slate-700 select-none">
+                                        <div class="radio-circle"></div>
+                                        <span class="flex-1">${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kontainer Pembahasan (Disembunyikan pada Awal) -->
+                        <div id="explanation_${index}" class="hidden mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border fade-in text-sm md:text-base relative overflow-hidden">
+                            <!-- Injeksi JS Pembahasan -->
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Render kuis saat pertama kali dimuat
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        // Deklarasi tombol dan area hasil
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+
+        // Logika saat tombol Periksa ditekan
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Kunci semua radio input untuk mencegah perubahan jawaban (Cheating)
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                
+                let isCorrect = false;
+                let statusHeader = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        // Jawaban Benar
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusHeader = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">JAWABAN TEPAT</span>`;
+                        bgClass = "bg-emerald-50";
+                        borderClass = "border-emerald-300";
+                        textClass = "text-emerald-900";
+                    } else {
+                        // Jawaban Salah
+                        statusHeader = `<span class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">JAWABAN KELIRU</span>`;
+                        bgClass = "bg-rose-50";
+                        borderClass = "border-rose-300";
+                        textClass = "text-rose-900";
+                        
+                        // Beri tanda visual pada kunci jawaban yang benar (Hinting UI)
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5";
+                        correctLabel.style.borderColor = "#10b981";
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                    }
+                } else {
+                    // Tidak Dijawab
+                    statusHeader = `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">TIDAK DIJAWAB</span>`;
+                    bgClass = "bg-amber-50";
+                    borderClass = "border-amber-300";
+                    textClass = "text-amber-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                }
+
+                // Injeksi elemen HTML pembahasan ke dalam div
+                explanationDiv.innerHTML = `
+                    <div class="font-bold mb-4 pb-3 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-6 h-6 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : (selectedOption ? `<svg class="w-6 h-6 mr-2 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`
+                                              : `<svg class="w-6 h-6 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`)
+                        }
+                        ${statusHeader}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass} relative z-10">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                // Menampilkan UI Pembahasan
+                explanationDiv.className = `mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border ${bgClass} ${borderClass} fade-in text-[0.95rem] md:text-base block`;
+            });
+
+            // Set Logika Skor Akhir & Pewarnaan Nilai
+            const finalScore = Math.round(score);
+            scoreDisplay.innerText = finalScore;
+            
+            scoreDisplay.className = "text-7xl font-black mb-8 drop-shadow-sm transition-colors duration-700 ";
+            if(finalScore >= 80) scoreDisplay.className += "text-emerald-500";
+            else if(finalScore >= 60) scoreDisplay.className += "text-blue-500";
+            else if(finalScore >= 40) scoreDisplay.className += "text-amber-500";
+            else scoreDisplay.className += "text-rose-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Scroll otomatis menuju layar hasil skor di bagian bawah form
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 350);
+        });
+
+        // Logika untuk Ulangi Tes
+        btnRetry.addEventListener('click', () => {
+            // Mereset state elemen form dan me-render ulang DOM untuk membersihkan semua class CSS di label
+            quizForm.reset();
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Menggulir perlahan kembali ke soal nomor 1
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

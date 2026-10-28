@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Sistem Persamaan Linear Dua Variabel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0ea5e9', // Sky 500
+                        primaryHover: '#0284c7', // Sky 600
+                        correct: '#10b981', // Emerald 500
+                        correctBg: '#d1fae5', // Emerald 100
+                        wrong: '#f43f5e', // Rose 500
+                        wrongBg: '#ffe4e6', // Rose 100
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        /* Gaya wajib untuk gambar Base64 sesuai instruksi */
+        img[src^="data:image"] {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            display: block;
+        }
+
+        /* Styling Kustom Radio Button */
+        .option-label {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .option-input:checked + .option-content {
+            border-color: #0ea5e9;
+            background-color: #f0f9ff;
+        }
+        
+        .option-input:checked + .option-content .radio-circle {
+            border-color: #0ea5e9;
+            background-color: #0ea5e9;
+        }
+
+        .option-input:checked + .option-content .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        /* Status Classes diinjeksi lewat JS */
+        .status-correct {
+            border-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+            color: #065f46 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10b981 !important;
+            background-color: #10b981 !important;
+        }
+
+        .status-wrong {
+            border-color: #f43f5e !important;
+            background-color: #ffe4e6 !important;
+            color: #9f1239 !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #f43f5e !important;
+            background-color: #f43f5e !important;
+        }
+
+        /* Animasi Kotak Pembahasan */
+        .explanation-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
+            opacity: 0;
+        }
+        .explanation-box.show {
+            max-height: 1500px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative pb-20">
+
+    <!-- Navigasi -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Tombol Kembali -->
+                <button onclick="goBack()" class="flex items-center text-slate-500 hover:text-primary transition-colors focus:outline-none bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-lg">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="font-medium text-sm">Kembali</span>
+                </button>
+                <div class="font-bold text-lg text-primary truncate ml-4">
+                    Kuis Matematika
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Utama -->
+    <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Header Judul -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-10 mb-8 border-t-4 border-primary">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 text-center">Sistem Persamaan Linear Dua Variabel (SPLDV)</h1>
+            <p class="text-slate-600 text-center mb-6 text-sm sm:text-base leading-relaxed">
+                Uji pemahamanmu tentang SPLDV! Kerjakan dengan teliti. Jika kamu tidak yakin, kamu bisa melewati soal. 
+                Klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk melihat skor dan pembahasan langkah demi langkah.
+            </p>
+        </div>
+
+        <!-- Form Kuis -->
+        <form id="quiz-form" class="space-y-6">
+            <!-- Tempat merender soal via JavaScript -->
+            <div id="quiz-container" class="space-y-6"></div>
+
+            <!-- Panel Aksi (Tombol Periksa & Skor) -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mt-8 sticky bottom-4 z-40 border border-slate-200">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white font-semibold rounded-xl shadow-md hover:bg-primaryHover hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-lg">
+                        Periksa Jawaban
+                    </button>
+                    
+                    <div id="score-display" class="hidden flex-col items-center sm:items-end w-full sm:w-auto">
+                        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Nilai Akhir Anda</span>
+                        <div class="text-6xl font-extrabold text-primary drop-shadow-sm" id="final-score">0</div>
+                    </div>
+                </div>
+
+                <!-- Tombol Reset -->
+                <div id="action-buttons" class="hidden mt-6 pt-6 border-t border-slate-100 flex justify-center">
+                    <button type="button" id="reset-btn" class="flex items-center px-6 py-3 bg-slate-800 text-white font-medium rounded-xl hover:bg-slate-700 transition-colors focus:outline-none shadow-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-900 text-slate-400 py-5 text-center text-sm">
+        <p class="font-medium tracking-wide">By <span class="text-white font-bold">EDUFILLAH</span>, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                question: "Di antara persamaan-persamaan berikut, manakah yang merupakan bentuk sistem persamaan linear dua variabel (SPLDV)?",
+                options: [
+                    "2x + 3y = 12 dan x - y = 5",
+                    "x<sup>2</sup> + y = 10 dan 2x - y = 3",
+                    "3x + 2y - z = 6 dan x + y = 2",
+                    "2x + 5 = 11 dan 3y - 4 = 8"
+                ],
+                correct: 0, 
+                explanation: `<strong>Jawaban Benar: A</strong><br><br>
+                Mari kita bedah syarat utama SPLDV (Sistem Persamaan Linear Dua Variabel):
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm text-slate-700">
+                    <li><strong>Sistem:</strong> Harus terdiri dari lebih dari satu persamaan (biasanya dua).</li>
+                    <li><strong>Linear:</strong> Pangkat tertinggi dari setiap variabelnya harus satu (tidak boleh dikuadratkan).</li>
+                    <li><strong>Dua Variabel:</strong> Hanya boleh memuat dua jenis huruf yang berbeda (umumnya x dan y).</li>
+                </ul>
+                <br>Analisis Pilihan:
+                <br>&bull; <strong>A. Benar.</strong> Memiliki dua variabel (x, y) dan pangkat tertinggi variabelnya adalah satu.
+                <br>&bull; B. Salah. Ada variabel berpangkat dua (x<sup>2</sup>), sehingga ini bukan persamaan linear.
+                <br>&bull; C. Salah. Persamaan pertama memiliki tiga variabel (x, y, z), ini adalah SPLTV.
+                <br>&bull; D. Salah. Masing-masing persamaan hanya memuat satu variabel, sehingga bukan persamaan linear dua variabel yang saling terkait.`
+            },
+            {
+                id: 2,
+                question: "Jika diketahui persamaan linear dua variabel 3x - 2y = 12, dan nilai y adalah -3, maka nilai x yang memenuhi persamaan tersebut adalah...",
+                options: [
+                    "2",
+                    "3",
+                    "4",
+                    "6"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 2</strong><br><br>
+                Ini adalah penerapan dasar metode substitusi. Kita diminta memasukkan (mengganti) nilai y dengan angka -3 ke dalam persamaan.
+                <br><br><strong>Langkah Penyelesaian:</strong>
+                <br>1. Persamaan awal: <code>3x - 2y = 12</code>
+                <br>2. Ganti huruf 'y' dengan '(-3)':
+                <br>&nbsp;&nbsp;&nbsp;<code>3x - 2(-3) = 12</code>
+                <br>3. Ingat perkalian tanda! Negatif dikali negatif hasilnya positif (-2 &times; -3 = +6):
+                <br>&nbsp;&nbsp;&nbsp;<code>3x + 6 = 12</code>
+                <br>4. Pindahkan +6 ke ruas kanan menjadi -6:
+                <br>&nbsp;&nbsp;&nbsp;<code>3x = 12 - 6</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>3x = 6</code>
+                <br>5. Bagi kedua ruas dengan 3 untuk mendapatkan nilai tunggal x:
+                <br>&nbsp;&nbsp;&nbsp;<code>x = 6 &divide; 3</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>x = 2</code>`
+            },
+            {
+                id: 3,
+                question: "Himpunan penyelesaian dari sistem persamaan x + y = 7 dan x - y = 3 adalah...",
+                options: [
+                    "(2, 5)",
+                    "(5, 2)",
+                    "(4, 3)",
+                    "(3, 4)"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: (5, 2)</strong><br><br>
+                Soal ini sangat mudah diselesaikan menggunakan <strong>Metode Eliminasi</strong> (menghilangkan salah satu variabel).
+                <br><br><strong>Langkah Penyelesaian:</strong>
+                <br>1. Susun kedua persamaan secara bersusun:
+                <br>&nbsp;&nbsp;&nbsp;<code>x + y = 7</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>x - y = 3</code>
+                <br>2. Jika kita <strong>tambahkan</strong> kedua persamaan ke bawah, nilai +y dan -y akan saling menghilangkan (habis):
+                <br>&nbsp;&nbsp;&nbsp;<code>(x + x) + (y - y) = 7 + 3</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>2x = 10</code>
+                <br>3. Cari nilai x:
+                <br>&nbsp;&nbsp;&nbsp;<code>x = 10 &divide; 2 = 5</code>
+                <br>4. Untuk mencari nilai y, substitusikan nilai x=5 ke salah satu persamaan (misal persamaan pertama):
+                <br>&nbsp;&nbsp;&nbsp;<code>x + y = 7</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>5 + y = 7</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>y = 7 - 5 = 2</code>
+                <br><br>Jadi, himpunan penyelesaiannya adalah (x, y) = <strong>(5, 2)</strong>.`
+            },
+            {
+                id: 4,
+                question: "Nilai x yang memenuhi sistem persamaan 2x + 3y = 8 dan 3x - y = 1 adalah...",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 1</strong><br><br>
+                Kita bisa menggunakan <strong>Metode Substitusi</strong> karena persamaan kedua sangat mudah diubah bentuknya.
+                <br><br><strong>Langkah Penyelesaian:</strong>
+                <br>1. Ubah persamaan kedua (<code>3x - y = 1</code>) agar y berdiri sendiri:
+                <br>&nbsp;&nbsp;&nbsp;Pindah -y ke kanan, dan 1 ke kiri:
+                <br>&nbsp;&nbsp;&nbsp;<code>3x - 1 = y</code> atau <code>y = 3x - 1</code>
+                <br>2. Masukkan (substitusikan) bentuk <code>(3x - 1)</code> tersebut ke 'y' pada persamaan pertama:
+                <br>&nbsp;&nbsp;&nbsp;<code>2x + 3y = 8</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>2x + 3(3x - 1) = 8</code>
+                <br>3. Buka kurung dengan mengalikan (kali pelangi):
+                <br>&nbsp;&nbsp;&nbsp;<code>2x + 9x - 3 = 8</code>
+                <br>4. Sederhanakan dan selesaikan:
+                <br>&nbsp;&nbsp;&nbsp;<code>11x - 3 = 8</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>11x = 8 + 3</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>11x = 11</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>x = 1</code>`
+            },
+            {
+                id: 5,
+                question: "Diketahui sistem persamaan x - 2y = 5 dan 2x + y = 5. Nilai dari x + y adalah...",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 2</strong><br><br>
+                <strong>Langkah 1: Temukan nilai x dan y (Metode Substitusi)</strong>
+                <br>Dari persamaan pertama, kita buat 'x' berdiri sendiri:
+                <br><code>x - 2y = 5</code> &rarr; <code>x = 2y + 5</code>
+                <br><br>Masukkan bentuk <code>x</code> tersebut ke persamaan kedua:
+                <br><code>2x + y = 5</code>
+                <br><code>2(2y + 5) + y = 5</code>
+                <br><code>4y + 10 + y = 5</code>
+                <br><code>5y = 5 - 10</code>
+                <br><code>5y = -5</code>
+                <br><code>y = -1</code>
+                <br><br>Cari nilai x dengan memasukkan y=-1 ke persamaan awal:
+                <br><code>x = 2y + 5</code>
+                <br><code>x = 2(-1) + 5</code>
+                <br><code>x = -2 + 5 = 3</code>
+                <br><br><strong>Langkah 2: Menjawab pertanyaan</strong>
+                <br>Soal meminta nilai dari <code>x + y</code>:
+                <br><code>x + y = 3 + (-1) = 2</code>`
+            },
+            {
+                id: 6,
+                question: "Harga 3 buah buku tulis dan 2 buah pensil adalah Rp 15.000,00. Sedangkan harga 4 buah buku tulis dan 1 buah pensil dengan jenis yang sama adalah Rp 17.500,00. Harga untuk 1 buah buku tulis adalah...",
+                options: [
+                    "Rp 2.000,00",
+                    "Rp 2.500,00",
+                    "Rp 3.000,00",
+                    "Rp 4.000,00"
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: Rp 4.000,00</strong><br><br>
+                Mari kita buat <strong>Model Matematika</strong> dari cerita tersebut.
+                <br>Misal: Buku Tulis = <code>b</code>, Pensil = <code>p</code>.
+                <br>(1) <code>3b + 2p = 15.000</code>
+                <br>(2) <code>4b + 1p = 17.500</code>
+                <br><br><strong>Langkah Penyelesaian:</strong>
+                <br>Ubah persamaan (2) agar <code>p</code> berdiri sendiri:
+                <br><code>p = 17.500 - 4b</code>
+                <br><br>Substitusikan ke persamaan (1):
+                <br><code>3b + 2(17.500 - 4b) = 15.000</code>
+                <br><code>3b + 35.000 - 8b = 15.000</code>
+                <br>Gabungkan variabel <code>b</code> (3b - 8b = -5b):
+                <br><code>-5b + 35.000 = 15.000</code>
+                <br><code>-5b = 15.000 - 35.000</code>
+                <br><code>-5b = -20.000</code>
+                <br><code>b = -20.000 &divide; -5 = 4.000</code>
+                <br><br>Karena yang ditanya harga 1 buku tulis (b), maka jawabannya adalah <strong>Rp 4.000,00</strong>.`
+            },
+            {
+                id: 7,
+                question: "Keliling sebuah kebun berbentuk persegi panjang adalah 44 meter. Jika lebar kebun tersebut 6 meter lebih pendek dari panjangnya, maka luas kebun tersebut adalah...",
+                options: [
+                    "112 meter persegi",
+                    "120 meter persegi",
+                    "135 meter persegi",
+                    "160 meter persegi"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 112 meter persegi</strong><br><br>
+                <strong>Membangun Persamaan:</strong>
+                <br>Rumus Keliling Persegi Panjang: <code>K = 2(p + l)</code>
+                <br>Diketahui K = 44, maka:
+                <br><code>2(p + l) = 44</code>
+                <br>Bagi dengan 2: <code>p + l = 22</code> (Persamaan 1)
+                <br><br>Informasi kedua: "Lebar 6 meter lebih pendek dari panjangnya"
+                <br><code>l = p - 6</code> (Persamaan 2)
+                <br><br><strong>Penyelesaian:</strong>
+                <br>Substitusikan Persamaan 2 ke Persamaan 1:
+                <br><code>p + (p - 6) = 22</code>
+                <br><code>2p - 6 = 22</code>
+                <br><code>2p = 22 + 6 = 28</code>
+                <br><code>p = 14 meter</code>
+                <br><br>Cari nilai lebar (l):
+                <br><code>l = p - 6 = 14 - 6 = 8 meter</code>
+                <br><br>Cari Luas kebun:
+                <br>Luas = p &times; l = 14 &times; 8 = <strong>112 m<sup>2</sup></strong>.`
+            },
+            {
+                id: 8,
+                question: "Diketahui sistem persamaan pecahan:<br><sup>1</sup>&frasl;<sub>2</sub>x + y = 5<br>x - <sup>1</sup>&frasl;<sub>3</sub>y = 3<br>Nilai dari x - y adalah...",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 1</strong><br><br>
+                <strong>Trik Menghadapi Pecahan:</strong> Hilangkan pecahannya terlebih dahulu!
+                <br><br>1. Persamaan 1: <code><sup>1</sup>&frasl;<sub>2</sub>x + y = 5</code>
+                <br>&nbsp;&nbsp;&nbsp;Kalikan dengan 2 agar pecahan hilang: <code>x + 2y = 10</code>
+                <br>2. Persamaan 2: <code>x - <sup>1</sup>&frasl;<sub>3</sub>y = 3</code>
+                <br>&nbsp;&nbsp;&nbsp;Kalikan dengan 3 agar pecahan hilang: <code>3x - y = 9</code> &rarr; ubah jadi <code>y = 3x - 9</code>
+                <br><br><strong>Penyelesaian:</strong>
+                <br>Substitusikan nilai y ke persamaan 1 yang baru:
+                <br><code>x + 2(3x - 9) = 10</code>
+                <br><code>x + 6x - 18 = 10</code>
+                <br><code>7x = 10 + 18</code>
+                <br><code>7x = 28</code> &rarr; <code>x = 4</code>
+                <br><br>Cari nilai y:
+                <br><code>y = 3(4) - 9 = 12 - 9 = 3</code>
+                <br><br>Pertanyaan: Nilai <code>x - y</code> = 4 - 3 = <strong>1</strong>.`
+            },
+            {
+                id: 9,
+                question: "Dua buah garis lurus memiliki persamaan y = 2x + 5 dan y = 2x - 3. Jika kedua persamaan tersebut membentuk sebuah sistem persamaan linear, maka banyaknya penyelesaian dari sistem tersebut adalah...",
+                options: [
+                    "Memiliki tepat satu penyelesaian",
+                    "Memiliki dua penyelesaian",
+                    "Memiliki tak hingga banyak penyelesaian",
+                    "Tidak memiliki penyelesaian sama sekali"
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: D (Tidak memiliki penyelesaian sama sekali)</strong><br><br>
+                Ini adalah konsep dasar hubungan antar garis dalam SPLDV!
+                <br>Persamaan garis lurus memiliki bentuk umum <code>y = mx + c</code>, di mana <strong>m adalah gradien (kemiringan)</strong>.
+                <br><br>Mari kita lihat kedua persamaan:
+                <br>1. <code>y = 2x + 5</code> &rarr; Gradiennya adalah 2.
+                <br>2. <code>y = 2x - 3</code> &rarr; Gradiennya juga 2.
+                <br><br>Karena kedua garis memiliki kemiringan yang sama (gradien = 2) namun memotong sumbu Y di titik yang berbeda (5 dan -3), maka <strong>kedua garis tersebut SEJAJAR</strong>.
+                <br>Dua garis yang sejajar tidak akan pernah bertemu atau berpotongan. Karena penyelesaian SPLDV adalah "titik potong" antar garis, maka sistem ini <strong>tidak memiliki penyelesaian</strong>.`
+            },
+            {
+                id: 10,
+                question: "Diketahui sistem persamaan linear dua variabel:<br>2x + ky = 8<br>4x + 6y = 16<br>Agar sistem persamaan tersebut memiliki tak hingga banyak penyelesaian, maka nilai k yang memenuhi adalah...",
+                options: [
+                    "2",
+                    "3",
+                    "4",
+                    "6"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 3</strong><br><br>
+                <strong>Konsep SPLDV Tak Hingga:</strong>
+                <br>Sebuah SPLDV memiliki penyelesaian tak terhingga jika kedua persamaannya sebenarnya adalah <strong>garis yang berhimpit (sama persis)</strong>. Artinya, persamaan yang satu adalah kelipatan dari persamaan yang lain.
+                <br><br>Mari kita bandingkan:
+                <br>Persamaan atas: <code>2x + ky = 8</code>
+                <br>Persamaan bawah: <code>4x + 6y = 16</code>
+                <br><br>Jika kita perhatikan, angka konstanta (16) adalah 2 kali lipat dari (8). Koefisien x (4) juga 2 kali lipat dari (2).
+                <br>Agar bentuknya identik (berhimpit), kita kalikan persamaan atas dengan 2:
+                <br><code>2 &times; (2x + ky = 8)</code> &rarr; <code>4x + 2ky = 16</code>
+                <br><br>Sekarang cocokkan posisi y dengan persamaan bawah:
+                <br><code>2k = 6</code>
+                <br><code>k = 6 &divide; 2 = 3</code>`
+            },
+            {
+                id: 11,
+                question: "Sistem persamaan ax + by = 8 dan bx + ay = 7 memiliki penyelesaian (x, y) = (1, 2). Nilai dari a + b adalah...",
+                options: [
+                    "3",
+                    "5",
+                    "7",
+                    "15"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 5</strong><br><br>
+                <strong>Langkah Penyelesaian (dengan Trik Cepat!):</strong>
+                <br>Karena diketahui penyelesaiannya adalah x=1 dan y=2, masukkan nilai tersebut ke dalam persamaan.
+                <br>Persamaan 1: <code>a(1) + b(2) = 8</code> &rarr; <code>a + 2b = 8</code>
+                <br>Persamaan 2: <code>b(1) + a(2) = 7</code> &rarr; <code>2a + b = 7</code>
+                <br><br>Alih-alih mencari nilai 'a' dan 'b' satu per satu menggunakan eliminasi, kita bisa langsung <strong>menjumlahkan kedua persamaan tersebut!</strong>
+                <br>&nbsp;&nbsp;<code>a + 2b = 8</code>
+                <br>&nbsp;&nbsp;<code>2a + b = 7</code>
+                <br><code>---------------- +</code>
+                <br>&nbsp;&nbsp;<code>3a + 3b = 15</code>
+                <br><br>Lalu, sederhanakan dengan membagi seluruh ruas dengan 3:
+                <br><code>(3a + 3b) &divide; 3 = 15 &divide; 3</code>
+                <br><code>a + b = 5</code>`
+            },
+            {
+                id: 12,
+                question: "Seorang siswa menyelesaikan sistem persamaan:<br>x + y = 5<br>2x + 2y = 10<br>Siswa tersebut menyimpulkan bahwa sistem persamaan ini tidak memiliki penyelesaian karena jika kedua persamaan digambar, garisnya akan saling berhimpit. Bagaimana Anda mengevaluasi kesimpulan siswa tersebut?",
+                options: [
+                    "Kesimpulan siswa benar karena garis berhimpit berarti tidak ada titik potong yang unik.",
+                    "Kesimpulan siswa salah karena garis berhimpit berarti sistem memiliki tepat satu penyelesaian.",
+                    "Kesimpulan siswa salah karena garis berhimpit berarti sistem memiliki tak hingga banyak penyelesaian.",
+                    "Kesimpulan siswa benar karena kedua persamaan tersebut sebenarnya identik dan tidak bisa diselesaikan."
+                ],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: C</strong><br><br>
+                Siswa tersebut berhasil menemukan fakta bahwa kedua garis tersebut berhimpit (karena persamaan kedua <code>2x + 2y = 10</code> adalah tepat dua kali lipat dari persamaan pertama <code>x + y = 5</code>). Keduanya membentuk grafik garis yang sama persis.
+                <br><br><strong>Namun, kesimpulannya keliru!</strong>
+                <br>Penyelesaian SPLDV adalah titik di mana kedua garis bertemu (titik singgung/potong). Jika dua garis saling berhimpit secara sempurna, maka mereka bersinggungan di <strong>setiap titik</strong> sepanjang garis tersebut.
+                <br>Oleh karena garis memiliki panjang tak terbatas, maka sistem tersebut memiliki <strong>tak hingga banyak penyelesaian</strong>.`
+            },
+            {
+                id: 13,
+                question: "Diberikan dua persamaan:<br>y = 2x - 3<br>y = -3x + 7<br><br>Metode penyelesaian SPLDV manakah yang paling efisien dan langsung menghasilkan nilai variabel tanpa perlu melakukan manipulasi perkalian koefisien terlebih dahulu?",
+                options: [
+                    "Metode Eliminasi murni",
+                    "Metode Substitusi langsung dengan menyamakan nilai y",
+                    "Metode Grafik dengan skala besar",
+                    "Metode Campuran dengan mengalikan persamaan pertama dengan 3"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B</strong><br><br>
+                Perhatikan bentuk persamaannya. Keduanya sudah disajikan dalam bentuk eksplisit, yaitu <strong><code>y = ...</code></strong>.
+                <br><br>Karena nilai 'y' pada persamaan pertama sama dengan nilai 'y' pada persamaan kedua (dalam sebuah SPLDV), metode paling cepat dan efisien adalah <strong>Metode Substitusi dengan menyamakan ruas kanannya</strong>.
+                <br>Tidak perlu menyusun ke bawah atau mengalikan koefisien. Langsung saja ditulis:
+                <br><code>y = y</code>
+                <br><code>2x - 3 = -3x + 7</code>
+                <br><br>Langkah ini sangat langsung dan seketika menyisakan variabel x saja untuk dihitung.`
+            },
+            {
+                id: 14,
+                question: "Perhatikan pernyataan berikut mengenai sistem persamaan linear dua variabel:<br>(1) Jika kedua garis sejajar, maka sistem tidak memiliki penyelesaian.<br>(2) Jika kedua garis berpotongan di satu titik, maka sistem memiliki tepat satu penyelesaian.<br>(3) Jika kedua garis berhimpit, maka sistem memiliki tepat dua penyelesaian.<br>Pernyataan yang benar adalah...",
+                options: [
+                    "(1) dan (2) saja",
+                    "(1) dan (3) saja",
+                    "(2) dan (3) saja",
+                    "(1), (2), dan (3)"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: A ((1) dan (2) saja)</strong><br><br>
+                Mari kita evaluasi hubungan geometris SPLDV:
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li><strong>(1) Garis Sejajar:</strong> Tidak akan pernah bertemu, sehingga <strong>0 penyelesaian</strong>. (PERNYATAAN BENAR).</li>
+                    <li><strong>(2) Garis Berpotongan:</strong> Bertemu menyilang di satu koordinat pasti, sehingga ada <strong>tepat 1 penyelesaian</strong>. (PERNYATAAN BENAR).</li>
+                    <li><strong>(3) Garis Berhimpit:</strong> Menempel satu sama lain memanjang tanpa batas, sehingga memiliki <strong>penyelesaian TAK HINGGA</strong> (bukan hanya dua). (PERNYATAAN SALAH).</li>
+                </ul>`
+            },
+            {
+                id: 15,
+                question: "Umur seorang ayah sekarang adalah 3 kali umur anaknya. Lima tahun yang lalu, umur ayah adalah 4 kali umur anaknya. Umur ayah sekarang adalah...",
+                options: [
+                    "35 tahun",
+                    "40 tahun",
+                    "45 tahun",
+                    "50 tahun"
+                ],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: 45 tahun</strong><br><br>
+                <strong>Membangun Model Matematika:</strong>
+                <br>Misal Umur Ayah sekarang = <code>A</code>, Anak = <code>B</code>.
+                <br>Kondisi Sekarang: <code>A = 3B</code> (Persamaan 1)
+                <br>Kondisi 5 tahun lalu: Keduanya berumur lebih muda 5 tahun.
+                <br><code>(A - 5) = 4 &times; (B - 5)</code>
+                <br><code>A - 5 = 4B - 20</code> (Persamaan 2)
+                <br><br><strong>Penyelesaian:</strong>
+                <br>Substitusikan nilai A = 3B ke dalam Persamaan 2:
+                <br><code>3B - 5 = 4B - 20</code>
+                <br>Pindahkan B ke kanan, angka ke kiri:
+                <br><code>-5 + 20 = 4B - 3B</code>
+                <br><code>15 = B</code> (Umur anak saat ini adalah 15 tahun).
+                <br><br>Cari umur Ayah sekarang:
+                <br><code>A = 3B = 3 &times; 15 = 45 tahun</code>.`
+            },
+            {
+                id: 16,
+                question: "Jika x dan y memenuhi sistem persamaan 3x - 2y = 11 dan -4x + 3y = -15, maka nilai dari 2x - y adalah...",
+                options: [
+                    "1",
+                    "3",
+                    "5",
+                    "7"
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: 7</strong><br><br>
+                Gunakan <strong>Metode Eliminasi</strong>. Kita hilangkan y dengan menyamakan koefisiennya. KPK dari 2 dan 3 adalah 6.
+                <br><br>Kalikan (Persamaan 1) dengan 3:
+                <br><code>3(3x - 2y) = 3(11)</code> &rarr; <code>9x - 6y = 33</code>
+                <br>Kalikan (Persamaan 2) dengan 2:
+                <br><code>2(-4x + 3y) = 2(-15)</code> &rarr; <code>-8x + 6y = -30</code>
+                <br><br>Tambahkan kedua persamaan baru tersebut agar y habis (-6y + 6y = 0):
+                <br><code>(9x - 8x) + 0 = 33 - 30</code>
+                <br><code>x = 3</code>
+                <br><br>Substitusi x = 3 ke Persamaan 1:
+                <br><code>3(3) - 2y = 11</code>
+                <br><code>9 - 2y = 11</code>
+                <br><code>-2y = 11 - 9</code>
+                <br><code>-2y = 2</code> &rarr; <code>y = -1</code>
+                <br><br>Hitung nilai akhir pertanyaan:
+                <br><code>2x - y = 2(3) - (-1) = 6 + 1 = 7</code>.`
+            },
+            {
+                id: 17,
+                question: "Dua buah bilangan cacah memiliki jumlah 35. Jika selisih kedua bilangan tersebut adalah 11, maka hasil kali kedua bilangan tersebut adalah...",
+                options: [
+                    "276",
+                    "286",
+                    "296",
+                    "306"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 276</strong><br><br>
+                Misal bilangan besar adalah x, dan bilangan kecil adalah y.
+                <br>Diketahui Jumlah: <code>x + y = 35</code>
+                <br>Diketahui Selisih: <code>x - y = 11</code>
+                <br><br>Gunakan Eliminasi (Tambahkan ke bawah):
+                <br><code>(x + x) + (y - y) = 35 + 11</code>
+                <br><code>2x = 46</code>
+                <br><code>x = 23</code>
+                <br><br>Cari nilai y (dari x + y = 35):
+                <br><code>23 + y = 35</code> &rarr; <code>y = 35 - 23 = 12</code>
+                <br><br>Hasil kali kedua bilangan:
+                <br><code>23 &times; 12 = 276</code>.`
+            },
+            {
+                id: 18,
+                question: "Sebuah toko pakaian menawarkan dua paket hemat:<br>Paket A: 3 kaos dan 2 topi seharga Rp 280.000,00<br>Paket B: 1 kaos dan 3 topi seharga Rp 210.000,00<br>Berdasarkan informasi di atas, evaluasilah harga dari paket baru (Paket C) yang berisi 2 kaos dan 2 topi!",
+                options: [
+                    "Rp 200.000,00",
+                    "Rp 220.000,00",
+                    "Rp 240.000,00",
+                    "Rp 260.000,00"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: Rp 220.000,00</strong><br><br>
+                Misal Kaos = <code>k</code>, Topi = <code>t</code>.
+                <br>(1) <code>3k + 2t = 280.000</code>
+                <br>(2) <code>1k + 3t = 210.000</code> &rarr; ubah jadi <code>k = 210.000 - 3t</code>
+                <br><br>Substitusi bentuk 'k' ke Persamaan 1:
+                <br><code>3(210.000 - 3t) + 2t = 280.000</code>
+                <br><code>630.000 - 9t + 2t = 280.000</code>
+                <br><code>-7t = 280.000 - 630.000</code>
+                <br><code>-7t = -350.000</code>
+                <br><code>t = 50.000</code> (Harga 1 topi Rp50.000)
+                <br><br>Cari harga kaos:
+                <br><code>k = 210.000 - 3(50.000) = 210.000 - 150.000 = 60.000</code>
+                <br><br>Harga Paket C (2 kaos + 2 topi):
+                <br><code>2k + 2t = 2(60.000) + 2(50.000) = 120.000 + 100.000 = Rp 220.000,00</code>.`
+            },
+            {
+                id: 19,
+                question: "Grafik dari sistem persamaan x + y = 4 dan x - y = 2 akan saling berpotongan di titik...",
+                options: [
+                    "(3, 1)",
+                    "(1, 3)",
+                    "(2, 2)",
+                    "(4, 0)"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: (3, 1)</strong><br><br>
+                Konsep visualnya, <strong>titik potong grafik</strong> dari dua persamaan linear tidak lain adalah <strong>Himpunan Penyelesaian</strong> dari sistem persamaan tersebut.
+                <br><br>Gunakan eliminasi (dengan cara menjumlahkan):
+                <br>&nbsp;&nbsp;<code>x + y = 4</code>
+                <br>&nbsp;&nbsp;<code>x - y = 2</code>
+                <br><code>------------ +</code>
+                <br>&nbsp;&nbsp;<code>2x = 6</code>
+                <br>&nbsp;&nbsp;<code>x = 3</code>
+                <br><br>Substitusikan x = 3 ke persamaan pertama:
+                <br><code>3 + y = 4</code> &rarr; <code>y = 1</code>
+                <br><br>Jadi, kedua grafik tersebut bertemu pada koordinat (x, y) = <strong>(3, 1)</strong>.`
+            },
+            {
+                id: 20,
+                question: "Diberikan sistem persamaan:<br>px + qy = 10<br>qx + py = 8<br>Jika diketahui p + q = 6, maka nilai dari x + y adalah...",
+                options: [
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 3</strong><br><br>
+                Soal ini terlihat rumit jika dikerjakan dengan substitusi/eliminasi biasa karena ada p dan q. Tapi ada trik matematika aljabarnya!
+                <br><br><strong>Langkah Penyelesaian:</strong>
+                <br>Jumlahkan kedua persamaan secara langsung ke bawah:
+                <br>&nbsp;&nbsp;<code>px + qy = 10</code>
+                <br>&nbsp;&nbsp;<code>qx + py = 8</code>
+                <br><code>---------------- +</code>
+                <br><code>(p + q)x + (p + q)y = 18</code>
+                <br><br>Faktorkan/keluarkan unsur <code>(p + q)</code> karena sama-sama memilikinya:
+                <br><code>(p + q)(x + y) = 18</code>
+                <br><br>Karena di soal sudah diketahui nilai <code>p + q = 6</code>, maka:
+                <br><code>6 &times; (x + y) = 18</code>
+                <br><code>x + y = 18 &divide; 6</code>
+                <br><code>x + y = 3</code>.`
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const quizForm = document.getElementById('quiz-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScoreEl = document.getElementById('final-score');
+        const actionButtons = document.getElementById('action-buttons');
+
+        function renderQuiz() {
+            quizData.forEach((item, index) => {
+                const questionNum = index + 1;
+                
+                // Kontainer Kartu Soal
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-7 transition-all hover:shadow-md';
+                cardDiv.id = `card-${item.id}`;
+
+                // Header Soal
+                const questionHeader = document.createElement('div');
+                questionHeader.className = 'flex items-start gap-4 mb-5';
+                questionHeader.innerHTML = `
+                    <div class="flex-shrink-0 bg-sky-50 text-primary font-bold text-lg w-10 h-10 rounded-full flex items-center justify-center border border-sky-100 mt-1">
+                        ${questionNum}
+                    </div>
+                    <div class="text-slate-800 font-medium leading-relaxed w-full text-base sm:text-lg pt-1">
+                        ${item.question}
+                    </div>
+                `;
+                cardDiv.appendChild(questionHeader);
+
+                // Grid Opsi Jawaban
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pl-0 sm:pl-14';
+
+                item.options.forEach((opt, optIndex) => {
+                    const optionLabel = document.createElement('label');
+                    optionLabel.className = 'option-label relative flex items-center w-full';
+                    
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question-${item.id}`;
+                    optionInput.value = optIndex;
+                    optionInput.className = 'option-input opacity-0 absolute w-full h-full cursor-pointer z-10';
+
+                    const optionContent = document.createElement('div');
+                    optionContent.className = 'option-content flex items-center w-full p-4 border border-slate-200 rounded-xl hover:bg-slate-50';
+                    
+                    const radioCircleDiv = `<div class="radio-circle flex-shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full mr-3 relative transition-colors"></div>`;
+                    
+                    const letter = String.fromCharCode(65 + optIndex);
+                    
+                    optionContent.innerHTML = radioCircleDiv + `<span class="text-sm sm:text-base text-slate-700 font-medium"><span class="font-bold text-slate-400 mr-2">${letter}.</span> ${opt}</span>`;
+
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(optionContent);
+                    optionsGrid.appendChild(optionLabel);
+                });
+                cardDiv.appendChild(optionsGrid);
+
+                // Kotak Penjelasan
+                const explanationDiv = document.createElement('div');
+                explanationDiv.id = `explanation-${item.id}`;
+                explanationDiv.className = 'explanation-box bg-slate-50 border-l-4 border-slate-400 rounded-r-lg mt-0 sm:ml-14 text-sm sm:text-base text-slate-700 leading-relaxed shadow-inner';
+                explanationDiv.innerHTML = `<div class="p-5">${item.explanation}</div>`;
+                cardDiv.appendChild(explanationDiv);
+
+                quizContainer.appendChild(cardDiv);
+            });
+        }
+
+        renderQuiz();
+
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                let selectedValue = null;
+                
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        selectedValue = parseInt(radios[i].value);
+                        break;
+                    }
+                }
+
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                // Selalu warnai jawaban yang benar dengan warna hijau
+                optionLabels[item.correct].classList.add('status-correct');
+
+                if (selectedValue === item.correct) {
+                    correctCount++;
+                } else if (selectedValue !== null) {
+                    // Jika dijawab salah, warnai pilihan user dengan merah
+                    optionLabels[selectedValue].classList.add('status-wrong');
+                }
+                // Jika tidak dijawab (null), otomatis salah (tidak menambah skor), hanya menampilkan jawaban benar.
+
+                // Tampilkan kotak penjelasan
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.add('show');
+                
+                // Set warna sisi kiri kotak penjelasan
+                if (selectedValue === item.correct) {
+                    explanationBox.classList.remove('border-slate-400', 'border-wrong');
+                    explanationBox.classList.add('border-correct');
+                } else {
+                    explanationBox.classList.remove('border-slate-400', 'border-correct');
+                    explanationBox.classList.add('border-wrong');
+                }
+
+                // Matikan input radio
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = true;
+                }
+            });
+
+            // Perhitungan skor
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            try {
+                finalScoreEl.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            scoreDisplay.classList.remove('hidden');
+            scoreDisplay.classList.add('flex');
+            
+            if(score >= 80) {
+                finalScoreEl.className = 'text-6xl font-extrabold text-correct drop-shadow-sm';
+            } else if(score >= 60) {
+                finalScoreEl.className = 'text-6xl font-extrabold text-amber-500 drop-shadow-sm';
+            } else {
+                finalScoreEl.className = 'text-6xl font-extrabold text-wrong drop-shadow-sm';
+            }
+
+            // Animasi penghitung skor
+            let currentScore = 0;
+            finalScoreEl.innerText = 0;
+            const animateScore = setInterval(() => {
+                if (currentScore < score) {
+                    currentScore++;
+                    finalScoreEl.innerText = currentScore;
+                } else {
+                    clearInterval(animateScore);
+                    finalScoreEl.innerText = score;
+                }
+            }, 15);
+
+            // Tukar tombol aksi
+            submitBtn.classList.add('hidden');
+            actionButtons.classList.remove('hidden');
+            
+            // Gulir otomatis ke hasil di bagian bawah halaman
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', function() {
+            quizForm.reset();
+
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = false;
+                }
+
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.remove('show');
+                explanationBox.classList.remove('border-correct', 'border-wrong');
+                explanationBox.classList.add('border-slate-400');
+            });
+
+            scoreDisplay.classList.add('hidden');
+            scoreDisplay.classList.remove('flex');
+            actionButtons.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+    
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'CLOSE_MODAL' }, '*');
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+</script>
+</body>
+</html>

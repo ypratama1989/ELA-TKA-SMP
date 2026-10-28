@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Pertidaksamaan Linear Satu Variabel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0284C7', // Light Blue 600
+                        primaryHover: '#0369A1', // Light Blue 700
+                        correct: '#10B981', // Emerald 500
+                        correctBg: '#D1FAE5', // Emerald 100
+                        wrong: '#EF4444', // Red 500
+                        wrongBg: '#FEE2E2', // Red 100
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        
+        /* Custom gaya untuk Base64 gambar sesuai instruksi */
+        img[src^="data:image"] {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+        }
+
+        /* Custom Radio Button Styling */
+        .option-label {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .option-input:checked + .option-content {
+            border-color: #0284C7;
+            background-color: #F0F9FF;
+        }
+        
+        .option-input:checked + .option-content .radio-circle {
+            border-color: #0284C7;
+            background-color: #0284C7;
+        }
+
+        .option-input:checked + .option-content .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        /* Status Classes injected by JS */
+        .status-correct {
+            border-color: #10B981 !important;
+            background-color: #D1FAE5 !important;
+            color: #065F46 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10B981 !important;
+            background-color: #10B981 !important;
+        }
+
+        .status-wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEE2E2 !important;
+            color: #991B1B !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #EF4444 !important;
+            background-color: #EF4444 !important;
+        }
+
+        /* Animasi untuk kotak pembahasan */
+        .explanation-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .explanation-box.show {
+            max-height: 1200px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative pb-24">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <button onclick="goBack()" class="flex items-center text-gray-500 hover:text-primary transition-colors focus:outline-none bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="font-medium text-sm">Kembali</span>
+                </button>
+                <div class="font-bold text-lg text-primary truncate ml-4">
+                    Kuis Matematika
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-10 mb-8 border-t-4 border-primary">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 text-center">Pertidaksamaan Linear Satu Variabel</h1>
+            <p class="text-gray-600 text-center mb-6 text-sm sm:text-base leading-relaxed">
+                Uji pemahamanmu tentang Pertidaksamaan Linear! Kamu bebas menjawab sebagian atau seluruh soal. 
+                Klik <strong>"Periksa Jawaban"</strong> di bagian bawah untuk langsung melihat skor dan pembahasan mendetail.
+            </p>
+        </div>
+
+        <form id="quiz-form" class="space-y-6">
+            <!-- Tempat merender soal via JavaScript -->
+            <div id="quiz-container" class="space-y-6"></div>
+
+            <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mt-8 sticky bottom-4 z-40 border border-gray-100">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3 bg-primary text-white font-semibold rounded-xl shadow hover:bg-primaryHover transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                        Periksa Jawaban
+                    </button>
+                    
+                    <div id="score-display" class="hidden flex-col items-center sm:items-end w-full sm:w-auto">
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Nilai Akhir Anda</span>
+                        <div class="text-5xl font-extrabold text-primary" id="final-score">0</div>
+                    </div>
+                </div>
+
+                <div id="action-buttons" class="hidden mt-6 pt-6 border-t border-gray-100 flex justify-center">
+                    <button type="button" id="reset-btn" class="flex items-center px-6 py-3 bg-gray-800 text-white font-medium rounded-xl hover:bg-gray-700 transition-colors focus:outline-none shadow-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-gray-900 text-gray-400 py-5 text-center text-sm">
+        <p class="font-medium tracking-wide">By <span class="text-white font-bold">EDUFILLAH</span>, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                question: "Di antara kalimat terbuka berikut, manakah yang merupakan pertidaksamaan linear satu variabel?",
+                options: [
+                    "2x + 5y &gt; 10",
+                    "x<sup>2</sup> - 4x &le; 0",
+                    "3p - 6 &gt; 9",
+                    "2a + 3 = 11"
+                ],
+                correct: 2, 
+                explanation: `<strong>Jawaban Benar: C</strong><br><br>
+                Mari kita bedah syarat <strong>Pertidaksamaan Linear Satu Variabel (PtLSV)</strong>:
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm text-gray-700">
+                    <li><strong>Pertidaksamaan:</strong> Harus memuat tanda &lt;, &gt;, &le;, atau &ge;.</li>
+                    <li><strong>Satu Variabel:</strong> Hanya boleh ada satu jenis huruf yang belum diketahui nilainya.</li>
+                    <li><strong>Linear:</strong> Pangkat tertinggi dari variabel tersebut <strong>harus satu</strong> (tidak boleh ada kuadrat/pangkat dua).</li>
+                </ul>
+                <br>Analisis Pilihan:
+                <br>&bull; A. Salah, karena ada <strong>dua variabel</strong> yaitu x dan y.
+                <br>&bull; B. Salah, karena ada variabel berpangkat dua (x<sup>2</sup>). Ini disebut pertidaksamaan kuadrat.
+                <br>&bull; C. <strong>Benar!</strong> Memiliki satu variabel (p), berpangkat satu, dan menggunakan tanda '&gt;'.
+                <br>&bull; D. Salah, karena menggunakan tanda sama dengan (=). Ini adalah <em>persamaan</em>, bukan pertidaksamaan.`
+            },
+            {
+                id: 2,
+                question: "Kalimat matematika yang tepat untuk menyatakan \"Sebuah bus dapat mengangkut tidak lebih dari 45 penumpang\" jika jumlah penumpang dinyatakan dengan p adalah...",
+                options: [
+                    "p &lt; 45",
+                    "p &le; 45",
+                    "p &gt; 45",
+                    "p &ge; 45"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B (p &le; 45)</strong><br><br>
+                Kata kunci di sini adalah <strong>"tidak lebih dari"</strong>.
+                <br><br>Bayangkan kamu adalah kondektur bus tersebut. Jika dibilang "tidak lebih dari 45", apakah boleh mengangkut tepat 45 orang? Ya, boleh! 45 orang adalah batas maksimalnya. Yang tidak boleh adalah 46, 47, dan seterusnya.
+                <br><br>Oleh karena itu, tanda yang tepat adalah <strong>kurang dari atau sama dengan (&le;)</strong>. Jadi, kalimat matematikanya ditulis <code>p &le; 45</code>.`
+            },
+            {
+                id: 3,
+                question: "Himpunan penyelesaian dari pertidaksamaan x - 5 &gt; 3 untuk x anggota bilangan bulat adalah...",
+                options: [
+                    "{..., 5, 6, 7}",
+                    "{..., 6, 7, 8}",
+                    "{8, 9, 10, ...}",
+                    "{9, 10, 11, ...}"
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: D ({9, 10, 11, ...})</strong><br><br>
+                Mari kita selesaikan pertidaksamaannya seperti menyelesaikan persamaan biasa:
+                <br><code>x - 5 &gt; 3</code>
+                <br>Pindahkan -5 ke ruas kanan menjadi +5:
+                <br><code>x &gt; 3 + 5</code>
+                <br><code>x &gt; 8</code>
+                <br><br><strong>Penting:</strong> Karena tandanya hanya lebih besar dari (&gt;) dan <strong>tidak ada garis di bawahnya (=)</strong>, maka angka 8 <strong>tidak diajak</strong>.
+                <br>Jadi, bilangan bulat yang lebih besar dari 8 adalah 9, 10, 11, 12, dan seterusnya.`
+            },
+            {
+                id: 4,
+                question: "Nilai x yang memenuhi pertidaksamaan 2x - 7 &le; 9 untuk x anggota bilangan cacah adalah...",
+                options: [
+                    "{0, 1, 2, 3, 4, 5, 6, 7, 8}",
+                    "{1, 2, 3, 4, 5, 6, 7, 8}",
+                    "{0, 1, 2, 3, 4, 5, 6, 7}",
+                    "{1, 2, 3, 4, 5, 6, 7}"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: A ({0, 1, 2, 3, 4, 5, 6, 7, 8})</strong><br><br>
+                <strong>Langkah Penyelesaian:</strong>
+                <br><code>2x - 7 &le; 9</code>
+                <br>Pindah ruas angka -7 menjadi +7:
+                <br><code>2x &le; 9 + 7</code>
+                <br><code>2x &le; 16</code>
+                <br>Bagi kedua ruas dengan 2:
+                <br><code>x &le; 8</code>
+                <br><br><strong>Konsep Penting:</strong> Soal meminta x adalah <strong>Bilangan Cacah</strong>. Ingat, bilangan cacah adalah himpunan bilangan positif yang <strong>dimulai dari angka 0</strong> (0, 1, 2, 3, ...).
+                <br>Karena x &le; 8 (8 termasuk), maka himpunannya adalah {0, 1, 2, 3, 4, 5, 6, 7, 8}.`
+            },
+            {
+                id: 5,
+                question: "Penyelesaian dari pertidaksamaan -3x + 4 &gt; 19 adalah...",
+                options: [
+                    "x &gt; -5",
+                    "x &lt; -5",
+                    "x &gt; 5",
+                    "x &lt; 5"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B (x &lt; -5)</strong><br><br>
+                <strong>Langkah Penyelesaian:</strong>
+                <br><code>-3x + 4 &gt; 19</code>
+                <br><code>-3x &gt; 19 - 4</code>
+                <br><code>-3x &gt; 15</code>
+                <br><br><strong>ATURAN EMAS PERTIDAKSAMAAN:</strong>
+                <br>Saat kita membagi atau mengalikan kedua ruas dengan <strong>bilangan negatif</strong> (dalam hal ini dibagi -3), maka arah tanda pertidaksamaan <strong>WAJIB BERBALIK ARAH!</strong>
+                <br><code>x &lt; 15 &divide; (-3)</code>
+                <br><code>x &lt; -5</code>`
+            },
+            {
+                id: 6,
+                question: "Himpunan penyelesaian dari pertidaksamaan 5x - 2 &lt; 3x + 8 untuk x anggota bilangan bulat adalah...",
+                options: [
+                    "{..., 1, 2, 3, 4}",
+                    "{..., 2, 3, 4, 5}",
+                    "{5, 6, 7, ...}",
+                    "{6, 7, 8, ...}"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: A ({..., 1, 2, 3, 4})</strong><br><br>
+                <strong>Langkah Penyelesaian:</strong>
+                <br>Kumpulkan variabel (x) di sebelah kiri, dan angka di sebelah kanan.
+                <br><code>5x - 2 &lt; 3x + 8</code>
+                <br><code>5x - 3x &lt; 8 + 2</code>
+                <br><code>2x &lt; 10</code>
+                <br>Bagi dengan 2 (positif, jadi tanda tidak berubah):
+                <br><code>x &lt; 5</code>
+                <br><br>Karena x adalah bilangan bulat yang <strong>lebih kecil dari 5</strong> (5 tidak ikut), maka anggotanya adalah mundur ke belakang: 4, 3, 2, 1, 0, -1, dan seterusnya.`
+            },
+            {
+                id: 7,
+                question: "Penyelesaian dari pertidaksamaan <sup>1</sup>&frasl;<sub>2</sub>x - 3 &ge; <sup>1</sup>&frasl;<sub>3</sub>x + 2 adalah...",
+                options: [
+                    "x &ge; 30",
+                    "x &le; 30",
+                    "x &ge; 5",
+                    "x &le; 5"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: A (x &ge; 30)</strong><br><br>
+                <strong>Trik Menghadapi Pecahan:</strong>
+                <br>Agar perhitungan lebih mudah, hilangkan bentuk pecahan dengan mengalikan semua ruas menggunakan <strong>KPK dari penyebutnya</strong> (KPK dari 2 dan 3 adalah 6).
+                <br><br>Kalikan semuanya dengan 6:
+                <br><code>6 &times; (<sup>1</sup>&frasl;<sub>2</sub>x - 3) &ge; 6 &times; (<sup>1</sup>&frasl;<sub>3</sub>x + 2)</code>
+                <br><code>3x - 18 &ge; 2x + 12</code>
+                <br><br>Selanjutnya, kumpulkan x di kiri:
+                <br><code>3x - 2x &ge; 12 + 18</code>
+                <br><code>x &ge; 30</code>`
+            },
+            {
+                id: 8,
+                question: "Pak Budi memiliki uang Rp50.000,00. Ia ingin membeli beberapa buku tulis dengan harga Rp4.500,00 per buku dan sebuah pulpen seharga Rp5.000,00. Jumlah buku tulis maksimal yang dapat dibeli Pak Budi adalah...",
+                options: [
+                    "9 buah",
+                    "10 buah",
+                    "11 buah",
+                    "12 buah"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 10 buah</strong><br><br>
+                Ini adalah penerapan PtLSV dalam kehidupan sehari-hari!
+                <br><br><strong>Membangun Model Matematika:</strong>
+                <br>Misalkan jumlah buku tulis yang dibeli = x.
+                <br>Total belanjaan tidak boleh melebihi uang di dompet Pak Budi (&le; 50.000).
+                <br><code>(Harga 1 buku &times; x) + Harga Pulpen &le; Total Uang</code>
+                <br><code>4.500x + 5.000 &le; 50.000</code>
+                <br><br><strong>Penyelesaian:</strong>
+                <br><code>4.500x &le; 50.000 - 5.000</code>
+                <br><code>4.500x &le; 45.000</code>
+                <br><code>x &le; 45.000 &divide; 4.500</code>
+                <br><code>x &le; 10</code>
+                <br><br>Jadi, batas maksimal buku tulis yang bisa dibeli agar uangnya cukup adalah 10 buah.`
+            },
+            {
+                id: 9,
+                question: "Sebuah persegi panjang memiliki panjang (2x - 1) cm dan lebar 5 cm. Jika luas persegi panjang tersebut kurang dari 45 cm<sup>2</sup>, maka batasan nilai x yang memenuhi adalah...",
+                options: [
+                    "x &lt; 5",
+                    "<sup>1</sup>&frasl;<sub>2</sub> &lt; x &lt; 5",
+                    "x &lt; 10",
+                    "<sup>1</sup>&frasl;<sub>2</sub> &lt; x &lt; 10"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B (<sup>1</sup>&frasl;<sub>2</sub> &lt; x &lt; 5)</strong><br><br>
+                Soal geometri ini memiliki jebakan logika! Mari kita urai:
+                <br><br><strong>Syarat 1: Luas kurang dari 45</strong>
+                <br>Luas = Panjang &times; Lebar
+                <br><code>(2x - 1) &times; 5 &lt; 45</code>
+                <br><code>10x - 5 &lt; 45</code>
+                <br><code>10x &lt; 50</code>
+                <br><code>x &lt; 5</code>
+                <br><br><strong>Syarat 2 (Jebakan): Dimensi fisik harus positif</strong>
+                <br>Apakah mungkin sebuah benda memiliki panjang minus (negatif)? Tentu tidak! Maka, nilai Panjang harus lebih besar dari 0.
+                <br><code>Panjang &gt; 0</code>
+                <br><code>2x - 1 &gt; 0</code>
+                <br><code>2x &gt; 1</code>
+                <br><code>x &gt; <sup>1</sup>&frasl;<sub>2</sub></code>
+                <br><br>Gabungkan kedua syarat tersebut: x harus lebih besar dari <sup>1</sup>&frasl;<sub>2</sub> TETAPI lebih kecil dari 5. Penulisannya: <strong><sup>1</sup>&frasl;<sub>2</sub> &lt; x &lt; 5</strong>.`
+            },
+            {
+                id: 10,
+                question: "Seorang siswa menyelesaikan pertidaksamaan -2x + 5 &ge; 11 dengan langkah-langkah sebagai berikut:<br>Langkah 1: -2x &ge; 11 - 5<br>Langkah 2: -2x &ge; 6<br>Langkah 3: x &ge; -3<br><br>Evaluasilah hasil pekerjaan siswa tersebut!",
+                options: [
+                    "Pekerjaan siswa sudah benar di setiap langkah.",
+                    "Salah pada Langkah 1, seharusnya menjadi -2x &ge; 11 + 5.",
+                    "Salah pada Langkah 2, seharusnya hasilnya adalah -2x &ge; 16.",
+                    "Salah pada Langkah 3, seharusnya tanda pertidaksamaan berbalik menjadi x &le; -3."
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: D (Salah pada Langkah 3)</strong><br><br>
+                Mari kita evaluasi:
+                <br>&bull; <strong>Langkah 1 & 2:</strong> <code>-2x &ge; 11 - 5</code> &rarr; <code>-2x &ge; 6</code> (Ini sudah benar, pemindahan ruas angka biasa).
+                <br>&bull; <strong>Langkah 3:</strong> Di sini siswa membagi ruas kiri dan kanan dengan angka <strong>-2</strong> untuk mendapatkan x. 
+                <br><br>Ingat aturan emas: <em>Jika pertidaksamaan dikali atau dibagi dengan bilangan negatif, maka tanda pertidaksamaan WAJIB DIBALIK.</em>
+                <br>Seharusnya:
+                <br><code>x &le; 6 &divide; (-2)</code>
+                <br><code>x &le; -3</code> (tanda berubah dari &ge; menjadi &le;).`
+            },
+            {
+                id: 11,
+                question: "Penyelesaian dari pertidaksamaan 4(x - 2) &ge; 2(3x + 4) adalah...",
+                options: [
+                    "x &ge; -8",
+                    "x &le; -8",
+                    "x &ge; 8",
+                    "x &le; 8"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B (x &le; -8)</strong><br><br>
+                <strong>Langkah Penyelesaian:</strong>
+                <br>1. Gunakan perkalian distributif (kali pelangi) untuk membuka kurung:
+                <br><code>4x - 8 &ge; 6x + 8</code>
+                <br>2. Kumpulkan variabel x di kiri dan angka di kanan:
+                <br><code>4x - 6x &ge; 8 + 8</code>
+                <br><code>-2x &ge; 16</code>
+                <br>3. Bagi kedua ruas dengan -2. Ingat, karena dibagi negatif, tandanya dibalik!
+                <br><code>x &le; 16 &divide; (-2)</code>
+                <br><code>x &le; -8</code>`
+            },
+            {
+                id: 12,
+                question: "Untuk lulus ujian seleksi, seorang peserta harus memperoleh rata-rata nilai dari tiga tes minimal 75. Jika pada tes pertama dan kedua Budi memperoleh nilai 70 dan 72, maka nilai minimal yang harus diperoleh Budi pada tes ketiga adalah...",
+                options: [
+                    "81",
+                    "83",
+                    "85",
+                    "87"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 83</strong><br><br>
+                <strong>Membangun Model Matematika Rata-rata:</strong>
+                <br>Rata-rata didapat dari (Total Nilai) dibagi (Jumlah Tes). Kata "minimal" berarti &ge; 75.
+                <br>Misalkan nilai tes ketiga adalah x.
+                <br><code>(70 + 72 + x) &divide; 3 &ge; 75</code>
+                <br><br><strong>Penyelesaian:</strong>
+                <br>1. Kalikan kedua ruas dengan 3 agar pecahan hilang:
+                <br><code>142 + x &ge; 75 &times; 3</code>
+                <br><code>142 + x &ge; 225</code>
+                <br>2. Cari nilai x:
+                <br><code>x &ge; 225 - 142</code>
+                <br><code>x &ge; 83</code>
+                <br><br>Jadi, Budi harus mendapatkan nilai 83 atau lebih agar rata-ratanya lulus.`
+            },
+            {
+                id: 13,
+                question: "Diberikan dua pernyataan berikut mengenai pertidaksamaan linear satu variabel:<br>Pernyataan I: Jika kedua ruas pertidaksamaan dikalikan dengan bilangan negatif yang sama, maka arah tanda pertidaksamaan tetap.<br>Pernyataan II: Nilai x = -2 merupakan salah satu penyelesaian dari pertidaksamaan 3x - 1 &le; -7.<br><br>Analisis dan evaluasilah kebenaran kedua pernyataan tersebut!",
+                options: [
+                    "Pernyataan I benar dan Pernyataan II benar.",
+                    "Pernyataan I benar dan Pernyataan II salah.",
+                    "Pernyataan I salah dan Pernyataan II benar.",
+                    "Pernyataan I salah dan Pernyataan II salah."
+                ],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: C</strong><br><br>
+                Mari kita evaluasi satu per satu:
+                <br><br>&bull; <strong>Pernyataan I (SALAH):</strong> Aturan dasar matematika menyatakan jika dikali/dibagi bilangan negatif, tanda pertidaksamaan HARUS BERBALIK (contoh: 2 &lt; 5, jika dikali -1 maka -2 &gt; -5).
+                <br><br>&bull; <strong>Pernyataan II (BENAR):</strong> Mari kita buktikan dengan substitusi (memasukkan) angka x = -2 ke dalam pertidaksamaan.
+                <br><code>3(-2) - 1 &le; -7</code>
+                <br><code>-6 - 1 &le; -7</code>
+                <br><code>-7 &le; -7</code>
+                <br>Apakah -7 kurang dari atau SAMA DENGAN -7? Ya, benar! Karena ada tanda sama dengannya, maka pernyataan ini bernilai benar.`
+            },
+            {
+                id: 14,
+                question: "Grafik penyelesaian dari pertidaksamaan 3x - 5 &lt; 7 pada garis bilangan digambarkan dengan...",
+                options: [
+                    "Bulatan kosong pada angka 4 dengan arah panah ke kanan.",
+                    "Bulatan kosong pada angka 4 dengan arah panah ke kiri.",
+                    "Bulatan penuh pada angka 4 dengan arah panah ke kanan.",
+                    "Bulatan penuh pada angka 4 dengan arah panah ke kiri."
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B</strong><br><br>
+                Pertama, kita selesaikan dulu pertidaksamaannya:
+                <br><code>3x - 5 &lt; 7</code>
+                <br><code>3x &lt; 7 + 5</code>
+                <br><code>3x &lt; 12</code>
+                <br><code>x &lt; 4</code>
+                <br><br><strong>Membaca Grafik Garis Bilangan:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>Karena tandanya hanya &lt; (TIDAK ADA SAMA DENGAN), maka angka 4 menggunakan <strong>Bulatan Kosong</strong> (artinya 4 tidak diajak).</li>
+                    <li>Karena tandanya <em>kurang dari</em>, maka nilai x semakin kecil, sehingga panah mengarah ke <strong>Kiri</strong>.</li>
+                </ul>`
+            },
+            {
+                id: 15,
+                question: "Sebuah perusahaan taksi online menetapkan tarif awal Rp10.000,00 dan tarif per kilometer Rp4.000,00. Andi memiliki uang tidak lebih dari Rp50.000,00 untuk membayar taksi tersebut. Jarak maksimum perjalanan yang dapat ditempuh Andi adalah...",
+                options: [
+                    "10 km",
+                    "11 km",
+                    "12 km",
+                    "13 km"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 10 km</strong><br><br>
+                Misalkan jarak perjalanan adalah x km.
+                <br><br><strong>Membangun Model:</strong>
+                <br><code>Tarif Awal + (Tarif per km &times; jarak) &le; Uang Andi</code>
+                <br><code>10.000 + 4.000x &le; 50.000</code>
+                <br><br><strong>Penyelesaian:</strong>
+                <br><code>4.000x &le; 50.000 - 10.000</code>
+                <br><code>4.000x &le; 40.000</code>
+                <br><code>x &le; 10</code>
+                <br><br>Karena x &le; 10, maka jarak maksimum yang bisa ditempuh tepat 10 kilometer.`
+            },
+            {
+                id: 16,
+                question: "Di antara nilai-nilai berikut, manakah yang BUKAN merupakan solusi dari pertidaksamaan 2(x + 3) &gt; 5x - 6?",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: 4</strong><br><br>
+                Pertama, cari himpunan penyelesaiannya:
+                <br><code>2(x + 3) &gt; 5x - 6</code>
+                <br><code>2x + 6 &gt; 5x - 6</code>
+                <br><code>2x - 5x &gt; -6 - 6</code>
+                <br><code>-3x &gt; -12</code>
+                <br>Bagi dengan -3 (tanda berbalik):
+                <br><code>x &lt; 4</code>
+                <br><br><strong>Analisis Hasil:</strong>
+                <br>Solusi menyatakan bahwa x harus <strong>lebih kecil dari 4 secara mutlak</strong>. Artinya, angka 4 sendiri TIDAK TERMASUK dalam himpunan solusi. Jadi, 4 adalah jawaban yang dicari (yang bukan solusi).`
+            },
+            {
+                id: 17,
+                question: "Sebuah mobil box memiliki daya angkut maksimal 800 kg. Berat sopir dan kernet adalah 150 kg. Mobil tersebut akan mengangkut beberapa kotak barang yang masing-masing beratnya 25 kg. Pemilik toko membuat model matematika untuk menentukan jumlah kotak (k) yang dapat diangkut sebagai berikut: 25k + 150 &lt; 800.<br><br>Evaluasilah apakah model matematika tersebut sudah tepat atau belum!",
+                options: [
+                    "Tepat, karena total muatan tidak boleh melebihi daya angkut maksimal.",
+                    "Kurang tepat, seharusnya tanda yang digunakan adalah \"&le;\" karena muatan boleh tepat bernilai 800 kg.",
+                    "Salah, seharusnya berat sopir dan kernet dikurangkan, yaitu 25k - 150 &le; 800.",
+                    "Salah, seharusnya variabel k dikalikan dengan berat sopir, yaitu 150k + 25 &le; 800."
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B</strong><br><br>
+                Mari kita telaah kata demi kata dari kalimat cerita.
+                <br>Kata kunci: <strong>"daya angkut maksimal 800 kg"</strong>.
+                <br><br>Jika tertulis maksimal, itu berarti kapasitasnya boleh mentok sampai pas di angka 800 kg. 
+                <br>Model <code>25k + 150 &lt; 800</code> buatan pemilik toko melarang muatan mencapai 800 kg pas, sehingga merugikan secara efisiensi.
+                <br>Model yang paling tepat adalah menggunakan tanda kurang dari atau sama dengan: <strong><code>25k + 150 &le; 800</code></strong>.`
+            },
+            {
+                id: 18,
+                question: "Penyelesaian dari pertidaksamaan <sup>2</sup>&frasl;<sub>3</sub>(x - 6) &lt; <sup>1</sup>&frasl;<sub>4</sub>(x + 8) adalah...",
+                options: [
+                    "x &lt; 14.4",
+                    "x &lt; 12",
+                    "x &lt; 16",
+                    "x &lt; 14.8"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: x &lt; 14.4</strong><br><br>
+                <strong>Langkah Penyelesaian (Trik KPK):</strong>
+                <br>Penyebutnya adalah 3 dan 4. KPK dari 3 dan 4 adalah 12. Kalikan seluruh pertidaksamaan dengan 12 untuk membuang pecahan.
+                <br><code>12 &times; [<sup>2</sup>&frasl;<sub>3</sub>(x - 6)] &lt; 12 &times; [<sup>1</sup>&frasl;<sub>4</sub>(x + 8)]</code>
+                <br><code>8(x - 6) &lt; 3(x + 8)</code>
+                <br><br>Kali pelangi:
+                <br><code>8x - 48 &lt; 3x + 24</code>
+                <br><code>8x - 3x &lt; 24 + 48</code>
+                <br><code>5x &lt; 72</code>
+                <br><code>x &lt; 72 &divide; 5</code>
+                <br><code>x &lt; 14.4</code>`
+            },
+            {
+                id: 19,
+                question: "Keliling sebuah segitiga sama kaki tidak lebih dari 30 cm. Jika panjang sisi alasnya adalah 8 cm dan panjang sisi-sisi kakinya adalah x cm, maka batas nilai x yang memenuhi adalah...",
+                options: [
+                    "x &le; 11",
+                    "x &lt; 11",
+                    "0 &lt; x &le; 11",
+                    "4 &lt; x &le; 11"
+                ],
+                correct: 3,
+                explanation: `<strong>Jawaban Benar: D (4 &lt; x &le; 11)</strong><br><br>
+                Ini adalah soal HOTS (Higher Order Thinking Skills)! Ada dua aturan yang bekerja.
+                <br><br><strong>Aturan 1: Keliling &le; 30</strong>
+                <br>Keliling Segitiga = Alas + Kaki + Kaki
+                <br><code>8 + x + x &le; 30</code>
+                <br><code>8 + 2x &le; 30</code>
+                <br><code>2x &le; 22</code>
+                <br><code>x &le; 11</code>
+                <br><br><strong>Aturan 2: Ketidaksamaan Segitiga (Syarat Geometri)</strong>
+                <br>Untuk bisa membentuk bangun segitiga, jumlah dua sisi terpendek HARUS LEBIH BESAR dari sisi terpanjang.
+                <br><code>x + x &gt; 8</code>
+                <br><code>2x &gt; 8</code>
+                <br><code>x &gt; 4</code>
+                <br><br>Gabungkan kedua syarat tersebut: x harus lebih dari 4, namun tidak boleh lebih dari 11. Penulisan tepatnya: <strong>4 &lt; x &le; 11</strong>.`
+            },
+            {
+                id: 20,
+                question: "Dua orang siswa, Rian dan Susi, mencoba menyelesaikan pertidaksamaan 5 - 2x &lt; 11.<br>Rian menghasilkan jawaban: x &gt; -3.<br>Susi menghasilkan jawaban: x &lt; -3.<br>Siapakah yang memberikan argumen dan hasil penyelesaian yang benar?",
+                options: [
+                    "Rian benar, karena ketika membagi kedua ruas dengan -2, tanda pertidaksamaan harus berbalik arah.",
+                    "Susi benar, karena tanda pertidaksamaan awal adalah \"&lt;\" sehingga hasil akhir harus tetap menggunakan tanda \"&lt;\".",
+                    "Keduanya salah, karena hasil yang benar seharusnya adalah x &gt; 3.",
+                    "Keduanya benar, karena nilai x tergantung pada himpunan semesta yang dipilih."
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: A</strong><br><br>
+                Mari kita buktikan pengerjaannya:
+                <br><code>5 - 2x &lt; 11</code>
+                <br>Pindahkan angka 5 ke ruas kanan:
+                <br><code>-2x &lt; 11 - 5</code>
+                <br><code>-2x &lt; 6</code>
+                <br><br>Nah, di titik inilah sering terjadi kesalahan. Untuk mencari x, kita harus membagi ruas kanan dengan <strong>-2 (bilangan negatif)</strong>. Hukum mutlak PtLSV menyatakan jika dibagi/dikali negatif, tandanya dibalik!
+                <br><code>x &gt; 6 &divide; (-2)</code>
+                <br><code>x &gt; -3</code>
+                <br><br>Jadi, hasil Rian dan argumennya sudah tepat sesuai dengan aturan matematika.`
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const quizForm = document.getElementById('quiz-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScoreEl = document.getElementById('final-score');
+        const actionButtons = document.getElementById('action-buttons');
+
+        function renderQuiz() {
+            quizData.forEach((item, index) => {
+                const questionNum = index + 1;
+                
+                // Card Kontainer Soal
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-7 transition-all hover:shadow-md';
+                cardDiv.id = `card-${item.id}`;
+
+                // Header Soal (Nomor dan Pertanyaan)
+                const questionHeader = document.createElement('div');
+                questionHeader.className = 'flex items-start gap-4 mb-5';
+                questionHeader.innerHTML = `
+                    <div class="flex-shrink-0 bg-sky-50 text-primary font-bold text-lg w-10 h-10 rounded-full flex items-center justify-center border border-sky-100 mt-1">
+                        ${questionNum}
+                    </div>
+                    <div class="text-gray-800 font-medium leading-relaxed w-full text-base sm:text-lg pt-1">
+                        ${item.question}
+                    </div>
+                `;
+                cardDiv.appendChild(questionHeader);
+
+                // Opsi Jawaban (Grid layout untuk estetika)
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pl-0 sm:pl-14';
+
+                item.options.forEach((opt, optIndex) => {
+                    const optionLabel = document.createElement('label');
+                    optionLabel.className = 'option-label relative flex items-center w-full';
+                    
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question-${item.id}`;
+                    optionInput.value = optIndex;
+                    optionInput.className = 'option-input opacity-0 absolute w-full h-full cursor-pointer z-10'; // Hide native, keep functional
+
+                    const optionContent = document.createElement('div');
+                    optionContent.className = 'option-content flex items-center w-full p-4 border border-gray-200 rounded-xl hover:bg-gray-50';
+                    
+                    // Custom Radio Circle
+                    const radioCircleDiv = `<div class="radio-circle flex-shrink-0 w-5 h-5 border-2 border-gray-300 rounded-full mr-3 relative transition-colors"></div>`;
+                    
+                    // Konversi Huruf Pilihan Ganda (A, B, C, D)
+                    const letter = String.fromCharCode(65 + optIndex);
+                    
+                    optionContent.innerHTML = radioCircleDiv + `<span class="text-sm sm:text-base text-gray-700 font-medium"><span class="font-bold text-gray-400 mr-2">${letter}.</span> ${opt}</span>`;
+
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(optionContent);
+                    optionsGrid.appendChild(optionLabel);
+                });
+                cardDiv.appendChild(optionsGrid);
+
+                // Kotak Pembahasan (Awalnya tersembunyi)
+                const explanationDiv = document.createElement('div');
+                explanationDiv.id = `explanation-${item.id}`;
+                explanationDiv.className = 'explanation-box bg-gray-50 border-l-4 border-gray-400 rounded-r-lg mt-0 sm:ml-14 text-sm sm:text-base text-gray-700 leading-relaxed shadow-inner';
+                explanationDiv.innerHTML = `<div class="p-5">${item.explanation}</div>`;
+                cardDiv.appendChild(explanationDiv);
+
+                quizContainer.appendChild(cardDiv);
+            });
+        }
+
+        // Jalankan render soal saat halaman dimuat
+        renderQuiz();
+
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah reload halaman
+
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                let selectedValue = null;
+                
+                // Cari input mana yang dipilih
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        selectedValue = parseInt(radios[i].value);
+                        break;
+                    }
+                }
+
+                // Ambil elemen div pembungkus opsi untuk dimanipulasi kelas CSS-nya
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                
+                // Reset styling jika diulang
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                // Highlight jawaban yang BENAR (warna hijau)
+                optionLabels[item.correct].classList.add('status-correct');
+
+                if (selectedValue === item.correct) {
+                    correctCount++;
+                } else if (selectedValue !== null) {
+                    // Jika dijawab salah, highlight pilihan user dengan warna MERAH
+                    optionLabels[selectedValue].classList.add('status-wrong');
+                }
+
+                // Tampilkan Kotak Pembahasan
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.add('show');
+                
+                // Ubah warna border sebelah kiri kotak pembahasan sesuai status jawaban
+                if (selectedValue === item.correct) {
+                    explanationBox.classList.remove('border-gray-400', 'border-wrong');
+                    explanationBox.classList.add('border-correct');
+                } else {
+                    explanationBox.classList.remove('border-gray-400', 'border-correct');
+                    explanationBox.classList.add('border-wrong');
+                }
+
+                // Disable input radio agar user tidak mengubah jawaban setelah disubmit
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = true;
+                }
+            });
+
+            // Skoring 0-100
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            try {
+                finalScoreEl.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            // Tampilkan panel skor
+            scoreDisplay.classList.remove('hidden');
+            scoreDisplay.classList.add('flex');
+            
+            // Set warna teks nilai berdasarkan hasil (Hijau/Kuning/Merah)
+            if(score >= 80) {
+                finalScoreEl.className = 'text-5xl font-extrabold text-correct';
+            } else if(score >= 60) {
+                finalScoreEl.className = 'text-5xl font-extrabold text-yellow-500';
+            } else {
+                finalScoreEl.className = 'text-5xl font-extrabold text-wrong';
+            }
+
+            // Animasi hitung angka skor (Count Up Animation)
+            let currentScore = 0;
+            finalScoreEl.innerText = 0;
+            const animateScore = setInterval(() => {
+                if (currentScore < score) {
+                    currentScore++;
+                    finalScoreEl.innerText = currentScore;
+                } else {
+                    clearInterval(animateScore);
+                    finalScoreEl.innerText = score;
+                }
+            }, 20); // Kecepatan animasi
+
+            // Swap Tombol
+            submitBtn.classList.add('hidden');
+            actionButtons.classList.remove('hidden');
+            
+            // Auto scroll ke bawah (ke bagian hasil)
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', function() {
+            // Mereset input form
+            quizForm.reset();
+
+            // Kembalikan state radio buttons dan sembunyikan UI evaluasi
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = false;
+                }
+
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.remove('show');
+                explanationBox.classList.remove('border-correct', 'border-wrong');
+                explanationBox.classList.add('border-gray-400');
+            });
+
+            // Sembunyikan bagian skor dan tukar kembali tombol aksi
+            scoreDisplay.classList.add('hidden');
+            scoreDisplay.classList.remove('flex');
+            actionButtons.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Scroll kembali ke puncak secara perlahan (Smooth Scroll)
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+    
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'CLOSE_MODAL' }, '*');
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+</script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Procedure Text & Manuals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive image styling for base64 or general images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Animation for result showing */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-2 py-1 rounded-md hover:bg-blue-50">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-center text-slate-800 flex-1">English Quiz: Procedure Text</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for perfect centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-900 mb-1">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+                        <li>Bacalah teks prosedur (*Procedure Text*) dengan saksama dan pilih jawaban paling tepat.</li>
+                        <li>Sistem skoring menggunakan skala <strong>0 - 100</strong>.</li>
+                        <li>Kamu <strong>tidak perlu</strong> mengisi semua soal untuk memeriksa jawaban. Tombol "Periksa Jawaban" ada di bagian bawah halaman.</li>
+                        <li>Soal yang tidak dijawab akan tetap ditampilkan pembahasannya (berwarna kuning).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quiz Form Container -->
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-8">
+                    <!-- Soal dan Teks akan dirender oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-12 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <!-- Decorative background element -->
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <!-- Result Area (Hidden by Default) -->
+                    <div id="result-area" class="hidden mb-8 py-4 border-b border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <p id="score-message" class="text-lg font-bold px-4 py-2 rounded-lg inline-block"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                <span>By EDUFILLAH</span> 
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span> 
+                <span class="text-slate-400">Unlock The Secret Of Curious Minds</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Soal, Teks, dan Pembahasan Edukatif yang telah Diperkaya
+        const quizData = [
+            {
+                type: "text",
+                title: "Text 1 (Questions 1-5)",
+                content: `
+                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                        <h3 class="font-bold text-xl mb-3 text-amber-900 border-b border-amber-200 pb-2">How to Make Quick Strawberry Smoothie</h3>
+                        
+                        <h4 class="font-bold text-amber-800 mb-2 mt-4"><i class="fas fa-shopping-basket mr-2"></i>Ingredients:</h4>
+                        <ul class="list-disc list-inside text-amber-900 space-y-1 ml-2 mb-4">
+                            <li>1 cup fresh strawberries, hulled</li>
+                            <li>&frac12; cup low-fat yogurt</li>
+                            <li>&frac12; cup milk</li>
+                            <li>1 tablespoon honey</li>
+                            <li>3 ice cubes</li>
+                        </ul>
+                        
+                        <h4 class="font-bold text-amber-800 mb-2"><i class="fas fa-list-ol mr-2"></i>Steps:</h4>
+                        <ol class="list-decimal list-inside text-amber-900 space-y-2 ml-2">
+                            <li>Wash the strawberries thoroughly under running water.</li>
+                            <li>Place the strawberries, yogurt, milk, and honey into the blender.</li>
+                            <li>Add the ice cubes.</li>
+                            <li>Blend on high speed for about 1-2 minutes until smooth.</li>
+                            <li>Pour the smoothie into a glass and serve immediately.</li>
+                        </ol>
+                    </div>
+                `
+            },
+            {
+                type: "question", id: 1,
+                question: "What is the main goal of the text?",
+                options: {
+                    A: "To describe the taste of a strawberry smoothie.",
+                    B: "To explain how to prepare a strawberry smoothie.",
+                    C: "To persuade readers to buy fresh strawberries.",
+                    D: "To inform about the nutritional value of yogurt."
+                },
+                correct: "B",
+                explanation: "Teks di atas adalah contoh dari <strong>Procedure Text</strong> berbentuk resep masakan (<em>recipe</em>). Ciri utamanya adalah memiliki bagian <em>Ingredients</em> (bahan) dan <em>Steps</em> (langkah-langkah). Tujuan utama (<em>main goal/purpose</em>) dari sebuah teks prosedur berbentuk resep selalu untuk menjelaskan <strong>bagaimana cara membuat/menyiapkan sesuatu</strong> (<em>how to make/prepare something</em>). Oleh karena itu, jawaban yang paling tepat adalah B."
+            },
+            {
+                type: "question", id: 2,
+                question: "Why should we wash the strawberries before putting them into the blender?",
+                options: {
+                    A: "To make them taste sweeter.",
+                    B: "To ensure they are clean and safe to consume.",
+                    C: "To help them blend faster.",
+                    D: "To change their color."
+                },
+                correct: "B",
+                explanation: "Pertanyaan ini menguji logika dasar dan pemahaman kontekstual (HOTS). Pada langkah 1 tertulis <em>\"Wash the strawberries thoroughly...\"</em> (Cuci stroberi secara menyeluruh). Logika dasarnya, mencuci buah atau sayur sebelum diolah bertujuan untuk menghilangkan kotoran, pestisida, atau bakteri agar bahan makanan tersebut <strong>bersih dan aman untuk dikonsumsi</strong> (<em>clean and safe to consume</em>)."
+            },
+            {
+                type: "question", id: 3,
+                question: "\"Blend on high speed for about 1-2 minutes until <u>smooth</u>.\" (Step 4)<br>What does the underlined word mean in this context?",
+                options: {
+                    A: "Having a thick and completely even texture.",
+                    B: "Having a rough and crunchy consistency.",
+                    C: "Extremely cold and frozen.",
+                    D: "Very sweet and sugary."
+                },
+                correct: "A",
+                explanation: "Kata <strong>\"smooth\"</strong> secara harfiah berarti halus. Dalam konteks memblender makanan/minuman, \"smooth\" berarti proses blender dihentikan jika teksturnya sudah lembut, tercampur merata sempurna, dan tidak ada lagi gumpalan kasar (<em>completely even texture</em>). Opsi B salah karena <em>rough and crunchy</em> berarti kasar dan renyah."
+            },
+            {
+                type: "question", id: 4,
+                question: "What might happen if we do not add ice cubes to the mixture?",
+                options: {
+                    A: "The smoothie will be warmer and less chilled.",
+                    B: "The smoothie will taste extremely bitter.",
+                    C: "The blender will stop working.",
+                    D: "The strawberries will not blend."
+                },
+                correct: "A",
+                explanation: "Es batu (<em>ice cubes</em>) ditambahkan ke dalam minuman dengan fungsi utama untuk menurunkan suhu sehingga minuman terasa dingin dan segar. Jika es batu tidak ditambahkan, secara logis minuman (smoothie) tersebut akan menjadi bersuhu lebih hangat dan kurang dingin (<em>warmer and less chilled</em>)."
+            },
+            {
+                type: "question", id: 5,
+                question: "Which of the following words from the text is an action verb (imperative)?",
+                options: {
+                    A: "Fresh",
+                    B: "Pour",
+                    C: "Smoothie",
+                    D: "Thoroughly"
+                },
+                correct: "B",
+                explanation: "Ingat kembali unsur kebahasaan <em>Procedure Text</em>! Teks ini selalu menggunakan kalimat perintah (<em>imperative sentences</em>) yang diawali dengan kata kerja tindakan (<strong>action verbs</strong>). Mari kita bedah opsinya:<br>• <em>Fresh</em> = segar (Kata Sifat / Adjective)<br>• <em>Smoothie</em> = nama minuman (Kata Benda / Noun)<br>• <em>Thoroughly</em> = secara menyeluruh (Kata Keterangan / Adverb)<br>• <strong>Pour</strong> = tuangkan (Kata Kerja Tindakan / Action Verb). Inilah jawabannya!"
+            },
+            
+            // TEXT 2
+            {
+                type: "text",
+                title: "Text 2 (Questions 6-10)",
+                content: `
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-xl mb-3 text-slate-800 border-b border-slate-300 pb-2">How to Use an Electric Kettle</h3>
+                        
+                        <h4 class="font-bold text-slate-700 mb-2 mt-4"><i class="fas fa-cogs mr-2"></i>Steps:</h4>
+                        <ol class="list-decimal list-inside text-slate-700 space-y-2 ml-2">
+                            <li>Fill the kettle with water up to the maximum line indicated on the water gauge. Do not overfill.</li>
+                            <li>Place the kettle on its power base.</li>
+                            <li>Plug the power cord into a suitable wall outlet.</li>
+                            <li>Press the switch down to turn it on. The indicator light will glow, showing that the water is heating.</li>
+                            <li>Once the water reaches a boil, the kettle will switch off automatically and the indicator light will go out.</li>
+                            <li>Unplug the cord from the outlet before pouring the water.</li>
+                        </ol>
+                    </div>
+                `
+            },
+            {
+                type: "question", id: 6,
+                question: "What is the purpose of the water gauge on the kettle?",
+                options: {
+                    A: "To heat the water faster.",
+                    B: "To show the level of water inside the kettle.",
+                    C: "To connect the kettle to the power base.",
+                    D: "To filter the water from impurities."
+                },
+                correct: "B",
+                explanation: "Kata kunci pada soal adalah <strong>\"water gauge\"</strong>. Kata <em>gauge</em> (dibaca: geij) berarti alat pengukur. Dalam ketel listrik, <em>water gauge</em> adalah jendela transparan berskala yang berfungsi untuk <strong>menunjukkan batas atau ketinggian air</strong> (<em>show the level of water</em>) yang ada di dalamnya agar pengguna tidak mengisi air terlalu sedikit atau terlalu penuh."
+            },
+            {
+                type: "question", id: 7,
+                question: "What happens automatically when the water reaches its boiling point?",
+                options: {
+                    A: "The kettle will turn off and the light will go out.",
+                    B: "The power cord will unplug itself.",
+                    C: "The water will pour out into a cup.",
+                    D: "The indicator light will turn red."
+                },
+                correct: "A",
+                explanation: "Cari kalimat yang mengandung kata <em>\"boil\"</em> (mendidih) di dalam teks. Pada langkah ke-5 disebutkan: <em>\"Once the water reaches a boil, the kettle will <strong>switch off automatically</strong> and the indicator <strong>light will go out</strong>.\"</em> Artinya, ketel akan mati dengan sendirinya dan lampu indikator akan padam."
+            },
+            {
+                type: "question", id: 8,
+                question: "Why is it important not to overfill the kettle?",
+                options: {
+                    A: "It might cause the water to take too long to boil or spill over when boiling.",
+                    B: "It will damage the power base immediately.",
+                    C: "The kettle will not turn off automatically.",
+                    D: "The water will taste metallic."
+                },
+                correct: "A",
+                explanation: "Pada teks tertulis larangan <em>\"Do not overfill\"</em> (Jangan mengisi terlalu penuh). Secara logika fisika dasar, jika wadah diisi air hingga terlalu penuh melebihi batas maksimal (MAX line), maka saat air memanas dan mendidih, air tersebut akan bergejolak meluap dan <strong>tumpah keluar (spill over)</strong>, yang tentunya sangat berbahaya dan bisa memicu korsleting listrik."
+            },
+            {
+                type: "question", id: 9,
+                question: "\"Plug the power cord into a <u>suitable</u> wall outlet.\" (Step 3)<br>The word \"suitable\" is closest in meaning to...",
+                options: {
+                    A: "Broken",
+                    B: "Appropriate",
+                    C: "Dangerous",
+                    D: "Expensive"
+                },
+                correct: "B",
+                explanation: "Kata <strong>\"suitable\"</strong> memiliki arti cocok, pantas, atau sesuai. Contoh: colokan yang sesuai dengan tegangannya. Dari pilihan yang ada, kata yang bersinonim (memiliki arti yang sama/terdekat) adalah <strong>\"Appropriate\"</strong> (sesuai/tepat).<br><em>Broken</em> = rusak; <em>Dangerous</em> = berbahaya; <em>Expensive</em> = mahal."
+            },
+            {
+                type: "question", id: 10,
+                question: "What should you do immediately before pouring the hot water?",
+                options: {
+                    A: "Press the switch down again.",
+                    B: "Fill the kettle to the maximum line.",
+                    C: "Unplug the cord from the wall outlet.",
+                    D: "Wash the power base with water."
+                },
+                correct: "C",
+                explanation: "Perhatikan kata kunci <em>\"before pouring\"</em> (sebelum menuangkan). Mari merujuk pada langkah terakhir (Step 6): <em>\"<strong>Unplug the cord</strong> from the outlet <u>before pouring</u> the water.\"</em> Jadi, hal yang harus segera dilakukan adalah mencabut kabel listrik dari stopkontak demi keamanan."
+            },
+            
+            // TEXT 3
+            {
+                type: "text",
+                title: "Text 3 (Questions 11-13)",
+                content: `
+                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <h3 class="font-bold text-xl mb-3 text-yellow-900 border-b border-yellow-300 pb-2">How to Make Scrambled Eggs</h3>
+                        
+                        <h4 class="font-bold text-yellow-800 mb-2 mt-4"><i class="fas fa-shopping-basket mr-2"></i>Ingredients:</h4>
+                        <ul class="list-disc list-inside text-yellow-900 space-y-1 ml-2 mb-4">
+                            <li>2 large eggs</li>
+                            <li>2 tablespoons milk</li>
+                            <li>1 tablespoon butter</li>
+                            <li>A pinch of salt and pepper</li>
+                        </ul>
+                        
+                        <h4 class="font-bold text-yellow-800 mb-2"><i class="fas fa-list-ol mr-2"></i>Steps:</h4>
+                        <ol class="list-decimal list-inside text-yellow-900 space-y-2 ml-2">
+                            <li>Whisk the eggs, milk, salt, and pepper in a small bowl until well blended.</li>
+                            <li>Melt the butter in a non-stick skillet over medium heat.</li>
+                            <li>Pour in the egg mixture. As the eggs begin to set, gently pull them across the pan with a spatula.</li>
+                            <li>Continue cooking—pulling and folding—until no liquid egg remains.</li>
+                            <li>Remove from heat and serve immediately.</li>
+                        </ol>
+                    </div>
+                `
+            },
+            {
+                type: "question", id: 11,
+                question: "What is the function of the spatula in this recipe?",
+                options: {
+                    A: "To whisk the eggs in the small bowl.",
+                    B: "To melt the butter on the skillet.",
+                    C: "To gently pull and fold the eggs in the pan.",
+                    D: "To measure the amount of milk needed."
+                },
+                correct: "C",
+                explanation: "Spatula (sodet/alat penggorengan) disebutkan pada langkah ke-3 dan ke-4. Fungsinya tertera jelas di teks: <em>\"...gently <strong>pull them</strong> across the pan with a spatula\"</em> dan dilanjutkan <em>\"Continue cooking—<strong>pulling and folding</strong>...\"</em>. Jadi fungsinya untuk menarik dan melipat/mengaduk telur saat dimasak di atas wajan (pan)."
+            },
+            {
+                type: "question", id: 12,
+                question: "What is the correct order of preparing the egg mixture before it is cooked?",
+                options: {
+                    A: "Melt butter, pour eggs, and fold them.",
+                    B: "Whisk eggs, milk, salt, and pepper in a bowl.",
+                    C: "Heat the skillet, add butter, and add pepper.",
+                    D: "Serve the eggs, then add salt and pepper."
+                },
+                correct: "B",
+                explanation: "Pertanyaan meminta langkah persiapan adonan telur <strong>sebelum dimasak (before it is cooked)</strong>. Proses masak (menggunakan api) baru dimulai di langkah 2 (melt the butter). Persiapan sebelumnya ada di langkah 1, yaitu <strong>mengocok telur, susu, garam, dan merica di mangkuk</strong> (<em>Whisk the eggs, milk, salt, and pepper in a small bowl</em>)."
+            },
+            {
+                type: "question", id: 13,
+                question: "\"As the eggs begin to <u>set</u>...\" (Step 3)<br>The word \"set\" in this context means...",
+                options: {
+                    A: "To turn from liquid into a solid or semi-solid state.",
+                    B: "To break into many small pieces.",
+                    C: "To become very hot and boil.",
+                    D: "To disappear from the pan."
+                },
+                correct: "A",
+                explanation: "Dalam kosakata memasak (khususnya untuk telur atau agar-agar), kata <strong>\"set\"</strong> berarti proses pemadatan. Telur mentah berbentuk cair (liquid), ketika terkena panas wajan, ia akan mulai menggumpal dan memadat menjadi bentuk padat atau semi-padat (<em>turn from liquid into a solid or semi-solid state</em>)."
+            },
+
+            // TEXT 4
+            {
+                type: "text",
+                title: "Text 4 (Questions 14-16)",
+                content: `
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
+                        <h3 class="font-bold text-xl mb-3 text-blue-900 border-b border-blue-300 pb-2">How to Safely Use a Microwave Oven</h3>
+                        
+                        <h4 class="font-bold text-blue-800 mb-2 mt-4"><i class="fas fa-cogs mr-2"></i>Steps:</h4>
+                        <ol class="list-decimal list-inside text-blue-900 space-y-2 ml-2">
+                            <li>Place the food in a microwave-safe container. Do not use metal pans or utensils.</li>
+                            <li>Open the microwave door and place the container in the center of the turntable.</li>
+                            <li>Close the door firmly.</li>
+                            <li>Set the cooking time and power level according to the food package instructions.</li>
+                            <li>Press the "Start" button.</li>
+                            <li>When the timer beeps, carefully remove the food using oven mitts as the container may be hot.</li>
+                        </ol>
+                    </div>
+                `
+            },
+            {
+                type: "question", id: 14,
+                question: "Why are metal pans or utensils prohibited in a microwave?",
+                options: {
+                    A: "They will make the food taste metallic.",
+                    B: "They can cause sparks and damage the microwave.",
+                    C: "They prevent the food from getting warm.",
+                    D: "They make the turntable rotate too slowly."
+                },
+                correct: "B",
+                explanation: "Ini merupakan soal yang membutuhkan pengetahuan umum tentang alat elektronik. Pada teks tertulis larangan <em>\"Do not use metal pans...\"</em> (Jangan gunakan wajan logam). Alasan ilmiahnya, logam akan memantulkan gelombang elektromagnetik (microwave), yang dapat menyebabkan <strong>timbulnya percikan api (sparks)</strong> yang berbahaya dan dapat merusak oven tersebut atau bahkan menyebabkan kebakaran."
+            },
+            {
+                type: "question", id: 15,
+                question: "What is the purpose of using oven mitts when removing the food?",
+                options: {
+                    A: "To keep the food clean.",
+                    B: "To protect your hands from getting burned.",
+                    C: "To stop the microwave from beeping.",
+                    D: "To press the start button easily."
+                },
+                correct: "B",
+                explanation: "Berdasarkan langkah ke-6, pengguna disarankan menggunakan <em>\"oven mitts\"</em> (sarung tangan tebal anti panas/cempal) karena <em>\"the container may be hot\"</em> (wadahnya mungkin sangat panas setelah diproses). Tentu saja fungsi utamanya adalah <strong>melindungi tangan kita agar tidak terbakar/melepuh</strong> (<em>protect your hands from getting burned</em>)."
+            },
+            {
+                type: "question", id: 16,
+                question: "What is the step after setting the cooking time and power level?",
+                options: {
+                    A: "Close the door firmly.",
+                    B: "Press the \"Start\" button.",
+                    C: "Remove the food using oven mitts.",
+                    D: "Place the food in a safe container."
+                },
+                correct: "B",
+                explanation: "Soal ini menguji pemahaman urutan teks prosedur. Teks menyebutkan mengatur waktu dan suhu di langkah ke-4 (<em>\"Set the cooking time and power level...\"</em>). Maka, langkah tepat setelahnya (langkah 5) adalah <em>\"<strong>Press the 'Start' button</strong>\"</em>."
+            },
+
+            // TEXT 5 (Comparative Texts)
+            {
+                type: "text",
+                title: "Text 5 (Questions 17-20)",
+                content: `
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <!-- Text A -->
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h3 class="font-bold text-lg mb-2 text-red-900 border-b border-red-200 pb-1">Text A (Recipe: Instant Noodles)</h3>
+                            <ol class="list-decimal list-inside text-red-900 space-y-1 ml-2 text-sm">
+                                <li>Boil 400 ml of water in a pan.</li>
+                                <li>Add the noodles and simmer for 3 minutes.</li>
+                                <li>Mix the seasoning powder, oil, and chili powder on a plate.</li>
+                                <li>Drain the noodles and mix them well with the seasonings.</li>
+                                <li>Serve hot.</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- Text B -->
+                        <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                            <h3 class="font-bold text-lg mb-2 text-teal-900 border-b border-teal-200 pb-1">Text B (Manual: Digital Thermometer)</h3>
+                            <ol class="list-decimal list-inside text-teal-900 space-y-1 ml-2 text-sm">
+                                <li>Press the power button to turn on the thermometer.</li>
+                                <li>Place the sensor tip under the tongue or armpit.</li>
+                                <li>Wait until you hear the beep sound (about 60 seconds).</li>
+                                <li>Read the temperature shown on the digital screen.</li>
+                                <li>Press the power button again to turn it off.</li>
+                            </ol>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                type: "question", id: 17,
+                question: "What is the primary difference in the social function of Text A and Text B?",
+                options: {
+                    A: "Text A explains how to operate a device, while Text B explains how to make food.",
+                    B: "Text A explains how to prepare food, while Text B explains how to operate a device.",
+                    C: "Text A describes the features of noodles, while Text B describes a thermometer.",
+                    D: "Text A and Text B have the exact same social function."
+                },
+                correct: "B",
+                explanation: "Keduanya adalah <em>Procedure Text</em>, tetapi jenisnya berbeda. Text A adalah <strong>Resep (Recipe)</strong> yang fungsi sosialnya mengajarkan cara membuat/menyiapkan makanan (<em>prepare food</em>). Text B adalah <strong>Buku Panduan/Manual</strong> yang fungsinya mengajarkan cara mengoperasikan sebuah alat elektronik/perangkat (<em>operate a device</em>)."
+            },
+            {
+                type: "question", id: 18,
+                question: "Which of the following elements is present in Text A but is NOT found in Text B?",
+                options: {
+                    A: "Imperative verbs.",
+                    B: "Step-by-step instructions.",
+                    C: "Specific ingredients/materials with measurements.",
+                    D: "Sequential conjunctions."
+                },
+                correct: "C",
+                explanation: "Mari kita bandingkan unsur kebahasaannya:<br>- Keduanya memiliki <em>imperative verbs</em> (Boil, Press, dsb).<br>- Keduanya menyajikan langkah (<em>step-by-step</em>).<br>- Namun, hanya Teks A (Resep Makanan) yang secara eksplisit menyebutkan <strong>Bahan dengan takaran spesifik</strong> (contoh: <em>400 ml of water, seasoning powder, dsb</em>). Teks Manual alat (Text B) umumnya tidak membutuhkan takaran bahan (<em>ingredients</em>)."
+            },
+            {
+                type: "question", id: 19,
+                question: "Evaluate the following statement:<br><em>\"Both Text A and Text B use imperative sentences to guide the reader.\"</em><br>Is this statement correct?",
+                options: {
+                    A: "Yes, because both texts start their steps with action verbs like \"Boil\", \"Add\", \"Press\", and \"Place\".",
+                    B: "No, because Text A uses descriptions while Text B uses commands.",
+                    C: "Yes, because both texts are written to tell a story in the past tense.",
+                    D: "No, because only Text B uses action verbs."
+                },
+                correct: "A",
+                explanation: "Pernyataan di atas <strong>BENAR (Yes)</strong>. Salah satu ciri wajib dari *Procedure Text* (baik itu resep maupun manual) adalah penggunaan kalimat perintah (<em>imperative sentences</em>). Ciri kalimat perintah dalam bahasa Inggris adalah diawali langsung dengan <strong>Kata Kerja Tindakan (Action Verbs)</strong> tanpa subjek, contohnya: Boil (rebuslah), Add (tambahkanlah), Press (tekanlah)."
+            },
+            {
+                type: "question", id: 20,
+                question: "If a user wants to ensure safety and avoid damaging the objects mentioned in Text A and Text B, which of the following evaluations is most accurate?",
+                options: {
+                    A: "Text A requires safety precautions regarding electricity, while Text B requires precautions regarding heat.",
+                    B: "Text A requires attention to cooking time and boiling water, while Text B requires correct sensor placement and proper power shutdown.",
+                    C: "Neither text requires any caution because they are simple procedures.",
+                    D: "Both texts require the use of metal utensils to ensure safety."
+                },
+                correct: "B",
+                explanation: "(HOTS - Evaluasi dan Analisis Logika).<br>- Teks A berurusan dengan air mendidih (<em>boiling water</em>) dan durasi merebus. Pengguna harus waspada terhadap panas kompor/air agar tidak terluka dan masakan tidak hancur/kematangan.<br>- Teks B adalah alat digital yang sensitif. Pengguna harus tahu lokasi meletakkan sensor (di bawah lidah/ketiak) agar alat tidak patah tergigit, dan harus mematikannya setelah selesai mengukur suhu untuk menghemat baterai/mencegah kerusakan."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+            let questionNumber = 1;
+
+            quizData.forEach((item) => {
+                if (item.type === 'text') {
+                    // Render Reading Passage
+                    htmlContent += `
+                        <div class="mb-6 mt-8 rounded-xl overflow-hidden shadow-sm">
+                            ${item.content}
+                        </div>
+                    `;
+                } else if (item.type === 'question') {
+                    // Render Question
+                    htmlContent += `
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:p-7 relative group hover:border-blue-300 transition-colors duration-300">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner">
+                                    ${questionNumber}
+                                </div>
+                                <div class="flex-1 w-full">
+                                    <h4 class="text-slate-800 font-semibold text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                    <div class="space-y-3">
+                    `;
+                    
+                    // Render Options
+                    for (const [key, value] of Object.entries(item.options)) {
+                        htmlContent += `
+                            <label class="relative flex cursor-pointer group/label">
+                                <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                                <div class="w-full flex items-start sm:items-center p-3.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200">
+                                    <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                    <div class="flex-1 text-slate-700 font-medium">
+                                        <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                        ${value}
+                                    </div>
+                                </div>
+                            </label>
+                        `;
+                    }
+
+                    // Explanation Container (Hidden by default)
+                    htmlContent += `
+                                    </div>
+                                    <div id="exp-container-${item.id}" class="hidden mt-6 p-5 rounded-lg text-sm border-l-4 animate-fade-in-down">
+                                        <div class="flex items-start">
+                                            <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5"></div>
+                                            <div>
+                                                <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                                <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    questionNumber++;
+                }
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalQuestions = 0;
+
+            quizData.forEach(item => {
+                if (item.type === 'question') {
+                    totalQuestions++;
+                    const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                    const expContainer = document.getElementById(`exp-container-${item.id}`);
+                    const expTitle = document.getElementById(`exp-title-${item.id}`);
+                    const expText = document.getElementById(`exp-text-${item.id}`);
+                    const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                    
+                    // Reset classes
+                    expContainer.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'bg-rose-50', 'border-rose-500', 'text-rose-900', 'bg-amber-50', 'border-amber-500', 'text-amber-900');
+
+                    if (!selected) {
+                        // Unanswered
+                        expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                        expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                        expTitle.innerText = "Kamu belum menjawab soal ini!";
+                        expText.innerHTML = `Jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-1">Pembahasan:</span><br>${item.explanation}`;
+                    } else if (selected.value === item.correct) {
+                        // Correct
+                        correctCount++;
+                        expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                        expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                        expTitle.innerText = "Tepat Sekali! Jawaban Kamu Benar.";
+                        expText.innerHTML = item.explanation;
+                    } else {
+                        // Incorrect
+                        expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                        expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                        expTitle.innerText = `Jawaban kurang tepat. Jawaban yang benar adalah ${item.correct}.`;
+                        expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-1">Mari kita bahas:</span><br>${item.explanation}`;
+                    }
+                    
+                    // Disable radios
+                    const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                    radios.forEach(r => r.disabled = true);
+                }
+            });
+
+            // Calculate Score (Scale 0-100)
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Animate score counting
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Assign message based on score bracket
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Luar Biasa! Nilaimu Sempurna!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Kerja Bagus! Pemahamanmu sangat baik.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Mari lebih teliti membaca teksnya.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Terus Semangat! Yuk baca pembahasannya dan coba lagi!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2";
+            }
+
+            // Toggle Buttons visibility
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Scroll down to score smoothly
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // Ease out quad calculation
+                const easeProgress = progress * (2 - progress);
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset form UI and re-enable inputs
+            document.getElementById('quizForm').reset();
+            
+            quizData.forEach(item => {
+                if (item.type === 'question') {
+                    const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                    radios.forEach(r => {
+                        r.disabled = false;
+                        r.checked = false;
+                    });
+                    
+                    // Hide all explanations
+                    const expContainer = document.getElementById(`exp-container-${item.id}`);
+                    expContainer.classList.add('hidden');
+                }
+            });
+
+            // Hide Score Area
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Toggle Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initial setup
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

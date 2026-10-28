@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Conjunctions - EDUFILLAH</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc; /* Lighter modern gray/blue */
+        }
+        
+        /* Custom Radio Button Styling */
+        .custom-radio {
+            accent-color: #0284c7;
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        /* Highlight checked option */
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #0369a1; 
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Animation for explanations and score */
+        .explanation, .score-anim {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-slate-600 hover:text-sky-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-lg sm:text-xl font-bold text-sky-700 hidden sm:block">Latihan Soal Conjunctions</h1>
+            <div class="w-20 sm:hidden"></div> <!-- Balancer for mobile view -->
+        </div>
+    </header>
+
+    <main class="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Uji Penguasaan Conjunctions</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Kerjakan 20 soal grammar di bawah ini. Fokus pada makna kalimat (sebab-akibat, pertentangan, tujuan) untuk menentukan kata hubung yang tepat. Semangat!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">1. Rina wanted to buy the novel, ______ she did not have enough money at that moment.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio">
+                            <span class="ml-3">A. and</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio">
+                            <span class="ml-3">B. but</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio">
+                            <span class="ml-3">C. so</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio">
+                            <span class="ml-3">D. or</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (but)</strong><br><br>
+                        <strong>Mari kita bedah logikanya:</strong><br>
+                        Coba perhatikan dua kalimat ini: "Rina ingin membeli novel" (hal positif/harapan) dan "dia tidak punya cukup uang" (hal negatif/kendala).<br>
+                        Karena ada <strong>pertentangan</strong> antara harapan dan kenyataan, kata hubung yang paling tepat adalah <strong>but</strong> (tetapi).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">2. We should wear a mask when we go out ______ we can protect ourselves and others from viruses.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio">
+                            <span class="ml-3">A. because of</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio">
+                            <span class="ml-3">B. although</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio">
+                            <span class="ml-3">C. so that</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio">
+                            <span class="ml-3">D. in spite of</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (so that)</strong><br><br>
+                        <strong>Kenapa harus C?</strong><br>
+                        Kalimat ini menunjukkan sebuah <strong>tujuan</strong>. Kita disuruh memakai masker <em>dengan tujuan agar</em> kita bisa melindungi diri sendiri. <br>
+                        Dalam bahasa Inggris, "supaya" atau "agar" menggunakan kata <strong>so that</strong>. Apalagi setelah titik-titik ada kalimat utuh bersubjek (<em>we can protect...</em>), maka <em>so that</em> adalah pilihan yang sempurna!
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">3. ______ the heavy rain flooded the main streets of the city, many students still arrived at school on time.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio">
+                            <span class="ml-3">A. Because</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio">
+                            <span class="ml-3">B. Although</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio">
+                            <span class="ml-3">C. Since</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio">
+                            <span class="ml-3">D. However</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (Although)</strong><br><br>
+                        <strong>Mari kita bedah artinya:</strong><br>
+                        Hujan deras membanjiri jalanan (kendala), <em>tapi anehnya</em> banyak siswa tetap datang tepat waktu (hasil yang tidak disangka). Ini adalah hubungan pertentangan.<br>
+                        Kata yang tepat untuk mengawali kalimat seperti ini adalah <strong>Although</strong> yang artinya <em>Meskipun/Walaupun</em>. "Meskipun hujan membanjiri jalanan, siswa tetap datang tepat waktu."
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">4. You will not pass the final examination ______ you study hard and manage your time wisely from now on.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio">
+                            <span class="ml-3">A. if</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio">
+                            <span class="ml-3">B. unless</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio">
+                            <span class="ml-3">C. because</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio">
+                            <span class="ml-3">D. although</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (unless)</strong><br><br>
+                        <strong>Hati-hati dengan kalimat pengandaian!</strong><br>
+                        Kalimatnya berbunyi: "Kamu tidak akan lulus ujian akhir ______ kamu belajar keras." <br>
+                        Jelas tidak mungkin menggunakan "if" (jika kamu belajar keras, kamu tidak lulus). Yang paling logis adalah menggunakan kata <strong>kecuali jika</strong>. Dalam bahasa Inggris, "kecuali jika" adalah <strong>unless</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">5. The school trip was canceled ______ the extreme weather warning issued by the government.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio">
+                            <span class="ml-3">A. because of</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio">
+                            <span class="ml-3">B. because</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio">
+                            <span class="ml-3">C. since</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio">
+                            <span class="ml-3">D. as</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (because of)</strong><br><br>
+                        <strong>Ini rahasia membedakan "because" dan "because of":</strong><br>
+                        - Gunakan <em>because</em> jika setelahnya adalah kalimat utuh yang ada Subjek + Kata Kerja (contoh: because <em>it rained</em>).<br>
+                        - Gunakan <strong>because of</strong> jika setelahnya hanya berupa kata benda atau frasa kata benda (tanpa kata kerja/verb).<br>
+                        Pada soal di atas, "the extreme weather warning" (peringatan cuaca ekstrem) hanyalah sekumpulan kata benda tanpa verb utama. Jadi, kita wajib memakai <strong>because of</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">6. Read the following sentences:<br>
+                    <em>(1) The electricity went out.</em><br>
+                    <em>(2) We had to finish our group project using candlelight.</em><br>
+                    Which of the following is the most logical way to combine the two sentences?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio">
+                            <span class="ml-3">A. The electricity went out, but we had to finish our group project using candlelight.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio">
+                            <span class="ml-3">B. Since the electricity went out, we had to finish our group project using candlelight.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio">
+                            <span class="ml-3">C. We had to finish our group project using candlelight although the electricity went out.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio">
+                            <span class="ml-3">D. The electricity went out unless we had to finish our group project using candlelight.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Mari kita susun logikanya:</strong><br>
+                        Kenapa kita harus menggunakan cahaya lilin? <em>Sebabnya</em> karena listrik padam. Ini adalah hubungan <strong>sebab-akibat</strong>.<br>
+                        Kata "Since" di awal kalimat bisa berarti "Karena" (sama seperti because). Jadi, kalimat B memiliki arti: <em>Karena listrik mati, kami harus menyelesaikan tugas dengan lilin.</em> Ini sangat logis!
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">7. Not only did Diana win the national storytelling competition, ______ she also received a full scholarship to study abroad.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio">
+                            <span class="ml-3">A. but</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio">
+                            <span class="ml-3">B. and</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio">
+                            <span class="ml-3">C. or</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio">
+                            <span class="ml-3">D. so</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (but)</strong><br><br>
+                        <strong>Ingat pasangan abadi ini:</strong><br>
+                        Dalam bahasa Inggris, kata <strong>Not only</strong> (Bukan hanya) SELALU berpasangan dengan <strong>but also</strong> (tetapi juga). Ini disebut <em>correlative conjunctions</em>.<br>
+                        Karena kata <em>"also"</em> sudah ada di dalam soal (she <em>also</em> received...), maka kata yang hilang di titik-titik tersebut hanyalah <strong>but</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">8. Evaluate the use of conjunctions in the sentences below. Which sentence uses the conjunction INCORRECTLY?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio">
+                            <span class="ml-3">A. He decided to walk to school although it was raining heavily.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio">
+                            <span class="ml-3">B. She saved her pocket money so that she could buy a new bicycle.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio">
+                            <span class="ml-3">C. Since he was very tired, but he went to bed early last night.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio">
+                            <span class="ml-3">D. You can either write an essay or make a video presentation for the project.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita cari kesalahannya:</strong><br>
+                        Kalimat C ini serakah kata hubung! Dia menggunakan "Since" (karena) di awal, lalu memakai "but" (tetapi) di tengah kalimat.<br>
+                        Dalam bahasa Inggris, kita <strong>tidak boleh</strong> menggunakan dua kata hubung untuk menyambungkan dua klausa. Itu pemborosan kata (*redundant*). Seharusnya pilih salah satu saja: <em>"Since he was very tired, he went to bed early"</em>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">9. The local library is a great place to study. It is quiet; ______, it has a very fast internet connection.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio">
+                            <span class="ml-3">A. however</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio">
+                            <span class="ml-3">B. furthermore</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio">
+                            <span class="ml-3">C. on the contrary</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio">
+                            <span class="ml-3">D. otherwise</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (furthermore)</strong><br><br>
+                        <strong>Mari kita bedah situasinya:</strong><br>
+                        Perpustakaan itu tenang (hal positif). Kemudian ditambahkan lagi info bahwa internetnya sangat cepat (hal positif lainnya).<br>
+                        Karena kita menambahkan informasi positif ke informasi positif lainnya, kita butuh kata hubung yang berarti "selain itu" atau "lagipula". Kata yang paling tepat adalah <strong>furthermore</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">10. Read the dialogue below!<br>
+                    <em>Siti: "Why do you think we should plant more trees in our schoolyard?"</em><br>
+                    <em>Edo: "We should plant more trees ______ they produce oxygen ______ absorb carbon dioxide to make the air fresher."</em><br>
+                    The most appropriate pair of conjunctions to fill in the blanks is....</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio">
+                            <span class="ml-3">A. because – and</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio">
+                            <span class="ml-3">B. although – but</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio">
+                            <span class="ml-3">C. so that – or</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio">
+                            <span class="ml-3">D. because of – and</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (because – and)</strong><br><br>
+                        <strong>Langkah Penyelesaian:</strong><br>
+                        1. Siti bertanya "Why" (Mengapa). Edo pasti menjawab alasannya menggunakan kata "karena" (<strong>because</strong>).<br>
+                        2. Edo menyebutkan dua manfaat pohon: menghasilkan oksigen <em>dan</em> menyerap karbon dioksida. Dua hal yang setara ini dihubungkan dengan kata <strong>and</strong> (dan).<br>
+                        Kombinasinya menjadi sempurna: "...<strong>because</strong> they produce oxygen <strong>and</strong> absorb carbon dioxide...".
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">11. My father always drinks a cup of black coffee in the morning, ______ my mother prefers warm green tea.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio">
+                            <span class="ml-3">A. so</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio">
+                            <span class="ml-3">B. while</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio">
+                            <span class="ml-3">C. because</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio">
+                            <span class="ml-3">D. or</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (while)</strong><br><br>
+                        <strong>Mari kita lihat situasinya:</strong><br>
+                        Kalimat ini membandingkan kesukaan dua orang yang berbeda pada waktu yang sama (Ayah suka kopi hitam, Ibu suka teh hijau).<br>
+                        Untuk menunjukkan perbandingan atau kegiatan yang berbeda secara bersamaan, kita menggunakan kata hubung <strong>while</strong> yang artinya <em>sedangkan/sementara itu</em>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">12. Read the situation below!<br>
+                    <em>Roni is very talented in playing the piano. However, he rarely practices because he is lazy.</em><br><br>
+                    Which of the following sentences best evaluates and reformulates the situation above using a correct contrastive conjunction?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio">
+                            <span class="ml-3">A. Roni is very talented in playing the piano, so he rarely practices because of his laziness.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio">
+                            <span class="ml-3">B. Although Roni is very talented in playing the piano, he rarely practices due to his laziness.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio">
+                            <span class="ml-3">C. Roni is very talented in playing the piano because he rarely practices although he is lazy.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio">
+                            <span class="ml-3">D. Unless Roni is very talented in playing the piano, he rarely practices because he is lazy.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Yuk perhatikan cara merangkum ceritanya:</strong><br>
+                        Cerita aslinya bilang Roni berbakat, TAPI jarang latihan. Ini namanya pertentangan.<br>
+                        Opsi B paling tepat merangkumnya: "<strong>Meskipun (Although)</strong> Roni sangat berbakat, dia jarang berlatih <strong>karena (due to)</strong> kemalasannya." <br>
+                        *(Catatan: "due to" artinya sama dengan "because of" dan wajib diikuti kata benda "his laziness").*
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">13. We must turn off the air conditioner before leaving the classroom ______ we can save energy and reduce the school's electricity bill.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio">
+                            <span class="ml-3">A. in order to</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio">
+                            <span class="ml-3">B. because of</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio">
+                            <span class="ml-3">C. so that</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio">
+                            <span class="ml-3">D. although</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (so that)</strong><br><br>
+                        <strong>Ada trik penting di sini!</strong><br>
+                        Kalimat ini menunjukkan tujuan. Kenapa kita harus mematikan AC? <em>Supaya/agar</em> kita bisa hemat energi.<br>
+                        Banyak yang bingung antara "in order to" dan "so that" karena artinya sama-sama "supaya". Bedanya:<br>
+                        - Pakai <strong>in order to</strong> kalau setelahnya langsung kata kerja (contoh: in order to save...)<br>
+                        - Pakai <strong>so that</strong> kalau setelahnya ada Subjek baru (contoh: so that <em>we</em> can save...). Karena di soal ada subjek "we", maka C jawabannya!
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">14. Read the following statements:<br>
+                    <em>(1) The internet provides vast resources for learning.</em><br>
+                    <em>(2) Students must use it wisely.</em><br>
+                    <em>(3) They might get distracted by social media.</em><br><br>
+                    What is the most logical way to combine these three statements into one coherent sentence?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio">
+                            <span class="ml-3">A. The internet provides vast resources for learning, but students must use it wisely because they might get distracted by social media.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio">
+                            <span class="ml-3">B. Although the internet provides vast resources for learning, students must use it wisely so that they might get distracted by social media.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio">
+                            <span class="ml-3">C. The internet provides vast resources for learning because students must use it wisely unless they might get distracted by social media.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio">
+                            <span class="ml-3">D. Since the internet provides vast resources for learning, students must use it wisely or they might get distracted by social media.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Mari kita rangkai kalimatnya seperti puzzle!</strong><br>
+                        Pernyataan 1 itu hal yang baik. Pernyataan 2 itu aturan. Pernyataan 3 itu ancaman/hal buruk.<br>
+                        Susunan paling logis: Internet sangat berguna, <strong>tetapi (but)</strong> siswa harus bijak menggunakannya <strong>karena (because)</strong> mereka bisa terganggu oleh medsos. Opsi A merangkai logika ini dengan sempurna.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">15. ______ having a severe headache, the teacher kept explaining the lesson clearly to the students.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio">
+                            <span class="ml-3">A. Although</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio">
+                            <span class="ml-3">B. Despite</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio">
+                            <span class="ml-3">C. Because of</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio">
+                            <span class="ml-3">D. Even though</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (Despite)</strong><br><br>
+                        <strong>Ini rumus penting dalam grammar!</strong><br>
+                        Arti kalimatnya: "Meskipun sedang sakit kepala parah, guru itu tetap mengajar." <br>
+                        Kata <em>Although, Even though,</em> dan <em>Despite</em> semuanya berarti "meskipun". Lalu pilih yang mana?<br>
+                        - <em>Although/Even though</em> harus diikuti kalimat utuh (Subjek + Kata Kerja).<br>
+                        - <strong>Despite / In spite of</strong> harus diikuti kata benda (Noun) atau kata kerja berakhiran -ing (Gerund).<br>
+                        Karena setelah titik-titik ada kata "having" (Verb-ing), maka kita <strong>wajib</strong> memakai <em>Despite</em>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">16. You can submit your English assignment via Google Classroom, ______ you can hand in the printed paper directly to me tomorrow morning.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio">
+                            <span class="ml-3">A. but</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio">
+                            <span class="ml-3">B. or</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio">
+                            <span class="ml-3">C. so</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio">
+                            <span class="ml-3">D. since</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (or)</strong><br><br>
+                        <strong>Bedah Logika:</strong><br>
+                        Guru memberikan dua alternatif cara mengumpulkan tugas: bisa online via Google Classroom, *pilihan lainnya* adalah dikumpulkan langsung pakai kertas besok pagi. <br>
+                        Kata hubung untuk menunjukkan pilihan (*choice*) adalah <strong>or</strong> (atau).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">17. Evaluate these four sentences. Which sentence presents the most logical and grammatically correct relationship between cause and effect?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio">
+                            <span class="ml-3">A. The road was closed so that there was a big accident this morning.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio">
+                            <span class="ml-3">B. There was a big accident this morning because of the road was closed.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio">
+                            <span class="ml-3">C. The road was closed because there was a big accident this morning.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio">
+                            <span class="ml-3">D. Although there was a big accident this morning, so the road was closed.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita uji logikanya:</strong><br>
+                        Apa yang terjadi duluan? Pasti <em>Kecelakaan</em> (Sebab), baru setelah itu <em>Jalan Ditutup</em> (Akibat).<br>
+                        Kalimat C mengatakan: "Jalan ditutup <strong>karena (because)</strong> ada kecelakaan besar pagi ini." Ini sangat logis dan grammarnya sempurna!<br>
+                        *Catatan:* Opsi B salah secara grammar karena "because of" tidak boleh diikuti kalimat utuh (the road was closed).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">18. We should consume enough fresh water every day ______ stay hydrated and keep our kidneys healthy.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio">
+                            <span class="ml-3">A. so that</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio">
+                            <span class="ml-3">B. in order to</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio">
+                            <span class="ml-3">C. because</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio">
+                            <span class="ml-3">D. although</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (in order to)</strong><br><br>
+                        <strong>Trik Cepat!</strong><br>
+                        Coba perhatikan kata tepat setelah titik-titik. Kata itu adalah "stay" (kata kerja dasar / Verb 1).<br>
+                        Untuk menyatakan tujuan ("untuk" atau "supaya"), jika langsung diikuti oleh kata kerja dasar, kita <strong>harus</strong> menggunakan <strong>in order to</strong> atau cukup "to". Kita tidak bisa pakai "so that" karena so that butuh subjek (misal: so that we stay...).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">19. Read the paragraph below!<br>
+                    <em>Digital literacy is very important in this modern era. (1) ______ many teenagers use smartphones daily, (2) ______ they often do not know how to filter valid information from fake news. (3) ______, schools must provide proper guidance on digital literacy.</em><br>
+                    The correct sequence of conjunctions/connectives to complete the paragraph is....</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio">
+                            <span class="ml-3">A. (1) Although, (2) but, (3) Therefore</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio">
+                            <span class="ml-3">B. (1) Since, (2) and, (3) However</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio">
+                            <span class="ml-3">C. (1) Although, (2) yet, (3) Therefore</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio">
+                            <span class="ml-3">D. (1) Because, (2) so, (3) On the other hand</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita lengkapi ceritanya pelan-pelan:</strong><br>
+                        - Kalimat 1 dan 2 itu bertentangan. Remaja sering main HP, TAPI gampang tertipu hoax. Jadi (1) diisi <strong>Although</strong> (Meskipun).<br>
+                        - Untuk mempertegas pertentangan setelah Although, kita bisa memakai kata (2) <strong>yet</strong> (namun). *Ingat: Jangan pernah pasangkan Although dengan But (opsi A salah).*<br>
+                        - Kalimat (3) adalah kesimpulan solusi. "<strong>Oleh karena itu (Therefore)</strong>, sekolah harus memberi panduan." Kombinasi C paling sempurna!
+                    </div>
+                </div>
+
+                <div class="question-block mb-12" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">20. "I will call you ______ I arrive at the train station ______ we can arrange where to meet."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio">
+                            <span class="ml-3">A. as soon as – so that</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio">
+                            <span class="ml-3">B. although – in order to</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio">
+                            <span class="ml-3">C. unless – because</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio">
+                            <span class="ml-3">D. while – so</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Mari pasangkan kata yang tepat:</strong><br>
+                        - Bagian rumpang pertama butuh penanda waktu. "Aku akan menelponmu <strong>segera setelah (as soon as)</strong> aku tiba..."<br>
+                        - Bagian rumpang kedua butuh penanda tujuan. "...<strong>supaya (so that)</strong> kita bisa merundingkan tempat bertemu." (so that diikuti subjek 'we').<br>
+                        Kombinasi A membuat kalimat ini punya makna yang utuh dan jelas!
+                    </div>
+                </div>
+
+                <!-- Hasil Skor (Sembunyi by default) -->
+                <div id="score-container" class="hidden mb-10 p-8 bg-sky-50 rounded-2xl border-2 border-sky-200 text-center shadow-inner">
+                    <h3 class="text-xl sm:text-2xl font-semibold text-slate-700 mb-2">Nilai Akhir Kamu:</h3>
+                    <div id="score-display" class="text-6xl sm:text-7xl font-extrabold text-sky-600 mb-4 drop-shadow-sm">0</div>
+                    <p id="score-message" class="text-lg text-slate-600 font-medium"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pb-6">
+                    <button type="button" id="check-btn" class="bg-sky-600 hover:bg-sky-700 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-slate-700 hover:bg-slate-800 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-slate-500 font-medium mt-auto w-full bg-slate-50 border-t border-slate-200">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // 20 soal dengan bobot 5 poin per soal (total max 100)
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach((q) => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    // Memasukkan konten pembahasan tersembunyi ke dalam kotak yang akan ditampilkan
+                    explanationDiv.innerHTML = rationaleHTML; 
+
+                    radios.forEach(radio => {
+                        // Kunci input agar tidak bisa diubah setelah periksa jawaban
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Gaya CSS saat Benar (Hijau)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-emerald-50 text-emerald-900 border-emerald-500 block shadow-sm';
+                            } else {
+                                // Gaya CSS saat Salah (Merah)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                            }
+                        }
+                    });
+
+                    // Logika jika tidak dijawab (otomatis Salah)
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                        explanationDiv.innerHTML = '<strong class="text-rose-700 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Oops, kamu belum menjawab pertanyaan ini!</strong><hr class="border-rose-200 my-3">' + rationaleHTML;
+                    }
+                });
+
+                // Perhitungan Skor
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                
+                // Animasi Counter Angka Skor
+                let currentScore = 0;
+                const scoreInterval = setInterval(() => {
+                    if (currentScore >= finalScore) {
+                        clearInterval(scoreInterval);
+                        scoreDisplay.textContent = finalScore;
+                    } else {
+                        currentScore++;
+                        scoreDisplay.textContent = currentScore;
+                    }
+                }, 20); 
+
+                // Pesan Evaluasi
+                if (finalScore === 100) {
+                    scoreMessage.innerHTML = "🎉 Luar biasa! Pemahamanmu tentang Conjunctions sangat sempurna.";
+                } else if (finalScore >= 80) {
+                    scoreMessage.innerHTML = "🌟 Hebat! Kamu sudah sangat menguasai materi ini.";
+                } else if (finalScore >= 60) {
+                    scoreMessage.innerHTML = "👍 Cukup baik. Yuk, baca ulang pembahasannya agar lebih paham penggunaan kata hubungnya.";
+                } else {
+                    scoreMessage.innerHTML = "💪 Jangan menyerah! Pelajari pelan-pelan langkah pembahasannya dan coba lagi ya.";
+                }
+
+                // Tampilkan container skor & tombol ulangi, sembunyikan tombol periksa
+                scoreContainer.classList.remove('hidden');
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Otomatis scroll perlahan ke bagian skor
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset form (radio buttons uncheck)
+                form.reset();
+
+                // Kembalikan ke state awal
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; // Buka kunci interaksi
+                    });
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.classList.remove('block');
+                    explanationDiv.classList.add('hidden');
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Sembunyikan skor & ubah tombol kembali seperti semula
+                scoreContainer.classList.add('hidden');
+                scoreDisplay.textContent = '0';
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Scroll mulus kembali ke ujung atas halaman
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

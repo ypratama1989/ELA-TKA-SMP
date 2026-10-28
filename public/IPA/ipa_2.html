@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Sains - EDUFILLAH</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        primaryHover: '#4338CA', // Indigo 700
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom radio button styling */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        /* Style parent label when child input is checked */
+        .option-label:has(.option-input:checked) {
+            border-color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+        /* Style the radio circle sibling */
+        .option-input:checked + .radio-circle {
+            border-color: #4F46E5;
+        }
+        .option-input:checked + .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #4F46E5;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Status styling for Correct/Wrong after submit */
+        .status-correct {
+            border-color: #10B981 !important;
+            background-color: #ECFDF5 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10B981 !important;
+        }
+        .status-correct .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #10B981 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .status-wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEF2F2 !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #EF4444 !important;
+        }
+        .status-wrong .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #EF4444 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Smooth fade in for elements */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-10">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-gray-600 hover:text-primary transition-colors font-medium">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1 ml-4 truncate">
+                Latihan Soal Sains (Suhu, Kalor & Pemuaian)
+            </h1>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Instruksi -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 border-l-4 border-l-primary">
+            <h2 class="text-xl font-semibold mb-2"><i class="fas fa-info-circle text-primary mr-2"></i>Petunjuk Pengerjaan</h2>
+            <p class="text-gray-600 text-sm md:text-base">
+                Pilihlah salah satu jawaban yang paling tepat! Kamu tidak diwajibkan mengisi semua soal, namun soal yang kosong akan bernilai 0. Klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk melihat skor dan pembahasan lengkap.
+            </p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="questions-container">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="text-center mt-10">
+                <button type="button" onclick="checkAnswers()" id="btn-submit" class="bg-primary hover:bg-primaryHover text-white font-semibold py-4 px-10 rounded-full shadow-lg transform transition hover:-translate-y-1 text-lg w-full md:w-auto">
+                    <i class="fas fa-check-circle mr-2"></i> Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-section" class="hidden mt-12 bg-white p-8 rounded-3xl shadow-xl text-center border-t-8 border-t-primary fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Skor Akhir Kamu</h2>
+            <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-indigo-50 text-5xl font-extrabold text-primary mb-4 border-4 border-indigo-100">
+                <span id="final-score">0</span>
+            </div>
+            <p id="score-message" class="text-gray-600 text-lg mb-8 font-medium">Luar biasa! Terus tingkatkan rasa ingin tahumu!</p>
+            
+            <button type="button" onclick="resetQuiz()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition-colors flex items-center justify-center mx-auto">
+                <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="mt-8 text-center text-gray-500 text-sm font-medium">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban (Diperbaiki), dan Pembahasan Ekstensif (SD/SMP Friendly)
+        const quizData = [
+            {
+                id: 1,
+                question: "Sebuah termometer skala X memiliki titik beku air pada suhu -20&deg;X dan titik didih air pada suhu 130&deg;X. Jika sebuah benda diukur menggunakan termometer Celsius menunjukkan angka 40&deg;C, maka suhu benda tersebut jika diukur dengan termometer X adalah...",
+                options: { A: "40&deg;X", B: "45&deg;X", C: "50&deg;X", D: "60&deg;X" },
+                correct: "A",
+                explanation: "Bayangkan termometer sebagai penggaris. Skala Celsius punya jarak 100 angka (dari 0&deg;C ke 100&deg;C). Skala X punya jarak 150 angka (dari -20 ke 130). Jika kita bandingkan posisinya:<br><br><b>Langkah-langkah:</b><br>1. Perbandingan = (Suhu X - Titik Bawah X) / Jarak Skala X = (Suhu C - Titik Bawah C) / Jarak Skala C<br>2. (X - (-20)) / 150 = (40 - 0) / 100<br>3. (X + 20) / 150 = 40 / 100 &rarr; <i>sederhanakan 40/100 jadi 2/5</i><br>4. X + 20 = (2/5) &times; 150<br>5. X + 20 = 60<br>6. X = 40&deg;X.<br><br>Jadi, suhunya setara dengan 40&deg;X. Kunci jawaban asli sudah diperbaiki ya!"
+            },
+            {
+                id: 2,
+                question: "Perhatikan tabel koefisien muai panjang (&alpha;) beberapa logam berikut:<br><ul class='list-disc pl-5 mt-2 mb-2'><li>Tembaga: 0,000017 /&deg;C</li><li>Kuningan: 0,000019 /&deg;C</li><li>Besi: 0,000012 /&deg;C</li><li>Aluminium: 0,000024 /&deg;C</li></ul>Sebuah bimetal yang terdiri dari dua logam berbeda dipanaskan hingga melengkung ke arah logam pertama. Jika logam penyusun bimetal tersebut adalah Aluminium dan Tembaga, maka posisi logam yang benar adalah...",
+                options: { A: "Aluminium di bagian dalam lengkungan karena memuai lebih lambat", B: "Tembaga di bagian dalam lengkungan karena memuai lebih lambat", C: "Aluminium di bagian luar lengkungan karena memuai lebih lambat", D: "Tembaga di bagian luar lengkungan karena memuai lebih cepat" },
+                correct: "B",
+                explanation: "Prinsip bimetal itu seperti dua pelari yang diikat kakinya. Kalau dipanaskan, yang nilai koefisien muainya <b>lebih besar</b> (Aluminium = 0,000024) akan 'berlari' memanjang lebih cepat, sehingga dia terpaksa mengambil jalur <b>luar</b> tikungan. Sedangkan yang muainya <b>lebih kecil</b> (Tembaga = 0,000017) akan memanjang lebih lambat, sehingga tertinggal dan melengkung ke jalur <b>dalam</b> (menjadi pusat lengkungan). Jadi, Tembaga melengkung di bagian dalam!"
+            },
+            {
+                id: 3,
+                question: "Sebuah jembatan baja memiliki panjang 100 meter pada suhu 25&deg;C. Jika koefisien muai panjang baja adalah 0,000011 /&deg;C, berapakah celah pemuaian minimum yang harus disediakan agar jembatan tidak melengkung saat suhu udara mencapai 45&deg;C?",
+                options: { A: "1,1 cm", B: "2,2 cm", C: "3,3 cm", D: "4,4 cm" },
+                correct: "B",
+                explanation: "Jembatan baja bisa bertambah panjang saat cuaca panas. Kalau tidak diberi celah, jembatan bisa melengkung dan rusak!<br><br><b>Yuk kita hitung pertambahan panjangnya (&Delta;L):</b><br>&Delta;L = Panjang Awal &times; Koefisien Muai &times; Perubahan Suhu<br>&Delta;L = 100 m &times; 0,000011 /&deg;C &times; (45&deg;C - 25&deg;C)<br>&Delta;L = 100 &times; 0,000011 &times; 20<br>&Delta;L = 0,022 meter.<br><br>Karena 1 meter = 100 cm, maka 0,022 meter = <b>2,2 cm</b>. Celah ini menyelamatkan jembatan dari kehancuran termal!"
+            },
+            {
+                id: 4,
+                question: "Sebuah jendela kaca dengan luas 2 m<sup>2</sup> dipasang pada bingkai kayu pada suhu 20&deg;C. Koefisien muai panjang kaca adalah 0,000009 /&deg;C. Jika suhu udara meningkat menjadi 40&deg;C, pertambahan luas kaca tersebut adalah...",
+                options: { A: "0,36 cm<sup>2</sup>", B: "0,72 cm<sup>2</sup>", C: "3,60 cm<sup>2</sup>", D: "7,20 cm<sup>2</sup>" },
+                correct: "D",
+                explanation: "Hati-hati, ini soal <b>muai luas</b>! Koefisien muai luas (&beta;) nilainya adalah <b>2 kali</b> koefisien muai panjang (&alpha;).<br><br>&beta; = 2 &times; 0,000009 = 0,000018 /&deg;C.<br><br><b>Hitung pertambahan luas (&Delta;A):</b><br>&Delta;A = Luas Awal &times; &beta; &times; Perubahan Suhu<br>&Delta;A = 2 m<sup>2</sup> &times; 0,000018 &times; (40&deg;C - 20&deg;C)<br>&Delta;A = 2 &times; 0,000018 &times; 20 = 0,00072 m<sup>2</sup>.<br><br>Ubah ke satuan cm<sup>2</sup> (dikali 10.000): 0,00072 &times; 10.000 = <b>7,20 cm<sup>2</sup></b>. <i>(Catatan: Kunci asli keliru pada perhitungannya, dan telah dikoreksi sistem ke D)</i>."
+            },
+            {
+                id: 5,
+                question: "Sebuah bejana tembaga dengan volume 1000 cm<sup>3</sup> diisi penuh dengan alkohol pada suhu 10&deg;C. Bejana tersebut kemudian dipanaskan bersama-sama hingga suhunya mencapai 60&deg;C. Jika koefisien muai volume alkohol adalah 0,00101 /&deg;C dan koefisien muai panjang tembaga adalah 0,000017 /&deg;C, volume alkohol yang tumpah adalah...",
+                options: { A: "45,25 cm<sup>3</sup>", B: "47,95 cm<sup>3</sup>", C: "50,50 cm<sup>3</sup>", D: "53,05 cm<sup>3</sup>" },
+                correct: "B",
+                explanation: "Zat cair (alkohol) biasanya memuai jauh lebih besar daripada zat padat (tembaga). Mari hitung keduanya untuk perubahan suhu 50&deg;C (60-10):<br><br>1. <b>Muai Alkohol:</b><br>&Delta;V<sub>alkohol</sub> = 1000 &times; 0,00101 &times; 50 = 50,5 cm<sup>3</sup><br>2. <b>Muai Bejana Tembaga:</b> Karena yang diketahui baru muai panjang (&alpha;), kita wajib cari muai volume (&gamma;) yaitu <b>3 &times; &alpha;</b>.<br>&gamma; = 3 &times; 0,000017 = 0,000051 /&deg;C.<br>&Delta;V<sub>tembaga</sub> = 1000 &times; 0,000051 &times; 50 = 2,55 cm<sup>3</sup><br><br>Alkohol membesar 50,5, tapi ruangannya cuma bertambah besar 2,55. Maka yang luber tumpah adalah selisihnya: 50,5 - 2,55 = <b>47,95 cm<sup>3</sup></b>."
+            },
+            {
+                id: 6,
+                question: "Fenomena \"Anomali Air\" terjadi pada rentang suhu 0&deg;C hingga 4&deg;C. Berdasarkan sifat anomali ini, pernyataan berikut yang paling tepat mengevaluasi dampaknya terhadap kehidupan ekosistem air di daerah beriklim dingin saat musim salju adalah...",
+                options: { A: "Air di dasar danau membeku terlebih dahulu karena massa jenisnya paling kecil pada suhu 4&deg;C", B: "Air pada suhu 4&deg;C memiliki massa jenis terbesar sehingga turun ke dasar danau, menjaga air di dasar tetap cair dan hangat", C: "Seluruh air di danau membeku merata dari bawah ke atas karena penyusutan volume saat mendingin", D: "Es mengapung di permukaan karena massa jenis es pada suhu 0&deg;C lebih besar daripada air suhu 4&deg;C" },
+                correct: "B",
+                explanation: "Ini adalah 'Keajaiban Alam' yang menyelamatkan biota air! Normalnya benda mendingin akan makin rapat dan berat. Tapi khusus air, ia mencapai posisi paling berat (massa jenis terbesar) pada suhu <b>4&deg;C</b>.<br><br>Saat musim dingin, air di permukaan mendingin. Saat suhunya 4&deg;C ia sangat berat sehingga tenggelam ke dasar. Air yang lebih dingin (3, 2, 1, 0&deg;C) menjadi lebih ringan, tetap di permukaan, lalu membeku jadi es. Lapisan es ini bagai 'selimut tebal' yang menahan panas, sementara air di dasar danau tetap hangat berwujud cair di suhu 4&deg;C. Ikan-ikan pun selamat dari kebekuan!"
+            },
+            {
+                id: 7,
+                question: "Air sebanyak 500 gram bersuhu 20&deg;C diberikan kalor sebesar 42.000 Joule. Jika kalor jenis air adalah 4.200 J/kg&deg;C, berapakah suhu akhir air tersebut setelah pemanasan?",
+                options: { A: "30&deg;C", B: "40&deg;C", C: "50&deg;C", D: "60&deg;C" },
+                correct: "B",
+                explanation: "Ayo gunakan rumus andalan Kalor: <b>Q = m &times; c &times; &Delta;T</b> (Sering dihafal <i>'Kipli Macet'</i>)<br><br>Jangan lupa ubah massa ke kilogram! 500 gram = 0,5 kg.<br>42.000 J = 0,5 kg &times; 4.200 J/kg&deg;C &times; &Delta;T<br>42.000 = 2.100 &times; &Delta;T<br>&Delta;T = 42.000 &divide; 2.100 = 20&deg;C. (Artinya, suhu <i>bertambah/naik</i> 20 derajat).<br><br>Karena suhu awal adalah 20&deg;C, maka suhu akhirnya menjadi: 20&deg;C + 20&deg;C = <b>40&deg;C</b>."
+            },
+            {
+                id: 8,
+                question: "Perhatikan grafik pemanasan 200 gram es (suhu -10&deg;C) menjadi air seluruhnya pada suhu 0&deg;C di bawah ini:<br><ul class='list-disc pl-5 mt-2 mb-2'><li>Tahap A-B: Pemanasan es dari -10&deg;C ke 0&deg;C</li><li>Tahap B-C: Peleburan es menjadi air pada suhu 0&deg;C</li></ul>(Diketahui: kalor jenis es = 2.100 J/kg&deg;C, kalor lebur es = 336.000 J/kg)<br>Total kalor yang dibutuhkan untuk proses dari A hingga C adalah...",
+                options: { A: "4.200 Joule", B: "67.200 Joule", C: "71.400 Joule", D: "75.600 Joule" },
+                correct: "C",
+                explanation: "Ada 2 tahap perjuangan yang harus dilewati si Es!<br><br><b>Tahap 1 (A-B): Es dipanaskan (Q = m &times; c<sub>es</sub> &times; &Delta;T)</b><br>Massa = 0,2 kg. Suhu naik dari -10 ke 0 berarti selisihnya 10&deg;C.<br>Q<sub>1</sub> = 0,2 &times; 2.100 &times; 10 = 4.200 J.<br><br><b>Tahap 2 (B-C): Es mencair jadi air (Q = m &times; L)</b><br>Pada fase mendatar ini suhunya tetap 0&deg;C, tapi tetap rakus menyedot energi untuk melebur wujudnya!<br>Q<sub>2</sub> = 0,2 &times; 336.000 = 67.200 J.<br><br>Total Energi = 4.200 + 67.200 = <b>71.400 Joule</b>."
+            },
+            {
+                id: 9,
+                question: "Dalam sebuah eksperimen laboratorium, 200 gram air bersuhu 80&deg;C dicampur dengan 300 gram air bersuhu 20&deg;C dalam wadah yang terisolasi sempurna. Suhu akhir campuran tersebut saat mencapai kesetimbangan termal adalah...",
+                options: { A: "40&deg;C", B: "44&deg;C", C: "50&deg;C", D: "56&deg;C" },
+                correct: "B",
+                explanation: "Saat suhu beda dicampur, terapkan <b>Asas Black</b>: Kalor yang dilepas benda panas = Kalor diserap benda dingin.<br><br>m<sub>panas</sub> &times; (T<sub>panas</sub> - T<sub>campuran</sub>) = m<sub>dingin</sub> &times; (T<sub>campuran</sub> - T<sub>dingin</sub>)<br><i>*Karena sama-sama air, nilai kalor jenis (c) kiri-kanan bisa dicoret!</i><br><br>200 &times; (80 - T) = 300 &times; (T - 20) &rarr; <i>Bagi 100 agar angkanya kecil</i><br>2(80 - T) = 3(T - 20)<br>160 - 2T = 3T - 60<br>160 + 60 = 3T + 2T<br>220 = 5T &rarr; T = 220 &divide; 5 = <b>44&deg;C</b>."
+            },
+            {
+                id: 10,
+                question: "Logam X bermassa 100 gram dipanaskan hingga suhunya mencapai 100&deg;C, lalu segera dimasukkan ke dalam kalorimeter yang berisi 200 gram air bersuhu 20&deg;C. Jika suhu akhir kesetimbangan adalah 24&deg;C dan kalor jenis air adalah 4.200 J/kg&deg;C (kapasitas wadah diabaikan), kalor jenis logam X tersebut adalah...",
+                options: { A: "380 J/kg&deg;C", B: "442 J/kg&deg;C", C: "450 J/kg&deg;C", D: "520 J/kg&deg;C" },
+                correct: "B",
+                explanation: "Kita pakai kembali Asas Black (Q lepas logam = Q serap air). Ubah massa ke kg ya!<br>m<sub>logam</sub> = 0,1 kg, m<sub>air</sub> = 0,2 kg.<br><br>m<sub>logam</sub> &times; c<sub>logam</sub> &times; (T<sub>awal logam</sub> - T<sub>akhir</sub>) = m<sub>air</sub> &times; c<sub>air</sub> &times; (T<sub>akhir</sub> - T<sub>awal air</sub>)<br>0,1 &times; c<sub>logam</sub> &times; (100 - 24) = 0,2 &times; 4.200 &times; (24 - 20)<br>0,1 &times; c<sub>logam</sub> &times; 76 = 840 &times; 4<br>7,6 &times; c<sub>logam</sub> = 3.360<br>c<sub>logam</sub> = 3.360 &divide; 7,6 = <b>442,1 J/kg&deg;C</b> (Dibulatkan jadi 442 J/kg&deg;C)."
+            },
+            {
+                id: 11,
+                question: "Dua buah batang logam P dan Q dengan ukuran yang sama disambungkan ujung ke ujungnya. Suhu ujung bebas logam P adalah 90&deg;C dan suhu ujung bebas logam Q adalah 30&deg;C. Jika konduktivitas termal logam P adalah dua kali konduktivitas termal logam Q, maka suhu pada sambungan kedua logam tersebut adalah...",
+                options: { A: "50&deg;C", B: "60&deg;C", C: "70&deg;C", D: "80&deg;C" },
+                correct: "C",
+                explanation: "Laju perpindahan panas (konduksi) yang mengalir melewati sambungan itu besarnya SAMA di P maupun Q.<br>Panas mengalir dari P yang terik (90&deg;C) menuju Q yang lebih dingin (30&deg;C). Karena ukurannya (luas & panjang) persis sama, kita bisa langsung membandingkan suhunya:<br><br>k<sub>P</sub> &times; (T<sub>P</sub> - T<sub>sambungan</sub>) = k<sub>Q</sub> &times; (T<sub>sambungan</sub> - T<sub>Q</sub>)<br>2 &times; k<sub>Q</sub> &times; (90 - T) = 1 &times; k<sub>Q</sub> &times; (T - 30)<br><i>Coret k<sub>Q</sub> di kedua sisi!</i><br>2 &times; (90 - T) = (T - 30)<br>180 - 2T = T - 30<br>180 + 30 = 3T<br>210 = 3T &rarr; T = 210 &divide; 3 = <b>70&deg;C</b>."
+            },
+            {
+                id: 12,
+                question: "Termos air panas dirancang untuk mempertahankan suhu air di dalamnya agar tidak cepat dingin. Evaluasi yang paling tepat mengenai fungsi lapisan perak mengkilap pada dinding bagian dalam termos kaca adalah...",
+                options: { A: "Mencegah perpindahan kalor secara konduksi melalui ruang hampa", B: "Mencegah perpindahan kalor secara konveksi dengan menghentikan aliran", C: "Mencegah perpindahan kalor secara radiasi dengan memantulkan panas", D: "Meningkatkan kapasitas kalor kaca agar menyimpan panas lebih lama" },
+                correct: "C",
+                explanation: "Termos itu ibarat benteng pertahanan canggih agar suhu tidak kabur!<br>1. <i>Ruang hampa (vakum)</i> di tengah dinding: bertugas mencegah konduksi dan konveksi (karena kalor butuh media perantara/udara untuk merambat).<br>2. <i>Lapisan perak/mengkilap</i>: bertindak seperti cermin. Fungsinya memantulkan pancaran sinar inframerah (radiasi) kembali ke dalam termos, sehingga panas tidak bisa memancar tembus keluar dinding kaca."
+            },
+            {
+                id: 13,
+                question: "Seorang desainer alat masak ingin membuat wajan yang efisien: cepat panas saat digunakan tetapi gagangnya tetap aman dipegang tanpa pelindung tambahan yang tebal. Kombinasi material yang paling tepat untuk bagian dasar wajan dan gagang wajan adalah...",
+                options: { A: "Dasar aluminium (kalor jenis rendah, konduktivitas tinggi), gagang kayu (kalor jenis tinggi, konduktivitas rendah)", B: "Dasar besi (kalor jenis tinggi, konduktivitas rendah), gagang plastik (kalor jenis rendah, konduktivitas tinggi)", C: "Dasar tembaga (kalor jenis rendah, konduktivitas rendah), gagang ebonit (kalor jenis tinggi, konduktivitas tinggi)", D: "Dasar baja (kalor jenis tinggi, konduktivitas tinggi), gagang aluminium (kalor jenis rendah, konduktivitas rendah)" },
+                correct: "A",
+                explanation: "Bahan panci/wajan idaman para koki!<br>1. <b>Dasar Wajan</b>: Harus langsung 'nge-gas' panasnya saat kena api. Maka butuh <i>konduktivitas tinggi</i> (penghantar panas ngebut) dan <i>kalor jenis rendah</i> (gampang naik suhunya meski kalornya sedikit). Contoh: Aluminium/Tembaga.<br>2. <b>Gagang Wajan</b>: Harus super aman dipegang tangan. Maka butuh <i>konduktivitas rendah</i> (isolator jelek/menghambat panas) dan <i>kalor jenis tinggi</i> (susah naik suhunya walau ketransfer panas). Contoh: Kayu/Plastik/Ebonit."
+            },
+            {
+                id: 14,
+                question: "Pemasangan kabel jaringan listrik di pinggir jalan dibuat agak kendur pada siang hari. Analisis yang paling tepat mengenai alasan teknis dari perlakuan tersebut adalah...",
+                options: { A: "Agar kabel tidak putus pada malam hari ketika suhu udara turun dan kabel menyusut", B: "Agar kabel tidak putus pada siang hari ketika suhu udara naik dan kabel memuai", C: "Menghindari gesekan berlebih antara kabel dengan tiang listrik akibat pemuaian tiang", D: "Memudahkan aliran arus listrik karena hambatan kabel berkurang saat mengendur" },
+                correct: "A",
+                explanation: "Benda padat seperti logam kabel (tembaga/baja) akan menyusut (bertambah pendek) saat suhu dingin ekstrem (malam hari/musim dingin) dan memuai (bertambah panjang) saat kena terik matahari.<br><br>Jika di siang hari kabel ditarik <i>terlalu ketat/lurus</i>, maka bayangkan apa yang terjadi saat malam hari tiba? Kabel akan berusaha menyusut sangat kuat. Karena sudah mentok lurus, gaya tarikan (tegangan termal) ini bisa dengan mudah membuat kabel putus tertarik ujungnya sendiri!"
+            },
+            {
+                id: 15,
+                question: "Grafik hubungan suhu terhadap waktu pada pemanasan zat cair X bermassa 1 kg dengan daya pemanas konstan 500 Watt menunjukkan:<br><ul class='list-disc pl-5 mt-2 mb-2'><li>Suhu awal (t = 0 s) adalah 20&deg;C</li><li>Suhu akhir (t = 120 s) adalah 80&deg;C</li></ul>Jika seluruh energi dari pemanas diserap sempurna oleh zat cair X, kalor jenis zat cair tersebut adalah...",
+                options: { A: "1.000 J/kg&deg;C", B: "1.200 J/kg&deg;C", C: "2.000 J/kg&deg;C", D: "4.000 J/kg&deg;C" },
+                correct: "A",
+                explanation: "Di sini kita mengubah energi listrik pemanas menjadi energi kalor:<br><b>Energi Listrik (W) = Energi Kalor (Q)</b><br>Daya &times; Waktu = massa &times; kalor jenis &times; &Delta;Suhu<br>P &times; t = m &times; c &times; &Delta;T<br><br>Masukkan angkanya:<br>500 Watt &times; 120 sekon = 1 kg &times; c &times; (80 - 20)<br>60.000 = 1 &times; c &times; 60<br>c = 60.000 &divide; 60 = <b>1.000 J/kg&deg;C</b>."
+            },
+            {
+                id: 16,
+                question: "Sebuah panel surya pemanas air digunakan untuk memanaskan 100 kg air. Jika panel tersebut menerima energi radiasi matahari rata-rata sebesar 1.400 Watt dan efisiensi sistem pemanas adalah 60%, waktu yang dibutuhkan untuk menaikkan suhu air dari 25&deg;C menjadi 45&deg;C adalah... (kalor jenis air = 4.200 J/kg&deg;C)",
+                options: { A: "1.667 detik", B: "5.000 detik", C: "10.000 detik", D: "12.500 detik" },
+                correct: "C",
+                explanation: "Langkah penyelesaian:<br>1. <b>Hitung target Kalor (Q) yang dibutuhkan si air:</b><br>Q = m &times; c &times; &Delta;T = 100 kg &times; 4.200 &times; (45-25)<br>Q = 420.000 &times; 20 = 8.400.000 Joule.<br><br>2. <b>Hitung Daya <i>efektif</i> panel:</b><br>Dari cahaya 1.400 Watt, cuma 60% yang benar-benar jadi panas (sisanya terbuang).<br>P<sub>efektif</sub> = 60/100 &times; 1.400 = 840 Watt (artinya memompa 840 Joule/detik).<br><br>3. <b>Hitung Waktu (t):</b><br>t = Target Q &divide; P<sub>efektif</sub><br>t = 8.400.000 &divide; 840 = <b>10.000 detik</b>."
+            },
+            {
+                id: 17,
+                question: "Tiga buah zat cair A, B, dan C masing-masing bermassa m, 2m, dan 3m dicampur dalam wadah adiabatik. Suhu awal zat A adalah 90&deg;C, zat B adalah 60&deg;C, dan zat C adalah 30&deg;C. Jika kalor jenis ketiga zat tersebut berturut-turut adalah c, 2c, dan 3c, maka suhu akhir campuran setelah mencapai kesetimbangan termal adalah...",
+                options: { A: "42,9 &deg;C", B: "45,0 &deg;C", C: "48,2 &deg;C", D: "52,5 &deg;C" },
+                correct: "A",
+                explanation: "Jurus pamungkas Asas Black untuk banyak campuran zat cair:<br>T<sub>campuran</sub> = Total dari(m &times; c &times; T) dibagi Total dari(m &times; c)<br><br>Total(m &times; c &times; T) = (m&middot;c&middot;90) + (2m&middot;2c&middot;60) + (3m&middot;3c&middot;30)<br>= 90mc + 240mc + 270mc = 600mc.<br><br>Total(m &times; c) = (m&middot;c) + (2m&middot;2c) + (3m&middot;3c)<br>= 1mc + 4mc + 9mc = 14mc.<br><br>T<sub>campuran</sub> = 600mc &divide; 14mc = 600 &divide; 14 &asymp; <b>42,857... &deg;C</b>. Pembulatan yang paling logis dan akurat di pilihan ganda adalah 42,9 &deg;C. <i>(Opsi A telah dikoreksi agar presisi secara matematis)</i>."
+            },
+            {
+                id: 18,
+                question: "Pada konstruksi rel kereta api modern, celah antar rel sering kali dihilangkan dengan cara menyambung rel menggunakan las (Continuous Welded Rail). Untuk mencegah rel melengkung atau patah akibat pemuaian ekstrem di siang hari, tindakan rekayasa teknologi yang paling tepat dilakukan adalah...",
+                options: { A: "Membuat rel dari bahan plastik sintetis yang tidak dapat memuai", B: "Mengikat rel ke bantalan beton dengan klip baja elastis yang sangat kuat", C: "Menyiram rel dengan air dingin otomatis sepanjang siang hari", D: "Memasang rel hanya pada malam hari saat suhu titik terendah" },
+                correct: "B",
+                explanation: "Di zaman dulu, rel diberi celah pemuaian yang bikin kereta berbunyi berisik 'jeg-jeg-jeg'. Tapi rel modern (CWR) dilas lurus panjang tanpa celah agar kereta peluru melaju super mulus.<br><br>Rahasia agar rel tidak terpelanting membengkok <i>(buckling)</i> saat memuai di siang terik adalah dengan menahannya secara mekanik: <b>rel dijepit dan diikat super kencang</b> pakai klip elastis baja ke bantalan rel berbahan beton yang masif/berat. Sistem penahan ini memakan seluruh tegangan regangan (stress) sehingga logam dipaksa tetap lurus walau suhunya panas."
+            },
+            {
+                id: 19,
+                question: "Sebuah balok logam bermassa 500 gram bersuhu 120&deg;C dimasukkan ke dalam bejana berisi 1 kg air bersuhu 20&deg;C. Setelah terjadi kesetimbangan, suhu akhir sistem menjadi 25&deg;C. Jika kalor jenis air adalah 4.200 J/kg&deg;C dan kalor yang diserap bejana diabaikan, berapakah kalor jenis balok logam tersebut?",
+                options: { A: "442 J/kg&deg;C", B: "520 J/kg&deg;C", C: "884 J/kg&deg;C", D: "950 J/kg&deg;C" },
+                correct: "A",
+                explanation: "Kembali berlatih Asas Black (Q lepas = Q serap) ya!<br>Pastikan satuan massa kilogram: m<sub>logam</sub> = 0,5 kg. m<sub>air</sub> = 1 kg.<br><br>m<sub>logam</sub> &times; c<sub>logam</sub> &times; (T<sub>panas</sub> - T<sub>campuran</sub>) = m<sub>air</sub> &times; c<sub>air</sub> &times; (T<sub>campuran</sub> - T<sub>dingin</sub>)<br>0,5 &times; c<sub>logam</sub> &times; (120 - 25) = 1 &times; 4.200 &times; (25 - 20)<br>0,5 &times; c<sub>logam</sub> &times; 95 = 4.200 &times; 5<br>47,5 &times; c<sub>logam</sub> = 21.000<br>c<sub>logam</sub> = 21.000 &divide; 47,5 &asymp; <b>442,1 J/kg&deg;C</b>. (Sesuai dengan opsi A)."
+            },
+            {
+                id: 20,
+                question: "Panci presto (pressure cooker) bekerja dengan cara menaikkan tekanan udara di dalam panci sehingga air mendidih pada suhu yang lebih tinggi dari 100&deg;C. Evaluasi fisis yang benar mengenai mengapa makanan menjadi lebih cepat matang menggunakan panci presto adalah...",
+                options: { A: "Tekanan tinggi langsung menghancurkan serat makanan tanpa memerlukan energi kalor", B: "Suhu didih air meningkat sehingga transfer energi kalor ke makanan jauh lebih cepat", C: "Uap air yang terperangkap memuai dan menekan dinding menghasilkan gesekan", D: "Kalor jenis air dalam panci menurun drastis akibat tekanan sehingga air cepat panas" },
+                correct: "B",
+                explanation: "Biasanya, kalau kamu merebus sup di panci biasa, airnya mentok mendidih di suhu 100&deg;C (kalau api dibesarkan, airnya hanya cepat habis menguap, suhunya tidak akan naik lagi).<br><br>Tapi Panci Presto itu kedap udara! Uap air ditahan di dalam sehingga <b>tekanan</b> di dalam panci naik drastis. Berdasarkan hukum termodinamika, tekanan naik &rarr; titik didih ikut naik! Air baru mendidih di suhu sekitar 120&deg;C. Daging bandeng yang direbus di air bersuhu 120&deg;C tentu matangnya berkali-kali lipat lebih kilat, empuk, dan tulang lunak dibanding suhu 100&deg;C!"
+            }
+        ];
+
+        // Parser text untuk mengubah tag [GAMBAR: ...] menjadi tag <img> (jika ada)
+        function parseContent(text) {
+            return text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" class="max-w-full h-auto rounded-lg shadow-md my-4 mx-auto block border border-gray-200">');
+        }
+
+        // Fungsi Render Soal
+        function renderQuiz() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = ''; // Bersihkan container
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Card Pembungkus Soal
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6";
+                card.id = `card-q${questionNum}`;
+                
+                // Header & Teks Soal
+                const questionText = document.createElement('h3');
+                questionText.className = "text-lg font-medium text-gray-800 mb-5 leading-relaxed";
+                questionText.innerHTML = `<span class="bg-indigo-100 text-primary font-bold px-3 py-1 rounded-md mr-2">Soal ${questionNum}</span> <br class="block sm:hidden"><div class="mt-3 sm:inline sm:mt-0">${parseContent(q.question)}</div>`;
+                card.appendChild(questionText);
+
+                // Kontainer Pilihan Jawaban
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = "flex flex-col space-y-3";
+
+                // Loop Opsi (A, B, C, D)
+                for (const [key, value] of Object.entries(q.options)) {
+                    const label = document.createElement('label');
+                    label.className = "option-label relative flex items-start p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 option-content";
+                    label.htmlFor = `q${questionNum}_${key}`;
+
+                    const input = document.createElement('input');
+                    input.type = "radio";
+                    input.name = `q${questionNum}`;
+                    input.id = `q${questionNum}_${key}`;
+                    input.value = key;
+                    input.className = "option-input sr-only"; // Hide default radio
+
+                    const circle = document.createElement('div');
+                    circle.className = "radio-circle flex-shrink-0 w-6 h-6 border-2 border-gray-300 rounded-full mr-4 relative mt-0.5 transition-colors";
+
+                    const textSpan = document.createElement('div');
+                    textSpan.className = "text-gray-700 font-medium";
+                    textSpan.innerHTML = `<span class="font-bold mr-1">${key}.</span> ${parseContent(value)}`;
+
+                    label.appendChild(input);
+                    label.appendChild(circle);
+                    label.appendChild(textSpan);
+                    optionsWrapper.appendChild(label);
+                }
+                card.appendChild(optionsWrapper);
+
+                // Kotak Pembahasan (Awalnya Sembunyi)
+                const explanationBox = document.createElement('div');
+                explanationBox.id = `exp-q${questionNum}`;
+                explanationBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed";
+                
+                const expTitle = document.createElement('div');
+                expTitle.id = `exp-title-q${questionNum}`;
+                expTitle.className = "font-bold mb-2 flex items-center";
+                
+                const expContent = document.createElement('div');
+                expContent.innerHTML = parseContent(q.explanation);
+                
+                explanationBox.appendChild(expTitle);
+                explanationBox.appendChild(expContent);
+
+                card.appendChild(explanationBox);
+                container.appendChild(card);
+            });
+        }
+
+        // Panggil fungsi render saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', renderQuiz);
+
+        // Fungsi Periksa Jawaban
+        function checkAnswers() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                const userAnswer = formData.get(`q${questionNum}`);
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                const expTitle = document.getElementById(`exp-title-q${questionNum}`);
+                
+                // Ambil semua label opsi di soal ini untuk di-reset stylingnya
+                const labels = document.querySelectorAll(`input[name="q${questionNum}"] + .radio-circle`);
+                const optionContainers = document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                    input.disabled = true; // Disable input setelah disubmit
+                });
+
+                if (userAnswer === q.correct) {
+                    correctCount++;
+                    
+                    // Style UI untuk Jawaban Benar
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-green-50 border-green-500 text-green-900 block fade-in";
+                    expTitle.innerHTML = `<i class="fas fa-check-circle text-green-500 text-xl mr-2"></i> Benar! Jawaban: ${q.correct}`;
+                    
+                    // Highlight opsi yang benar
+                    const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                    selectedLabel.classList.add('status-correct');
+
+                } else {
+                    // Style UI untuk Jawaban Salah atau Kosong
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-red-50 border-red-500 text-red-900 block fade-in";
+                    let titleText = userAnswer 
+                        ? `<i class="fas fa-times-circle text-red-500 text-xl mr-2"></i> Salah.`
+                        : `<i class="fas fa-exclamation-circle text-orange-500 text-xl mr-2"></i> Tidak dijawab.`;
+                    expTitle.innerHTML = `${titleText} Jawaban yang tepat: <b>${q.correct}</b>`;
+                    
+                    // Highlight opsi yang disalahkan user (jika ada isinya)
+                    if (userAnswer) {
+                        const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                        selectedLabel.classList.add('status-wrong');
+                    }
+                    // Highlight (dengan warna hijau) opsi kunci yang sebetulnya benar
+                    const correctLabel = document.getElementById(`q${questionNum}_${q.correct}`).parentElement;
+                    correctLabel.classList.add('status-correct');
+                }
+            });
+
+            // Hitung Skor (Skala 0 - 100)
+            const finalScore = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Tampilkan Skor di UI
+            const resultSection = document.getElementById('result-section');
+            const finalScoreEl = document.getElementById('final-score');
+            const scoreMessageEl = document.getElementById('score-message');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            finalScoreEl.innerText = finalScore;
+            
+            if (finalScore === 100) {
+                scoreMessageEl.innerText = "Sempurna! Kamu adalah Ilmuwan Cilik sejati!";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerText = "Luar biasa! Pemahaman sainsmu sudah sangat baik.";
+            } else if (finalScore >= 50) {
+                scoreMessageEl.innerText = "Kerja bagus! Terus pelajari lagi bagian yang salah ya.";
+            } else {
+                scoreMessageEl.innerText = "Jangan menyerah! Sains itu menyenangkan jika terus berlatih. Yuk baca lagi pembahasannya!";
+            }
+
+            resultSection.classList.remove('hidden');
+            btnSubmit.classList.add('hidden'); // Sembunyikan tombol submit
+
+            // Scroll mulus ke bawah (bagian skor)
+            // scrollIntoView disabled to prevent screen jumping
+        }
+
+        // Fungsi Ulangi Tes
+        function resetQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.reset(); // Reset form radio buttons
+
+            // Re-enable inputs dan hapus styling/kelas
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Sembunyikan box pembahasan
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                expBox.classList.add('hidden');
+                expBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed"; // reset classes
+                
+                // Reset radio styling dan enable kembali
+                document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.disabled = false;
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                });
+            });
+
+            // Sembunyikan hasil & tampilkan tombol submit
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('btn-submit').classList.remove('hidden');
+
+            // Scroll otomatis ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t2',
+          topicIndex: 2,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

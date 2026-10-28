@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz: Asking & Giving Directions</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Animation */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-2 py-1 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-center text-slate-800 flex-1">Quiz: Giving Directions</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for perfect centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-900 mb-1">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).</li>
+                        <li>Sistem skoring menggunakan skala <strong>0 - 100</strong>.</li>
+                        <li>Kamu <strong>tidak perlu</strong> mengisi semua soal untuk memeriksa jawaban. Soal yang kosong akan dianggap salah.</li>
+                        <li>Jangan lupa baca pembahasan di akhir untuk memperdalam pemahamanmu tentang kosakata arah jalan!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Soal akan dirender di sini via JS -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <!-- Result Area -->
+                    <div id="result-area" class="hidden mb-8 py-4 border-b border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <p id="score-message" class="text-lg font-bold px-4 py-2 rounded-lg inline-block"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                By EDUFILLAH 
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 mx-2"></span> 
+                Unlock The Secret Of Curious Minds
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Dialogue for questions number 1 and 2.</strong><br><br>
+                    <strong>Stranger:</strong> Excuse me, could you help me? I’m looking for the nearest traditional market.<br>
+                    <strong>Rian:</strong> Oh, sure. Go straight along this street for about 200 meters until you find a T-junction. Then, turn left onto Jl. Merdeka. The market is just on your right, opposite the post office.<br>
+                    <strong>Stranger:</strong> I see. So, I go straight, turn left at the T-junction, and it’s on my right?<br>
+                    <strong>Rian:</strong> Yes, exactly.<br>
+                    <strong>Stranger:</strong> Thank you so much for your help!<br>
+                    <strong>Rian:</strong> You’re welcome.
+                </div>`,
+                question: "What is the stranger doing in the dialogue?",
+                options: {
+                    A: "Offering help to Rian.",
+                    B: "Asking for directions to a market.",
+                    C: "Explaining the location of a post office.",
+                    D: "Inviting Rian to go to the traditional market."
+                },
+                correct: "B",
+                explanation: "Yuk kita perhatikan kalimat pertama dari <em>stranger</em> (orang asing): <em>\"I’m looking for the nearest traditional market\"</em> (Saya sedang mencari pasar tradisional terdekat).<br>Kalimat ini adalah kata kunci bahwa ia sedang <strong>meminta petunjuk arah</strong> menuju pasar (<em>asking for directions to a market</em>)."
+            },
+            {
+                id: 2,
+                question: "Based on the dialogue, where is the traditional market located?",
+                options: {
+                    A: "Next to the T-junction.",
+                    B: "Across from the post office.",
+                    C: "Behind the post office on Jl. Merdeka.",
+                    D: "On the left side of the T-junction."
+                },
+                correct: "B",
+                explanation: "Coba lihat penjelasan Rian: <em>\"The market is just on your right, <strong>opposite</strong> the post office\"</em> (Pasar berada tepat di sebelah kananmu, di seberang kantor pos).<br>Kata <strong>opposite</strong> dalam penunjuk arah memiliki arti berhadapan atau berseberangan. Sinonim yang paling tepat untuk <em>opposite</em> adalah <strong>across from</strong>."
+            },
+            {
+                id: 3,
+                context: `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm md:text-base text-slate-800 font-medium mb-3 shadow-sm">
+                    <strong>Read the text below to answer questions number 3 and 4.</strong><br><br>
+                    You are currently standing in front of the School. You want to go to the Library.<br>
+                    Here is the map description:<br>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>The School is on Green Street.</li>
+                        <li>If you walk east on Green Street, you will pass a <strong>Bakery</strong> on your left.</li>
+                        <li>Keep walking until you reach the intersection of Green Street and Oak Avenue.</li>
+                        <li>Turn right onto Oak Avenue.</li>
+                        <li>The Library is the second building on your left, right after the Bank.</li>
+                    </ul>
+                </div>`,
+                question: "If you follow the directions above, what building will you pass first after leaving the School?",
+                options: {
+                    A: "The Bank",
+                    B: "The Library",
+                    C: "The Bakery",
+                    D: "The Intersection"
+                },
+                correct: "C",
+                explanation: "Mari kita telusuri langkahnya selangkah demi selangkah sesuai teks:<br>Kamu mulai dari Sekolah di Green Street. Langkah berikutnya disebutkan: <em>\"If you walk east on Green Street, you will pass a <strong>Bakery</strong> on your left.\"</em><br>Jadi, bangunan pertama yang akan kamu lewati setelah keluar dari sekolah adalah toko roti (Bakery)."
+            },
+            {
+                id: 4,
+                question: "Which of the following maps correctly represents the position of the Library?",
+                options: {
+                    A: "The Library is next to the Bank on Oak Avenue.",
+                    B: "The Library is opposite the School on Green Street.",
+                    C: "The Library is between the School and the Bakery.",
+                    D: "The Library is at the corner of Green Street and Oak Avenue."
+                },
+                correct: "A",
+                explanation: "Perhatikan petunjuk terakhir: <em>\"The Library is the second building on your left, <strong>right after the Bank</strong>.\"</em><br>Frasa <em>right after</em> berarti 'tepat setelah'. Jika kamu berjalan dan melewati Bank, lalu bangunan berikutnya langsung Perpustakaan, itu artinya Perpustakaan <strong>berdampingan / bersebelahan (next to)</strong> dengan Bank di jalan Oak Avenue."
+            },
+            {
+                id: 5,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Stranger:</strong> Excuse me, ___________ where the bus station is?<br>
+                    <strong>Siti:</strong> Sure. Just go straight and turn right at the first corner. It's on your left.
+                </div>`,
+                question: "The most polite and appropriate phrase to complete the dialogue is...",
+                options: {
+                    A: "do you know",
+                    B: "could you tell me",
+                    C: "where is",
+                    D: "can you show me now"
+                },
+                correct: "B",
+                explanation: "Ketika kita bertanya kepada orang asing (stranger) di jalan, kita harus menggunakan bahasa yang paling sopan (Formal/Polite expression).<br>• <em>\"Could you tell me...\"</em> (Bisakah Anda memberi tahu saya...) adalah bentuk yang jauh lebih sopan dan halus dibandingkan \"where is\" atau \"can you show me\".<br>Ini adalah bentuk *Indirect Question* (pertanyaan tidak langsung) yang sangat umum dipakai dalam etika berbahasa Inggris."
+            },
+            {
+                id: 6,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Tourist:</strong> Excuse me, I am lost. I want to go to the National Museum, but my phone battery is dead.<br>
+                    <strong>Local Resident:</strong> Oh, don't worry. The National Museum is quite far from here. If you walk, it will take 45 minutes. I suggest you take public bus number 12 from the bus stop over there. It will take you directly to the museum gates.
+                </div>`,
+                question: "Why does the local resident suggest taking a bus instead of walking?",
+                options: {
+                    A: "Because the resident is in a hurry.",
+                    B: "Because walking to the museum is too far.",
+                    C: "Because there are no sidewalks on the way.",
+                    D: "Because the tourist does not have a map."
+                },
+                correct: "B",
+                explanation: "Penduduk lokal (Local Resident) menyatakan: <em>\"The National Museum is <strong>quite far</strong> from here. If you walk, it will take 45 minutes.\"</em><br>Pernyataan ini jelas menunjukkan bahwa alasan menyarankan naik bus adalah karena jaraknya yang lumayan jauh (butuh 45 menit jika berjalan kaki)."
+            },
+            {
+                id: 7,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Read the following text for questions number 7 and 8.</strong><br><br>
+                    <strong>Route A:</strong> Go straight on Jl. Sudirman (1 km), turn left to Jl. Pemuda (500 m). The destination is on the right. <em>(Traffic: Very crowded/heavy traffic jam).</em><br>
+                    <strong>Route B:</strong> Go straight on Jl. Sudirman (500 m), turn right to Jl. Mawar (1.2 km), then turn left to Jl. Pemuda (300 m). <em>(Traffic: Quiet and smooth).</em>
+                </div>`,
+                question: "If a driver wants to reach the destination as quickly as possible, which route should they choose and why?",
+                options: {
+                    A: "Route A, because the total distance is shorter than Route B.",
+                    B: "Route B, because although it is longer, the traffic is quiet and smooth.",
+                    C: "Route A, because turning left is always faster than turning right.",
+                    D: "Route B, because it has more turns which makes the trip interesting."
+                },
+                correct: "B",
+                explanation: "Mari kita lakukan evaluasi logis:<br>• Rute A memang lebih pendek (total 1.5 km), tetapi kondisinya <strong>macet parah (heavy traffic jam)</strong>.<br>• Rute B lebih jauh (total 2.0 km), tetapi kondisinya <strong>lancar dan sepi (quiet and smooth)</strong>.<br>Dalam berkendara, rute yang lancar sering kali jauh lebih cepat sampai tujuan dibandingkan rute yang pendek tapi macet total. Maka pilihan B adalah keputusan logis yang paling tepat."
+            },
+            {
+                id: 8,
+                question: "What is the total distance of Route B?",
+                options: {
+                    A: "1.5 km",
+                    B: "1.7 km",
+                    C: "2.0 km",
+                    D: "2.2 km"
+                },
+                correct: "C",
+                explanation: "Yuk kita hitung total jarak Rute B berdasarkan teks!<br>• Lurus di Jl. Sudirman: 500 meter (0.5 km)<br>• Belok kanan ke Jl. Mawar: 1.2 km<br>• Belok kiri ke Jl. Pemuda: 300 meter (0.3 km)<br><strong>Total:</strong> 0.5 + 1.2 + 0.3 = <strong>2.0 km</strong>."
+            },
+            
+            {
+                id: 9,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Teacher:</strong> Excuse me, is the computer lab on the second floor?<br>
+                    <strong>Student:</strong> No, Ma'am. It’s on the first floor. Go down this corridor, ___________ the science lab, and it’s the last room on your left.
+                </div>`,
+                question: "The correct preposition/phrase to fill in the blank is...",
+                options: {
+                    A: "past",
+                    B: "under",
+                    C: "between",
+                    D: "opposite"
+                },
+                correct: "A",
+                explanation: "Dalam konteks memberikan arah, kata <strong>past</strong> berarti <em>'melewati'</em> (kamu berjalan melintasi bagian depan suatu tempat tanpa memasukinya).<br>Kalimat <em>\"...past the science lab...\"</em> berarti \"...lewati laboratorium IPA, dan ruangannya ada di ujung sebelah kirimu.\" Pilihan lain tidak logis secara tata ruang."
+            },
+            {
+                id: 10,
+                context: `<div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Look at these scrambled directions to the Hospital:</strong><br>
+                    1) Finally, you will see the Hospital on your right, next to the pharmacy.<br>
+                    2) Go straight along this road until you see a traffic light.<br>
+                    3) At the traffic light, turn left onto Jasmine Street.<br>
+                    4) Walk past the supermarket for about 100 meters.
+                </div>`,
+                question: "The best and most logical arrangement of the directions is...",
+                options: {
+                    A: "2) - 3) - 4) - 1)",
+                    B: "2) - 4) - 3) - 1)",
+                    C: "3) - 2) - 4) - 1)",
+                    D: "4) - 2) - 3) - 1)"
+                },
+                correct: "A",
+                explanation: "Cara termudah menyusun petunjuk arah adalah mengikuti alur perjalanan yang masuk akal:<br>• Mulai dari jalan lurus dulu mencari patokan (2: <em>Go straight... until traffic light</em>).<br>• Setelah sampai patokan, lakukan manuver belok (3: <em>At the traffic light, turn left...</em>).<br>• Susuri jalan baru tersebut melewati patokan lain (4: <em>Walk past the supermarket...</em>).<br>• Akhiri dengan penanda lokasi tujuan (1: <em>Finally, you will see the Hospital...</em>).<br>Maka urutan logisnya adalah <strong>2 - 3 - 4 - 1</strong>."
+            },
+            {
+                id: 11,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Aulia:</strong> Excuse me, is there a pharmacy near here?<br>
+                    <strong>Budi:</strong> Yes, there is one on Jl. Kartini. Go straight, turn right at the intersection, and it's next to the supermarket.<br>
+                    <strong>Aulia:</strong> So, I turn left at the intersection?<br>
+                    <strong>Budi:</strong> No, turn right, not left.
+                </div>`,
+                question: "What is the purpose of Budi's second statement?",
+                options: {
+                    A: "To ask for clarification.",
+                    B: "To correct Aulia's misunderstanding.",
+                    C: "To give a new direction.",
+                    D: "To apologize for the wrong direction."
+                },
+                correct: "B",
+                explanation: "Aulia salah menangkap informasi dari Budi dengan bertanya <em>\"So, I turn left...?\"</em> (Jadi, saya belok kiri?).<br>Budi merespons dengan tegas: <em>\"No, turn right, not left.\"</em><br>Tujuan Budi mengatakan hal ini adalah untuk <strong>mengoreksi kesalahpahaman</strong> Aulia (<em>to correct Aulia's misunderstanding</em>) agar Aulia tidak tersesat."
+            },
+            {
+                id: 12,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Situation:</strong><br>
+                    A tourist asks you for directions to the railway station. However, you are a newcomer in this town and do not know where it is.
+                </div>`,
+                question: "What is the most polite way to respond to the tourist?",
+                options: {
+                    A: "\"I don't know. Go ask someone else.\"",
+                    B: "\"I'm sorry, I'm not from around here, so I don't know the way.\"",
+                    C: "\"The railway station is very far, you cannot go there.\"",
+                    D: "\"Just walk straight, maybe you will find it.\""
+                },
+                correct: "B",
+                explanation: "Jika kita tidak tahu arah yang ditanyakan, kita harus menjawabnya dengan jujur dan sopan agar tidak membuat orang tersebut tersesat.<br>Pilihan B (<em>\"Maaf, saya bukan orang asli sini, jadi saya tidak tahu jalannya\"</em>) adalah penolakan memberikan arah yang paling sopan, disertai alasan yang jelas tanpa menyinggung perasaan penanya."
+            },
+            {
+                id: 13,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Read the description:</strong><br>
+                    "To get to the post office, walk along Blue Street until you pass the city park on your right. Then, cross the pedestrian bridge. The post office is right at the foot of the bridge, between the police station and the bank."
+                </div>`,
+                question: "Which of the following statements is FALSE according to the text?",
+                options: {
+                    A: "The city park is on the right side of Blue Street.",
+                    B: "The post office is located next to the police station.",
+                    C: "You need to cross a bridge to reach the post office.",
+                    D: "The bank is located across from the post office."
+                },
+                correct: "D",
+                explanation: "Mari kita analisis kalimat terakhir teks: <em>\"The post office is... <strong>between</strong> the police station and the bank.\"</em> (Kantor pos berada di antara kantor polisi dan bank).<br>Ini berarti kantor pos diapit/bersebelahan dengan bank. Oleh karena itu, pernyataan D yang menyebutkan Bank berada di seberang (<em>across from</em>) kantor pos adalah <strong>SALAH (FALSE)</strong>."
+            },
+            {
+                id: 14,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Mr. Jack:</strong> Excuse me, can you show me the way to the nearest bank?<br>
+                    <strong>Dian:</strong> Sure. Walk down this street, turn left at the first corner. The bank is on your right, adjacent to the bookstore.
+                </div>`,
+                question: "The word \"adjacent to\" has the closest meaning to...",
+                options: {
+                    A: "behind",
+                    B: "next to",
+                    C: "across from",
+                    D: "far from"
+                },
+                correct: "B",
+                explanation: "Kosakata baru nih! Kata <strong>adjacent</strong> berarti berdampingan, menempel, atau bersebelahan langsung. Dalam konteks lokasi bangunan, makna ini paling dekat dan sama dengan <strong>next to</strong> (di sebelah)."
+            },
+            {
+                id: 15,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Situation:</strong><br>
+                    You are giving directions to a blind person (orang tunanetra) who wants to find the nearest bus stop.
+                </div>`,
+                question: "Which of the following instructions is the most helpful and safe for them?",
+                options: {
+                    A: "\"Just run straight for 50 meters, then jump over the ditch.\"",
+                    B: "\"Walk straight along this textured guiding block for about 20 steps, then stop. The bus stop is directly on your left.\"",
+                    C: "\"Look at that big blue sign over there, the bus stop is right under it.\"",
+                    D: "\"Follow that man in the red shirt, he is going to the bus stop too.\""
+                },
+                correct: "B",
+                explanation: "Memberikan petunjuk kepada tunanetra membutuhkan empati. Instruksi harus berbasis taktil (sentuhan) pendengaran, atau hitungan fisik, BUKAN berbasis visual (warna/melihat tanda).<br>Menggunakan <em>guiding block</em> (ubin pemandu kuning bertekstur di trotoar) dan hitungan langkah kaki (<em>20 steps</em>) pada pilihan B adalah metode yang paling aman, logis, dan inklusif."
+            },
+            {
+                id: 16,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Visitor:</strong> Excuse me, how do I get to the principal's office?<br>
+                    <strong>Student:</strong> From the lobby, go straight past the library, then turn right. The principal's office is the second door on your left.<br>
+                    <strong>Visitor:</strong> Thank you.
+                </div>`,
+                question: "Where is the library located in relation to the principal's office?",
+                options: {
+                    A: "It is next to the principal's office.",
+                    B: "It is passed before turning right to reach the principal's office.",
+                    C: "It is inside the principal's office.",
+                    D: "It is on the second floor above the principal's office."
+                },
+                correct: "B",
+                explanation: "Perhatikan petunjuk arah dari siswa: <em>\"...go straight <strong>past the library</strong>, then turn right.\"</em><br>Artinya, pengunjung harus berjalan lurus dan <strong>melewati perpustakaan terlebih dahulu</strong>, baru kemudian berbelok kanan untuk menemukan ruang kepala sekolah (<em>It is passed before turning right...</em>)."
+            },
+            {
+                id: 17,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Read the text:</strong><br>
+                    "If you want to go to the cinema, you should take a taxi because it is raining heavily. The cinema is located on the top floor of the Grand Mall, which is 3 kilometers from here."
+                </div>`,
+                question: "Why does the speaker recommend taking a taxi?",
+                options: {
+                    A: "Because the Grand Mall is closed.",
+                    B: "Because the cinema is on the top floor.",
+                    C: "Because of the heavy rain and the distance.",
+                    D: "Because taxis are cheaper than buses."
+                },
+                correct: "C",
+                explanation: "Dalam teks disebutkan dua alasan kuat: <em>\"...because it is <strong>raining heavily</strong>... which is <strong>3 kilometers</strong> from here.\"</em><br>Alasan pemilihan taksi adalah faktor cuaca (hujan deras) dan jarak yang cukup jauh (3 kilometer) untuk berjalan kaki."
+            },
+            {
+                id: 18,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Edo:</strong> Is the museum near the zoo?<br>
+                    <strong>Fafa:</strong> No, they are quite far apart. You need to go through three intersections to get there.
+                </div>`,
+                question: "What can we infer from Fafa's response?",
+                options: {
+                    A: "The museum and the zoo are in the same building.",
+                    B: "The distance between the museum and the zoo is close.",
+                    C: "The route from the zoo to the museum is long and involves several crossings.",
+                    D: "Edo does not need any transportation to go to the museum."
+                },
+                correct: "C",
+                explanation: "Fafa menyatakan <em>\"they are quite far apart. You need to go through three intersections...\"</em> (keduanya lumayan jauh. Kamu harus melewati 3 persimpangan jalan).<br>Dari pernyataan ini kita bisa menyimpulkan (infer) bahwa rute dari kebun binatang ke museum cukup panjang dan melibatkan beberapa persimpangan/penyeberangan jalan."
+            },
+            {
+                id: 19,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Santi:</strong> Excuse me, is this the right way to the botanical garden?<br>
+                    <strong>Officer:</strong> No, you are heading in the opposite direction. You need to turn back and go straight until you see a big statue, then turn left.
+                </div>`,
+                question: "What should Santi do after speaking to the officer?",
+                options: {
+                    A: "Continue walking in the same direction.",
+                    B: "Turn around and look for a statue.",
+                    C: "Ask another officer for directions.",
+                    D: "Stop and wait at the statue."
+                },
+                correct: "B",
+                explanation: "Petugas memberi tahu: <em>\"you are heading in the opposite direction. You need to <strong>turn back</strong>...\"</em> (Kamu berjalan ke arah yang berlawanan. Kamu harus berbalik arah...).<br>Maka tindakan logis Santi selanjutnya adalah berbalik arah (<em>turn around</em>) dan mencari patung besar sesuai petunjuk petugas."
+            },
+            {
+                id: 20,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Tourist:</strong> Excuse me, can you help me find the art gallery?<br>
+                    <strong>Guide:</strong> Sure. Walk straight, turn right, then turn left, then go straight again, then turn right after the red building, and it's behind the yellow house.<br>
+                    <strong>Tourist:</strong> Oh, that's very confusing. I might get lost.
+                </div>`,
+                question: "Why is the guide's direction considered ineffective?",
+                options: {
+                    A: "Because it is too short and simple.",
+                    B: "Because it uses too many turns without clear landmarks or distances.",
+                    C: "Because the art gallery is already closed.",
+                    D: "Because the guide is being impolite to the tourist."
+                },
+                correct: "B",
+                explanation: "Petunjuk arah yang diberikan si pemandu terlalu berbelit-belit (belok kanan, lalu kiri, lurus, belok kanan lagi) dan ia melupakan detail penting seperti <strong>jarak atau patokan yang jelas di awal</strong>.<br>Memberikan terlalu banyak arahan belokan beruntun tanpa acuan jalan membuat orang sangat mudah tersesat (<em>confusing</em>). Petunjuk arah yang baik harus singkat, jelas, dengan patokan (landmarks) yang mudah terlihat."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:p-7 relative group hover:border-blue-300 transition-colors duration-300">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                ${item.context ? item.context : ''}
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+                
+                // Render Options
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                htmlContent += `
+                                </div>
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                // Clean classes
+                expContainer.className = 'mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down';
+
+                if (!selected) {
+                    // Unanswered handling
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Soal terlewat / Belum dijawab!";
+                    expText.innerHTML = `Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-1"><i class="fas fa-lightbulb mr-1 text-amber-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                } else if (selected.value === item.correct) {
+                    // Correct answer
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Hebat! Jawaban Kamu Benar.";
+                    expText.innerHTML = item.explanation;
+                } else {
+                    // Incorrect answer
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat. Kunci yang benar adalah ${item.correct}.`;
+                    expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-1"><i class="fas fa-lightbulb mr-1 text-rose-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                }
+                
+                // Disable inputs after checking
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Score Counting Animation
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Conditional messages based on performance
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Nilai Sempurna! Kosakatamu tentang arah jalan luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Sangat Baik! Kamu sudah memahami konsep arah dengan mantap.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Baca lagi pembahasannya ya biar nggak nyasar.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-map-marked-alt mr-2 text-rose-500'></i> Tetap Semangat! Jangan menyerah, pelajari lagi kosakata patokan jalan dan coba lagi!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            }
+
+            // Button visibility toggle
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Auto scroll to results
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); // EaseOut quad function
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset forms natively
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable and uncheck all inputs, hide explanation boxes
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false;
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+            });
+
+            // Hide Result Board
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Swap Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll to Top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

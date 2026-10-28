@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz: Suggestion, Permission & Instruction</title>
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Animation */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+        
+        /* Math Fraction Styling for Question 16 */
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0 0.2em;
+        }
+        .fraction span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: thin solid black;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-2 py-1 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-center text-slate-800 flex-1">Quiz: Suggestion, Permission & Instruction</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for perfect centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-900 mb-1">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).</li>
+                        <li>Sistem skoring menggunakan skala <strong>0 - 100</strong>.</li>
+                        <li>Kamu <strong>tidak perlu</strong> mengisi semua soal untuk memeriksa jawaban.</li>
+                        <li>Soal yang terlewat akan tetap ditampilkan pembahasannya di akhir untuk bahan belajar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Soal akan dirender di sini via JS -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <!-- Result Area -->
+                    <div id="result-area" class="hidden mb-8 py-4 border-b border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <p id="score-message" class="text-lg font-bold px-4 py-2 rounded-lg inline-block"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                By EDUFILLAH 
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 mx-2"></span> 
+                Unlock The Secret Of Curious Minds
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rani:</strong> "I’m so tired of having online classes. I can’t focus easily."<br>
+                    <strong>Sita:</strong> "__________ take a short break and stretch your body? It might help you feel refreshed."
+                </div>`,
+                question: "Complete the dialogue with the correct expression of suggestion!",
+                options: {
+                    A: "Why don't you",
+                    B: "You must not",
+                    C: "Would you like to",
+                    D: "May I"
+                },
+                correct: "A",
+                explanation: "Rani merasa kelelahan belajar *online*. Sita ingin memberikan **saran (suggestion)** agar Rani beristirahat sebentar. <br>• Dalam bahasa Inggris, salah satu cara paling umum untuk memberikan saran adalah menggunakan frasa <strong>\"Why don't you + Verb 1\"</strong> (Mengapa kamu tidak...).<br>• Opsi B adalah larangan keras, C adalah tawaran (bukan saran), dan D adalah meminta izin."
+            },
+            {
+                id: 2,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Teacher:</strong> "Attention, class! Before you start the experiment, make sure you wear your safety goggles."<br>
+                    <strong>Students:</strong> "Yes, Ma'am."
+                </div>`,
+                question: "What is the teacher doing?",
+                options: {
+                    A: "Asking for permission",
+                    B: "Giving an instruction",
+                    C: "Offering a suggestion",
+                    D: "Making an excuse"
+                },
+                correct: "B",
+                explanation: "Kalimat guru berbunyi: *\"...make sure you wear your safety goggles.\"* (pastikan kalian memakai kacamata pelindung). <br>Ini bukan sekadar saran santai, melainkan **sebuah arahan atau instruksi wajib (Giving an instruction)** sebelum memulai praktik di laboratorium demi keselamatan siswa."
+            },
+            {
+                id: 3,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Fahri:</strong> "I have a terrible toothache. I can't even chew my food."<br>
+                    <strong>Aris:</strong> "__________"
+                </div>`,
+                question: "Which of the following is the most appropriate suggestion for Fahri?",
+                options: {
+                    A: "You should eat more sweet candies.",
+                    B: "You ought to see a dentist as soon as possible.",
+                    C: "You can ignore it until it stops hurting.",
+                    D: "Why don't you brush your teeth tomorrow?"
+                },
+                correct: "B",
+                explanation: "Fahri sedang sakit gigi parah (*terrible toothache*) sampai tidak bisa mengunyah makanan. <br>• Saran yang paling masuk akal dan benar secara medis adalah menyuruhnya ke dokter gigi: <strong>\"You ought to see a dentist...\"</strong> (Kamu sebaiknya pergi ke dokter gigi...). <br>• Kata *ought to* memiliki makna yang sama dengan *should* (sebaiknya/seharusnya)."
+            },
+            {
+                id: 4,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rian:</strong> "Excuse me, Mr. Adi. __________ use the computer to print my assignment? My laptop is broken."<br>
+                    <strong>Mr. Adi:</strong> "Sure, go ahead. But make sure you turn it off after you finish."
+                </div>`,
+                question: "Complete the dialogue with the suitable expression!",
+                options: {
+                    A: "Must I",
+                    B: "Should I",
+                    C: "May I",
+                    D: "Do you have to"
+                },
+                correct: "C",
+                explanation: "Rian ingin meminjam komputer gurunya (Mr. Adi). Karena berbicara dengan guru, Rian harus menggunakan ungkapan **meminta izin (Asking for permission)** yang sopan. <br>• Frasa yang paling tepat dan sopan untuk meminta izin adalah <strong>\"May I...\"</strong> (Bolehkah saya...). <br>• Mr. Adi kemudian mengizinkan dengan menjawab *\"Sure, go ahead\"*."
+            },
+            {
+                id: 5,
+                context: `<div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>How to Clean a Blender:</strong><br>
+                    <ol class="list-decimal list-inside mt-2 space-y-1 text-sm">
+                        <li>Pour warm water into the blender pitcher until it is half full.</li>
+                        <li>Add a few drops of liquid dish soap.</li>
+                        <li class="font-bold text-yellow-800">Secure the lid tightly on the blender.</li>
+                        <li>Turn on the blender and let it run for 30 seconds.</li>
+                        <li>Pour out the soapy water and rinse the pitcher thoroughly.</li>
+                    </ol>
+                </div>`,
+                question: "What will happen if you skip step 3?",
+                options: {
+                    A: "The blender will not turn on.",
+                    B: "The soapy water will splash everywhere.",
+                    C: "The blender pitcher will break.",
+                    D: "The soap will not clean the blender."
+                },
+                correct: "B",
+                explanation: "Mari kita bayangkan secara logis! <br>Langkah ke-3 menyuruh kita untuk **menutup rapat penutup blender** (*Secure the lid tightly*). <br>Langkah ke-4 adalah menyalakan blender. Jika langkah ke-3 dilewati (blender dinyalakan tanpa ditutup), tentu saja putaran pisau blender yang cepat akan membuat **air sabun muncrat ke mana-mana (The soapy water will splash everywhere).**"
+            },
+            {
+                id: 6,
+                context: `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Situation:</strong><br>
+                    Deni wants to go to the library to study for the final exam, but his younger brother is crying because he lost his toy car. Deni's mother is busy cooking in the kitchen.
+                </div>`,
+                question: "Evaluate which of the following actions is the best combination of giving a suggestion and asking for permission for Deni to solve this situation wisely:",
+                options: {
+                    A: "Deni says to his mother, \"Mom, can I go to the library now? Let my brother cry, he will stop eventually.\"",
+                    B: "Deni says to his brother, \"Stop crying! You should find your toy yourself because I must go to the library.\"",
+                    C: "Deni says to his mother, \"Mom, may I go to the library after I help my brother find his toy? You should focus on your cooking.\"",
+                    D: "Deni says to his mother, \"You should help my brother find his toy, Mom, so that I can have permission to go to the library.\""
+                },
+                correct: "C",
+                explanation: "(Soal HOTS/Evaluasi). Kita mencari tindakan yang **paling bijaksana** yang menggabungkan meminta izin dan memberi saran. <br>• Pada opsi C, Deni **meminta izin** ke perpus *setelah* berinisiatif membantu adiknya (\"*May I go to the library after I help...*\"). <br>• Ia juga **memberikan saran** yang baik agar ibunya fokus memasak saja (\"*You should focus on your cooking*\"). Tindakan ini sangat bertanggung jawab."
+            },
+            {
+                id: 7,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Library Rules:</strong><br>
+                    "Keep your voice down. <span class="underline decoration-2 decoration-red-400">Do not bring food or drinks into the reading room.</span>"
+                </div>`,
+                question: "The underlined sentence is an expression of....",
+                options: {
+                    A: "Giving permission",
+                    B: "Giving an order/prohibition",
+                    C: "Offering help",
+                    D: "Asking for suggestion"
+                },
+                correct: "B",
+                explanation: "Kalimat *\"Do not bring food...\"* (Jangan membawa makanan...) menggunakan pola *Negative Imperative* (Do not + Verb 1). <br>Kalimat seperti ini secara tata bahasa berfungsi untuk **memberikan larangan atau perintah (Giving an order/prohibition)**. Ini adalah aturan tegas, bukan sekadar saran."
+            },
+            {
+                id: 8,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Guest:</strong> "Could I possibly use your phone for a minute? My phone's battery is completely dead."<br>
+                    <strong>Host:</strong> "__________ The charger is also over there if you need it."
+                </div>`,
+                question: "Complete the host's response!",
+                options: {
+                    A: "No, you can't.",
+                    B: "I'm afraid not.",
+                    C: "Yes, of course.",
+                    D: "You should not do that."
+                },
+                correct: "C",
+                explanation: "Tamu meminta izin meminjam HP dengan sangat sopan (*Could I possibly...*). <br>Tuan rumah (Host) merespons dengan ramah dan bahkan menawarkan *charger*. Artinya, tuan rumah **memberikan izin**. <br>Ungkapan memberikan izin yang tepat dan ramah adalah <strong>\"Yes, of course.\"</strong> (Ya, tentu saja)."
+            },
+            {
+                id: 9,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Siska:</strong> "I failed my English test again. I feel so stupid."<br>
+                    <strong>Tono:</strong> "Don't say that. You just need to change your study habits. Why don't we study together every Saturday?"
+                </div>`,
+                question: "What is Tono's attitude towards Siska?",
+                options: {
+                    A: "He is ordering Siska to study harder.",
+                    B: "He is asking for Siska's permission to study.",
+                    C: "He is giving a supportive suggestion to Siska.",
+                    D: "He is criticizing Siska's bad grades."
+                },
+                correct: "C",
+                explanation: "Siska sedang sedih karena gagal ujian. <br>Tono merespons dengan kata-kata penyemangat (*Don't say that*) dan menawarkan solusi: *\"Why don't we study together...\"* (Bagaimana kalau kita belajar bersama...). <br>Sikap Tono ini menunjukkan bahwa ia sedang **memberikan saran yang mendukung (giving a supportive suggestion)** untuk membantu temannya."
+            },
+            {
+                id: 10,
+                context: `<div class="bg-red-50 p-4 rounded-lg border border-red-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>In case of fire (Safety Instructions):</strong><br>
+                    <ol class="list-decimal list-inside mt-2 space-y-1 text-sm font-medium">
+                        <li>Do not use the elevator. Use the stairs instead.</li>
+                        <li class="text-red-700">Leave all your heavy belongings behind.</li>
+                        <li>Cover your nose and mouth with a wet cloth if there is smoke.</li>
+                    </ol>
+                </div>`,
+                question: "Why is it highly recommended to follow instruction number 2?",
+                options: {
+                    A: "Because heavy bags will get dirty because of the smoke.",
+                    B: "Because carrying heavy items will slow down your evacuation process.",
+                    C: "Because the elevator cannot carry heavy belongings.",
+                    D: "Because the stairs are too narrow for big bags."
+                },
+                correct: "B",
+                explanation: "Instruksi nomor 2 berbunyi: *\"Leave all your heavy belongings behind\"* (Tinggalkan semua barang bawaanmu yang berat). <br>Logika keselamatan saat kebakaran (evakuasi darurat) adalah harus bergerak secepat mungkin ke luar gedung. <br>Jika kamu sibuk membawa tas/koper yang berat, tentu saja hal itu akan **memperlambat proses penyelamatan dirimu (slow down your evacuation process)**."
+            },
+            {
+                id: 11,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rara:</strong> "I want to make a vanilla cake, but I ran out of white sugar."<br>
+                    <strong>Dito:</strong> "__________ use brown sugar instead? It might change the color, but the taste will still be good."
+                </div>`,
+                question: "Fill in the blank with the correct expression!",
+                options: {
+                    A: "Why don't you",
+                    B: "You must not",
+                    C: "Can I",
+                    D: "Let's not"
+                },
+                correct: "A",
+                explanation: "Rara kehabisan gula putih (*white sugar*). Dito lalu memberikan solusi/saran untuk menggunakan gula merah (*brown sugar*). <br>Frasa yang tepat untuk mengawali kalimat saran berbentuk pertanyaan adalah <strong>\"Why don't you\"</strong> (Mengapa kamu tidak menggunakan gula merah saja?)."
+            },
+            {
+                id: 12,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Student:</strong> "Excuse me, Sir. May I wash my hands?"<br>
+                    <strong>Teacher:</strong> "Yes, but please be quick. We are going to start the quiz in five minutes."
+                </div>`,
+                question: "The student is asking for....",
+                options: {
+                    A: "An instruction",
+                    B: "A suggestion",
+                    C: "A permission",
+                    D: "An order"
+                },
+                correct: "C",
+                explanation: "Kalimat *\"May I wash my hands?\"* (Bolehkah saya mencuci tangan / pergi ke kamar mandi?) menggunakan modal awal *\"May I\"*. <br>Dalam bahasa Inggris, *\"May I...\"* adalah bentuk standar dan sangat sopan yang digunakan untuk **meminta izin (Asking for permission)**."
+            },
+            {
+                id: 13,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Father:</strong> "It's already 11 PM. Turn off the TV and go to sleep right now!"<br>
+                    <strong>Son:</strong> "Yes, Dad. I'm going to sleep."
+                </div>`,
+                question: "The father's expression shows a strong....",
+                options: {
+                    A: "Suggestion",
+                    B: "Order",
+                    C: "Permission",
+                    D: "Request"
+                },
+                correct: "B",
+                explanation: "Perhatikan kalimat ayah: *\"Turn off the TV and go to sleep right now!\"* <br>Kalimat ini menggunakan pola perintah (*Imperative*), diakhiri tanda seru (!), dan ada penekanan waktu *\"right now\"* (sekarang juga!). <br>Ini bukan saran yang bisa ditolak, melainkan sebuah **perintah tegas (Order)** dari orang tua kepada anaknya karena hari sudah larut."
+            },
+            {
+                id: 14,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Yuni:</strong> "I have a lot of plastic bottles at home. They are just taking up space."<br>
+                    <strong>Eko:</strong> "How about __________ them into creative flower pots?"
+                </div>`,
+                question: "Choose the correct verb form!",
+                options: {
+                    A: "recycle",
+                    B: "to recycle",
+                    C: "recycling",
+                    D: "recycled"
+                },
+                correct: "C",
+                explanation: "Dalam *English Grammar*, ada aturan khusus untuk frasa penawaran/saran <strong>\"How about...\"</strong> dan <strong>\"What about...\"</strong>. <br>Setelah kata depan *about*, kata kerja yang mengikutinya WAJIB diubah menjadi bentuk **Gerund (Verb-ing)**. <br>Jadi yang benar adalah *\"How about recycling...\"*."
+            },
+            {
+                id: 15,
+                context: `<div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Situation:</strong><br>
+                    Ayu is attending a formal online webinar. She wants to ask a question to the keynote speaker, but the speaker is still delivering the material.
+                </div>`,
+                question: "Evaluate which action is the most polite and appropriate way for Ayu to ask for permission to speak:",
+                options: {
+                    A: "Unmute her microphone immediately and say, \"Excuse me, I must ask a question now.\"",
+                    B: "Write in the chat box, \"Can I talk? You should stop speaking for a moment because I have a question.\"",
+                    C: "Use the 'raise hand' feature and wait for the moderator's permission before unmuting her microphone.",
+                    D: "Send a direct message to the speaker telling them to read her question immediately."
+                },
+                correct: "C",
+                explanation: "(Soal Etika Digital). Di lingkungan formal seperti webinar daring, memotong pembicaraan (Opsi A) atau menyuruh pemateri berhenti (Opsi B) sangatlah tidak sopan. <br>Cara meminta izin (*asking for permission*) yang paling tepat dan beradab adalah dengan **menggunakan fitur 'raise hand' (angkat tangan) pada aplikasi zoom/meet, lalu menunggu sampai moderator mempersilakan kita bicara (Opsi C)**."
+            },
+            {
+                id: 16,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base font-medium mb-3 text-center py-6">
+                    Rearrange these words into a correct instruction!<br><br>
+                    <div class="inline-flex flex-wrap justify-center gap-3 mt-4 text-lg">
+                        <div class="fraction"><span>the plug</span><span class="fdn text-sm text-slate-500">1</span></div>
+                        <span class="mt-1 font-bold">-</span>
+                        <div class="fraction"><span>do not</span><span class="fdn text-sm text-slate-500">2</span></div>
+                        <span class="mt-1 font-bold">-</span>
+                        <div class="fraction"><span>wet hands</span><span class="fdn text-sm text-slate-500">3</span></div>
+                        <span class="mt-1 font-bold">-</span>
+                        <div class="fraction"><span>touch</span><span class="fdn text-sm text-slate-500">4</span></div>
+                        <span class="mt-1 font-bold">-</span>
+                        <div class="fraction"><span>with</span><span class="fdn text-sm text-slate-500">5</span></div>
+                    </div>
+                </div>`,
+                question: "Choose the correct sequence:",
+                options: {
+                    A: "2 - 4 - 1 - 5 - 3",
+                    B: "2 - 1 - 4 - 5 - 3",
+                    C: "4 - 1 - 2 - 5 - 3",
+                    D: "3 - 5 - 2 - 4 - 1"
+                },
+                correct: "A",
+                explanation: "Kita diminta merangkai kalimat instruksi larangan. <br>• Kalimat larangan (*Negative Imperative*) diawali dengan kata kerja bantu negatif: **Do not (2)**. <br>• Diikuti kata kerja dasar: **touch (4)** (jangan sentuh). <br>• Objek yang disentuh: **the plug (1)** (colokan listrik). <br>• Keterangan cara: **with (5)** (dengan). <br>• Kata benda penjelas: **wet hands (3)** (tangan yang basah). <br>Jadi kalimat sempurnanya: *\"Do not touch the plug with wet hands.\"* (Urutan: 2-4-1-5-3)."
+            },
+            {
+                id: 17,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Mother:</strong> "__________ touch the hot pan! You will burn your hand."<br>
+                    <strong>Child:</strong> "Okay, Mom. I won't."
+                </div>`,
+                question: "Fill in the blank with the correct word!",
+                options: {
+                    A: "Do",
+                    B: "Don't",
+                    C: "Please",
+                    D: "You should"
+                },
+                correct: "B",
+                explanation: "Ibu melihat anaknya akan menyentuh panci panas (*hot pan*) dan memperingatkan: *\"You will burn your hand\"* (Tanganmu akan melepuh). <br>Oleh karena itu, bagian awal kalimat pastilah sebuah **larangan kuat**. Kata awalan yang tepat untuk melarang suatu tindakan (Jangan...!) adalah <strong>\"Don't\"</strong> (Don't touch!)."
+            },
+            {
+                id: 18,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Ahmad:</strong> "I think we should discuss our group project at the library this afternoon."<br>
+                    <strong>Budi:</strong> "__________ The library has a lot of reference books we can use."
+                </div>`,
+                question: "What is Budi's response to Ahmad's suggestion?",
+                options: {
+                    A: "I don't think so.",
+                    B: "That's a great idea.",
+                    C: "I disagree with you.",
+                    D: "I'm not sure about that."
+                },
+                correct: "B",
+                explanation: "Ahmad menyarankan (*giving suggestion*) agar mereka kerja kelompok di perpus. <br>Perhatikan kalimat lanjutan Budi: *\"The library has a lot of reference books...\"* (Perpus punya banyak buku referensi...). <br>Alasan Budi ini bersifat **mendukung/positif**. Berarti Budi setuju dengan saran Ahmad. Frasa persetujuan (*agreeing with a suggestion*) yang benar adalah <strong>\"That's a great idea.\"</strong> (Itu ide yang bagus)."
+            },
+            {
+                id: 19,
+                context: `<div class="bg-orange-50 p-4 rounded-lg border border-orange-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Dialogue 1:</strong><br>
+                    <strong>Child:</strong> "Can I watch TV, Mom?"<br>
+                    <strong>Mother:</strong> "Yes, but finish your homework first."<br><br>
+                    <strong>Dialogue 2:</strong><br>
+                    <strong>Employee:</strong> "Could I possibly leave the office an hour early today, Sir? I have a doctor's appointment."<br>
+                    <strong>Manager:</strong> "Yes, as long as you finish the report before you leave."
+                </div>`,
+                question: "Analyze the difference between the permission expressions used in Dialogue 1 and Dialogue 2!",
+                options: {
+                    A: "Dialogue 1 uses a more formal expression because it is between a mother and a child.",
+                    B: "Dialogue 2 uses a more formal and polite expression because of the professional relationship between the speakers.",
+                    C: "Dialogue 1 is more polite than Dialogue 2 because \"Can\" is more formal than \"Could\".",
+                    D: "Both dialogues use the exact same level of formality because they both ask for permission."
+                },
+                correct: "B",
+                explanation: "Soal Analisis Sosial Budaya Bahasa. <br>• Dalam Bahasa Inggris, penggunaan modal *\"Can I...\"* dianggap bentuk standar/kasual, cocok digunakan kepada teman atau keluarga (seperti di Dialog 1). <br>• Sedangkan *\"Could I...\"* atau *\"May I...\"* dianggap **lebih formal dan sangat sopan**. Cocok digunakan dalam konteks profesional, misalnya bawahan ke atasan (seperti di Dialog 2). <br>Maka kesimpulannya, Dialog 2 lebih formal (Opsi B)."
+            },
+            {
+                id: 20,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Situation:</strong><br>
+                    Santi has a bad cough. Her friend, Riko, suggests: "You should drink ice-cold water to soothe your throat."
+                </div>`,
+                question: "Evaluate Riko's suggestion!",
+                options: {
+                    A: "The suggestion is correct because cold water always cures a cough.",
+                    B: "The suggestion is logical because ice-cold water can reduce throat irritation.",
+                    C: "The suggestion is inappropriate because cold drinks can actually worsen a cough and irritate the throat.",
+                    D: "The suggestion is perfect because Santi does not need to see a doctor."
+                },
+                correct: "C",
+                explanation: "Santi menderita batuk parah (*bad cough*). Namun temannya menyarankan untuk minum air es dingin (*ice-cold water*). <br>Secara medis dan logika kesehatan dasar, memberikan saran minum es pada orang batuk adalah tindakan yang tidak tepat/salah. <br>Air dingin justru dapat merangsang batuk dan membuat iritasi tenggorokan menjadi lebih parah. Jadi, sarannya **tidak pantas (inappropriate) (Opsi C)**."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:p-7 relative group hover:border-blue-300 transition-colors duration-300">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                ${item.context ? item.context : ''}
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+                
+                // Render Options
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                // Explanation Container
+                htmlContent += `
+                                </div>
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                // Reset styling classes
+                expContainer.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'bg-rose-50', 'border-rose-500', 'text-rose-900', 'bg-amber-50', 'border-amber-500', 'text-amber-900');
+
+                if (!selected) {
+                    // Unanswered handling
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Kamu belum menjawab soal ini!";
+                    expText.innerHTML = `Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-1"><i class="fas fa-book-open mr-1"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                } else if (selected.value === item.correct) {
+                    // Correct answer
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Hebat! Jawaban Kamu Benar.";
+                    expText.innerHTML = item.explanation;
+                } else {
+                    // Incorrect answer
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat. Jawaban yang benar adalah ${item.correct}.`;
+                    expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-1"><i class="fas fa-book-open mr-1"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                }
+                
+                // Lock inputs
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            // Score Calculation
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Score Counter Animation
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Conditional Messaging based on Score
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Sempurna! Pemahamanmu tentang materi ini sangat luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Keren! Kamu sudah menguasai ungkapan Suggestion & Permission dengan baik.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Pelajari lagi pembahasan di atas untuk memperkuat konsepmu.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Terus Semangat! Yuk baca pelan-pelan pembahasannya dan coba lagi!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2";
+            }
+
+            // Buttons state toggling
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Scroll gently to result
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); // easeOut quad
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset Form Data
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable and reset questions UI
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false;
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+            });
+
+            // Hide Results Panel
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Toggle Action Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll to Top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize App
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

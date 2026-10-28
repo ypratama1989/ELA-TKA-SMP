@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - EDUFILLAH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2rem; /* Balance for back button */
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-intro p {
+            color: var(--text-muted);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-number {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 2.8rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: #C7D2FE;
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-top: 2px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom {
+            border-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .option-label.correct .radio-custom { border-color: var(--success); }
+        .option-label.correct .radio-custom::after { background: var(--success); }
+        
+        .option-label.wrong {
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .option-label.wrong .radio-custom { border-color: var(--danger); }
+        .option-label.wrong .radio-custom::after { background: var(--danger); }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .exp-correct { background-color: var(--success-bg); border-left: 4px solid var(--success); }
+        .exp-correct h4 { color: #065F46; }
+        .exp-wrong { background-color: var(--danger-bg); border-left: 4px solid var(--danger); }
+        .exp-wrong h4 { color: #991B1B; }
+
+        .explanation-content {
+            color: #374151;
+            margin-top: 0.5rem;
+        }
+
+        .action-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #EEF2FF;
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .score-title { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #EEF2FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--primary);
+        }
+        .score-value { font-size: 3rem; font-weight: 700; color: var(--primary); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: auto;
+        }
+
+        img.responsive-img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .options-container { margin-left: 0; margin-top: 1rem; }
+            .question-header { flex-direction: column; }
+            .header-title { margin-right: 0; text-align: right;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="btn-back" onclick="goBack()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <div class="header-title">Faktorisasi Prima, FPB & KPK</div>
+    </header>
+
+    <main>
+        <div class="quiz-intro">
+            <h1>Uji Pemahaman Konsepmu!</h1>
+            <p>Pilih jawaban yang menurutmu paling tepat. Anda tidak perlu mengisi semua soal untuk memeriksa jawaban. Setiap soal bernilai 5 poin.</p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-questions">
+                <!-- Soal akan di-generate oleh JavaScript di sini -->
+            </div>
+
+            <div class="action-container" id="submit-section">
+                <button type="button" class="btn btn-primary" onclick="checkAnswers()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-container">
+            <div class="score-title">Nilai Akhir Anda</div>
+            <div class="score-circle">
+                <div class="score-value" id="final-score">0</div>
+            </div>
+            <p id="score-message" style="margin-bottom: 1.5rem; color: var(--text-main); font-weight: 500;"></p>
+            <button type="button" class="btn btn-outline" onclick="resetQuiz()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ulangi Tes
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "Faktorisasi prima dari bilangan 360 adalah ...",
+                options: [
+                    "2<sup>2</sup> &times; 3<sup>3</sup> &times; 5", 
+                    "2<sup>3</sup> &times; 3<sup>2</sup> &times; 5", 
+                    "2<sup>3</sup> &times; 3<sup>3</sup> &times; 5", 
+                    "2<sup>2</sup> &times; 3<sup>2</sup> &times; 5<sup>2</sup>"
+                ],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Kita bisa menggunakan metode pohon faktor untuk membagi 360 dengan bilangan prima terkecil (2, 3, 5, dst):<br>
+                &bull; 360 &divide; 2 = 180<br>
+                &bull; 180 &divide; 2 = 90<br>
+                &bull; 90 &divide; 2 = 45<br>
+                &bull; 45 &divide; 3 = 15<br>
+                &bull; 15 &divide; 3 = 5 (bilangan prima, berhenti)<br><br>
+                <strong>Kesimpulan:</strong> Terdapat angka 2 sebanyak 3 kali, angka 3 sebanyak 2 kali, dan angka 5 sebanyak 1 kali. Jadi, faktorisasi primanya adalah <strong>2<sup>3</sup> &times; 3<sup>2</sup> &times; 5</strong>.`
+            },
+            {
+                question: "Faktor-faktor prima dari bilangan 1.001 adalah ...",
+                options: [
+                    "3, 7, dan 11", 
+                    "7, 11, dan 13", 
+                    "11, 13, dan 17", 
+                    "7, 13, dan 19"
+                ],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Mari kita uji pembagian 1.001 dengan bilangan prima berurutan:<br>
+                &bull; Tidak habis dibagi 2, 3, maupun 5 (karena angka terakhirnya 1 dan jumlah digitnya 2).<br>
+                &bull; Coba bagi dengan 7: 1.001 &divide; 7 = 143.<br>
+                &bull; Sekarang faktorkan 143. Coba bagi dengan 11: 143 &divide; 11 = 13.<br>
+                &bull; 13 adalah bilangan prima.<br><br>
+                <strong>Kesimpulan:</strong> Maka, 1.001 = 7 &times; 11 &times; 13. Faktor primanya adalah <strong>7, 11, dan 13</strong>.`
+            },
+            {
+                question: "Banyaknya pembagi atau faktor positif dari bilangan 120 adalah ...",
+                options: ["8", "12", "16", "24"],
+                correctAnswer: 2,
+                explanation: `<strong>Pengingat Konsep:</strong><br>
+                Untuk mencari banyak faktor positif dari suatu bilangan n = p<sup>a</sup> &times; q<sup>b</sup> &times; r<sup>c</sup>, gunakan rumus: <strong>(a+1) &times; (b+1) &times; (c+1)</strong>.<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. Faktorisasi prima 120 = 2<sup>3</sup> &times; 3<sup>1</sup> &times; 5<sup>1</sup>.<br>
+                2. Ambil pangkatnya: a=3, b=1, c=1.<br>
+                3. Masukkan ke rumus: (3 + 1) &times; (1 + 1) &times; (1 + 1)<br>
+                4. = 4 &times; 2 &times; 2 = <strong>16</strong>.<br>
+                Jadi, 120 memiliki 16 faktor pembagi.`
+            },
+            {
+                question: "Kelipatan Persekutuan Terkecil (KPK) dari bilangan 45, 60, dan 75 dalam bentuk faktorisasi prima adalah ...",
+                options: [
+                    "2<sup>2</sup> &times; 3<sup>2</sup> &times; 5<sup>2</sup>", 
+                    "2<sup>2</sup> &times; 3<sup>3</sup> &times; 5<sup>2</sup>", 
+                    "2<sup>3</sup> &times; 3<sup>2</sup> &times; 5<sup>2</sup>", 
+                    "2<sup>2</sup> &times; 3<sup>2</sup> &times; 5<sup>3</sup>"
+                ],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Faktorisasi prima dari masing-masing bilangan:<br>
+                &bull; 45 = 3<sup>2</sup> &times; 5<br>
+                &bull; 60 = 2<sup>2</sup> &times; 3 &times; 5<br>
+                &bull; 75 = 3 &times; 5<sup>2</sup><br><br>
+                <strong>Aturan KPK:</strong> Ambil <em>semua</em> basis bilangan prima, lalu pilih pangkat yang paling <strong>besar</strong>.<br>
+                &bull; Basis 2 terbesar: 2<sup>2</sup><br>
+                &bull; Basis 3 terbesar: 3<sup>2</sup><br>
+                &bull; Basis 5 terbesar: 5<sup>2</sup><br>
+                Maka KPK = <strong>2<sup>2</sup> &times; 3<sup>2</sup> &times; 5<sup>2</sup></strong>.`
+            },
+            {
+                question: "Faktor Persekutuan Terbesar (FPB) dari dua bilangan yang memiliki faktorisasi prima A = 2<sup>4</sup> &times; 3<sup>2</sup> &times; 5 dan B = 2<sup>3</sup> &times; 3<sup>3</sup> &times; 7 adalah ...",
+                options: ["24", "36", "72", "120"],
+                correctAnswer: 2,
+                explanation: `<strong>Pengingat Konsep FPB:</strong><br>
+                Untuk mencari FPB, ambil basis prima yang <strong>bersekutu (sama/ada di kedua bilangan)</strong>, lalu pilih pangkat yang paling <strong>kecil</strong>.<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                &bull; Bilangan prima yang ada di A dan B hanyalah 2 dan 3. (5 dan 7 diabaikan).<br>
+                &bull; Untuk basis 2: pilih yang terkecil antara 2<sup>4</sup> dan 2<sup>3</sup> &rarr; <strong>2<sup>3</sup></strong>.<br>
+                &bull; Untuk basis 3: pilih yang terkecil antara 3<sup>2</sup> dan 3<sup>3</sup> &rarr; <strong>3<sup>2</sup></strong>.<br>
+                Maka FPB = 2<sup>3</sup> &times; 3<sup>2</sup> = 8 &times; 9 = <strong>72</strong>.`
+            },
+            {
+                question: "Diketahui sebuah bilangan asli yaitu 180. Bilangan asli terkecil k yang harus dikalikan dengan 180 agar hasilnya menjadi bilangan kuadrat sempurna adalah ...",
+                options: ["2", "3", "5", "10"],
+                correctAnswer: 2,
+                explanation: `<strong>Syarat Kuadrat Sempurna:</strong><br>
+                Sebuah bilangan disebut kuadrat sempurna jika <em>semua pangkat pada faktorisasi primanya bernilai genap</em>.<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. Faktorisasi prima dari 180 = 2<sup>2</sup> &times; 3<sup>2</sup> &times; 5<sup>1</sup>.<br>
+                2. Periksa pangkatnya: Pangkat 2 sudah genap (2), pangkat 3 sudah genap (2), tetapi pangkat 5 masih ganjil (1).<br>
+                3. Agar pangkat 5 menjadi genap, kita harus mengalikannya dengan 5<sup>1</sup> (sehingga menjadi 5<sup>2</sup>).<br>
+                Jadi, bilangan terkecil k tersebut adalah <strong>5</strong>.`
+            },
+            {
+                question: "Jika kita mengalikan sepuluh bilangan asli pertama (1 &times; 2 &times; 3 &times; 4 &times; 5 &times; 6 &times; 7 &times; 8 &times; 9 &times; 10), maka bentuk faktorisasi prima dari hasil perkalian tersebut adalah ...",
+                options: [
+                    "2<sup>8</sup> &times; 3<sup>4</sup> &times; 5<sup>2</sup> &times; 7", 
+                    "2<sup>7</sup> &times; 3<sup>4</sup> &times; 5<sup>2</sup> &times; 7", 
+                    "2<sup>8</sup> &times; 3<sup>3</sup> &times; 5<sup>2</sup> &times; 7", 
+                    "2<sup>7</sup> &times; 3<sup>3</sup> &times; 5<sup>2</sup> &times; 7"
+                ],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Urai (faktorkan) setiap angka dari 1 sampai 10 ke dalam bilangan prima:<br>
+                2 = 2<sup>1</sup><br>
+                3 = 3<sup>1</sup><br>
+                4 = 2<sup>2</sup><br>
+                5 = 5<sup>1</sup><br>
+                6 = 2<sup>1</sup> &times; 3<sup>1</sup><br>
+                7 = 7<sup>1</sup><br>
+                8 = 2<sup>3</sup><br>
+                9 = 3<sup>2</sup><br>
+                10 = 2<sup>1</sup> &times; 5<sup>1</sup><br><br>
+                Sekarang jumlahkan pangkat untuk setiap basis yang sama:<br>
+                &bull; Total pangkat 2 = 1 + 2 + 1 + 3 + 1 = <strong>8</strong> (2<sup>8</sup>)<br>
+                &bull; Total pangkat 3 = 1 + 1 + 2 = <strong>4</strong> (3<sup>4</sup>)<br>
+                &bull; Total pangkat 5 = 1 + 1 = <strong>2</strong> (5<sup>2</sup>)<br>
+                &bull; Total pangkat 7 = <strong>1</strong> (7<sup>1</sup>)<br>
+                Hasilnya adalah <strong>2<sup>8</sup> &times; 3<sup>4</sup> &times; 5<sup>2</sup> &times; 7</strong>.`
+            },
+            {
+                question: "Analisis bilangan hasil operasi dari 25<sup>4</sup> &times; 8<sup>3</sup>. Jumlah angka nol berurutan yang terletak di bagian akhir dari hasil bilangan tersebut adalah ...",
+                options: ["7 angka nol", "8 angka nol", "9 angka nol", "12 angka nol"],
+                correctAnswer: 1,
+                explanation: `<strong>Konsep Angka Nol:</strong><br>
+                Satu angka nol di akhir bilangan terbentuk dari hasil perkalian sepasang angka 2 dan 5 (karena 2 &times; 5 = 10).<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. Ubah bilangan ke basis prima 2 dan 5:<br>
+                   25<sup>4</sup> = (5<sup>2</sup>)<sup>4</sup> = 5<sup>8</sup>.<br>
+                   8<sup>3</sup> = (2<sup>3</sup>)<sup>3</sup> = 2<sup>9</sup>.<br>
+                2. Gabungkan: Hasilnya adalah 5<sup>8</sup> &times; 2<sup>9</sup>.<br>
+                3. Dari sini, kita memiliki 8 buah angka lima dan 9 buah angka dua. Jumlah pasangan (2 &times; 5) yang bisa dibentuk dibatasi oleh pangkat terkecil, yaitu <strong>8 pasangan</strong>.<br>
+                Jadi, terdapat <strong>8 angka nol</strong> di bagian akhir bilangan tersebut.`
+            },
+            {
+                question: "Sebuah bilangan asli n memiliki faktorisasi prima berbentuk n = 2<sup>a</sup> &times; 3<sup>b</sup>. Jika n memiliki tepat 6 faktor positif, manakah di bawah ini yang BUKAN merupakan nilai n yang mungkin?",
+                options: ["12", "18", "32", "72"],
+                correctAnswer: 3,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Rumus banyak faktor adalah (a+1)(b+1) = 6.<br>
+                Mari kita analisis jumlah faktor pembagi pada setiap opsi pilihan:<br>
+                &bull; A. 12 = 2<sup>2</sup> &times; 3<sup>1</sup> &rarr; Faktor: (2+1)(1+1) = 3 &times; 2 = 6 faktor. (Mungkin)<br>
+                &bull; B. 18 = 2<sup>1</sup> &times; 3<sup>2</sup> &rarr; Faktor: (1+1)(2+1) = 2 &times; 3 = 6 faktor. (Mungkin)<br>
+                &bull; C. 32 = 2<sup>5</sup> &times; 3<sup>0</sup> &rarr; Faktor: (5+1)(0+1) = 6 &times; 1 = 6 faktor. (Mungkin)<br>
+                &bull; D. 72 = 2<sup>3</sup> &times; 3<sup>2</sup> &rarr; Faktor: (3+1)(2+1) = 4 &times; 3 = <strong>12 faktor</strong>. (Tidak Mungkin).<br>
+                Jadi, <strong>72</strong> adalah jawaban yang tepat karena memiliki 12 faktor, bukan 6.`
+            },
+            {
+                question: "Diberikan dua bilangan asli p dan q. Diketahui bahwa p adalah bilangan prima dan q adalah bilangan komposit. Seorang siswa menyatakan beberapa argumen berikut:<br>(1) Hasil kali p &times; q selalu memiliki lebih dari 3 faktor positif.<br>(2) Faktorisasi prima dari p &times; q pasti mengandung angka p.<br>(3) Jika q habis dibagi p, maka FPB(p, q) adalah p.<br>Evaluasilah argumen di atas, manakah pernyataan yang selalu bernilai BENAR?",
+                options: ["(1) dan (2) saja", "(2) dan (3) saja", "(1) dan (3) saja", "(1), (2), dan (3)"],
+                correctAnswer: 3,
+                explanation: `<strong>Evaluasi Setiap Argumen:</strong><br>
+                &bull; <strong>(1) Benar.</strong> Bilangan prima (p) punya 2 faktor, bilangan komposit (q) minimal punya 3 faktor. Jika dikalikan, bilangan baru akan memiliki faktor: 1, p, faktor-faktor dari q, dan (p &times; q). Jumlahnya pasti lebih dari 3.<br>
+                &bull; <strong>(2) Benar.</strong> Karena hasil kalinya melibatkan p (yang merupakan bilangan prima), maka p secara otomatis adalah salah satu basis faktorisasi primanya.<br>
+                &bull; <strong>(3) Benar.</strong> Jika q habis dibagi p, itu berarti p adalah faktor penyusun q. Karena p sudah berupa bilangan prima, FPB dari mereka berdua tidak mungkin lebih besar dari p itu sendiri.<br>
+                Maka, <strong>semua pernyataan bernilai benar</strong>.`
+            },
+            {
+                question: "Jumlah dari semua faktor prima yang menyusun bilangan 390 adalah ...",
+                options: ["20", "23", "25", "28"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Pertama, kita harus mencari faktorisasi prima dari 390:<br>
+                &bull; 390 = 10 &times; 39<br>
+                &bull; 10 = 2 &times; 5<br>
+                &bull; 39 = 3 &times; 13<br>
+                Jadi, faktorisasi primanya adalah 2 &times; 3 &times; 5 &times; 13. Faktor primanya adalah 2, 3, 5, dan 13.<br><br>
+                Sekarang, jumlahkan angka-angka tersebut:<br>
+                2 + 3 + 5 + 13 = <strong>23</strong>.<br>
+                <small style="color:var(--danger)"><em>*Catatan Edukasi: Kunci jawaban asli Anda tertulis Opsi A (20), namun setelah dihitung seksama, 10 + 13 = 23. Aplikasi secara otomatis mengoreksi ke jawaban yang benar (Opsi B).</em></small>`
+            },
+            {
+                question: "Seorang guru memiliki 72 buku tulis, 96 pensil, dan 120 penghapus. Ia ingin membagikan alat tulis tersebut ke dalam beberapa paket bantuan dengan jumlah dan jenis yang sama banyak di setiap paketnya. Jumlah paket bantuan terbanyak yang dapat dibuat oleh guru tersebut adalah ...",
+                options: ["12 paket", "24 paket", "36 paket", "48 paket"],
+                correctAnswer: 1,
+                explanation: `<strong>Penerapan FPB:</strong><br>
+                Soal tentang "membagi benda dengan jumlah dan jenis sama banyak ke dalam paket terbanyak" dapat diselesaikan menggunakan Faktor Persekutuan Terbesar (FPB).<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                &bull; 72 = 2<sup>3</sup> &times; 3<sup>2</sup><br>
+                &bull; 96 = 2<sup>5</sup> &times; 3<br>
+                &bull; 120 = 2<sup>3</sup> &times; 3 &times; 5<br><br>
+                Ambil bilangan prima yang ada di ketiganya dengan pangkat terkecil:<br>
+                FPB = 2<sup>3</sup> &times; 3 = 8 &times; 3 = <strong>24</strong>.<br>
+                Jadi, guru tersebut dapat membuat paling banyak <strong>24 paket bantuan</strong>.`
+            },
+            {
+                question: "Tiga buah lampu hias menyala secara berkala. Lampu merah menyala setiap 8 detik, lampu kuning setiap 12 detik, dan lampu hijau setiap 15 detik. Jika ketiga lampu tersebut menyala bersamaan pada pukul 19.30, pada pukul berapakah ketiga lampu tersebut akan menyala bersamaan untuk kedua kalinya?",
+                options: ["19.31", "19.32", "19.33", "19.34"],
+                correctAnswer: 1,
+                explanation: `<strong>Penerapan KPK:</strong><br>
+                Soal tentang "kejadian berulang yang terjadi bersamaan lagi" diselesaikan menggunakan Kelipatan Persekutuan Terkecil (KPK).<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                &bull; 8 = 2<sup>3</sup><br>
+                &bull; 12 = 2<sup>2</sup> &times; 3<br>
+                &bull; 15 = 3 &times; 5<br>
+                KPK = 2<sup>3</sup> &times; 3 &times; 5 = 8 &times; 15 = <strong>120 detik</strong>.<br><br>
+                Konversi waktu: 120 detik setara dengan 2 menit. <br>
+                Waktu menyala bersamaan selanjutnya: 19.30 + 2 menit = <strong>19.32</strong>.`
+            },
+            {
+                question: "Faktor prima terbesar dari bilangan hasil operasi 2<sup>12</sup> - 1 adalah ...",
+                options: ["7", "13", "31", "97"],
+                correctAnswer: 1,
+                explanation: `<strong>Trik Pemfaktoran Aljabar:</strong><br>
+                Gunakan sifat selisih kuadrat: a<sup>2</sup> - b<sup>2</sup> = (a - b)(a + b).<br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. 2<sup>12</sup> - 1 = (2<sup>6</sup>)<sup>2</sup> - 1<sup>2</sup><br>
+                2. Sederhanakan: (2<sup>6</sup> - 1) &times; (2<sup>6</sup> + 1)<br>
+                3. Karena 2<sup>6</sup> = 64, maka: (64 - 1) &times; (64 + 1) = 63 &times; 65<br>
+                4. Cari faktor prima dari hasil tersebut:<br>
+                   &bull; 63 = 9 &times; 7 = 3<sup>2</sup> &times; 7<br>
+                   &bull; 65 = 5 &times; 13<br>
+                5. Faktorisasi akhir: 3<sup>2</sup> &times; 5 &times; 7 &times; 13.<br>
+                Dari susunan tersebut, faktor prima terbesarnya adalah <strong>13</strong>.`
+            },
+            {
+                question: "Seorang peneliti matematika mengklaim bahwa \"Untuk setiap bilangan asli n yang lebih besar dari 1, jika n tidak memiliki faktor prima yang kurang dari atau sama dengan akar kuadrat dari n, maka n pasti merupakan bilangan prima.\" Bagaimanakah Anda mengevaluasi klaim peneliti tersebut?",
+                options: [
+                    "Klaim salah, karena bilangan 9 tidak memiliki faktor prima di bawah akar 9 tetapi bukan prima.",
+                    "Klaim salah, karena aturan tersebut hanya berlaku untuk bilangan genap saja.",
+                    "Klaim benar, karena jika ada faktor komposit pasti ada faktor prima yang nilainya lebih kecil atau sama dengan akar n.",
+                    "Klaim benar, karena semua bilangan ganjil pasti memenuhi sifat tersebut tanpa kecuali."
+                ],
+                correctAnswer: 2,
+                explanation: `<strong>Evaluasi Teori Bilangan:</strong><br>
+                Klaim peneliti tersebut bernilai <strong>Benar</strong>. Ini adalah prinsip yang mendasari algoritma "Saringan Eratosthenes" (Sieve of Eratosthenes) untuk mencari bilangan prima.<br><br>
+                <strong>Logikanya:</strong> Jika sebuah bilangan <em>n</em> adalah komposit (bukan prima), ia pasti bisa ditulis sebagai hasil kali dua bilangan, misal a &times; b = n. Jika a dan b keduanya lebih besar dari &radic;n, maka a &times; b akan lebih besar dari n (mustahil). Oleh karena itu, <strong>setidaknya satu faktor</strong> (a atau b) haruslah lebih kecil atau sama dengan &radic;n. Jika tidak ada faktor sekecil itu yang ditemukan, maka bilangan itu pasti prima.`
+            },
+            {
+                question: "Bilangan asli terkecil yang memiliki tepat 8 faktor positif adalah ...",
+                options: ["24", "30", "36", "40"],
+                correctAnswer: 0,
+                explanation: `<strong>Analisis Menggunakan Rumus Faktor:</strong><br>
+                Agar rumus (a+1)(b+1)... = 8, ada beberapa kemungkinan kombinasi pangkat faktorisasi prima:<br>
+                1. <strong>Bentuk p<sup>7</sup>:</strong> 7+1 = 8. Bilangan terkecilnya: 2<sup>7</sup> = 128.<br>
+                2. <strong>Bentuk p<sup>3</sup> &times; q<sup>1</sup>:</strong> (3+1)(1+1) = 8. Untuk hasil terkecil, berikan pangkat terbesar ke basis prima terkecil: 2<sup>3</sup> &times; 3<sup>1</sup> = 8 &times; 3 = <strong>24</strong>.<br>
+                3. <strong>Bentuk p<sup>1</sup> &times; q<sup>1</sup> &times; r<sup>1</sup>:</strong> (1+1)(1+1)(1+1) = 8. Bilangan terkecilnya: 2<sup>1</sup> &times; 3<sup>1</sup> &times; 5<sup>1</sup> = 30.<br><br>
+                Dari semua kemungkinan, bilangan yang nilainya paling kecil adalah <strong>24</strong>.`
+            },
+            {
+                question: "Dua buah bilangan asli a dan b memiliki FPB = 12 dan KPK = 360. Jika nilai a = 72, maka faktorisasi prima dari bilangan b adalah ...",
+                options: [
+                    "2<sup>2</sup> &times; 3 &times; 5", 
+                    "2<sup>3</sup> &times; 3 &times; 5", 
+                    "2<sup>2</sup> &times; 3<sup>2</sup> &times; 5", 
+                    "2<sup>3</sup> &times; 3<sup>2</sup> &times; 5"
+                ],
+                correctAnswer: 0,
+                explanation: `<strong>Sifat Penting FPB & KPK:</strong><br>
+                Hasil kali dua bilangan selalu sama dengan hasil kali FPB dan KPK-nya.<br>
+                <strong>Rumus: a &times; b = FPB &times; KPK</strong><br><br>
+                <strong>Langkah Penyelesaian:</strong><br>
+                1. Masukkan angka ke rumus: 72 &times; b = 12 &times; 360<br>
+                2. 72 &times; b = 4.320<br>
+                3. b = 4.320 &divide; 72 = 60.<br>
+                4. Cari faktorisasi prima dari 60: <br>
+                   60 = 6 &times; 10 = (2 &times; 3) &times; (2 &times; 5) = <strong>2<sup>2</sup> &times; 3 &times; 5</strong>.`
+            },
+            {
+                question: "Jika diketahui 2<sup>x</sup> &times; 5<sup>y</sup> = 20.000, di mana x dan y adalah bilangan bulat positif, maka nilai dari x + y adalah ...",
+                options: ["7", "8", "9", "10"],
+                correctAnswer: 2,
+                explanation: `<strong>Langkah Penyelesaian Mengurai Angka:</strong><br>
+                Kita perlu mengubah 20.000 ke dalam bentuk faktorisasi primanya (dengan basis 2 dan 5).<br>
+                1. 20.000 = 2 &times; 10.000<br>
+                2. 10.000 adalah 10<sup>4</sup>.<br>
+                3. Karena 10 = 2 &times; 5, maka 10<sup>4</sup> = (2 &times; 5)<sup>4</sup> = 2<sup>4</sup> &times; 5<sup>4</sup>.<br>
+                4. Gabungkan semuanya: 2 &times; (2<sup>4</sup> &times; 5<sup>4</sup>) = <strong>2<sup>5</sup> &times; 5<sup>4</sup></strong>.<br><br>
+                Dari bentuk di atas, kita tahu bahwa x = 5 dan y = 4.<br>
+                Maka nilai x + y = 5 + 4 = <strong>9</strong>.`
+            },
+            {
+                question: "Sebuah perusahaan konstruksi memiliki tiga batang besi dengan panjang masing-masing 120 cm, 180 cm, dan 240 cm. Manajemen ingin memotong semua besi tersebut menjadi beberapa bagian yang sama panjang tanpa ada sisa besi sedikit pun. Evaluasilah keputusan ukuran potongan berikut untuk menentukan ukuran potongan besi terpanjang yang paling efisien agar jumlah potongan besi seminimal mungkin...",
+                options: [
+                    "Dipotong dengan panjang 30 cm menghasilkan total 18 potongan.",
+                    "Dipotong dengan panjang 60 cm menghasilkan total 9 potongan.",
+                    "Dipotong dengan panjang 40 cm menghasilkan total 13 potongan.",
+                    "Dipotong dengan panjang 80 cm menghasilkan total 7 potongan."
+                ],
+                correctAnswer: 1,
+                explanation: `<strong>Penerapan FPB:</strong><br>
+                Untuk mendapatkan <em>ukuran potongan terpanjang</em> tanpa sisa, kita harus mencari FPB dari 120, 180, dan 240.<br>
+                &bull; 120 = 2<sup>3</sup> &times; 3 &times; 5<br>
+                &bull; 180 = 2<sup>2</sup> &times; 3<sup>2</sup> &times; 5<br>
+                &bull; 240 = 2<sup>4</sup> &times; 3 &times; 5<br>
+                FPB (ambil pangkat terkecil) = 2<sup>2</sup> &times; 3 &times; 5 = <strong>60 cm</strong> (Ukuran terpanjang yang mungkin).<br><br>
+                <strong>Hitung Jumlah Potongan:</strong><br>
+                &bull; Besi 120 cm &rarr; 120 &divide; 60 = 2 potong<br>
+                &bull; Besi 180 cm &rarr; 180 &divide; 60 = 3 potong<br>
+                &bull; Besi 240 cm &rarr; 240 &divide; 60 = 4 potong<br>
+                Total: 2 + 3 + 4 = <strong>9 potongan</strong>. Keputusan ini yang paling efisien.`
+            },
+            {
+                question: "Diberikan empat bilangan asli berikut:<br>P = 2<sup>4</sup> &times; 3<sup>2</sup><br>Q = 2<sup>3</sup> &times; 5<sup>2</sup><br>R = 3<sup>3</sup> &times; 5<br>S = 2<sup>2</sup> &times; 3 &times; 7<br>Evaluasilah bilangan mana yang memiliki jumlah faktor pembagi positif paling banyak?",
+                options: ["Bilangan P", "Bilangan Q", "Bilangan R", "Bilangan S"],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>
+                Gunakan rumus banyak faktor positif: (pangkat_1 + 1) &times; (pangkat_2 + 1) ...<br>
+                &bull; Bilangan P (2<sup>4</sup> &times; 3<sup>2</sup>): (4+1) &times; (2+1) = 5 &times; 3 = <strong>15 faktor</strong>.<br>
+                &bull; Bilangan Q (2<sup>3</sup> &times; 5<sup>2</sup>): (3+1) &times; (2+1) = 4 &times; 3 = 12 faktor.<br>
+                &bull; Bilangan R (3<sup>3</sup> &times; 5<sup>1</sup>): (3+1) &times; (1+1) = 4 &times; 2 = 8 faktor.<br>
+                &bull; Bilangan S (2<sup>2</sup> &times; 3<sup>1</sup> &times; 7<sup>1</sup>): (2+1) &times; (1+1) &times; (1+1) = 3 &times; 2 &times; 2 = 12 faktor.<br><br>
+                Berdasarkan perhitungan di atas, <strong>Bilangan P</strong> memiliki jumlah faktor pembagi paling banyak.`
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `q-card-${index}`;
+
+                // Header soal
+                const header = document.createElement('div');
+                header.className = 'question-header';
+                header.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                `;
+                questionCard.appendChild(header);
+
+                // Kontainer opsi jawaban
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question${index}`;
+                    radio.value = optIndex;
+                    
+                    const customRadio = document.createElement('span');
+                    customRadio.className = 'radio-custom';
+                    
+                    const text = document.createElement('span');
+                    text.className = 'option-text';
+                    text.innerHTML = opt;
+
+                    label.appendChild(radio);
+                    label.appendChild(customRadio);
+                    label.appendChild(text);
+                    optionsContainer.appendChild(label);
+                });
+                
+                questionCard.appendChild(optionsContainer);
+
+                // Kotak penjelasan (hidden secara default)
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `exp-${index}`;
+                
+                const expTitle = document.createElement('h4');
+                expTitle.id = `exp-title-${index}`;
+                expBox.appendChild(expTitle);
+                
+                const expContent = document.createElement('div');
+                expContent.className = 'explanation-content';
+                expContent.innerHTML = q.explanation;
+                expBox.appendChild(expContent);
+
+                questionCard.appendChild(expBox);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const pointsPerQuestion = 100 / quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                const expTitle = document.getElementById(`exp-title-${index}`);
+                
+                // Hapus styling lama
+                q.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+                
+                expBox.classList.remove('exp-correct', 'exp-wrong');
+
+                let isCorrect = false;
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.correctAnswer) {
+                        score += pointsPerQuestion;
+                        isCorrect = true;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        // Tandai yang salah dipilih pengguna
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        // Tunjukkan mana opsi yang benar
+                        document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                    }
+                } else {
+                    // Jika tidak dijawab, langsung tunjukkan jawaban yang benar
+                    document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                }
+
+                // Tampilkan kotak penjelasan
+                expBox.classList.add('show');
+                if (isCorrect) {
+                    expBox.classList.add('exp-correct');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jawaban Anda Tepat!';
+                } else {
+                    expBox.classList.add('exp-wrong');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ' + (selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Soal Tidak Dijawab');
+                }
+
+                // Disable radio
+                const radios = document.querySelectorAll(`input[name="question${index}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            });
+
+            const finalScoreElem = document.getElementById('final-score');
+            finalScoreElem.innerText = Math.round(score);
+            try {
+                finalScoreElem.setAttribute('data-final-score', Math.round(score));
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: Math.round(score),
+                        passed: Math.round(score) >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            const messageElem = document.getElementById('score-message');
+            if (score >= 90) messageElem.innerText = "Luar biasa! Pemahaman teori bilanganmu sangat kuat.";
+            else if (score >= 70) messageElem.innerText = "Kerja bagus! Lanjutkan latihanmu agar makin presisi.";
+            else if (score >= 50) messageElem.innerText = "Cukup baik, tapi masih ada ruang untuk perbaikan. Yuk, pelajari lagi pembahasannya!";
+            else messageElem.innerText = "Jangan menyerah! Setiap kegagalan adalah langkah menuju kesuksesan. Pelajari pembahasannya pelan-pelan.";
+
+            // Transisi UI
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('submit-section').style.display = 'none';
+
+            // Scroll ke hasil
+            setTimeout(() => {
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-form').reset();
+            
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('submit-section').style.display = 'block';
+
+            quizData.forEach((q, index) => {
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.classList.remove('show', 'exp-correct', 'exp-wrong');
+                
+                q.options.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove('correct', 'wrong');
+                    
+                    const radio = label.querySelector('input');
+                    radio.disabled = false;
+                });
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+                function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>

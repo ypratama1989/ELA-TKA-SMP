@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Literasi Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Kustomisasi input radio agar bisa disembunyikan tapi bisa distyle labelnya */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Transisi kotak penjelasan */
+        .explanation-box {
+            transition: all 0.3s ease-in-out;
+            max-height: 2000px; /* Cukup besar untuk konten */
+            overflow: hidden;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Gaya khusus untuk kotak kutipan teks (soal cerita) */
+        .quote-box {
+            border-left: 4px solid #64748b; /* slate-500 */
+            background-color: #f8fafc; /* slate-50 */
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+            font-style: italic;
+            color: #334155;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 text-center flex-1">Latihan Soal Literasi Teks</h1>
+            <div class="w-24"></div> <!-- Spacer untuk menyeimbangkan posisi judul -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Selamat Mengerjakan! &#x1F4DD;</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    Baca kutipan teks dengan teliti sebelum menjawab. Pilihlah jawaban yang paling tepat. 
+                    Kamu bisa langsung memeriksa jawabanmu meski belum semua soal terisi. Soal yang terlewat akan dianggap salah.
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Soal-soal akan di-generate oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-slate-200 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Area Hasil (Tersembunyi secara default) -->
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban yang terverifikasi, dan Pembahasan yang diperkaya
+        const quizData = [
+            {
+                text: "Teks berikut untuk menjawab soal nomor 1 dan 2.<div class='quote-box'>\"Pemerintah daerah Kabupaten Sleman resmi meluncurkan program <em>Sleman Smart Regency</em> pada awal tahun ini. Program ini bertujuan untuk meningkatkan kualitas pelayanan publik berbasis teknologi digital. Salah satu inovasi unggulannya adalah aplikasi <em>Sleman Mobile</em> yang mengintegrasikan layanan administrasi kependudukan, pengaduan warga, hingga informasi pariwisata. Berdasarkan data Dinas Komunikasi dan Informatika, dalam tiga bulan pertama sejak diluncurkan, aplikasi ini telah diunduh oleh lebih dari 50.000 pengguna aktif.\"</div>Berdasarkan teks tersebut, informasi tersurat mengenai tujuan utama diluncurkannya program \"Sleman Smart Regency\" adalah...",
+                options: [
+                    "Mengunduh aplikasi <em>Sleman Mobile</em> hingga mencapai 50.000 pengguna aktif.",
+                    "Meningkatkan kualitas pelayanan publik dengan basis teknologi digital.",
+                    "Mengintegrasikan seluruh layanan administrasi kependudukan di Indonesia.",
+                    "Membantu Dinas Komunikasi dan Informatika dalam mengumpulkan data warga."
+                ],
+                answer: 1, // B
+                explanation: "Adik-adik, kalau kita mencari 'tujuan utama' di dalam teks, carilah kata kunci penanda tujuan, seperti kata <em>'bertujuan'</em> atau <em>'untuk'</em>. Pada teks tersebut, langsung tertulis dengan sangat jelas di kalimat kedua: <strong>\"Program ini bertujuan untuk meningkatkan kualitas pelayanan publik berbasis teknologi digital.\"</strong> Pilihan B sangat akurat karena menyalin langsung informasi tersurat tersebut!"
+            },
+            {
+                text: "Evaluasilah pernyataan berikut! Manakah pernyataan yang paling akurat dan sesuai dengan data kuantitatif yang tersurat dalam teks di atas (Sleman Smart Regency)?",
+                options: [
+                    "Aplikasi <em>Sleman Mobile</em> diunduh oleh 50.000 pengguna setiap bulannya.",
+                    "Program \"Sleman Smart Regency\" membutuhkan waktu tiga bulan untuk diluncurkan.",
+                    "Jumlah pengunduh aktif aplikasi <em>Sleman Mobile</em> mencapai lebih dari 50.000 dalam triwulan pertama.",
+                    "Dinas Komunikasi dan Informatika menargetkan 50.000 pengunduh pada awal peluncuran."
+                ],
+                answer: 2, // C
+                explanation: "Coba perhatikan datanya baik-baik! Teks menyebutkan <strong>\"dalam tiga bulan pertama\"</strong>, yang dalam bahasa Indonesia sering disinonimkan dengan istilah <strong>\"triwulan pertama\"</strong> (tri = tiga). Jumlah unduhannya juga disebut <strong>\"lebih dari 50.000\"</strong>. Jadi, pilihan C adalah kalimat yang paling tepat untuk merangkum angka-angka kuantitatif tersebut."
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 3 dan 4.<div class='quote-box'>\"Terumbu karang di perairan Raja Ampat dikenal sebagai salah satu yang paling kaya akan keanekaragaman hayati di dunia. Namun, aktivitas penangkapan ikan menggunakan bahan peledak dan racun sianida telah merusak sekitar 15% area terumbu karang dalam kurun waktu lima tahun terakhir. Untuk mengatasi hal ini, komunitas lokal bersama organisasi lingkungan nirlaba mendirikan kawasan konservasi laut daerah (KKLD) yang melarang segala bentuk penangkapan ikan destruktif. Upaya ini berhasil memulihkan sekitar 5% terumbu karang yang rusak dalam waktu dua tahun.\"</div>Mengapa komunitas lokal dan organisasi lingkungan mendirikan kawasan konservasi laut daerah (KKLD)?",
+                options: [
+                    "Karena terumbu karang di Raja Ampat adalah yang paling indah di dunia.",
+                    "Untuk melarang segala bentuk penangkapan ikan destruktif yang merusak terumbu karang.",
+                    "Untuk meningkatkan persentase kerusakan terumbu karang hingga 15% dalam lima tahun.",
+                    "Karena ingin memulihkan seluruh terumbu karang yang rusak dalam waktu singkat."
+                ],
+                answer: 1, // B
+                explanation: "Untuk tahu alasannya, kita bisa mencari kalimat yang menjelaskan langkah penanganan. Di teks ada kalimat: <em>\"Untuk mengatasi hal ini, komunitas lokal... mendirikan kawasan... yang melarang segala bentuk penangkapan ikan destruktif.\"</em> Artinya, tujuan utama pendirian KKLD itu jelas untuk menghentikan cara-cara menangkap ikan yang merusak lingkungan (destruktif)."
+            },
+            {
+                text: "Jika kita mengevaluasi efektivitas program KKLD berdasarkan data yang tersurat pada teks (soal nomor 3), kesimpulan mana yang paling valid?",
+                options: [
+                    "Program KKLD gagal total karena kerusakan terumbu karang masih terus berlangsung setiap tahun.",
+                    "Program KKLD sangat efektif karena berhasil memulihkan seluruh kerusakan (15%) hanya dalam dua tahun.",
+                    "Program KKLD menunjukkan hasil positif dengan memulihkan sepertiga dari total kerusakan (5% dari 15% yang rusak) dalam waktu dua tahun.",
+                    "Program KKLD tidak memiliki pengaruh apa pun terhadap kelestarian terumbu karang di Raja Ampat."
+                ],
+                answer: 2, // C
+                explanation: "Yuk kita hitung matematika sederhananya! Kerusakannya adalah <strong>15%</strong>, lalu yang berhasil pulih ada <strong>5%</strong>. Jika kita bandingkan, 5% itu adalah <strong>sepertiga (1/3) dari 15%</strong> (karena 5 &times; 3 = 15). Jadi, kesimpulan yang sangat objektif dan berdasarkan data adalah program ini berhasil memulihkan sepertiga dari total kerusakan. Pilihan C adalah evaluasi yang paling cerdas!"
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 5 dan 6.<div class='quote-box'><strong>Langkah-Langkah Pembuatan Kompos Sederhana:</strong><br>1) Siapkan wadah berupa ember besar yang telah diberi lubang kecil di bagian bawahnya untuk sirkulasi udara.<br>2) Masukkan sampah organik (sisa sayuran, kulit buah) setebal 10 cm sebagai lapisan pertama.<br>3) Taburkan tanah kering setebal 2 cm di atas lapisan sampah organik tersebut untuk mempercepat pembusukan.<br>4) Siram dengan sedikit air agar kondisi media tetap lembap, tetapi jangan terlalu basah.<br>5) Ulangi proses pelapisan ini hingga wadah penuh, lalu tutup rapat wadah tersebut.</div>Berdasarkan petunjuk langkah kerja di atas, fungsi dari pemberian lubang kecil di bagian bawah ember adalah...",
+                options: [
+                    "Menjadi tempat keluarnya air siraman agar media tidak terlalu basah.",
+                    "Memudahkan pengguna memasukkan sampah organik ke dalam ember.",
+                    "Menjaga sirkulasi udara di dalam wadah pembuatan kompos.",
+                    "Mempercepat proses penaburan tanah kering setebal 2 cm."
+                ],
+                answer: 2, // C
+                explanation: "Baca baik-baik langkah nomor 1! Di sana tersurat dengan sangat jelas: <em>\"...ember besar yang telah diberi lubang kecil di bagian bawahnya <strong>untuk sirkulasi udara</strong>.\"</em> Udara sangat dibutuhkan oleh mikroba pengurai supaya sampah organiknya bisa membusuk dengan baik dan tidak menimbulkan bau menyengat."
+            },
+            {
+                text: "Evaluasilah tindakan berikut! Jika seseorang membuat kompos tetapi melewatkan langkah nomor 3 (tidak menaburkan tanah kering), dampak langsung apa yang tersurat/tersirat secara logis dari teks mengenai fungsi tanah tersebut?",
+                options: [
+                    "Wadah ember akan kekurangan sirkulasi udara di bagian bawahnya.",
+                    "Proses pembusukan sampah organik menjadi lambat atau terhambat.",
+                    "Sampah organik akan menjadi terlalu basah dan membusuk dengan cepat.",
+                    "Lapisan sampah organik tidak dapat mencapai ketebalan 10 cm."
+                ],
+                answer: 1, // B
+                explanation: "Fungsi menaburkan tanah kering di langkah ke-3 dijelaskan <em>\"untuk mempercepat pembusukan\"</em>. Nah, secara logika sebab-akibat, kalau kamu tidak memasukkan tanah kering yang fungsinya sebagai pemercepat itu, maka proses pembusukannya pasti akan menjadi sebaliknya, yaitu <strong>lebih lambat atau terhambat</strong>."
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 7 dan 8.<div class='quote-box'>\"Penggunaan gawai pada anak usia dini kini menjadi perhatian serius. Penelitian terbaru menunjukkan bahwa anak yang menggunakan gawai lebih dari dua jam sehari memiliki risiko keterlambatan bicara (<em>speech delay</em>) sebesar 40% lebih tinggi dibandingkan anak yang membatasi penggunaannya di bawah satu jam. Selain itu, paparan layar gawai sebelum tidur dapat mengganggu produksi hormon melatonin, yang berfungsi mengatur siklus tidur anak. Akibatnya, anak sering mengalami gangguan tidur dan menjadi rewel di siang hari.\"</div>Berdasarkan teks di atas, apa penyebab langsung terganggunya produksi hormon melatonin pada anak?",
+                options: [
+                    "Penggunaan gawai yang melebihi batas waktu dua jam sehari.",
+                    "Paparan layar gawai yang terjadi sebelum waktu tidur anak.",
+                    "Risiko keterlambatan bicara (<em>speech delay</em>) yang mencapai 40%.",
+                    "Kondisi emosional anak yang menjadi rewel pada siang hari."
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita cari kata kunci <strong>\"hormon melatonin\"</strong> di dalam teks. Di sana tertulis: <em>\"...paparan layar gawai sebelum tidur dapat mengganggu produksi hormon melatonin...\"</em> Berarti, penyebab utamanya secara langsung adalah cahaya dari layar gawai yang ditatap oleh anak tepat sebelum jam tidurnya."
+            },
+            {
+                text: "Evaluasilah klaim berikut: <em>\"Membatasi penggunaan gawai di bawah satu jam sehari sama sekali tidak memberikan manfaat bagi kesehatan anak.\"</em> Apakah klaim ini didukung oleh informasi tersurat dalam teks (soal nomor 7)?",
+                options: [
+                    "Ya, karena teks menyatakan bahwa semua anak yang menggunakan gawai pasti mengalami keterlambatan bicara.",
+                    "Tidak, karena teks secara tersurat menyatakan bahwa membatasi gawai di bawah satu jam dapat menurunkan risiko keterlambatan bicara hingga 40%.",
+                    "Ya, karena teks hanya fokus membahas dampak buruk hormon melatonin tanpa memberikan solusi konkret.",
+                    "Tidak, karena teks membuktikan bahwa gawai hanya boleh digunakan pada siang hari saja tanpa batasan waktu."
+                ],
+                answer: 1, // B
+                explanation: "Klaim di soal menyatakan 'sama sekali tidak memberikan manfaat'. Padahal, kalau kita baca teksnya, tertulis bahwa anak yang membatasi gawai <strong>di bawah satu jam</strong> punya risiko <em>speech delay</em> yang jauh lebih rendah (risikonya lebih kecil 40% dibanding yang main di atas 2 jam). Artinya, klaim tersebut salah total (Tidak). Membatasi waktu main gawai justru sangat bermanfaat bagi tumbuh kembang anak!"
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 9 dan 10.<div class='quote-box'>\"Transportasi massal MRT Jakarta koridor Bundaran HI - Lebak Bulus mencatatkan ketepatan waktu perjalanan (<em>on-time performance</em>) sebesar 99,8% sepanjang tahun lalu. Keberhasilan ini dicapai berkat penerapan sistem persinyalan otomatis berbasis komunikasi (CBTC) yang dikendalikan dari pusat kontrol operasi. Meskipun demikian, kendala teknis kecil berupa gangguan pintu kereta sempat terjadi sebanyak tiga kali, yang menyebabkan keterlambatan rata-rata 5 menit pada jam sibuk pagi hari.\"</div>Informasi tersurat yang menjadi faktor utama di balik tingginya ketepatan waktu perjalanan MRT Jakarta adalah...",
+                options: [
+                    "Pengendalian manual oleh masinis berpengalaman di setiap stasiun.",
+                    "Adanya gangguan pintu kereta yang hanya terjadi tiga kali setahun.",
+                    "Penerapan sistem persinyalan otomatis berbasis komunikasi (CBTC).",
+                    "Pembatasan jumlah penumpang pada jam sibuk di pagi hari."
+                ],
+                answer: 2, // C
+                explanation: "Rahasia mengapa MRT bisa sangat tepat waktu disebutkan pada kalimat kedua teks: <em>\"Keberhasilan ini dicapai berkat <strong>penerapan sistem persinyalan otomatis berbasis komunikasi (CBTC)</strong>...\"</em> Jadi, bukan digerakkan manual oleh masinis, melainkan sistem komputer yang super canggih."
+            },
+            {
+                text: "Evaluasilah pernyataan berikut! Manakah evaluasi yang paling tepat mengenai keandalan operasional MRT Jakarta berdasarkan data gangguan yang tersurat dalam teks (soal nomor 9)?",
+                options: [
+                    "MRT Jakarta tidak andal karena sering mengalami gangguan pintu kereta pada jam sibuk pagi hari.",
+                    "MRT Jakarta sangat andal karena meskipun ada tiga kali gangguan pintu, ketepatan waktunya tetap mencapai 99,8%.",
+                    "Keandalan MRT Jakarta buruk karena keterlambatan rata-rata 5 menit merusak seluruh sistem persinyalan.",
+                    "Sistem CBTC terbukti gagal karena tidak mampu mengatasi gangguan pintu kereta yang terjadi berulang kali."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita timbang-timbang! Gangguan pintu kereta cuma terjadi <strong>3 kali</strong> dalam setahun (itu pun telatnya rata-rata cuma 5 menit), sedangkan ketepatan waktunya mencapai angka spektakuler <strong>99,8%</strong>. Persentase keberhasilannya jauh lebih dominan dibanding gangguannya. Jadi, evaluasi yang paling adil adalah sistem MRT ini tetap <strong>sangat andal</strong> dan bisa dipercaya."
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 11 dan 12.<div class='quote-box'>\"Hutan mangrove memiliki peran krusial dalam melindungi kawasan pesisir dari abrasi. Akar napas pohon mangrove yang rapat mampu memecah energi gelombang air laut sebelum mencapai daratan. Selain itu, ekosistem mangrove menjadi tempat memijah dan berkembang biak bagi berbagai jenis ikan dan udang. Namun, konversi lahan mangrove menjadi tambak udang intensif di wilayah pantai utara Jawa telah menghilangkan hampir 60% area hutan mangrove asli sejak tahun 1990-an.\"</div>Berdasarkan teks, bagaimana cara fisik akar napas pohon mangrove melindungi daratan dari abrasi?",
+                options: [
+                    "Dengan menyerap seluruh air laut yang mengalir ke daratan pesisir.",
+                    "Dengan memecah energi gelombang air laut melalui kerapatan akarnya.",
+                    "Dengan mengonversi lahan pesisir menjadi tambak udang yang intensif.",
+                    "Dengan menyediakan tempat memijah bagi berbagai jenis ikan dan udang."
+                ],
+                answer: 1, // B
+                explanation: "Perhatikan kalimat kedua pada teks: <em>\"Akar napas pohon mangrove yang rapat <strong>mampu memecah energi gelombang air laut</strong> sebelum mencapai daratan.\"</em> Bayangkan akar-akar itu seperti benteng alam! Saat ombak laut yang besar datang, akar yang lebat itu memecah ombaknya menjadi percikan air yang jauh lebih kecil, sehingga daratan aman dari abrasi (pengikisan)."
+            },
+            {
+                text: "Evaluasilah dampak dari konversi lahan mangrove berdasarkan data sejarah yang tersurat dalam teks (soal nomor 11)!",
+                options: [
+                    "Konversi lahan berhasil meningkatkan populasi ikan dan udang di pantai utara Jawa secara signifikan.",
+                    "Konversi lahan sejak tahun 1990-an telah merusak kelestarian pesisir dengan hilangnya mayoritas (60%) hutan mangrove asli.",
+                    "Konversi lahan tidak berpengaruh pada abrasi karena akar mangrove tetap berfungsi di dalam tambak udang.",
+                    "Konversi lahan ke tambak udang justru memperkuat struktur tanah pesisir dari terjangan gelombang laut."
+                ],
+                answer: 1, // B
+                explanation: "Apa dampak dari pembukaan lahan tambak udang? Teks bilang: <em>\"telah menghilangkan hampir <strong>60% area hutan mangrove asli</strong>.\"</em> Karena 60% itu lebih dari separuh (50%), maka kita bisa menyebutnya sebagai hilangnya 'mayoritas' hutan. Ini jelas merupakan kerusakan ekosistem pesisir yang sangat disayangkan."
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 13 dan 14.<div class='quote-box'>\"Museum Nasional Indonesia menyimpan lebih dari 140.000 benda bersejarah yang dikelompokkan ke dalam tujuh jenis koleksi, yaitu prasejarah, arkeologi, keramik, numismatik-heraldik, geografi, sejarah, dan etnografi. Untuk menjaga kelestarian koleksi tersebut, pengelola menerapkan sistem kontrol suhu ruangan konstan antara 18&deg;C hingga 22&deg;C dengan kelembapan udara 50% hingga 60%. Suhu dan kelembapan yang tidak stabil dapat mempercepat pelapukan pada material kayu, kertas, dan tekstil kuno.\"</div>Berdasarkan teks di atas, koleksi Museum Nasional Indonesia dikelompokkan menjadi...",
+                options: [
+                    "140.000 jenis koleksi yang tersebar di seluruh ruangan museum.",
+                    "Tujuh jenis koleksi, termasuk prasejarah, arkeologi, dan etnografi.",
+                    "Tiga jenis material rentan, yaitu kayu, kertas, dan tekstil kuno.",
+                    "Sistem kontrol suhu ruangan dan kelembapan udara yang konstan."
+                ],
+                answer: 1, // B
+                explanation: "Di teks jelas sekali tertulis benda bersejarah itu <em>\"...dikelompokkan ke dalam <strong>tujuh jenis koleksi</strong>, yaitu prasejarah, arkeologi, keramik...\"</em> dan seterusnya. Pilihan B merangkum informasi pengelompokan ini dengan sangat pas."
+            },
+            {
+                text: "Evaluasilah tindakan pengelola museum! Mengapa pengaturan suhu pada rentang 18&deg;C - 22&deg;C dan kelembapan 50% - 60% sangat penting untuk dievaluasi kelayakannya secara berkala?",
+                options: [
+                    "Agar pengunjung merasa nyaman dan tidak kepanasan saat berada di dalam museum.",
+                    "Untuk mencegah kerusakan berupa pelapukan cepat pada koleksi berbahan kayu, kertas, dan tekstil kuno.",
+                    "Karena rentang suhu tersebut merupakan standar internasional untuk semua jenis gedung perkantoran.",
+                    "Untuk mempermudah pengelompokan tujuh jenis koleksi bersejarah yang ada di museum."
+                ],
+                answer: 1, // B
+                explanation: "Coba pikirkan, kenapa museum repot-repot mendinginkan ruangan siang dan malam? Di kalimat terakhir ada jawabannya! Kalau suhu dan kelembapan tidak stabil, benda-benda kuno dari kayu, kertas, dan kain (tekstil) akan cepat lapuk (rusak jadi debu). Jadi, tujuannya semata-mata <strong>untuk merawat benda bersejarah itu agar awet</strong>, bukan sekadar memanjakan pengunjung."
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 15 dan 16.<div class='quote-box'>\"Konsumsi gula berlebih pada remaja kini menjadi ancaman kesehatan yang serius. Berdasarkan rekomendasi Kementerian Kesehatan RI, batas konsumsi gula harian adalah 50 gram (setara dengan 4 sendok makan). Namun, hasil survei menunjukkan bahwa rata-rata remaja perkotaan mengonsumsi hingga 85 gram gula per hari, yang sebagian besar berasal dari minuman kemasan manis (<em>sweetened beverages</em>). Kebiasaan ini meningkatkan risiko obesitas dan diabetes melitus tipe 2 pada usia muda sebesar dua kali lipat.\"</div>Berapa batas konsumsi gula harian yang direkomendasikan oleh Kementerian Kesehatan RI berdasarkan teks di atas?",
+                options: [
+                    "85 gram per hari.",
+                    "Setara dengan 4 sendok makan (50 gram).",
+                    "Dua kali lipat dari konsumsi remaja perkotaan.",
+                    "Tergantung pada jumlah minuman kemasan manis yang dikonsumsi."
+                ],
+                answer: 1, // B
+                explanation: "Langsung cari angka rekomendasinya di teks! Kalimat kedua menyebutkan: <em>\"...rekomendasi Kementerian Kesehatan RI, batas konsumsi gula harian adalah <strong>50 gram (setara dengan 4 sendok makan)</strong>.\"</em> Ingat-ingat angka ini ya untuk menjaga kesehatan tubuhmu sendiri!"
+            },
+            {
+                text: "Evaluasilah kesesuaian antara perilaku konsumsi remaja perkotaan dengan rekomendasi kesehatan berdasarkan teks (soal nomor 15)!",
+                options: [
+                    "Konsumsi gula remaja perkotaan sudah sesuai karena masih di bawah batas maksimal 85 gram.",
+                    "Konsumsi gula remaja perkotaan sangat mengkhawatirkan karena melebihi rekomendasi harian sebesar 35 gram.",
+                    "Remaja perkotaan telah membatasi konsumsi gula dengan hanya mengonsumsi minuman kemasan manis.",
+                    "Rekomendasi Kementerian Kesehatan RI terlalu rendah sehingga tidak mungkin diterapkan oleh remaja."
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita hitung selisihnya! Batas aman dari Kemenkes RI cuma <strong>50 gram</strong>. Tapi, remaja kita rata-rata mengonsumsi sampai <strong>85 gram</strong>. Wah, berarti ada kelebihan <strong>35 gram</strong> (karena 85 - 50 = 35). Oleh karena itu, evaluasi yang tepat adalah kebiasaan mereka sangat mengkhawatirkan karena over dosis 35 gram gula setiap harinya."
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 17 dan 18.<div class='quote-box'>\"Pembangkit Listrik Tenaga Surya (PLTS) Terapung Cirata di Jawa Barat merupakan yang terbesar di Asia Tenggara. PLTS ini memiliki kapasitas 192 megawatt peak (MWp) dan membentang di atas permukaan Waduk Cirata seluas 250 hektare. Proyek ini menggunakan 340.000 panel surya yang mampu menghasilkan energi bersih untuk mengaliri sekitar 50.000 rumah tangga. Penggunaan area waduk dinilai efektif karena dapat mengurangi penguapan air waduk sekaligus mendinginkan suhu panel surya sehingga kinerjanya menjadi lebih efisien.\"</div>Di mana lokasi PLTS Terapung terbesar di Asia Tenggara berdasarkan teks tersebut?",
+                options: [
+                    "Di atas lahan seluas 250 hektare di Jawa Tengah.",
+                    "Di permukaan Waduk Cirata, Jawa Barat.",
+                    "Di pusat energi bersih yang mengaliri 50.000 rumah tangga.",
+                    "Di kawasan industri panel surya Asia Tenggara."
+                ],
+                answer: 1, // B
+                explanation: "Kalimat pembuka teks langsung memberikan jawabannya secara lugas: <em>\"Pembangkit Listrik Tenaga Surya (PLTS) Terapung <strong>Cirata di Jawa Barat</strong>...\"</em> Kata 'terapung' juga menjelaskan bahwa letaknya mengambang di atas permukaan waduk air tawar."
+            },
+            {
+                text: "Evaluasilah keuntungan ganda dari penempatan panel surya di atas permukaan waduk (terapung) berdasarkan informasi tersurat dalam teks (soal nomor 17)!",
+                options: [
+                    "Menghasilkan kapasitas listrik melebihi 192 MWp dan memperluas area Waduk Cirata.",
+                    "Mengurangi penguapan air waduk dan meningkatkan efisiensi kinerja panel surya akibat suhu yang dingin.",
+                    "Mempermudah pemasangan 340.000 panel surya tanpa memerlukan teknologi khusus.",
+                    "Menghilangkan kebutuhan transmisi listrik ke 50.000 rumah tangga di sekitarnya."
+                ],
+                answer: 1, // B
+                explanation: "Apa untungnya panel surya ditaruh di atas air waduk? Kalimat terakhir menjawabnya dengan sangat rinci: 1) Air waduk terlindungi dari matahari sehingga <strong>mengurangi penguapan</strong>. 2) Uap air waduk membuat panel surya jadi lebih sejuk, sehingga kinerjanya <strong>lebih maksimal (efisien)</strong> menghasilkan listrik. Betul-betul keuntungan ganda yang cemerlang!"
+            },
+            {
+                text: "Teks berikut untuk menjawab soal nomor 19 dan 20.<div class='quote-box'>\"Literasi digital masyarakat Indonesia pada tahun ini mengalami peningkatan indeks dari 3,49 menjadi 3,54 (skala 1-5), yang masuk dalam kategori 'sedang'. Peningkatan tertinggi terjadi pada pilar <em>digital skills</em> (kecakapan digital) dan <em>digital culture</em> (budaya digital). Namun, pilar <em>digital safety</em> (keamanan digital) justru mencatatkan skor terendah. Hal ini terlihat dari tingginya angka korban penipuan daring dan kebocoran data pribadi akibat kurangnya pemahaman masyarakat dalam mengamankan akun media sosial mereka.\"</div>Berdasarkan teks, pilar literasi digital manakah yang mencatatkan skor paling rendah di masyarakat?",
+                options: [
+                    "<em>Digital skills</em> (kecakapan digital).",
+                    "<em>Digital culture</em> (budaya digital).",
+                    "<em>Digital safety</em> (keamanan digital).",
+                    "Indeks literasi digital secara umum."
+                ],
+                answer: 2, // C
+                explanation: "Teks menyebutkan secara eksplisit (tersurat) pada kalimat ketiga: <em>\"Namun, pilar <strong>digital safety (keamanan digital)</strong> justru mencatatkan skor terendah.\"</em> Karena itulah masih banyak orang yang akunnya diretas atau tertipu modus pinjaman online. Hati-hati selalu, ya!"
+            },
+            {
+                text: "Evaluasilah kesimpulan yang paling tepat mengenai kondisi literasi digital Indonesia berdasarkan seluruh informasi tersurat dalam teks (soal nomor 19)!",
+                options: [
+                    "Literasi digital Indonesia sudah sempurna karena indeksnya telah mencapai angka maksimal skala 5.",
+                    "Meskipun kecakapan dan budaya digital meningkat, masyarakat masih sangat rentan terhadap kejahatan siber karena rendahnya pilar keamanan digital.",
+                    "Penipuan daring dan kebocoran data pribadi terjadi karena masyarakat tidak memiliki gawai yang memadai untuk mengakses internet.",
+                    "Peningkatan indeks dari 3,49 menjadi 3,54 membuktikan bahwa pilar keamanan digital tidak lagi menjadi masalah penting."
+                ],
+                answer: 1, // B
+                explanation: "Kesimpulan yang bagus harus merangkum seluruh cerita dari awal sampai akhir. Kabar baiknya: ada peningkatan kecakapan dan budaya digital (positif). Tapi kabar buruknya: keamanan digital masyarakat masih jeblok sehingga rentan tertipu kejahatan siber (negatif). Pilihan B merangkum keadaan 'manis-pahit' ini secara seimbang dan cerdas."
+            }
+        ];
+
+        function processContent(text) {
+            // Ubah pattern [GAMBAR: data:image/...] menjadi elemen <img> dengan styling
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<div class="my-4"><img src="$1" alt="Gambar Soal" class="max-w-full h-auto mx-auto rounded-lg shadow border border-slate-200"></div>');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white md:bg-slate-50 p-5 md:p-8 rounded-xl border border-slate-200 shadow-sm transition-all duration-300';
+            questionDiv.id = `question-block-${index}`;
+
+            // Menyusun Pilihan Ganda (A, B, C, D)
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-4">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-bold shadow-md mb-4 md:mb-0 md:mr-5">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-14">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Penjelasan (Awalnya tersembunyi dengan transisi) -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-14 bg-white rounded-xl shadow-sm">
+                    <div class="p-5 md:p-6">
+                        <h4 class="font-bold text-lg mb-3 flex items-center" id="status-title-${index}">
+                            <!-- Ikon & Status akan dirender di sini -->
+                        </h4>
+                        <div class="text-sm md:text-base text-slate-700 leading-relaxed bg-white rounded-lg" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Menampilkan kotak penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Mengunci pilihan dan menandai jawaban
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true; // Lock
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    
+                    if (val === q.answer) {
+                        // Highlight jawaban benar selalu hijau
+                        label.classList.remove('bg-white', 'border-slate-300', 'hover:bg-slate-50');
+                        label.classList.add('bg-green-50', 'border-green-400', 'ring-2', 'ring-green-400');
+                        label.querySelector('span').classList.replace('bg-slate-100', 'bg-green-500');
+                        label.querySelector('span').classList.replace('text-slate-700', 'text-white');
+                        label.querySelector('span').classList.replace('border-slate-200', 'border-green-600');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // JAWABAN BENAR
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-green-50 border-l-4 border-green-500 rounded-r-xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali!</span>`;
+                        qBlock.classList.add('ring-1', 'ring-green-200');
+                    } else {
+                        // JAWABAN SALAH
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-red-50 border-l-4 border-red-500 rounded-r-xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Ups, Kurang Tepat! Jawaban: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-1', 'ring-red-200');
+                        
+                        // Menandai jawaban yang salah dengan warna merah
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        wrongLabel.querySelector('span').classList.replace('bg-slate-100', 'bg-red-500');
+                        wrongLabel.querySelector('span').classList.replace('text-slate-700', 'text-white');
+                        wrongLabel.querySelector('span').classList.replace('border-slate-200', 'border-red-600');
+                    }
+                } else {
+                    // TIDAK DIJAWAB
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-orange-50 border-l-4 border-orange-500 rounded-r-xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-orange-800">Terlewat! Jawaban: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-1', 'ring-orange-200');
+                }
+
+                // Injeksi teks penjelasan (Edukatif)
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            // Animasi angka
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1200; // ms
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            // Menyiapkan Layout Akhir
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Atur pesan dinamis sesuai perolehan nilai
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Kamu memiliki kemampuan literasi yang sangat luar biasa!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja bagus! 👏 Kemampuan membacamu sudah terasah dengan baik. Sedikit lagi!";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya semakin jeli. 📚";
+                scoreMessage.className = "text-orange-600 mb-8 font-bold text-lg px-4";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Setiap ahli berawal dari seorang pemula. Ayo coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+            }
+
+            // Scroll mulus ke bagian bawah (skor)
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset input radio
+            form.reset();
+
+            // Sembunyikan semua elemen penjelasan dan reset warna
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                // Tutup kotak pembahasan
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-14 bg-white rounded-xl shadow-sm';
+                
+                // Hapus highlight blok
+                qBlock.classList.remove('ring-1', 'ring-green-200', 'ring-red-200', 'ring-orange-200');
+                
+                // Reset semua styling pada radio button dan labelnya
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanIcon = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500';
+                    spanIcon.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200';
+                });
+            });
+
+            // Tukar kembali visibilitas Area Hasil dan Tombol Periksa
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Gulir kembali ke atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

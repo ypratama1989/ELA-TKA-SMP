@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Logika & Analisis Teks Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Customizing radio inputs to be hidden but stylable via labels */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Smooth transition for explanation boxes */
+        .explanation-box {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2500px;
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Styling for story/context quotes */
+        .quote-box {
+            border-left: 4px solid #6366f1; /* indigo-500 */
+            background-color: #eef2ff; /* indigo-50 */
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+            font-style: italic;
+            color: #312e81; /* indigo-900 */
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        /* Quote mark decorative element */
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #c7d2fe; /* indigo-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        /* Responsive images for Base64 */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-2xl font-bold text-slate-800 text-center flex-1 px-2">Kuis Analisis Teks & Logika</h1>
+            <div class="w-24"></div> <!-- Spacer for flexbox balance -->
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Selamat Mengerjakan! &#x1F4DD;</h2>
+                <p class="text-slate-600 text-[15px] md:text-lg leading-relaxed">
+                    Baca setiap kutipan teks dengan teliti. Analisis situasi, cari petunjuk tersirat, dan tarik kesimpulan yang paling logis. 
+                    Kamu bisa langsung menekan tombol periksa kapan saja, soal yang terlewat akan ditandai. Semangat belajar!
+                </p>
+            </div>
+
+            <!-- Quiz Form -->
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-12">
+                    <!-- Questions will be dynamically injected here by JS -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Result Area (Hidden by default) -->
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 1 dan 2.</strong><div class='quote-box'>Rian menatap tumpukan buku di mejanya dengan helaan napas panjang. Jarum jam sudah menunjukkan pukul 23.30 WIB, sementara matanya sudah sangat berat. Esok pagi adalah ujian akhir semester mata pelajaran Matematika, materi yang paling ia hindari. Alih-alih melanjutkan belajar, Rian memutuskan untuk menutup bukunya, mematikan lampu meja, dan langsung merebahkan diri di tempat tidur tanpa memasang alarm.</div>Berdasarkan petunjuk dalam teks, peristiwa apa yang paling logis terjadi pada Rian keesokan harinya?",
+                options: [
+                    "Rian akan bangun lebih awal karena merasa cemas dengan ujian Matematika.",
+                    "Rian akan bangun kesiangan dan terburu-buru pergi ke sekolah untuk ujian.",
+                    "Rian akan menguasai materi ujian dengan baik karena tidurnya sangat nyenyak.",
+                    "Rian akan meminta izin sakit kepada gurunya agar tidak perlu mengikuti ujian."
+                ],
+                answer: 1, // B
+                explanation: "Halo, yuk kita main detektif! Mari kumpulkan petunjuk dari teks:<br>1. Rian tidur sudah sangat malam (23.30 WIB).<br>2. Matanya <strong>sangat berat</strong> (berarti dia sangat kelelahan).<br>3. Dia <strong>tidak memasang alarm</strong>.<br><br>Nah, apa yang terjadi kalau orang yang sangat capek tidur tanpa alarm? Tentu saja kemungkinan terbesarnya dia akan bablas alias bangun kesiangan. Kesimpulan (inferensi) yang paling masuk akal adalah <strong>Pilihan B</strong>."
+            },
+            {
+                text: "Jika Rian tidak memasang alarm dan langsung tidur dalam kondisi sangat lelah, evaluasi manakah yang paling menggambarkan konsekuensi terhadap hasil ujiannya?",
+                options: [
+                    "Hasil ujian Rian akan maksimal karena otaknya beristirahat dengan cukup.",
+                    "Rian kemungkinan besar terlambat dan konsentrasinya terganggu saat mengerjakan ujian.",
+                    "Guru akan memberikan dispensasi waktu karena memahami kondisi Rian yang kelelahan.",
+                    "Rian akan mampu menjawab semua soal dengan tenang karena tidak stres belajar semalaman."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita analisis sebab-akibatnya.<br>Sebab: Rian tidur larut, kelelahan, tanpa alarm, dan tidak belajar Matematika (materi yang ia hindari).<br>Akibat: Bangun kesiangan $\\rightarrow$ panik dan terlambat ke sekolah $\\rightarrow$ saat ujian konsentrasinya buyar karena terburu-buru dan kurang persiapan.<br><br>Jadi, evaluasi konsekuensi yang paling realistis di dunia nyata adalah <strong>Pilihan B</strong>."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 3 dan 4.</strong><div class='quote-box'>Selama tiga bulan terakhir, warga Desa Sukamaju aktif membuang sampah plastik langsung ke aliran sungai kecil di ujung desa. Ketika musim kemarau, tumpukan sampah tersebut hanya menyumbat aliran air yang dangkal. Namun, kini awan hitam pekat mulai sering menggantung di langit desa, menandakan musim hujan telah tiba dengan intensitas yang sangat tinggi.</div>Prediksi peristiwa jangka pendek yang paling mungkin terjadi di Desa Sukamaju saat hujan deras turun pertama kali adalah...",
+                options: [
+                    "Aliran sungai akan menjadi bersih karena sampah-sampah plastik hanyut ke laut.",
+                    "Air sungai akan meluap dan menggenangi area pemukiman warga di sekitar sungai.",
+                    "Warga desa akan bergotong-royong membersihkan sungai saat hujan mulai turun.",
+                    "Pemerintah daerah langsung membangun tanggul raksasa untuk mencegah banjir."
+                ],
+                answer: 1, // B
+                explanation: "Coba bayangkan pipa saluran air di kamar mandimu tersumbat plastik, lalu kamu menyalakan keran air dengan deras. Apa yang terjadi? Pasti airnya meluber ke mana-mana, kan?<br><br>Sama halnya dengan teks ini. Sungainya sudah <strong>tersumbat sampah</strong>, lalu tiba-tiba turun <strong>hujan deras</strong> (airnya banyak). Prediksi jangka pendek yang pasti langsung terjadi adalah air meluap dan banjir. Jawaban yang tepat adalah <strong>Pilihan B</strong>."
+            },
+            {
+                text: "Evaluasi tindakan warga Desa Sukamaju terhadap potensi bencana ekologis jangka panjang yang akan mereka hadapi adalah...",
+                options: [
+                    "Warga akan menyadari kesalahan mereka setelah sungai mengering akibat sumbatan sampah.",
+                    "Kerusakan ekosistem sungai akan memicu wabah penyakit dan penurunan kualitas air bersih warga.",
+                    "Sungai akan melebar secara alami untuk menampung volume sampah dan air hujan yang meningkat.",
+                    "Warga akan beralih menggunakan teknologi pembakaran sampah modern untuk mengatasi masalah tersebut."
+                ],
+                answer: 1, // B
+                explanation: "Kata kuncinya adalah <strong>Bencana Ekologis Jangka Panjang</strong> (dampak lingkungan yang lama).<br><br>Kalau sungai terus-terusan penuh sampah plastik, airnya akan tercemar. Air kotor yang menggenang (apalagi kalau banjir) akan menjadi sarang nyamuk dan bakteri. Akibat jangka panjangnya, ekosistem rusak dan warga bisa terkena wabah penyakit (seperti diare atau demam berdarah) serta krisis air bersih. <strong>Pilihan B</strong> adalah evaluasi lingkungan yang paling akurat."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 5 dan 6.</strong><div class='quote-box'>Danu menemukan sebuah dompet kulit berwarna cokelat di koridor sekolah. Saat membukanya untuk mencari identitas pemilik, ia melihat beberapa lembar uang seratus ribuan yang cukup banyak beserta kartu pelajar atas nama Ari, siswa kelas VII yang terkenal pendiam dan sering kehilangan barang. Danu tahu bahwa Ari sangat membutuhkan uang tersebut untuk membayar buku LKS baru yang batas pembayarannya adalah hari ini. Danu sendiri sedang membutuhkan uang untuk membeli kuota internet.</div>Berdasarkan karakter Danu sebagai siswa yang jujur dan berintegritas, tindakan apa yang paling mungkin ia lakukan selanjutnya?",
+                options: [
+                    "Mengambil sebagian uang untuk membeli kuota internet lalu mengembalikan dompetnya ke Ari.",
+                    "Menyimpan dompet tersebut di tasnya dan menunggu sampai Ari membuat pengumuman kehilangan.",
+                    "Segera menemui Ari atau menyerahkan dompet tersebut kepada guru BK agar dikembalikan utuh.",
+                    "Membiarkan dompet tersebut tergeletak di koridor agar ditemukan oleh orang lain yang lebih membutuhkan."
+                ],
+                answer: 2, // C
+                explanation: "Perhatikan petunjuk sifat tokohnya: Danu adalah anak yang <strong>jujur dan berintegritas</strong>.<br><br>Orang yang berintegritas itu memegang prinsip kebenaran meskipun tidak ada yang melihat, dan meskipun dia sedang butuh (butuh kuota). Karena sifatnya jujur, ia tidak akan mengambil sepeser pun dan pasti akan langsung mengembalikan dompet itu secara utuh kepada Ari atau lewat guru. Jawaban paling tepat adalah <strong>Pilihan C</strong>."
+            },
+            {
+                text: "Jika Danu memutuskan untuk segera mengembalikan dompet tersebut kepada Ari melalui guru piket, prediksi dampak psikologis yang akan terjadi pada Ari adalah...",
+                options: [
+                    "Ari akan merasa curiga bahwa uangnya telah berkurang sebelum dikembalikan.",
+                    "Ari akan merasa sangat lega dan terbantu karena dapat melunasi pembayaran buku LKS tepat waktu.",
+                    "Ari akan menjadi lebih manja dan abai terhadap barang-barang pribadinya di sekolah.",
+                    "Ari akan merasa malu karena kecerobohannya diketahui oleh guru piket dan Danu."
+                ],
+                answer: 1, // B
+                explanation: "Dampak psikologis berarti berkaitan dengan perasaan.<br><br>Bayangkan kamu menjadi Ari. Kamu sangat butuh uang itu untuk bayar LKS <em>hari ini juga</em>. Saat tahu dompetmu hilang, kamu pasti sangat panik dan sedih. Nah, ketika tiba-tiba dompet itu kembali utuh lewat guru piket, perasaan apa yang dominan muncul?<br>Tentu saja rasa <strong>sangat lega</strong> dan merasa tertolong karena masalahmu selesai. <strong>Pilihan B</strong> sangat masuk akal."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 7 dan 8.</strong><div class='quote-box'>Sejak sebulan lalu, Pak Budi mengganti seluruh pupuk kimia di kebun tomatnya dengan pupuk organik cair hasil buatannya sendiri. Ia juga rutin melakukan penyiraman sesuai jadwal dan memasang jaring pelindung hama dari bahan alami. Pada minggu pertama, pertumbuhan tomat tampak melambat dibandingkan saat menggunakan pupuk kimia. Namun, memasuki minggu keempat, daun-daun pohon tomat terlihat lebih hijau royo-royo dan batangnya tampak lebih kokoh.</div>Prediksi hasil panen tomat Pak Budi pada musim panen berikutnya berdasarkan perkembangan tanaman tersebut adalah...",
+                options: [
+                    "Buah tomat yang dihasilkan akan berukuran sangat kecil dan rasanya masam.",
+                    "Tanaman tomat akan layu sebelum panen karena kekurangan zat kimia esensial.",
+                    "Hasil panen tomat akan lebih sehat, melimpah, dan memiliki daya simpan yang lebih lama.",
+                    "Pak Budi akan mengalami kerugian besar karena biaya pupuk organik jauh lebih mahal."
+                ],
+                answer: 2, // C
+                explanation: "Mari kita baca hasil kerja keras Pak Budi di minggu keempat:<br><em>\"Daun terlihat lebih hijau royo-royo dan batangnya tampak lebih kokoh.\"</em><br><br>Kondisi tanaman yang berdaun hijau segar dan berbatang kuat adalah indikator (tanda) bahwa tanaman itu sangat sehat. Secara biologi, tanaman yang sehat pasti akan menghasilkan buah yang berkualitas bagus pula. Jadi, prediksi paling logis adalah panen tomatnya menjadi sehat dan berkualitas (<strong>Pilihan C</strong>)."
+            },
+            {
+                text: "Evaluasi keputusan Pak Budi beralih ke pupuk organik terhadap kondisi tanah kebunnya di masa depan adalah...",
+                options: [
+                    "Struktur tanah akan menjadi keras dan tandus akibat akumulasi bahan organik.",
+                    "Kesuburan tanah akan terjaga secara berkelanjutan karena mikroorganisme tanah berkembang baik.",
+                    "Tanah kebun akan kehilangan unsur hara mikro karena tidak lagi disuplai oleh pupuk kimia.",
+                    "Kebun Pak Budi akan menjadi sarang hama baru yang kebal terhadap pestisida alami."
+                ],
+                answer: 1, // B
+                explanation: "Di pelajaran sains, kita belajar bahwa pupuk kimia jika dipakai terus-menerus bisa merusak tanah. Sebaliknya, <strong>Pupuk Organik</strong> (dari bahan alami) sangat disukai oleh cacing dan mikroorganisme penyubur tanah.<br><br>Jadi, keputusan Pak Budi sangat tepat. Evaluasi jangka panjangnya, tanah kebunnya akan tetap subur secara berkelanjutan karena makhluk hidup di dalam tanah bekerja dengan baik. <strong>Pilihan B</strong> adalah jawaban sains yang benar."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 9 dan 10.</strong><div class='quote-box'>Di tengah rintik hujan yang mulai menderas, seekor anak kucing terjebak di atas dahan pohon mangga yang cukup tinggi di halaman sekolah. Kucing itu terus mengeong ketakutan karena dahan tersebut mulai licin. Fajar, yang baru saja keluar dari kelas, melihat kejadian itu. Ia segera meletakkan tasnya di tempat teduh, lalu mencari tangga bambu di gudang sekolah yang biasanya digunakan oleh penjaga sekolah.</div>Berdasarkan tindakan Fajar, peristiwa apa yang paling mungkin terjadi berikutnya?",
+                options: [
+                    "Fajar akan mengabaikan kucing tersebut karena hujan semakin deras dan ia ingin segera pulang.",
+                    "Fajar akan menggunakan tangga bambu tersebut untuk memanjat pohon dan menyelamatkan anak kucing.",
+                    "Fajar akan memanggil pemadam kebakaran untuk mengevakuasi kucing yang terjebak di pohon.",
+                    "Fajar akan melempari dahan pohon dengan batu agar anak kucing tersebut mau melompat turun."
+                ],
+                answer: 1, // B
+                explanation: "Untuk menebak apa yang akan dilakukan Fajar, lihat gerak-geriknya:<br>1. Meletakkan tas agar tidak basah dan tidak merepotkan.<br>2. Mencari <strong>tangga bambu</strong>.<br><br>Logika sederhananya: Untuk apa seseorang repot-repot mengambil tangga kalau bukan untuk memanjat? Niat Fajar jelas ingin menyelamatkan kucing itu sendiri dengan memanjat menggunakan tangga. Jawaban <strong>Pilihan B</strong> sangat sesuai dengan alur cerita."
+            },
+            {
+                text: "Jika Fajar berhasil membawa tangga bambu namun hujan berubah menjadi badai disertai angin kencang, keputusan paling aman yang harus dievaluasi oleh Fajar adalah...",
+                options: [
+                    "Tetap memanjat pohon dengan cepat sebelum dahan pohon patah ditiup angin.",
+                    "Meminta bantuan teman atau penjaga sekolah untuk memegangi tangga selagi ia memanjat dalam badai.",
+                    "Menunda memanjat dan mencari alat alternatif seperti galah panjang untuk menjangkau kucing dari bawah.",
+                    "Melaporkan situasi berbahaya tersebut kepada guru atau penjaga sekolah untuk penanganan yang lebih aman."
+                ],
+                answer: 3, // D
+                explanation: "Saat berhadapan dengan alam (badai angin kencang), <strong>keselamatan diri sendiri (manusia) adalah prioritas utama</strong>.<br><br>Pohon bisa tumbang, petir bisa menyambar, dan tangga bambu sangat licin. Memanjat sendiri atau menyuruh teman memegangi tangga (Opsi A & B) sangat berbahaya dan ceroboh. Langkah paling aman dan cerdas bagi seorang siswa adalah melaporkan kondisi darurat ini kepada orang dewasa (guru/penjaga) yang tahu prosedur penyelamatan aman. (<strong>Pilihan D</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 11 dan 12.</strong><div class='quote-box'>Pemerintah Kota Metro meluncurkan program jalur sepeda baru dan memperbanyak taman kota di pusat keramaian. Selain itu, tarif parkir kendaraan bermotor pribadi di area tersebut dinaikkan hingga dua kali lipat. Di sisi lain, armada transportasi umum seperti bus kota diremajakan dan jadwal keberangkatannya dibuat lebih tepat waktu setiap 10 menit sekali.</div>Prediksi perubahan perilaku masyarakat Kota Metro dalam enam bulan ke depan setelah kebijakan tersebut diterapkan adalah...",
+                options: [
+                    "Penggunaan kendaraan bermotor pribadi akan meningkat karena masyarakat merasa tertantang dengan tarif parkir mahal.",
+                    "Masyarakat akan mulai beralih menggunakan transportasi umum dan sepeda untuk mobilitas sehari-hari.",
+                    "Taman-taman kota akan sepi pengunjung karena akses jalan ditutup khusus untuk pesepeda saja.",
+                    "Tarif parkir yang mahal akan membuat masyarakat enggan bepergian ke luar rumah sama sekali."
+                ],
+                answer: 1, // B
+                explanation: "Pemerintah Kota Metro melakukan taktik *Tarik-Dorong* (Pull and Push):<br>- <strong>Dorong (agar ditinggalkan):</strong> Parkir mobil/motor dibikin sangat mahal.<br>- <strong>Tarik (agar diminati):</strong> Bus dibikin nyaman dan tepat waktu, jalur sepeda dibangun.<br><br>Secara psikologi ekonomi, orang tidak suka keluar uang banyak. Karena parkir mahal tapi busnya enak, secara otomatis masyarakat akan beralih menggunakan transportasi umum atau sepeda (<strong>Pilihan B</strong>)."
+            },
+            {
+                text: "Bagaimana evaluasi dampak lingkungan jangka panjang dari kebijakan Pemerintah Kota Metro tersebut?",
+                options: [
+                    "Polusi udara di pusat kota akan menurun secara signifikan seiring berkurangnya emisi kendaraan pribadi.",
+                    "Suhu udara kota akan meningkat akibat banyaknya taman kota yang menyerap panas matahari.",
+                    "Terjadi kemacetan parah di jalur sepeda karena volume sepeda yang melebihi kapasitas jalan.",
+                    "Anggaran pendapatan daerah akan defisit karena biaya perawatan transportasi umum terlalu tinggi."
+                ],
+                answer: 0, // A
+                explanation: "Kata kuncinya: <strong>Dampak Lingkungan</strong>.<br><br>Berdasarkan soal sebelumnya, kita tahu masyarakat akhirnya memilih naik bus dan sepeda. Artinya, jumlah mobil dan motor pribadi di jalanan akan berkurang drastis.<br>Mobil berkurang = asap knalpot (emisi) berkurang = polusi udara menurun! Apalagi ditambah adanya taman kota baru. Evaluasi lingkungan yang paling benar adalah <strong>Pilihan A</strong>."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 13 dan 14.</strong><div class='quote-box'>Siska selalu menunda-nunda mengerjakan tugas proyek akhir Bahasa Indonesia yang diberikan sejak dua minggu lalu. Malam ini adalah malam terakhir sebelum pengumpulan esok pagi. Siska baru mulai membuka laptopnya pada pukul 22.00 WIB. Ketika ia sedang mengetik paragraf kedua, tiba-tiba aliran listrik di rumahnya padam total akibat badai, dan baterai laptopnya hanya tersisa 5%.</div>Berdasarkan situasi darurat tersebut, apa yang kemungkinan besar akan dilakukan Siska untuk menyelesaikan tugasnya?",
+                options: [
+                    "Siska akan tidur dan pasrah menerima nilai nol dari guru Bahasa Indonesia keesokan harinya.",
+                    "Siska akan mencoba mengetik secepat mungkin menggunakan sisa baterai laptop tanpa memedulikan kualitas tulisan.",
+                    "Siska akan segera beralih menulis tugasnya secara manual menggunakan kertas dengan bantuan cahaya lilin atau ponsel.",
+                    "Siska akan pergi ke warnet terdekat yang memiliki genset di tengah badai malam hari."
+                ],
+                answer: 2, // C
+                explanation: "Siska butuh mengumpulkan tugas besok pagi. Mari eliminasi pilihan yang tidak masuk akal:<br>- Mengetik secepat mungkin dengan baterai 5% (Opsi B) pasti gagal karena laptop segera mati.<br>- Pergi ke warnet di tengah malam badai lebat (Opsi D) sangat berbahaya.<br>- Pasrah dapat nol (Opsi A) bukan naluri siswa yang sedang terdesak.<br><br>Solusi manual (<em>plan B</em>) adalah jalan satu-satunya: mengambil kertas dan pulpen, lalu menulis di bawah cahaya lilin/senter ponsel (<strong>Pilihan C</strong>)."
+            },
+            {
+                text: "Evaluasi terhadap kualitas tugas proyek yang dikumpulkan Siska keesokan harinya adalah...",
+                options: [
+                    "Tugas Siska akan sangat rapi dan mendalam karena dikerjakan di bawah tekanan yang memicu kreativitas.",
+                    "Tugas Siska kemungkinan besar tidak selesai atau dikerjakan secara asal-asalan sehingga nilainya tidak maksimal.",
+                    "Guru akan memberikan nilai tambahan karena menghargai perjuangan Siska mengerjakan tugas saat mati lampu.",
+                    "Tugas Siska akan sama kualitasnya dengan teman-temannya yang sudah mencicil sejak dua minggu lalu."
+                ],
+                answer: 1, // B
+                explanation: "Siska terkena penyakit <em>Prokrastinasi</em> (suka menunda). Dia menggunakan Sistem Kebut Semalam (SKS).<br><br>Faktanya, tugas proyek yang dikerjakan terburu-buru, ditambah kondisi darurat (mati lampu, tulis tangan), pasti hasilnya tidak matang, terkesan asal-asalan, atau bahkan tidak tuntas. <strong>Pilihan B</strong> adalah konsekuensi logis dari menunda-nunda pekerjaan."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 15 dan 16.</strong><div class='quote-box'>Sebuah perusahaan teknologi raksasa baru saja meluncurkan aplikasi penerjemah bahasa instan berbasis kecerdasan buatan (AI) yang mampu menerjemahkan percakapan lisan secara akurat dan real-time ke dalam 50 bahasa dunia. Aplikasi ini dapat diunduh secara gratis oleh siapa saja di seluruh dunia.</div>Prediksi dampak langsung kehadiran teknologi tersebut terhadap industri pariwisata internasional adalah...",
+                options: [
+                    "Wisatawan asing akan kesulitan berkomunikasi karena ketergantungan pada gawai.",
+                    "Interaksi antara wisatawan asing dan penduduk lokal akan menjadi lebih mudah dan lancar tanpa kendala bahasa.",
+                    "Jumlah pemandu wisata lokal akan meningkat drastis karena wisatawan membutuhkan pendamping fisik.",
+                    "Agen perjalanan akan menutup rute internasional karena turis memilih berlibur di dalam negeri saja."
+                ],
+                answer: 1, // B
+                explanation: "Kendala terbesar saat liburan ke negara lain adalah <em>Language Barrier</em> (hambatan bahasa).<br><br>Dengan adanya aplikasi gratis di HP yang bisa menerjemahkan obrolan secara langsung (*real-time*), hambatan itu hilang! Seorang turis Indonesia bisa ngobrol santai dengan penjual makanan di Jepang hanya dengan berbicara ke HP-nya. Prediksinya, interaksi mereka akan jauh lebih lancar dan mudah (<strong>Pilihan B</strong>)."
+            },
+            {
+                text: "Evaluasi dampak jangka panjang teknologi penerjemah AI ini terhadap minat siswa dalam mempelajari bahasa asing secara akademis adalah...",
+                options: [
+                    "Minat belajar bahasa asing akan hilang sepenuhnya karena semua orang mengandalkan aplikasi.",
+                    "Fokus pembelajaran bahasa asing akan bergeser dari sekadar menghafal kosakata ke pemahaman budaya dan komunikasi kontekstual.",
+                    "Sekolah-sekolah akan menghapus mata pelajaran bahasa asing dari kurikulum nasional.",
+                    "Siswa hanya akan mempelajari bahasa pemrograman komputer daripada bahasa manusia."
+                ],
+                answer: 1, // B
+                explanation: "Apakah kalau ada kalkulator, pelajaran matematika dihapus? Tentu tidak!<br><br>Sama dengan bahasa. Meskipun robot AI bisa mengartikan kata-katanya, AI tidak selalu paham emosi, candaan, atau budaya lokal. Oleh karena itu, di masa depan siswa tidak lagi sekadar disuruh menghafal *vocabulary*, tapi diajak belajar memahami nilai budaya, nuansa, dan konteks bahasanya. Pembelajaran bahasa berevolusi menjadi lebih dalam (<strong>Pilihan B</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 17 dan 18.</strong><div class='quote-box'>Roni adalah seorang atlet lari estafet andalan sekolah. Dua hari sebelum perlombaan tingkat provinsi, ia mengalami cedera otot pergelangan kaki saat latihan karena tidak melakukan pemanasan dengan benar. Dokter menyarankan Roni untuk beristirahat total selama minimal satu minggu agar cederanya tidak bertambah parah atau menjadi permanen. Namun, Roni merasa bersalah kepada timnya jika ia mengundurkan diri.</div>Berdasarkan saran medis dan kondisi fisik Roni, apa yang paling mungkin terjadi jika Roni memaksakan diri tetap tampil dalam perlombaan?",
+                options: [
+                    "Roni akan memecahkan rekor lari tercepat karena motivasinya yang sangat tinggi untuk menang.",
+                    "Cedera kaki Roni akan semakin parah di tengah perlombaan, yang dapat membahayakan kesehatan fisiknya dan merugikan timnya.",
+                    "Tim estafet Roni pasti akan memenangkan perlombaan dengan mudah tanpa hambatan apa pun.",
+                    "Rasa sakit di kaki Roni akan hilang dengan sendirinya begitu ia mulai berlari di lintasan."
+                ],
+                answer: 1, // B
+                explanation: "Di dunia nyata (dan ilmu kedokteran), semangat dan motivasi tinggi tidak bisa menyembuhkan robekan otot seketika!<br><br>Jika Roni memaksa lari sprint dengan otot yang cedera, otot itu akan rusak makin parah (bisa cacat permanen). Di tengah lintasan, kemungkinan besar dia akan jatuh kesakitan. Akibatnya, alih-alih membantu tim, dia malah gagal *finish* dan merugikan seluruh tim. Jadi <strong>Pilihan B</strong> sangat logis."
+            },
+            {
+                text: "Evaluasi tindakan terbaik yang harus diambil oleh pelatih tim estafet demi kebaikan Roni dan tim adalah...",
+                options: [
+                    "Membiarkan Roni bertanding namun memintanya untuk berlari lebih lambat dari biasanya.",
+                    "Mengganti Roni dengan pelari cadangan yang telah dipersiapkan sebelumnya, meskipun kemampuannya sedikit di bawah Roni.",
+                    "Memaksa Roni menggunakan obat pereda nyeri dosis tinggi agar bisa berlari tanpa merasakan sakit sama sekali.",
+                    "Membatalkan keikutsertaan seluruh tim dalam perlombaan sebagai bentuk solidaritas terhadap cedera Roni."
+                ],
+                answer: 1, // B
+                explanation: "Seorang pelatih yang bijak tahu bahwa kesehatan jangka panjang atletnya jauh lebih penting daripada piala satu turnamen.<br><br>Memberi obat pereda nyeri (Opsi C) berbahaya karena kaki akan tetap rusak tanpa disadari. Menyuruh lari lambat (Opsi A) konyol untuk lomba estafet. Keputusan paling profesional adalah memainkan strategi plan-B: turunkan pemain cadangan (<strong>Pilihan B</strong>)."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 19 dan 20.</strong><div class='quote-box'>SMP Harapan Bangsa menerapkan kebijakan baru berupa larangan penggunaan plastik sekali pakai di lingkungan sekolah. Kantin sekolah tidak lagi menyediakan kantong plastik, sedotan, maupun wadah makanan berbahan plastik sekali pakai. Siswa dan guru diwajibkan membawa botol minum (tumbler) dan wadah makan sendiri dari rumah. Bagi yang melanggar akan dikenakan sanksi berupa poin pelanggaran tata tertib.</div>Prediksi kondisi lingkungan sekolah SMP Harapan Bangsa setelah kebijakan tersebut berjalan selama satu semester adalah...",
+                options: [
+                    "Volume sampah plastik di sekolah akan berkurang secara signifikan dan lingkungan sekolah menjadi lebih bersih.",
+                    "Kantin sekolah akan sepi pembeli karena siswa malas membawa wadah makanan sendiri dari rumah.",
+                    "Siswa akan sering membolos sekolah karena merasa aturan baru tersebut terlalu mengekang kebebasan mereka.",
+                    "Guru-guru akan kesulitan mengajar karena harus mengawasi penggunaan plastik setiap saat di kelas."
+                ],
+                answer: 0, // A
+                explanation: "Hukum alam dari aturan ini sangat sederhana: Karena sumber masalahnya (penjualan plastik di kantin) diputus total, maka produksi sampah plastiknya pun hilang.<br><br>Setelah berjalan 6 bulan (1 semester), pastinya gunungan sampah plastik bekas jajan di tong sampah sekolah akan menurun drastis. Akibat baiknya, lingkungan sekolah menjadi jauh lebih bersih (<strong>Pilihan A</strong>)."
+            },
+            {
+                text: "Evaluasi efektivitas sanksi poin pelanggaran dalam membentuk karakter peduli lingkungan pada siswa adalah...",
+                options: [
+                    "Sanksi poin tidak efektif karena siswa hanya akan patuh saat diawasi oleh guru di sekolah.",
+                    "Sanksi poin efektif sebagai langkah awal pendisiplinan yang lambat laun akan membentuk kebiasaan hidup ramah lingkungan.",
+                    "Sanksi tersebut terlalu berat dan tidak mendidik karena merusak reputasi akademis siswa yang melanggar.",
+                    "Kebijakan tersebut sebaiknya diganti dengan memberikan hadiah uang tunai bagi siswa yang tidak menggunakan plastik."
+                ],
+                answer: 1, // B
+                explanation: "Pembentukan karakter seringkali berawal dari pepatah: <em>\"Dipaksa, Terbiasa, lalu jadi Budaya.\"</em><br><br>Awalnya siswa mungkin patuh hanya karena takut kena poin sanksi (dipaksa). Namun, karena dilakukan setiap hari, membawa tumbler akhirnya menjadi *habit* (terbiasa). Saat mereka lulus, kepedulian lingkungan itu sudah menempel menjadi karakter. Jadi, aturan sanksi ini sangat <strong>efektif sebagai langkah awal pendisiplinan</strong> (<strong>Pilihan B</strong>)."
+            }
+        ];
+
+        // Helper to process Base64 images and HTML Entities if they exist in texts
+        function processContent(text) {
+            // Replace [GAMBAR: data:image/...] pattern with responsive <img> tag
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Referensi" class="img-responsive">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative group';
+            questionDiv.id = `question-block-${index}`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg md:text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Explanation Box -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-lg md:text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}"></h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Reveal explanation
+                explanationBox.classList.remove('hidden-box');
+
+                // Lock inputs
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    // Always highlight the correct answer
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-blue-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // Correct Answer Logic
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/70 border-l-[6px] md:border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali, Kamu Hebat!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // Wrong Answer Logic
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/70 border-l-[6px] md:border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Ups, Logikanya Kurang Tepat! Kunci: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Mark user's wrong choice
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // Skipped Question Logic
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/70 border-l-[6px] md:border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Terlewat! Kunci: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            // Score Counter Animation
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500;
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Dynamic Motivation Messages
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Nalar logikamu seperti seorang detektif profesional!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja hebat! 👏 Kemampuan analisamu sudah tajam, asah sedikit lagi ya!";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya logikamu makin matang. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Wah, sepertinya kamu kurang fokus. Ayo pelajari trik logikanya di bagian pembahasan dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            form.reset();
+
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors';
+                });
+            });
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

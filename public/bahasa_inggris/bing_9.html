@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Narrative Text</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+            color: #334155; /* slate-700 */
+        }
+        
+        /* Custom Radio Button styling for better UX */
+        .radio-custom:checked + div {
+            background-color: #eff6ff; /* blue-50 */
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+        
+        /* Text styling for stories */
+        .story-text p {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-3 py-2 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 font-medium text-sm sm:text-base">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-800 flex-1 text-center tracking-tight">Quiz: Narrative Text</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for perfect centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shadow-inner">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-blue-900 mb-1.5">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-blue-800 space-y-1.5 list-disc list-inside">
+                        <li>Bacalah teks cerita dengan teliti sebelum menjawab soal di bawahnya.</li>
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).</li>
+                        <li>Kamu bisa langsung menekan tombol <strong>"Periksa Jawaban"</strong> kapan saja. Soal yang terlewat akan otomatis dianggap salah.</li>
+                        <li>Jangan lupa baca pembahasan di akhir! Penjelasannya dirancang khusus agar kamu semakin paham konsep Bahasa Inggris.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-8">
+                    <!-- Javascript will inject the quiz content here -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-xl border border-slate-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <div id="result-area" class="hidden mb-8 py-6 border-b border-slate-100 relative z-10">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Skor Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <br>
+                        <p id="score-message" class="text-lg md:text-xl font-bold px-5 py-2 rounded-lg inline-block shadow-sm"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10 pt-2">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span>By EDUFILLAH</span>
+                <span class="hidden sm:inline w-1.5 h-1.5 rounded-full bg-slate-300 mx-1"></span> 
+                <span>Unlock The Secret Of Curious Minds</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz Data Structure grouping texts and their respective questions
+        const quizData = [
+            {
+                textTitle: "Text 1: The Legend of Malin Kundang",
+                textContent: `
+                    <p>A long time ago, in a small village near the beach in West Sumatra, lived a woman and her son, Malin Kundang. Malin’s father had passed away when he was a baby, and he had to live hard with his mother. Malin Kundang was a healthy, diligent, and strong boy. He usually went to sea to catch fish and brought it to his mother, or sold the caught fish in the town.</p>
+                    <p>One day, when Malin Kundang was sailing, he saw a merchant’s ship being raided by a small band of pirates. With his bravery, Malin Kundang helped the merchant defeat the pirates. To thank him, the merchant allowed Malin Kundang to sail with him. Malin Kundang agreed in the hope to get a better life. He left his mother alone.</p>
+                    <p>Many years later, Malin Kundang became wealthy. He had a huge ship and a lot of crew who worked loading trading goods. He was also married to a beautiful woman. When he was sailing on his trading journey, his ship landed on a coast near his hometown. The local people recognized him. The news ran fast in the town; “Malin Kundang has become rich and now he is here.”</p>
+                    <p>An old woman, who was Malin’s mother, ran to the beach to meet the new rich merchant. She wanted to hug him to release her sadness of being lonely after a long time. When his mother came near him, Malin Kundang—who was with his beautiful wife and his ship crews—denied that she was his mother. She had pleaded with him to look at her and admit she was his mother, but he kept refusing and yelled at her. At last Malin Kundang said to her, "Enough, old woman! I have never had a mother like you, a dirty and ugly peasant!" Then he ordered his crews to set sail to leave the old woman.</p>
+                    <p>Enraged and deeply saddened, his mother cursed Malin Kundang that he would turn into a stone if he didn't apologize to her. Malin Kundang just laughed and set sail. Suddenly, a thunderstorm came in the quiet sea, wrecking his huge ship. He was thrown out to a small island. It was really too late for him to avoid his curse; he had turned into a stone.</p>
+                `,
+                questions: [
+                    {
+                        id: 1,
+                        question: "What is the main conflict of the story?",
+                        options: {
+                            A: "Malin Kundang’s struggle to defeat the pirates on the merchant's ship.",
+                            B: "The poverty that forced Malin Kundang to leave his mother and his village.",
+                            C: "Malin Kundang’s refusal to acknowledge his mother after becoming wealthy.",
+                            D: "The sudden thunderstorm that destroyed Malin Kundang’s trading ship."
+                        },
+                        correct: "C",
+                        explanation: "Dalam teks naratif, konflik utama (complication) adalah masalah terbesar yang menggerakkan seluruh jalan cerita. Puncak masalah dalam cerita Malin Kundang bukan saat ia melawan bajak laut (A), melainkan ketika <strong>Malin yang sudah kaya raya menolak mengakui ibu kandungnya</strong> karena malu (C). Kejadian badai (D) adalah akibat/resolusi dari konflik tersebut."
+                    },
+                    {
+                        id: 2,
+                        question: "\"With his bravery, Malin Kundang helped the merchant defeat the pirates.\" (Paragraph 2)<br>The underlined word has the closest meaning to...",
+                        options: {
+                            A: "Cowardice",
+                            B: "Courage",
+                            C: "Wisdom",
+                            D: "Honesty"
+                        },
+                        correct: "B",
+                        explanation: "Kata <strong>\"bravery\"</strong> berarti keberanian atau sifat gagah berani. Sinonim yang paling tepat di antara pilihan tersebut adalah <strong>\"courage\"</strong> yang juga berarti keberanian. <br><em>Tips Kosakata:</em> \"Cowardice\" adalah kebalikannya (kepengecutan), \"Wisdom\" = kebijaksanaan, dan \"Honesty\" = kejujuran."
+                    },
+                    {
+                        id: 3,
+                        question: "Which of the following statements best describes the \"Complication\" stage of the text?",
+                        options: {
+                            A: "Malin Kundang lived happily with his mother in a small village in West Sumatra.",
+                            B: "Malin Kundang sailed with a rich merchant and left his mother alone.",
+                            C: "Malin Kundang denied his mother, yelled at her, and refused to admit she was his mother.",
+                            D: "A thunderstorm wrecked Malin Kundang's ship and turned him into a stone."
+                        },
+                        correct: "C",
+                        explanation: "Struktur teks naratif terdiri dari: <em>Orientation</em> (pengenalan tokoh/latar), <em>Complication</em> (munculnya krisis/masalah), dan <em>Resolution</em> (penyelesaian masalah). <br>Pilihan C menggambarkan <strong>puncak krisis (complication)</strong> ketika Malin membentak dan menolak ibunya. Pilihan A adalah Orientation, B adalah awal cerita, dan D adalah Resolution."
+                    },
+                    {
+                        id: 4,
+                        question: "Why did Malin Kundang deny his mother when she approached him at the beach?",
+                        options: {
+                            A: "He truly did not recognize her because she had aged so much.",
+                            B: "He was ashamed of her poor, dirty, and ugly appearance in front of his wife.",
+                            C: "He was still angry at her for letting him leave the village years ago.",
+                            D: "He thought she was a beggar trying to steal his wealth."
+                        },
+                        correct: "B",
+                        explanation: "Coba temukan buktinya di paragraf 4! Malin Kundang berteriak: <em>\"I have never had a mother like you, a dirty and ugly peasant!\"</em> (Aku tidak pernah punya ibu sepertimu, petani kotor dan jelek!).<br>Hal ini menunjukkan alasan sebenarnya ia menolak ibunya adalah karena <strong>ia merasa gengsi dan malu</strong> melihat penampilan ibunya yang miskin di hadapan istri dan anak buah kapalnya."
+                    },
+                    {
+                        id: 5,
+                        question: "What can we evaluate as the primary moral lesson of this legend?",
+                        options: {
+                            A: "Hard work is the only key to escaping poverty and achieving success.",
+                            B: "We must always help merchants who are attacked by pirates.",
+                            C: "Respecting and honoring our parents is a sacred duty, regardless of our status.",
+                            D: "We should not travel far from home if we have an elderly parent."
+                        },
+                        correct: "C",
+                        explanation: "Pelajaran moral (*moral lesson*) dari legenda Malin Kundang sangat jelas, yaitu: <strong>seorang anak wajib menghormati dan berbakti kepada orang tuanya</strong> (*respecting and honoring our parents*). Tidak peduli seberapa kaya atau suksesnya kita, durhaka kepada orang tua akan membawa kehancuran."
+                    }
+                ]
+            },
+            
+            {
+                textTitle: "Text 2: The Goose with the Golden Eggs",
+                textContent: `
+                    <p>Once upon a time, a man and his wife had the good fortune to have a goose which laid a golden egg every day. Lucky though they were, they soon began to think they were not getting rich fast enough.</p>
+                    <p>They imagined that if the bird must be able to lay golden eggs, its insides must be made of gold. And they thought that if they could get all that precious metal at once, they would get mighty rich very soon. So the couple decided to kill the bird.</p>
+                    <p>However, upon cutting the goose open, they were shocked to find that its innards were just like that of any other goose. They obtained no gold, and they could no longer enjoy the daily golden egg.</p>
+                `,
+                questions: [
+                    {
+                        id: 6,
+                        question: "What is the social function of the text above?",
+                        options: {
+                            A: "To describe how geese produce golden eggs in detail.",
+                            B: "To persuade the readers to raise geese for business.",
+                            C: "To entertain the readers with a story that carries a moral lesson.",
+                            D: "To report the physical characteristics of a unique goose."
+                        },
+                        correct: "C",
+                        explanation: "Ingat Rumus Jitu Teks Naratif! Fungsi sosial (*social function*) dari setiap cerita fiksi, legenda, atau fabel adalah untuk <strong>menghibur pembaca (*to entertain*) sekaligus memberikan pesan moral (*moral lesson*)</strong>. Teks ini bukan teks Report (D) atau Deskriptif (A)."
+                    },
+                    {
+                        id: 7,
+                        question: "What happened after the couple killed the goose?",
+                        options: {
+                            A: "They found a huge lump of gold inside its stomach.",
+                            B: "They became the richest people in the village instantly.",
+                            C: "They realized the goose was just like any other ordinary goose inside.",
+                            D: "They sold the goose's meat for a very high price."
+                        },
+                        correct: "C",
+                        explanation: "Lihat paragraf terakhir: <em>\"they were shocked to find that its innards were just like that of any other goose.\"</em> <br>Setelah memotong perut angsa tersebut, mereka terkejut karena menyadari bahwa bagian dalam tubuh angsa itu <strong>sama persis seperti angsa biasa pada umumnya</strong>, sama sekali tidak ada emas."
+                    },
+                    {
+                        id: 8,
+                        question: "\"They imagined that if the bird must be able to lay golden eggs, its <u>insides</u> must be made of gold.\" (Paragraph 2)<br>The word \"insides\" in the sentence refers to...",
+                        options: {
+                            A: "Feathers",
+                            B: "Innards",
+                            C: "Nest",
+                            D: "Wings"
+                        },
+                        correct: "B",
+                        explanation: "Kata <strong>\"insides\"</strong> secara harfiah berarti \"bagian dalam\". Dalam konteks tubuh hewan, ini merujuk pada organ dalam/jeroan. Di paragraf 3, penulis menggunakan kata <strong>\"innards\"</strong> (jeroan/organ dalam) untuk mendeskripsikan hal yang sama. Jadi, <em>insides = innards</em>."
+                    },
+                    {
+                        id: 9,
+                        question: "What character trait best describes the husband and wife in the story?",
+                        options: {
+                            A: "Greedy",
+                            B: "Generous",
+                            C: "Patient",
+                            D: "Creative"
+                        },
+                        correct: "A",
+                        explanation: "Sifat tokoh digambarkan dari tindakan mereka: mereka sudah mendapat 1 telur emas per hari, tapi merasa kurang cepat kaya, lalu memilih membunuh angsa demi mendapat semua emas sekaligus. Karakteristik ini sangat menggambarkan sifat <strong>Serakah (Greedy)</strong>. <br><em>Tips:</em> Generous = dermawan, Patient = sabar."
+                    },
+                    {
+                        id: 10,
+                        question: "If we evaluate the couple's decision to kill the goose, we can conclude that...",
+                        options: {
+                            A: "It was a clever business strategy to maximize immediate profit.",
+                            B: "It was a foolish action driven by greed that led to their own loss.",
+                            C: "It was a necessary step to find out the truth about the golden eggs.",
+                            D: "It was a brave experiment that unfortunately failed due to bad luck."
+                        },
+                        correct: "B",
+                        explanation: "Mengevaluasi keputusan tokoh: Tindakan membunuh angsa penghasil emas adalah tindakan yang sangat bodoh (<em>foolish action</em>) karena didorong oleh hawa nafsu keserakahan (<em>driven by greed</em>). Akibatnya fatal, mereka kehilangan sumber penghasilan emas mereka selamanya."
+                    }
+                ]
+            },
+
+            {
+                textTitle: "Text 3: The Legend of Prambanan Temple",
+                textContent: `
+                    <p>Once, there was a beautiful Javanese princess named Rara Jonggrang. She was the daughter of King Baka. A powerful prince named Bandung Bondowoso defeated King Baka in a war and wanted to marry Rara Jonggrang.</p>
+                    <p>Rara Jonggrang did not want to marry the cruel prince who killed her father, but she was afraid to refuse directly. So, she gave him an impossible condition: he had to build one thousand temples in just one night. Bandung Bondowoso agreed. He used his supernatural powers to summon genies to help him build the temples.</p>
+                    <p>By midnight, the work was nearly completed. Rara Jonggrang panicked. She woke up the palace maids and ordered them to pound rice mortars and burn straw to make the sky look red, mimicking dawn. The roosters, thinking it was morning, began to crow.</p>
+                    <p>Believing that daylight had arrived, the genies fled back to the underworld, leaving the work unfinished at 999 temples. When Bandung Bondowoso realized he had been tricked, he was furious. In his anger, he cursed Rara Jonggrang, turning her into stone to complete the 1000th temple.</p>
+                `,
+                questions: [
+                    {
+                        id: 11,
+                        question: "What did Rara Jonggrang do to prevent Bandung Bondowoso from completing his task?",
+                        options: {
+                            A: "She asked the genies to stop working and go home.",
+                            B: "She destroyed the temples that had already been built.",
+                            C: "She tricked the genies into thinking that dawn had arrived.",
+                            D: "She ran away from the palace before the sun rose."
+                        },
+                        correct: "C",
+                        explanation: "Berdasarkan paragraf 3, strategi yang dilakukan Rara Jonggrang untuk menggagalkan pembuatan candi adalah dengan menyuruh pelayan menumbuk padi dan membakar jerami agar langit memerah, sehingga <strong>mengelabui para jin (tricked the genies) agar mengira pagi/fajar (dawn) telah tiba.</strong>"
+                    },
+                    {
+                        id: 12,
+                        question: "How did Bandung Bondowoso react when he found out about Rara Jonggrang's trick?",
+                        options: {
+                            A: "He accepted his defeat and left the kingdom peacefully.",
+                            B: "He cursed her into a stone statue to complete the last temple.",
+                            C: "He ordered his army to destroy all the 999 temples.",
+                            D: "He begged her to give him another chance to build the temples."
+                        },
+                        correct: "B",
+                        explanation: "Cari kalimat yang memuat reaksi Bandung di paragraf terakhir: <em>\"When Bandung Bondowoso realized he had been tricked, he was furious. In his anger, he cursed Rara Jonggrang, turning her into stone...\"</em>. Ia bereaksi sangat marah dan <strong>mengutuk Rara Jonggrang menjadi patung batu</strong>."
+                    },
+                    {
+                        id: 13,
+                        question: "\"...she gave <u>him</u> an impossible condition...\" (Paragraph 2)<br>The underlined word refers to...",
+                        options: {
+                            A: "King Baka",
+                            B: "The genie",
+                            C: "Bandung Bondowoso",
+                            D: "The palace maid"
+                        },
+                        correct: "C",
+                        explanation: "Kalimat lengkapnya: \"Rara Jonggrang did not want to marry the cruel prince... So, she gave <strong>him</strong> an impossible condition\". Kata ganti \"him\" (dia laki-laki) di sini merujuk pada pangeran yang ingin menikahinya dan memberinya syarat tersebut, yaitu <strong>Bandung Bondowoso</strong>."
+                    },
+                    {
+                        id: 14,
+                        question: "Evaluating Rara Jonggrang’s character, we can say that she was...",
+                        options: {
+                            A: "Cruel and violent",
+                            B: "Clever but deceitful",
+                            C: "Weak and helpless",
+                            D: "Honest and obedient"
+                        },
+                        correct: "B",
+                        explanation: "Dari tindakannya, Rara Jonggrang dinilai sangat <strong>cerdik (clever)</strong> karena mampu menemukan ide membuat fajar buatan. Namun, di saat yang sama, ia juga <strong>penuh tipu daya/licik (deceitful)</strong> karena ia tidak menolak secara jujur melainkan berbuat curang untuk menang."
+                    },
+                    {
+                        id: 15,
+                        question: "What is the main difference between \"The Legend of Prambanan Temple\" and \"The Goose with the Golden Eggs\"?",
+                        options: {
+                            A: "Prambanan Temple is a legend explaining the origin of a place, while the Goose story is a fable teaching a moral lesson about greed.",
+                            B: "Prambanan Temple is a fable about animals, while the Goose story is a fairy tale about royalty.",
+                            C: "Prambanan Temple aims to describe a historical event, while the Goose story aims to entertain children.",
+                            D: "Prambanan Temple has a happy ending, while the Goose story has a tragic ending."
+                        },
+                        correct: "A",
+                        explanation: "Perbedaan utamanya terletak pada sub-genre Narrative: Candi Prambanan adalah sebuah cerita <strong>Legenda (Legend)</strong> yang dipercaya masyarakat untuk menjelaskan asal-usul terbentuknya suatu tempat/candi. Sedangkan cerita Angsa adalah <strong>Fabel (Fable)</strong> yang menggunakan karakter hewan untuk mengajarkan nilai moral (tentang keserakahan)."
+                    }
+                ]
+            },
+
+            {
+                textTitle: "Comparative & Analytical Questions",
+                textContent: `
+                    <p class="font-medium text-blue-800">Please answer the following questions based on the analysis of all three texts provided above.</p>
+                `,
+                questions: [
+                    {
+                        id: 16,
+                        question: "Compare the endings of \"The Legend of Malin Kundang\" and \"The Legend of Prambanan Temple\". What similarity do they share?",
+                        options: {
+                            A: "Both main characters got married and lived happily ever after.",
+                            B: "Both stories end with a character being turned into stone as a consequence of their actions.",
+                            C: "Both stories end with the main characters becoming extremely wealthy.",
+                            D: "Both stories show that tricks and lies always lead to success."
+                        },
+                        correct: "B",
+                        explanation: "Perbandingan Akhir Cerita (Resolution): Di akhir cerita Malin Kundang, Malin <strong>dikutuk menjadi batu</strong> karena kedurhakaannya. Di akhir cerita Prambanan, Rara Jonggrang juga <strong>dikutuk menjadi batu</strong> karena menipu. Keduanya memiliki kesamaan nasib akhir yang tragis menjadi batu."
+                    },
+                    {
+                        id: 17,
+                        question: "Read these two sentences:<br>1) <em>Malin Kundang was a healthy, diligent, and strong boy.</em><br>2) <em>Bandung Bondowoso used his supernatural powers to summon genies.</em><br><br>Which language feature of Narrative Text is highlighted in these sentences?",
+                        options: {
+                            A: "The use of simple present tense to describe facts.",
+                            B: "The use of specific nouns and noun phrases to describe characters and their attributes.",
+                            C: "The use of imperative sentences to give orders.",
+                            D: "The use of passive voice to emphasize the action."
+                        },
+                        correct: "B",
+                        explanation: "Analisis unsur kebahasaan: Kata-kata seperti <em>healthy, diligent, strong boy</em> dan <em>supernatural powers</em> adalah contoh dari <strong>penggunaan kata sifat (adjective) dan frasa kata benda (noun phrase)</strong> yang spesifik. Tujuannya adalah agar pembaca bisa membayangkan karakter dan atribut tokoh dengan jelas."
+                    },
+                    {
+                        id: 18,
+                        question: "In terms of social function, which of the following statements is true when comparing \"The Goose with the Golden Eggs\" and \"The Legend of Malin Kundang\"?",
+                        options: {
+                            A: "Both texts are written to explain the scientific origin of natural phenomena.",
+                            B: "Both texts aim to entertain the readers while warning them against negative human traits (greed and disobedience).",
+                            C: "\"The Goose\" is meant to inform readers about farming, while \"Malin Kundang\" is meant to promote tourism in Sumatra.",
+                            D: "Both texts are intended to persuade readers to become rich through honest means."
+                        },
+                        correct: "B",
+                        explanation: "Secara fungsi sosial, semua teks naratif bertujuan untuk menghibur pembaca sekaligus menanamkan pesan moral. Cerita Angsa memberi peringatan tentang bahaya <strong>keserakahan (greed)</strong>, sedangkan Malin Kundang memperingatkan tentang <strong>kedurhakaan (disobedience)</strong>."
+                    },
+                    {
+                        id: 19,
+                        question: "Analyze the structure of the three texts. Which element is always present in all three narratives?",
+                        options: {
+                            A: "A resolution where the main character solves the problem and lives happily.",
+                            B: "A complication where a crisis or problem arises for the characters.",
+                            C: "An orientation that introduces a modern-day setting and technology.",
+                            D: "A re-orientation that gives a scientific explanation of the events."
+                        },
+                        correct: "B",
+                        explanation: "Syarat mutlak sebuah cerita bisa disebut Teks Naratif adalah <strong>harus memiliki Complication (masalah/konflik yang memuncak).</strong> Tanpa adanya konflik atau krisis, cerita tersebut akan menjadi sangat datar (hanya seperti teks Recount). Resolusi bahagia (A) tidak selalu ada (contoh: cerita Malin berakhir sedih/tragis)."
+                    },
+                    {
+                        id: 20,
+                        question: "If you were to evaluate the behavior of the characters in \"The Legend of Malin Kundang\" (Malin) and \"The Goose with the Golden Eggs\" (the couple), what is the fundamental flaw they both committed?",
+                        options: {
+                            A: "They both lacked the courage to face their enemies.",
+                            B: "They both failed to appreciate what they had, leading to their own ruin.",
+                            C: "They both trusted the wrong people to help them.",
+                            D: "They both refused to work hard to achieve their dreams."
+                        },
+                        correct: "B",
+                        explanation: "Evaluasi karakter: Kelemahan mendasar (fundamental flaw) dari kedua pihak tersebut adalah <strong>rasa tidak bersyukur (failed to appreciate what they had)</strong>. Malin tidak menghargai kasih sayang ibunya, dan pasangan suami istri itu tidak mensyukuri telur emas harian mereka. Sikap tidak bersyukur inilah yang menuntun mereka pada kehancuran (*their own ruin*)."
+                    }
+                ]
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+            let questionCounter = 1;
+
+            quizData.forEach((group, groupIndex) => {
+                // Render Text Block
+                htmlContent += `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                        <div class="bg-indigo-600 text-white px-5 py-3 font-semibold flex items-center">
+                            <i class="fas fa-book-open mr-3"></i> ${group.textTitle}
+                        </div>
+                        <div class="p-5 md:p-8 story-text text-slate-700 bg-slate-50 border-b border-slate-200">
+                            ${group.textContent}
+                        </div>
+                        <div class="p-5 md:p-8 space-y-8">
+                `;
+
+                // Render Questions for this text
+                group.questions.forEach((item) => {
+                    htmlContent += `
+                        <div class="relative group">
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                    ${questionCounter}
+                                </div>
+                                <div class="flex-1 w-full">
+                                    <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                    <div class="space-y-3">
+                    `;
+                    
+                    for (const [key, value] of Object.entries(item.options)) {
+                        htmlContent += `
+                            <label class="relative flex cursor-pointer group/label">
+                                <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                                <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                    <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                    <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                        <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                        ${value}
+                                    </div>
+                                </div>
+                            </label>
+                        `;
+                    }
+
+                    htmlContent += `
+                                    </div>
+                                    <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-xl text-sm border-l-4 animate-fade-in-down shadow-sm">
+                                        <div class="flex items-start">
+                                            <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5 flex-shrink-0"></div>
+                                            <div>
+                                                <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                                <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    questionCounter++;
+                });
+
+                htmlContent += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalQuestions = 0;
+
+            quizData.forEach(group => {
+                totalQuestions += group.questions.length;
+                
+                group.questions.forEach(item => {
+                    const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                    const expContainer = document.getElementById(`exp-container-${item.id}`);
+                    const expTitle = document.getElementById(`exp-title-${item.id}`);
+                    const expText = document.getElementById(`exp-text-${item.id}`);
+                    const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                    
+                    // Reset styling
+                    expContainer.className = 'mt-6 p-4 md:p-5 rounded-xl text-sm border-l-4 animate-fade-in-down shadow-sm';
+
+                    if (!selected) {
+                        // Unanswered
+                        expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                        expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                        expTitle.innerText = "Soal terlewat / Belum dijawab!";
+                        expText.innerHTML = `Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-2 mt-1"><i class="fas fa-lightbulb mr-1 text-amber-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                    } else if (selected.value === item.correct) {
+                        // Correct
+                        correctCount++;
+                        expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                        expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                        expTitle.innerText = "Hebat! Jawaban Kamu Benar.";
+                        expText.innerHTML = item.explanation;
+                    } else {
+                        // Incorrect
+                        expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                        expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                        expTitle.innerText = `Jawaban kurang tepat. Kunci yang benar adalah ${item.correct}.`;
+                        expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-2 mt-1"><i class="fas fa-lightbulb mr-1 text-rose-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                    }
+                    
+                    expContainer.classList.remove('hidden');
+
+                    // Disable inputs after submission
+                    const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                    radios.forEach(r => r.disabled = true);
+                });
+            });
+
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Score Counting Animation
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Dynamic encouraging messages based on score
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Sempurna! Pemahaman teks naratifmu sudah sekelas expert!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Sangat Baik! Kemampuan literasi bahasa Inggrismu hebat.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Baca pelan-pelan pembahasannya agar lebih jago ya.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Tetap Semangat! Kesalahan adalah proses belajar. Ayo baca lagi pembahasannya!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            }
+
+            // Swap action buttons
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Scroll down to result section smoothly
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); // Ease out quad
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset form
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable inputs, uncheck, and hide explanations
+            quizData.forEach(group => {
+                group.questions.forEach(item => {
+                    const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                    radios.forEach(r => {
+                        r.disabled = false;
+                        r.checked = false;
+                    });
+                    
+                    const expContainer = document.getElementById(`exp-container-${item.id}`);
+                    expContainer.classList.add('hidden');
+                });
+            });
+
+            // Hide results
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Reset buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Load content initially
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

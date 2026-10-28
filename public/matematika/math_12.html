@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Barisan dan Deret</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        /* Styling kustom untuk animasi muncul yang halus */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Menyembunyikan radio button asli agar UI bisa dimodifikasi lebih modern */
+        input[type="radio"] {
+            display: none;
+        }
+        /* Styling untuk wadah opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+        }
+        .option-label:hover {
+            background-color: #f8fafc; /* slate-50 */
+            border-color: #cbd5e1; /* slate-300 */
+        }
+        /* Styling saat sebuah opsi dipilih oleh pengguna */
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        /* Membuat visual lingkaran radio button kustom */
+        .radio-circle {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 transition font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-20"></div> <!-- Spacer penyeimbang layout -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-3">Evaluasi: Barisan & Deret</h2>
+            <p class="text-gray-600">Kerjakan soal-soal di bawah ini. Anda dapat memeriksa jawaban kapan saja tanpa harus mengisi semua soal terlebih dahulu.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer ini akan diisi secara dinamis oleh JavaScript -->
+            </div>
+
+            <div class="mt-12 bg-white p-6 rounded-2xl shadow-sm border border-gray-200 text-center sticky bottom-4 z-40">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-lg">
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-6 fade-in">
+                    <div class="text-2xl font-bold text-gray-700 mb-2">Nilai Akhir Anda:</div>
+                    <div id="scoreDisplay" class="text-6xl font-extrabold text-blue-600 mb-6">0</div>
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Perhatikan barisan bilangan berikut: 3, 7, 11, 15, ...<br>Dua suku berikutnya dari barisan tersebut adalah...",
+                options: [
+                    "A. 18 dan 21",
+                    "B. 19 dan 23",
+                    "C. 19 dan 24",
+                    "D. 20 dan 25"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Pertama, kita cari selisih atau beda (b) antar angkanya. Dari 3 ke 7 itu naiknya 4 (b = 7 - 3 = 4).<br>2. Cek angka selanjutnya: 7 ke 11 juga naik 4. Artinya ini adalah <strong>Barisan Aritmetika</strong> yang selalu bertambah 4.<br>3. Suku terakhir yang diketahui adalah 15.<br>4. Suku ke-5 = 15 + 4 = <strong>19</strong>.<br>5. Suku ke-6 = 19 + 4 = <strong>23</strong>.<br><br>Jadi, dua angka berikutnya adalah 19 dan 23."
+            },
+            {
+                question: "Diketahui barisan aritmetika: 45, 38, 31, 24, ...<br>Beda (b) dari barisan aritmetika tersebut adalah...",
+                options: [
+                    "A. 7",
+                    "B. 6",
+                    "C. -6",
+                    "D. -7"
+                ],
+                correctAnswer: 3, // D
+                explanation: "<strong>Ingat Konsep:</strong> Beda (b) pada barisan aritmetika dicari dengan cara mengurangkan suku di depannya dengan suku sebelumnya (U<sub>2</sub> - U<sub>1</sub>).<br><br><strong>Perhitungan:</strong><br>b = Suku ke-2 - Suku ke-1<br>b = 38 - 45 = <strong>-7</strong>.<br><br><em>Catatan: Karena angkanya semakin mengecil, maka nilai bedanya pasti negatif.</em>"
+            },
+            {
+                question: "Suku ke-6 dari barisan geometri 2, 6, 18, 54, ... adalah...",
+                options: [
+                    "A. 162",
+                    "B. 486",
+                    "C. 1.458",
+                    "D. 4.374"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Tentukan suku pertama (a) = 2.<br>2. Tentukan pengali atau rasio (r) = 6 &divide; 2 = 3.<br>3. Gunakan rumus barisan geometri: U<sub>n</sub> = a &times; r<sup>n-1</sup><br>4. Kita mencari suku ke-6 (U<sub>6</sub>):<br>U<sub>6</sub> = 2 &times; 3<sup>6-1</sup><br>U<sub>6</sub> = 2 &times; 3<sup>5</sup><br>U<sub>6</sub> = 2 &times; 243 = <strong>486</strong>."
+            },
+            {
+                question: "Rumus suku ke-n (U<sub>n</sub>) dari barisan bilangan 5, 9, 13, 17, ... adalah...",
+                options: [
+                    "A. U<sub>n</sub> = 4n + 1",
+                    "B. U<sub>n</sub> = 4n - 1",
+                    "C. U<sub>n</sub> = 3n + 2",
+                    "D. U<sub>n</sub> = 5n - 1"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Mari kita buat rumusnya selangkah demi selangkah:<br>1. Suku pertama (a) = 5.<br>2. Beda (b) = 9 - 5 = 4.<br>3. Masukkan ke rumus umum aritmetika: <strong>U<sub>n</sub> = a + (n - 1)b</strong><br>U<sub>n</sub> = 5 + (n - 1)4<br>U<sub>n</sub> = 5 + 4n - 4<br>U<sub>n</sub> = <strong>4n + 1</strong>."
+            },
+            {
+                question: "Diketahui suku ke-3 dari suatu barisan aritmetika adalah 11 dan suku ke-7 adalah 23. Suku ke-15 dari barisan tersebut adalah...",
+                options: [
+                    "A. 47",
+                    "B. 49",
+                    "C. 51",
+                    "D. 53"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Ini soal yang butuh taktik eliminasi!<br>Rumus umum: U<sub>n</sub> = a + (n-1)b<br>• U<sub>7</sub> = a + 6b = 23<br>• U<sub>3</sub> = a + 2b = 11<br>------------------------ (Kurangkan atas dengan bawah)<br>4b = 12 &rarr; <strong>b = 3</strong><br><br>Sekarang cari 'a' (suku pertama) dengan memasukkan nilai b:<br>a + 2(3) = 11 &rarr; a + 6 = 11 &rarr; <strong>a = 5</strong><br><br>Terakhir, kita cari suku ke-15 (U<sub>15</sub>):<br>U<sub>15</sub> = a + 14b = 5 + 14(3) = 5 + 42 = <strong>47</strong>."
+            },
+            {
+                question: "Jumlah 10 suku pertama dari deret aritmetika 4 + 7 + 10 + 13 + ... adalah...",
+                options: [
+                    "A. 165",
+                    "B. 175",
+                    "C. 350",
+                    "D. 390"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Suku pertama (a) = 4.<br>2. Beda (b) = 7 - 4 = 3.<br>3. Banyaknya suku (n) = 10.<br>4. Gunakan rumus deret (Jumlah n suku pertama): S<sub>n</sub> = <sup>n</sup>/<sub>2</sub> &times; [2a + (n - 1)b]<br><br>Hitung:<br>S<sub>10</sub> = <sup>10</sup>/<sub>2</sub> &times; [2(4) + (10 - 1)3]<br>S<sub>10</sub> = 5 &times; [8 + 9(3)]<br>S<sub>10</sub> = 5 &times; [8 + 27]<br>S<sub>10</sub> = 5 &times; 35 = <strong>175</strong>."
+            },
+            {
+                question: "Perhatikan barisan bilangan bertingkat berikut: 2, 5, 10, 17, 26, ...<br>Suku ke-10 dari barisan tersebut adalah...",
+                options: [
+                    "A. 82",
+                    "B. 97",
+                    "C. 101",
+                    "D. 122"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Mari kita amati pola angkanya dengan teliti. Coba dekatkan angka-angka tersebut dengan bilangan kuadrat sempurna (1, 4, 9, 16, 25...):<br>• U<sub>1</sub> = 2 &rarr; (1<sup>2</sup> + 1)<br>• U<sub>2</sub> = 5 &rarr; (2<sup>2</sup> + 1)<br>• U<sub>3</sub> = 10 &rarr; (3<sup>2</sup> + 1)<br>• U<sub>4</sub> = 17 &rarr; (4<sup>2</sup> + 1)<br><br>Ternyata rumusnya adalah: U<sub>n</sub> = n<sup>2</sup> + 1<br>Maka untuk suku ke-10 (U<sub>10</sub>):<br>U<sub>10</sub> = 10<sup>2</sup> + 1 = 100 + 1 = <strong>101</strong>."
+            },
+            {
+                question: "Di sebuah laboratorium, bakteri jenis X membelah diri menjadi dua setiap 15 menit. Jika pada awal pengamatan terdapat 10 bakteri, maka banyak bakteri setelah 2 jam adalah...",
+                options: [
+                    "A. 1.280 bakteri",
+                    "B. 2.560 bakteri",
+                    "C. 5.120 bakteri",
+                    "D. 10.240 bakteri"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Logika Penyelesaian:</strong><br>1. <strong>Waktu total:</strong> 2 jam = 120 menit.<br>2. <strong>Berapa kali membelah?</strong> (n) = 120 &divide; 15 = 8 kali pembelahan.<br>3. Ini adalah barisan geometri. Suku awal (jumlah sebelum membelah) = 10. Rasionya (r) = 2 (karena membelah dua).<br><br>Jumlah bakteri setelah pembelahan ke-8:<br>Jumlah = Awal &times; r<sup>n</sup><br>Jumlah = 10 &times; 2<sup>8</sup><br>Jumlah = 10 &times; 256 = <strong>2.560 bakteri</strong>."
+            },
+            {
+                question: "Dalam sebuah aula, kursi disusun dalam beberapa baris. Baris pertama terdiri dari 15 kursi, baris kedua 19 kursi, baris ketiga 23 kursi, dan seterusnya selalu bertambah dengan pola yang sama. Jika di dalam aula tersebut terdapat 12 baris kursi, maka kapasitas total kursi di aula tersebut adalah...",
+                options: [
+                    "A. 444 kursi",
+                    "B. 450 kursi",
+                    "C. 516 kursi",
+                    "D. 540 kursi"
+                ],
+                correctAnswer: 0, // A - (Telah dikoreksi dari kunci asli yang salah)
+                explanation: "<em>Catatan Edukasi: Kunci jawaban asli (C/516) salah hitung, ini adalah hasil perhitungan yang tepat.</em><br><br>Karena kursi bertambah konstan, ini adalah Deret Aritmetika.<br>• Suku pertama (Baris 1) a = 15<br>• Beda antar baris (b) = 19 - 15 = 4<br>• Banyak baris (n) = 12<br><br>Kapasitas total = Jumlah seluruh kursi dari baris 1 sampai 12 (S<sub>12</sub>):<br>S<sub>12</sub> = <sup>12</sup>/<sub>2</sub> &times; [2(15) + (12 - 1)4]<br>S<sub>12</sub> = 6 &times; [30 + 11(4)]<br>S<sub>12</sub> = 6 &times; [30 + 44]<br>S<sub>12</sub> = 6 &times; 74 = <strong>444 kursi</strong>."
+            },
+            {
+                question: "Dua buah barisan aritmetika diberikan sebagai berikut:<br>Barisan P: 3, 7, 11, 15, 19, ...<br>Barisan Q: 4, 9, 14, 19, 24, ...<br>Jika kedua barisan tersebut diteruskan, bilangan terkecil kedua yang muncul pada kedua barisan tersebut adalah...",
+                options: [
+                    "A. 35",
+                    "B. 39",
+                    "C. 43",
+                    "D. 59"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah Logis:</strong><br>1. Cari angka yang sama (beririsan) untuk pertama kalinya. Dari barisan soal, angka yang sama pertama kali adalah <strong>19</strong>.<br>2. Cari \"lompatan bersama\". Barisan P melompat setiap 4 angka (b=4). Barisan Q melompat setiap 5 angka (b=5).<br>3. Angka yang sama berikutnya akan muncul di <strong>KPK</strong> (Kelipatan Persekutuan Terkecil) dari lompatan mereka. KPK dari 4 dan 5 adalah 20.<br>4. Jadi, angka sama berikutnya akan muncul 20 langkah ke depan dari 19.<br>Angka sama kedua = 19 + 20 = <strong>39</strong>."
+            },
+            {
+                question: "Rasio (r) dari barisan geometri 81, 27, 9, 3, ... adalah...",
+                options: [
+                    "A. 3",
+                    "B. 1/3",
+                    "C. -3",
+                    "D. -1/3"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Ingat Konsep:</strong> Rasio (r) pada barisan geometri dicari dengan membagi suku di depannya dengan suku sebelumnya (U<sub>2</sub> &divide; U<sub>1</sub>).<br><br>r = Suku ke-2 &divide; Suku ke-1<br>r = 27 &divide; 81.<br>Kita sederhanakan pecahannya dengan membagi pembilang dan penyebut dengan 27, hasilnya adalah <strong>1/3</strong>.<br><br><em>Artinya, angka-angka tersebut terus dibagi 3, yang sama maknanya dengan dikali 1/3.</em>"
+            },
+            {
+                question: "Jumlah 6 suku pertama dari deret geometri 3 + 6 + 12 + 24 + ... adalah...",
+                options: [
+                    "A. 189",
+                    "B. 192",
+                    "C. 378",
+                    "D. 381"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Data yang kita punya:</strong><br>• Suku awal (a) = 3<br>• Rasio (r) = 6 &divide; 3 = 2 (Karena r > 1, kita pakai rumus r di depan)<br>• Banyak suku (n) = 6<br><br><strong>Rumus:</strong> S<sub>n</sub> = a &times; (r<sup>n</sup> - 1) &divide; (r - 1)<br>S<sub>6</sub> = 3 &times; (2<sup>6</sup> - 1) &divide; (2 - 1)<br>S<sub>6</sub> = 3 &times; (64 - 1) &divide; 1<br>S<sub>6</sub> = 3 &times; 63 = <strong>189</strong>."
+            },
+            {
+                question: "Diketahui suatu barisan aritmetika berhingga memiliki suku pertama (U<sub>1</sub>) = 5 dan suku terakhir (U<sub>n</sub>) = 45. Jika banyaknya suku pada barisan tersebut adalah ganjil, maka nilai dari suku tengahnya (U<sub>t</sub>) adalah...",
+                options: [
+                    "A. 20",
+                    "B. 25",
+                    "C. 30",
+                    "D. 35"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mencari suku tengah pada barisan aritmetika itu persis seperti mencari nilai rata-rata dari angka paling awal dan angka paling akhir.<br><br><strong>Rumusnya:</strong> U<sub>t</sub> = (U<sub>awal</sub> + U<sub>akhir</sub>) &divide; 2<br>U<sub>t</sub> = (5 + 45) &divide; 2<br>U<sub>t</sub> = 50 &divide; 2 = <strong>25</strong>."
+            },
+            {
+                question: "Seutas tali dipotong menjadi 5 bagian sehingga panjang masing-masing bagian membentuk barisan geometri. Jika potongan tali terpendek adalah 4 cm dan potongan tali terpanjang adalah 324 cm, maka panjang tali semula sebelum dipotong adalah...",
+                options: [
+                    "A. 484 cm",
+                    "B. 488 cm",
+                    "C. 492 cm",
+                    "D. 496 cm"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Panjang tali semula berarti kita menjumlahkan seluruh kelima potongan tersebut (Mencari S<sub>5</sub>).<br><br>1. Suku terpendek (a) = 4.<br>2. Suku terpanjang (U<sub>5</sub>) = 324.<br>U<sub>5</sub> = a &times; r<sup>4</sup> &rarr; 324 = 4 &times; r<sup>4</sup><br>r<sup>4</sup> = 324 &divide; 4 = 81. Maka r = 3 (Karena 3&times;3&times;3&times;3 = 81).<br><br>3. Cari total panjang tali (S<sub>5</sub>):<br>S<sub>5</sub> = a &times; (r<sup>5</sup> - 1) &divide; (r - 1)<br>S<sub>5</sub> = 4 &times; (3<sup>5</sup> - 1) &divide; (3 - 1)<br>S<sub>5</sub> = 4 &times; (243 - 1) &divide; 2<br>S<sub>5</sub> = 2 &times; 242 = <strong>484 cm</strong>."
+            },
+            {
+                question: "Pola korek api disusun membentuk persegi seperti berikut:<br>Pola 1 memerlukan 4 batang korek api.<br>Pola 2 memerlukan 7 batang korek api.<br>Pola 3 memerlukan 10 batang korek api.<br>Banyaknya batang korek api yang diperlukan untuk membuat Pola ke-20 adalah...",
+                options: [
+                    "A. 61 batang",
+                    "B. 64 batang",
+                    "C. 67 batang",
+                    "D. 70 batang"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Banyak batang membentuk barisan: 4, 7, 10, ...<br>Ini adalah barisan aritmetika karena selalu bertambah konstan:<br>• Suku pertama (a) = 4<br>• Beda (b) = 7 - 4 = 3<br><br>Kita diminta mencari suku ke-20 (U<sub>20</sub>):<br>U<sub>20</sub> = a + 19b<br>U<sub>20</sub> = 4 + 19(3)<br>U<sub>20</sub> = 4 + 57 = <strong>61 batang</strong>."
+            },
+            {
+                question: "Dua orang anak, Andi dan Budi, mulai menabung pada hari yang sama.<br>Andi menabung dengan skema: Minggu pertama Rp 5.000, minggu kedua Rp 6.000, minggu ketiga Rp 7.000, dan seterusnya bertambah Rp 1.000 setiap minggu.<br>Budi menabung dengan skema: Setiap minggu selalu konsisten menabung sebesar Rp 8.000.<br>Evaluasilah pernyataan berikut yang paling tepat mengenai jumlah tabungan mereka pada akhir minggu ke-10!",
+                options: [
+                    "A. Tabungan Andi lebih banyak daripada tabungan Budi dengan selisih Rp 15.000.",
+                    "B. Tabungan Budi lebih banyak daripada tabungan Andi dengan selisih Rp 15.000.",
+                    "C. Tabungan Andi lebih banyak daripada tabungan Budi dengan selisih Rp 5.000.",
+                    "D. Tabungan Budi lebih banyak daripada tabungan Andi dengan selisih Rp 5.000."
+                ],
+                correctAnswer: 0, // A - (Telah dikoreksi dari kunci asli B)
+                explanation: "<em>Catatan Edukasi: Kunci asli (B) keliru. Mari kita buktikan.</em><br><br><strong>Hitung Tabungan Andi (Deret Aritmetika):</strong><br>Bulan 1(a)=5.000, Nambah(b)=1.000, Lama(n)=10.<br>S<sub>10</sub> = <sup>10</sup>/<sub>2</sub> &times; [2(5.000) + 9(1.000)]<br>S<sub>10</sub> = 5 &times; [10.000 + 9.000] = 5 &times; 19.000 = <strong>Rp 95.000</strong>.<br><br><strong>Hitung Tabungan Budi (Konstan):</strong><br>Karena setiap minggu sama, langsung kalikan saja: 10 &times; Rp 8.000 = <strong>Rp 80.000</strong>.<br><br><strong>Kesimpulan:</strong><br>Tabungan Andi (Rp 95.000) lebih banyak dari Budi (Rp 80.000). Selisihnya adalah 95.000 - 80.000 = <strong>Rp 15.000</strong>. (Opsi A yang benar)."
+            },
+            {
+                question: "Perhatikan beberapa barisan bilangan berikut:<br>(i) 1, 4, 9, 16, ...<br>(ii) 2, 5, 8, 11, ...<br>(iii) 3, 6, 12, 24, ...<br>(iv) 5, 10, 15, 25, …<br><br>Di antara barisan di atas, yang berturut-turut merupakan barisan aritmetika dan barisan geometri adalah...",
+                options: [
+                    "A. (i) dan (ii)",
+                    "B. (ii) dan (iii)",
+                    "C. (ii) dan (iv)",
+                    "D. (iii) dan (iv)"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mari kita identifikasi polanya satu per satu:<br>• (i) 1, 4, 9, 16.. &rarr; Jelas ini bilangan pangkat dua/kuadrat (Bukan aritmetika, bukan geometri).<br>• (ii) 2, 5, 8, 11.. &rarr; Selalu ditambah 3 (+3, +3). Ini adalah <strong>Barisan Aritmetika</strong>.<br>• (iii) 3, 6, 12, 24.. &rarr; Selalu dikali 2 (&times;2, &times;2). Ini adalah <strong>Barisan Geometri</strong>.<br>• (iv) 5, 10, 15, 25.. &rarr; Jaraknya tidak beraturan (+5, +5, tiba-tiba +10). Bukan keduanya.<br><br>Jadi pasangan yang tepat adalah (ii) dan (iii)."
+            },
+            {
+                question: "Nilai x agar barisan bilangan (x - 1), (x + 3), (3x - 1) membentuk barisan aritmetika yang valid adalah...",
+                options: [
+                    "A. 4",
+                    "B. 6",
+                    "C. 8",
+                    "D. 10"
+                ],
+                correctAnswer: 0, // A - (Telah dikoreksi dari kunci asli C)
+                explanation: "<em>Catatan Edukasi: Kunci jawaban C pada soal asli keliru. Kita kerjakan dengan benar.</em><br><br>Syarat mutlak barisan aritmetika adalah <strong>Bedanya sama</strong>.<br>Beda 1 (U<sub>2</sub> - U<sub>1</sub>) = Beda 2 (U<sub>3</sub> - U<sub>2</sub>)<br>(x + 3) - (x - 1) = (3x - 1) - (x + 3)<br><br>Buka kurungnya (hati-hati tanda minus!):<br>x + 3 - x + 1 = 3x - 1 - x - 3<br>4 = 2x - 4<br><br>Pindahkan -4 ke ruas kiri:<br>4 + 4 = 2x<br>8 = 2x &rarr; <strong>x = 4</strong>.<br><br><em>Coba masukkan x=4 ke barisan awal: (3), (7), (11). Benar kan bedanya konstan 4?</em>"
+            },
+            {
+                question: "Dalam sebuah barisan geometri, diketahui suku ke-2 adalah 6 dan suku ke-5 adalah 162. Jumlah 5 suku pertama dari barisan tersebut adalah...",
+                options: [
+                    "A. 240",
+                    "B. 242",
+                    "C. 244",
+                    "D. 246"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Kita bongkar dulu dengan perbandingan:<br>• U<sub>5</sub> = a &times; r<sup>4</sup> = 162<br>• U<sub>2</sub> = a &times; r<sup>1</sup> = 6<br><br>Bagikan U<sub>5</sub> dengan U<sub>2</sub> untuk mengeleminasi 'a':<br>(a &times; r<sup>4</sup>) &divide; (a &times; r<sup>1</sup>) = 162 &divide; 6<br>r<sup>3</sup> = 27 &rarr; r = 3 (Karena 3&times;3&times;3 = 27).<br><br>Cari 'a' (Suku pertama): a &times; 3 = 6 &rarr; a = 2.<br><br>Cari jumlah 5 suku pertama (S<sub>5</sub>):<br>S<sub>5</sub> = a &times; (r<sup>5</sup> - 1) &divide; (r - 1)<br>S<sub>5</sub> = 2 &times; (3<sup>5</sup> - 1) &divide; (3 - 1)<br>S<sub>5</sub> = 2 &times; (243 - 1) &divide; 2<br>Angka 2 di atas dan bawah bisa dicoret! Hasilnya S<sub>5</sub> = <strong>242</strong>."
+            },
+            {
+                question: "Diberikan rumus suku ke-n suatu barisan adalah U<sub>n</sub> = 2n<sup>2</sup> - 3. Seorang siswa menganalisis barisan tersebut dan membuat beberapa pernyataan:<br>(1) Suku ke-5 barisan tersebut adalah 47.<br>(2) Selisih antara suku ke-3 dan suku ke-2 adalah 10.<br>(3) Barisan ini merupakan barisan aritmetika bertingkat dua.<br>(4) Beda tingkat kedua dari barisan ini selalu konstan bernilai 4.<br>Hasil evaluasi yang benar menunjukkan bahwa pernyataan yang valid adalah...",
+                options: [
+                    "A. (1), (2), dan (3) saja",
+                    "B. (1), (3), dan (4) saja",
+                    "C. (2), (3), dan (4) saja",
+                    "D. Semua pernyataan (1), (2), (3), dan (4) benar"
+                ],
+                correctAnswer: 3, // D - (Telah dikoreksi dari kunci asli B)
+                explanation: "<em>Catatan Edukasi: Kunci asli B keliru karena semua pernyataan ini terbukti benar. Mari kita uji!</em><br><br>• <strong>(1) Uji Suku ke-5:</strong> U<sub>5</sub> = 2(5)<sup>2</sup> - 3 = 2(25) - 3 = 50 - 3 = 47. <strong>(BENAR)</strong><br>• <strong>(2) Uji Selisih U3-U2:</strong> U<sub>3</sub> = 2(3)<sup>2</sup> - 3 = 15. U<sub>2</sub> = 2(2)<sup>2</sup> - 3 = 5. Selisih = 15 - 5 = 10. <strong>(BENAR)</strong><br>• <strong>(3) Uji Jenis Barisan:</strong> Karena rumusnya mengandung variabel berpangkat dua (kuadrat / n<sup>2</sup>), maka sudah pasti ini barisan bertingkat dua. <strong>(BENAR)</strong><br>• <strong>(4) Uji Beda Tingkat Dua:</strong> Pada rumus U<sub>n</sub> = An<sup>2</sup> + Bn + C, nilai beda tingkat dua rumus cepatnya adalah 2A. Karena A = 2, maka bedanya = 2(2) = 4. <strong>(BENAR)</strong><br><br>Semua pernyataan di atas bernilai benar."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6 relative overflow-hidden group">
+                        <!-- Pita biru penanda nomor -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl opacity-80"></div>
+                        
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2rem] h-8 rounded-lg bg-blue-100 text-blue-700 font-bold mr-3 text-sm md:text-base">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-xl font-medium text-gray-800 leading-relaxed pt-0.5">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3 ml-0 md:ml-11">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-gray-700 text-base md:text-lg select-none">
+                                        <div class="radio-circle"></div>
+                                        <span>${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Area Penjelasan (Tersembunyi secara default) -->
+                        <div id="explanation_${index}" class="hidden mt-6 ml-0 md:ml-11 p-5 rounded-xl border fade-in text-sm md:text-base">
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Jalankan render pertama kali saat halaman dimuat
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Kunci semua radio input agar jawaban tidak diganti setelah diperiksa
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                
+                let isCorrect = false;
+                let statusText = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        // Jawaban Benar
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusText = "JAWABAN BENAR";
+                        bgClass = "bg-green-50";
+                        borderClass = "border-green-400";
+                        textClass = "text-green-800";
+                    } else {
+                        // Jawaban Salah
+                        statusText = "JAWABAN SALAH";
+                        bgClass = "bg-red-50";
+                        borderClass = "border-red-400";
+                        textClass = "text-red-800";
+                        
+                        // Menyoroti opsi yang seharusnya benar secara visual
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5"; 
+                        correctLabel.style.borderColor = "#10b981"; 
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2">(&check; Kunci)</span>`;
+                    }
+                } else {
+                    // Jika dikosongkan
+                    statusText = "TIDAK DIJAWAB";
+                    bgClass = "bg-orange-50";
+                    borderClass = "border-orange-400";
+                    textClass = "text-orange-800";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2">(&check; Kunci)</span>`;
+                }
+
+                // Injeksi kotak pembahasan ke DOM
+                explanationDiv.innerHTML = `
+                    <div class="font-bold mb-2 pb-2 border-b ${borderClass} flex items-center">
+                        ${isCorrect ? `<svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                                   : `<svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`}
+                        ${statusText}
+                    </div>
+                    <div class="leading-relaxed mt-2 text-gray-700">
+                        ${q.explanation}
+                    </div>
+                `;
+                explanationDiv.className = `mt-6 ml-0 md:ml-11 p-5 rounded-xl border ${bgClass} ${borderClass} ${textClass} fade-in text-sm md:text-base block`;
+            });
+
+            scoreDisplay.innerText = Math.round(score);
+            scoreDisplay.className = "text-6xl font-extrabold mb-6 transition-colors duration-500 ";
+            if(score >= 80) scoreDisplay.className += "text-green-600";
+            else if(score >= 60) scoreDisplay.className += "text-blue-600";
+            else if(score >= 40) scoreDisplay.className += "text-orange-500";
+            else scoreDisplay.className += "text-red-600";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Auto scroll ke bawah agar skor terlihat
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            quizForm.reset();
+            // Render ulang soal agar style warna merah/hijau dari DOM kembali netral
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Scroll ke atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

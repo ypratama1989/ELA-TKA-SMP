@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Statistika & Pengumpulan Data</title>
+    
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="/tailwindcss.js"></script>
+    
+    <!-- Memuat Font Google (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Konfigurasi kustom Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+        
+        /* Menyembunyikan radio button bawaan */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling kustom untuk label radio (opsi jawaban) */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+        }
+        
+        .option-label:hover {
+            border-color: #cbd5e1;
+            background-color: #f1f5f9;
+        }
+        
+        /* Styling saat radio dipilih */
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Bulatan custom untuk radio */
+        .radio-custom {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        
+        /* Titik di dalam bulatan saat dipilih */
+        input[type="radio"]:checked + .option-label .radio-custom::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-custom {
+            border-color: #3b82f6;
+        }
+
+        /* Kelas utilitas untuk pembahasan */
+        .explanation-box {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center">
+            <button onclick="goBack()" class="text-slate-500 hover:text-slate-800 transition-colors mr-4 focus:outline-none" aria-label="Kembali">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            <h1 class="text-xl font-bold text-slate-800 truncate">Latihan Soal Statistika SMP</h1>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+            <h2 class="text-lg font-semibold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Petunjuk Pengerjaan</h2>
+            <p class="text-blue-700 text-sm md:text-base">Pilihlah satu jawaban yang menurutmu paling tepat. Kamu dapat langsung menekan tombol <strong>"Periksa Jawaban"</strong> di bagian bawah meskipun belum menyelesaikan semua soal untuk melihat pembahasan lengkapnya.</p>
+        </div>
+
+        <form id="quizForm" onsubmit="return false;">
+            <div id="questionsContainer">
+                <!-- Soal akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="mt-8 mb-12 text-center" id="actionArea">
+                <button type="button" onclick="checkAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg w-full md:w-auto">
+                    <i class="fas fa-check-circle mr-2"></i> Periksa Jawaban
+                </button>
+            </div>
+
+            <div id="resultArea" class="hidden bg-white rounded-2xl shadow-xl p-8 mb-12 text-center border-t-4 border-blue-500">
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Kamu</h3>
+                <div class="relative inline-flex items-center justify-center w-32 h-32 rounded-full bg-blue-50 mb-4 shadow-inner">
+                    <span id="scoreDisplay" class="text-5xl font-extrabold text-blue-600">0</span>
+                </div>
+                <p id="scoreMessage" class="text-lg text-slate-600 mb-8 font-medium">Tetap semangat belajar!</p>
+                
+                <button type="button" onclick="resetQuiz()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3 px-8 rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-slate-200 w-full md:w-auto">
+                    <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-medium text-sm md:text-base tracking-wide">
+                By EDUFILLAH, Unlock The Secret Of Curious Minds
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        // Data soal, kunci jawaban (sudah diverifikasi), dan pembahasan yang diperkaya
+        const quizData = [
+            {
+                id: 1,
+                question: "Seorang peneliti ingin mengetahui jenis ekstrakurikuler yang paling diminati oleh siswa SMP Harapan Bangsa. Rumusan pertanyaan yang paling tepat dan tidak bias untuk mengumpulkan data tersebut adalah...",
+                options: {
+                    a: "A. Apakah kamu setuju jika ekstrakurikuler Pramuka adalah yang terbaik di sekolah ini?",
+                    b: "B. Ekstrakurikuler apa yang paling kamu sukai di antara pilihan yang ada di sekolah?",
+                    c: "C. Mengapa kamu tidak memilih ekstrakurikuler olahraga yang sangat menyehatkan itu?",
+                    d: "D. Apakah kamu terpaksa mengikuti ekstrakurikuler pilihanmu saat ini?"
+                },
+                answer: "b",
+                explanation: "Pertanyaan survei yang baik harus <strong>netral, objektif, dan tidak menggiring opini (non-bias)</strong>. <br><br>Pilihan B sangat tepat karena memberikan kebebasan kepada siswa untuk memilih tanpa dipengaruhi. Sedangkan opsi A, C, dan D mengandung opini pembuat pertanyaan yang dapat memaksa atau menggiring responden untuk menjawab sesuai keinginan penanya (bias)."
+            },
+            {
+                id: 2,
+                question: "Perhatikan tabel frekuensi nilai ujian matematika kelas 9A berikut:<br><br>Nilai 60: 4 siswa<br>Nilai 70: 8 siswa<br>Nilai 80: 12 siswa<br>Nilai 90: 5 siswa<br>Nilai 100: 1 siswa<br><br>Banyaknya siswa yang mendapatkan nilai lebih dari 70 adalah...",
+                options: {
+                    a: "A. 12 siswa",
+                    b: "B. 17 siswa",
+                    c: "C. 18 siswa",
+                    d: "D. 26 siswa"
+                },
+                answer: "c",
+                explanation: "Perhatikan kata kunci <strong>\"lebih dari 70\"</strong>. Artinya, siswa yang mendapat nilai tepat 70 <em>tidak ikut dihitung</em>. Kita hanya menghitung siswa yang mendapat nilai 80, 90, dan 100.<br><br>Langkah penyelesaian:<br>&bull; Siswa nilai 80 = 12 orang<br>&bull; Siswa nilai 90 = 5 orang<br>&bull; Siswa nilai 100 = 1 orang<br><br>Total = 12 + 5 + 1 = <strong>18 siswa</strong>."
+            },
+            {
+                id: 3,
+                question: "Sebuah diagram batang menunjukkan jumlah produksi padi Desa Makmur selama 4 tahun:<br>- Tahun 2020: 150 ton<br>- Tahun 2021: 200 ton<br>- Tahun 2022: 180 ton<br>- Tahun 2023: 250 ton<br><br>Selisih produksi padi pada tahun tertinggi dan tahun terendah adalah...",
+                options: {
+                    a: "A. 50 ton",
+                    b: "B. 70 ton",
+                    c: "C. 100 ton",
+                    d: "D. 120 ton"
+                },
+                answer: "c",
+                explanation: "Dalam matematika, <strong>selisih</strong> berarti hasil pengurangan antara nilai terbesar dengan nilai terkecil.<br><br>1. Cari produksi tertinggi: Tahun 2023 sebanyak <strong>250 ton</strong>.<br>2. Cari produksi terendah: Tahun 2020 sebanyak <strong>150 ton</strong>.<br>3. Hitung selisihnya: 250 &minus; 150 = <strong>100 ton</strong>."
+            },
+            {
+                id: 4,
+                question: "Perhatikan data perkembangan suhu tubuh seorang pasien demam berdarah yang dicatat setiap 2 jam dalam bentuk diagram garis berikut:<br>- Pukul 08.00: 38.5&deg;C<br>- Pukul 10.00: 39.0&deg;C<br>- Pukul 12.00: 37.5&deg;C<br>- Pukul 14.00: 38.0&deg;C<br>- Pukul 16.00: 36.5&deg;C<br><br>Penurunan suhu tubuh terbesar terjadi pada selang waktu...",
+                options: {
+                    a: "A. Pukul 08.00 - 10.00",
+                    b: "B. Pukul 10.00 - 12.00",
+                    c: "C. Pukul 12.00 - 14.00",
+                    d: "D. Pukul 14.00 - 16.00"
+                },
+                answer: "b",
+                explanation: "Mari kita analisis perubahan suhu tahap demi tahap:<br>&bull; 08.00 - 10.00: Naik 0.5&deg;C (dari 38.5 ke 39.0)<br>&bull; <strong>10.00 - 12.00: Turun 1.5&deg;C</strong> (dari 39.0 ke 37.5)<br>&bull; 12.00 - 14.00: Naik 0.5&deg;C (dari 37.5 ke 38.0)<br>&bull; 14.00 - 16.00: Turun 1.5&deg;C (dari 38.0 ke 36.5)<br><br>Penurunan drastis pertama dan terbesar (turun 1.5&deg;C) mulai terjadi pada selang waktu pukul 10.00 - 12.00. (Catatan: Penurunan pada 14.00 - 16.00 juga besarnya sama, namun pilihan B mewakili momen penurunan drastis pertama yang menghentikan tren kenaikan)."
+            },
+            {
+                id: 5,
+                question: "Sebuah diagram lingkaran menunjukkan hobi dari 120 siswa kelas 9. Data persentase hobi siswa adalah sebagai berikut:<br>- Membaca: 30%<br>- Olahraga: 45%<br>- Musik: 15%<br>- Seni Lukis: Sisanya<br><br>Banyaknya siswa yang menyukai seni lukis adalah...",
+                options: {
+                    a: "A. 10 siswa",
+                    b: "B. 12 siswa",
+                    c: "C. 18 siswa",
+                    d: "D. 24 siswa"
+                },
+                answer: "b",
+                explanation: "Total persentase dalam satu lingkaran penuh atau keseluruhan selalu <strong>100%</strong>.<br><br>1. Hitung dulu persentase Seni Lukis:<br>100% &minus; (30% + 45% + 15%) = 100% &minus; 90% = <strong>10%</strong>.<br><br>2. Hitung jumlah siswanya:<br>10% dari total 120 siswa = (10 &divide; 100) &times; 120 = <strong>12 siswa</strong>."
+            },
+            {
+                id: 6,
+                question: "OSIS SMP Merdeka ingin mengetahui tingkat kepuasan siswa terhadap menu makanan di kantin sekolah. Metode pengumpulan data yang paling efektif dan efisien untuk menjangkau seluruh perwakilan kelas adalah...",
+                options: {
+                    a: "A. Melakukan wawancara mendalam kepada kepala sekolah dan guru-guru",
+                    b: "B. Menyebarkan kuesioner online (Google Form) kepada perwakilan pengurus kelas",
+                    c: "C. Mengamati secara langsung siswa yang sedang makan di kantin selama satu bulan",
+                    d: "D. Membaca laporan keuangan tahunan pengelola kantin sekolah"
+                },
+                answer: "b",
+                explanation: "Kata kuncinya adalah <strong>efektif (tepat sasaran)</strong> dan <strong>efisien (hemat waktu & tenaga)</strong>.<br><br>Menyebarkan kuesioner online seperti Google Form ke perwakilan kelas (opsi B) memungkinkan data terkumpul cepat, terstruktur, dan mewakili suara siswa. Opsi A salah sasaran (yang makan siswa, bukan kepsek). Opsi C sangat tidak efisien (butuh 1 bulan penuh). Opsi D tidak relevan dengan kepuasan rasa makanan."
+            },
+            {
+                id: 7,
+                question: "Perhatikan data tinggi badan (dalam cm) 10 siswa berikut:<br>150, 155, 150, 160, 155, 165, 150, 160, 155, 155.<br><br>Jika data tersebut disajikan dalam bentuk tabel frekuensi, maka frekuensi untuk tinggi badan 155 cm adalah...",
+                options: {
+                    a: "A. 2",
+                    b: "B. 3",
+                    c: "C. 4",
+                    d: "D. 5"
+                },
+                answer: "c",
+                explanation: "<strong>Frekuensi</strong> adalah banyaknya kemunculan suatu data atau angka tertentu.<br><br>Mari kita hitung bersama berapa kali angka 155 muncul dari deretan data tersebut:<br>150, <strong>155 (1)</strong>, 150, 160, <strong>155 (2)</strong>, 165, 150, 160, <strong>155 (3)</strong>, <strong>155 (4)</strong>.<br><br>Angka 155 muncul sebanyak 4 kali. Jadi, frekuensinya adalah <strong>4</strong>."
+            },
+            {
+                id: 8,
+                question: "Diagram garis berikut menunjukkan penjualan buku di Toko Buku Pintar dari bulan Januari hingga Mei:<br>- Januari: 120 buku<br>- Februari: 150 buku<br>- Maret: 110 buku<br>- April: 160 buku<br>- Mei: 200 buku<br><br>Pernyataan yang benar mengenai perkembangan penjualan buku tersebut adalah...",
+                options: {
+                    a: "A. Penjualan buku selalu mengalami peningkatan setiap bulannya",
+                    b: "B. Peningkatan penjualan terbesar terjadi pada bulan Februari ke Maret",
+                    c: "C. Penurunan penjualan hanya terjadi pada bulan Februari ke Maret",
+                    d: "D. Kenaikan penjualan dari bulan April ke Mei adalah sebesar 40 buku"
+                },
+                answer: "d",
+                explanation: "Mari kita buktikan opsi yang ada:<br>&bull; Opsi A Salah, karena pada bulan Maret penjualan justru turun.<br>&bull; Opsi B Salah, karena Februari ke Maret mengalami penurunan (150 menjadi 110), bukan peningkatan.<br>&bull; Opsi C Pernyataannya kurang lengkap sebagai fakta utama meski benar turun, mari kita cek D.<br>&bull; Opsi D <strong>BENAR</strong>. Penjualan April adalah 160, lalu Mei adalah 200. Kenaikannya = 200 &minus; 160 = <strong>40 buku</strong>."
+            },
+            {
+                id: 9,
+                question: "Seorang guru ingin menyajikan data perkembangan berat badan seorang bayi dari bulan ke-1 hingga bulan ke-12. Jenis diagram yang paling tepat digunakan agar perkembangan tersebut terlihat jelas secara berkesinambungan adalah...",
+                options: {
+                    a: "A. Diagram lingkaran",
+                    b: "B. Diagram batang",
+                    c: "C. Diagram garis",
+                    d: "D. Diagram gambar (Piktogram)"
+                },
+                answer: "c",
+                explanation: "<strong>Diagram Garis</strong> adalah primadona untuk menyajikan data yang sifatnya <em>kontinu</em> atau berkesinambungan seiring berjalannya waktu.<br><br>Dengan diagram garis, kita bisa melihat jelas tren naik-turunnya suatu data, seperti perkembangan berat badan bayi setiap bulan, suhu tubuh pasien, atau nilai tukar mata uang, melalui garis yang menghubungkan titik-titik data."
+            },
+            {
+                id: 10,
+                question: "Diagram lingkaran di bawah ini menunjukkan mata pelajaran favorit dari 180 siswa kelas 9:<br>- Matematika: 90&deg;<br>- IPA: 120&deg;<br>- Bahasa Inggris: 80&deg;<br>- IPS: Sisanya<br><br>Banyaknya siswa yang memfavoritkan mata pelajaran IPS adalah...",
+                options: {
+                    a: "A. 35 siswa",
+                    b: "B. 40 siswa",
+                    c: "C. 45 siswa",
+                    d: "D. 50 siswa"
+                },
+                answer: "a",
+                explanation: "Ingat, total sudut satu lingkaran penuh adalah <strong>360&deg;</strong>.<br><br>1. Hitung sudut untuk IPS:<br>Sudut IPS = 360&deg; &minus; (90&deg; + 120&deg; + 80&deg;)<br>Sudut IPS = 360&deg; &minus; 290&deg; = <strong>70&deg;</strong>.<br><br>2. Hitung jumlah siswa penyuka IPS (Gunakan perbandingan):<br>Jumlah = (Sudut IPS &divide; Total Sudut) &times; Total Siswa<br>Jumlah = (70&deg; &divide; 360&deg;) &times; 180 siswa<br>Jumlah = 70 &times; (180 &divide; 360) = 70 &times; 0.5 = <strong>35 siswa</strong>."
+            },
+            {
+                id: 11,
+                question: "Seorang pemilik toko sepatu ingin mengetahui ukuran sepatu yang paling banyak dicari pembeli. Ia membuat pertanyaan: \"Apakah Anda memakai sepatu ukuran 40 yang sangat populer itu?\"<br><br>Evaluasi yang tepat terhadap pertanyaan tersebut adalah...",
+                options: {
+                    a: "A. Pertanyaan sudah sangat baik karena langsung menyebutkan ukuran yang dicari",
+                    b: "B. Pertanyaan bersifat mengarahkan (bias) sehingga jawaban responden menjadi tidak objektif",
+                    c: "C. Pertanyaan terlalu panjang sehingga sulit dipahami oleh pembeli",
+                    d: "D. Pertanyaan tidak relevan dengan tujuan pengumpulan data toko sepatu"
+                },
+                answer: "b",
+                explanation: "Frasa <em>\"...yang sangat populer itu?\"</em> memberikan sugesti psikologis kepada pembeli agar setuju dengan ukuran 40. <br><br>Ini disebut sebagai <strong>pertanyaan yang memandu/mengarahkan (Leading Question)</strong> yang menyebabkan <strong>bias</strong>. Responden mungkin menjawab \"Ya\" hanya karena gengsi tidak memakai sesuatu yang \"populer\", bukan karena ukuran kakinya benar-benar 40. Data yang didapat pun menjadi tidak valid."
+            },
+            {
+                id: 12,
+                question: "Perhatikan tabel penjualan dua jenis masker (Masker Medis dan Masker Kain) di sebuah apotek selama 4 hari:<br>- Hari 1: Medis = 50 box, Kain = 30 box<br>- Hari 2: Medis = 45 box, Kain = 40 box<br>- Hari 3: Medis = 60 box, Kain = 25 box<br>- Hari 4: Medis = 55 box, Kain = 35 box<br><br>Berdasarkan data di atas, total penjualan masker terbanyak terjadi pada hari...",
+                options: {
+                    a: "A. Hari 1",
+                    b: "B. Hari 2",
+                    c: "C. Hari 3",
+                    d: "D. Hari 4"
+                },
+                answer: "d",
+                explanation: "Untuk menyelesaikannya, kita harus menjumlahkan total masker medis dan kain setiap harinya:<br>&bull; Hari 1: 50 + 30 = 80 box<br>&bull; Hari 2: 45 + 40 = 85 box<br>&bull; Hari 3: 60 + 25 = 85 box<br>&bull; Hari 4: 55 + 35 = <strong>90 box</strong><br><br>Dari perhitungan di atas, total penjualan paling tinggi terjadi pada <strong>Hari 4</strong> yaitu sebanyak 90 box."
+            },
+            {
+                id: 13,
+                question: "Dinas Kesehatan ingin mengetahui efektivitas vaksinasi di suatu kota berpenduduk 1.000.000 jiwa. Mereka mengambil sampel data dari 10 orang yang kebetulan lewat di depan kantor dinas kesehatan. Evaluasi yang paling tepat terhadap pengambilan sampel ini adalah...",
+                options: {
+                    a: "A. Sampel sudah representatif karena diambil secara acak di jalanan umum",
+                    b: "B. Sampel tidak representatif karena jumlahnya terlalu sedikit dan tidak mewakili keragaman populasi",
+                    c: "C. Sampel sangat akurat karena menghemat waktu dan biaya operasional",
+                    d: "D. Sampel sudah cukup untuk menyimpulkan kondisi kesehatan seluruh kota"
+                },
+                answer: "b",
+                explanation: "<strong>Sampel yang baik harus representatif</strong>, artinya bisa mewakili karakteristik seluruh populasi.<br><br>Mengambil 10 orang dari 1.000.000 jiwa adalah proporsi yang teramat sangat kecil. Terlebih lagi, metode mengambil orang yang \"kebetulan lewat di satu tempat\" (convenience sampling) tidak mewakili variasi usia, kondisi medis, atau latar belakang wilayah dari 1 juta penduduk kota tersebut. Kesimpulan dari sampel ini pasti tidak akurat."
+            },
+            {
+                id: 14,
+                question: "Dua buah diagram lingkaran menyajikan data persentase kelulusan siswa di Sekolah A dan Sekolah B.<br>- Sekolah A (Total 200 siswa): Lulus 90%, Tidak Lulus 10%<br>- Sekolah B (Total 400 siswa): Lulus 85%, Tidak Lulus 15%<br><br>Berdasarkan data tersebut, kesimpulan yang paling tepat adalah...",
+                options: {
+                    a: "A. Jumlah siswa yang lulus di Sekolah A lebih banyak daripada di Sekolah B",
+                    b: "B. Jumlah siswa yang tidak lulus di Sekolah B adalah 60 siswa",
+                    c: "C. Persentase kelulusan Sekolah B lebih baik daripada Sekolah A",
+                    d: "D. Jumlah siswa yang lulus di Sekolah A adalah 190 siswa"
+                },
+                answer: "b",
+                explanation: "Mari kita ubah persentase menjadi jumlah siswa (jiwa):<br><br><strong>Sekolah A (200 siswa)</strong><br>&bull; Lulus: 90% &times; 200 = 180 siswa<br>&bull; Tidak Lulus: 10% &times; 200 = 20 siswa<br><br><strong>Sekolah B (400 siswa)</strong><br>&bull; Lulus: 85% &times; 400 = 340 siswa<br>&bull; <strong>Tidak Lulus: 15% &times; 400 = 60 siswa</strong><br><br>Maka pernyataan B adalah fakta yang paling benar. Meskipun persentase lulus Sekolah A lebih tinggi (90% > 85%), namun secara kuantitas jumlah lulusan Sekolah B lebih banyak (340 > 180) karena total siswanya dua kali lipat lebih besar."
+            },
+            {
+                id: 15,
+                question: "Perhatikan tabel frekuensi nilai olahraga berikut:<br>- Nilai 6: Frekuensi = 5<br>- Nilai 7: Frekuensi = 12<br>- Nilai 8: Frekuensi = 15<br>- Nilai 9: Frekuensi = 8<br><br>Jika syarat kelulusan adalah mendapatkan nilai minimal 8, persentase siswa yang lulus adalah...",
+                options: {
+                    a: "A. 37.5%",
+                    b: "B. 50.0%",
+                    c: "C. 57.5%",
+                    d: "D. 62.5%"
+                },
+                answer: "c",
+                explanation: "Langkah-langkah:<br>1. <strong>Hitung Total Siswa:</strong> 5 + 12 + 15 + 8 = 40 siswa.<br><br>2. <strong>Hitung Siswa Lulus:</strong> Syaratnya nilai minimal 8, berarti nilai 8 dan 9 lulus.<br>Siswa lulus = (Frekuensi nilai 8) + (Frekuensi nilai 9) = 15 + 8 = 23 siswa.<br><br>3. <strong>Hitung Persentase:</strong><br>(Siswa Lulus &divide; Total Siswa) &times; 100%<br>= (23 &divide; 40) &times; 100% = 0.575 &times; 100% = <strong>57.5%</strong>."
+            },
+            {
+                id: 16,
+                question: "Diagram garis menunjukkan curah hujan di Kota Hujan selama semester pertama tahun 2023:<br>- Jan: 300 mm, Feb: 280 mm, Mar: 250 mm, Apr: 180 mm, Mei: 120 mm, Jun: 80 mm.<br><br>Berdasarkan tren diagram garis tersebut, prediksi curah hujan pada bulan Juli adalah...",
+                options: {
+                    a: "A. Mengalami kenaikan yang sangat tajam di atas 300 mm",
+                    b: "B. Tetap sama dengan curah hujan pada bulan Juni yaitu 80 mm",
+                    c: "C. Cenderung terus menurun di bawah 80 mm karena memasuki musim kemarau",
+                    d: "D. Mengalami fluktuasi yang tidak dapat diprediksi sama sekali"
+                },
+                answer: "c",
+                explanation: "Statistika membantu kita membuat <strong>prediksi (forecasting)</strong> berdasarkan tren masa lalu. <br><br>Coba perhatikan urutan datanya: 300 &rarr; 280 &rarr; 250 &rarr; 180 &rarr; 120 &rarr; 80. Tren curah hujan terus mengalami <strong>penurunan (grafik turun)</strong> setiap bulannya tanpa terputus. Oleh karena itu, tebakan atau prediksi paling logis untuk bulan selanjutnya (Juli) adalah nilainya akan terus menyusut di bawah 80 mm yang biasanya sejalan dengan kedatangan musim kemarau."
+            },
+            {
+                id: 17,
+                question: "Sebuah diagram batang menyajikan data penjualan motor. Sumbu vertikal (jumlah penjualan) dimulai dari angka 100, bukan dari angka 0. Hal ini menyebabkan visualisasi diagram batang tersebut...",
+                options: {
+                    a: "A. Sangat akurat dan mudah dipahami oleh pembaca awam",
+                    b: "B. Menyesatkan (misleading) karena perbedaan kecil dalam penjualan terlihat sangat besar",
+                    c: "C. Lebih hemat ruang dan membuat tampilan diagram menjadi lebih estetis",
+                    d: "D. Tidak berpengaruh apa-apa terhadap interpretasi data penjualan"
+                },
+                answer: "b",
+                explanation: "Ini adalah salah satu trik pemanipulasian data visual yang disebut <strong>Truncated Graph (Grafik Terpotong)</strong>.<br><br>Jika sumbu-Y (vertikal) tidak dimulai dari nol, perbedaan nilai yang sebenarnya kecil antara batang A dan batang B secara visual akan terlihat sangat jauh atau berlipat ganda. Akibatnya, pembaca diagram akan salah persepsi (tertipu) menyimpulkan bahwa terjadi kenaikan atau penurunan yang drastis, padahal aslinya biasa saja."
+            },
+            {
+                id: 18,
+                question: "Perhatikan tabel kegemaran olahraga siswa kelas 9 berikut:<br>- Sepak Bola: 25 siswa<br>- Bulu Tangkis: 15 siswa<br>- Basket: 10 siswa<br>- Renang: 10 siswa<br><br>Guru olahraga menyimpulkan bahwa \"Mayoritas siswa kelas 9 hanya menyukai olahraga air\". Evaluasi yang tepat terhadap kesimpulan guru tersebut adalah...",
+                options: {
+                    a: "A. Kesimpulan benar karena renang adalah olahraga yang paling menyenangkan",
+                    b: "B. Kesimpulan salah karena jumlah siswa yang menyukai renang (olahraga air) justru paling sedikit dibanding sepak bola dan bulu tangkis",
+                    c: "C. Kesimpulan benar karena renang memiliki jumlah peminat yang sama dengan basket",
+                    d: "D. Kesimpulan salah karena guru tidak memasukkan olahraga atletik ke dalam tabel"
+                },
+                answer: "b",
+                explanation: "<strong>Mayoritas</strong> berarti jumlah yang paling banyak atau lebih dari separuh. <br><br>Mari kita lihat data: Olahraga air (Renang) hanya dipilih oleh 10 siswa. Ini adalah jumlah peminat <strong>paling sedikit</strong> bersama Basket. Mayoritas siswa justru menyukai olahraga darat, dengan Sepak Bola memimpin (25 siswa). Kesimpulan guru tersebut sangat keliru dan bertolak belakang dengan fakta pada data."
+            },
+            {
+                id: 19,
+                question: "Diagram lingkaran menunjukkan alokasi anggaran bulanan keluarga Pak Budi dengan total pendapatan Rp 6.000.000,00:<br>- Konsumsi: 40%<br>- Pendidikan: 25%<br>- Tabungan: 15%<br>- Transportasi: 10%<br>- Lain-lain: Sisanya<br><br>Besar uang yang dialokasikan untuk keperluan lain-lain adalah...",
+                options: {
+                    a: "A. Rp 300.000,00",
+                    b: "B. Rp 600.000,00",
+                    c: "C. Rp 900.000,00",
+                    d: "D. Rp 1.200.000,00"
+                },
+                answer: "b",
+                explanation: "Langkah pertama, cari tahu persentase untuk \"Lain-lain\". Ingat, total satu lingkaran penuh adalah 100%.<br><br>1. Persentase Lain-lain = 100% &minus; (40% + 25% + 15% + 10%)<br>= 100% &minus; 90% = <strong>10%</strong><br><br>2. Hitung nominal uangnya (10% dari total pendapatan):<br>= (10 &divide; 100) &times; Rp 6.000.000<br>= <strong>Rp 600.000,00</strong>"
+            },
+            {
+                id: 20,
+                question: "Di sebuah desa, data pekerjaan kepala keluarga (KK) disajikan dalam dua bentuk. Tabel menunjukkan:<br>- Petani: 120 KK<br>- PNS: 30 KK<br><br>Sedangkan diagram batang menunjukkan:<br>- Pedagang: 50 KK<br>- Buruh: 40 KK<br><br>Jika seluruh KK di desa tersebut hanya memiliki salah satu pekerjaan di atas, total kepala keluarga di desa tersebut adalah...",
+                options: {
+                    a: "A. 150 KK",
+                    b: "B. 200 KK",
+                    c: "C. 240 KK",
+                    d: "D. 250 KK"
+                },
+                answer: "c",
+                explanation: "Masalah ini meminta kita untuk menggabungkan dua sumber data (tabel dan diagram) untuk mendapatkan populasi total (keseluruhan).<br><br>1. Jumlah KK dari data Tabel: 120 (Petani) + 30 (PNS) = 150 KK.<br>2. Jumlah KK dari data Diagram: 50 (Pedagang) + 40 (Buruh) = 90 KK.<br><br>3. <strong>Total Keseluruhan</strong> = 150 KK + 90 KK = <strong>240 KK</strong>."
+            }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            quizData.forEach((q, index) => {
+                // Regex sederhana untuk mengganti teks [GAMBAR: data:image...] menjadi tag <img> HTML
+                // Meskipun dalam data saat ini tidak ada, fitur ini siap jika ada penambahan soal di masa depan
+                let formattedQuestion = q.question.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" class="w-full max-w-md mx-auto rounded-lg shadow-sm my-4">');
+
+                const questionHTML = `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6 transition-all duration-300" id="q-card-${index}">
+                        <div class="flex items-start mb-4">
+                            <span class="flex-shrink-0 bg-blue-100 text-blue-700 font-bold w-8 h-8 rounded-full flex items-center justify-center mr-4 mt-1">
+                                ${q.id}
+                            </span>
+                            <p class="text-lg font-medium text-slate-800 leading-relaxed">${formattedQuestion}</p>
+                        </div>
+                        
+                        <div class="space-y-3 pl-12">
+                            ${Object.entries(q.options).map(([key, value]) => `
+                                <div>
+                                    <input type="radio" name="q${index}" id="q${index}_${key}" value="${key}">
+                                    <label for="q${index}_${key}" class="option-label text-slate-700">
+                                        <div class="radio-custom"></div>
+                                        <span>${value}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kotak Pembahasan (Hidden by default) -->
+                        <div id="explanation-${index}" class="explanation-box mt-6 p-5 rounded-xl border-l-4">
+                            <div class="flex items-center mb-2">
+                                <i id="icon-${index}" class="fas mr-2 text-xl"></i>
+                                <h4 id="title-${index}" class="font-bold text-lg"></h4>
+                            </div>
+                            <div class="text-sm md:text-base leading-relaxed" id="text-${index}">
+                                ${q.explanation}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += questionHTML;
+            });
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const icon = document.getElementById(`icon-${index}`);
+                const title = document.getElementById(`title-${index}`);
+                const textContainer = document.getElementById(`text-${index}`);
+                const card = document.getElementById(`q-card-${index}`);
+
+                explanationBox.classList.add('show');
+                
+                // Reset class
+                explanationBox.className = 'explanation-box show mt-6 p-5 rounded-xl border-l-4';
+                card.classList.remove('border-green-400', 'border-red-400');
+
+                if (selectedOption && selectedOption.value === q.answer) {
+                    // Jawaban Benar
+                    correctCount++;
+                    explanationBox.classList.add('bg-green-50', 'border-green-500', 'text-green-900');
+                    icon.className = 'fas fa-check-circle text-green-600 mr-2 text-xl';
+                    title.className = 'font-bold text-lg text-green-700';
+                    title.textContent = 'Jawaban Benar!';
+                    card.classList.add('border-green-400');
+                } else {
+                    // Jawaban Salah atau Kosong
+                    explanationBox.classList.add('bg-red-50', 'border-red-500', 'text-red-900');
+                    icon.className = 'fas fa-times-circle text-red-600 mr-2 text-xl';
+                    title.className = 'font-bold text-lg text-red-700';
+                    
+                    if(!selectedOption) {
+                        title.textContent = 'Tidak Dijawab (Salah)';
+                    } else {
+                        title.textContent = 'Jawaban Kurang Tepat';
+                    }
+
+                    // Tambahkan keterangan kunci jawaban yang benar di awal pembahasan jika salah
+                    textContainer.innerHTML = `<p class="mb-3 font-semibold text-red-800 border-b border-red-200 pb-2">Kunci Jawaban: ${q.answer.toUpperCase()}</p>${q.explanation}`;
+                    card.classList.add('border-red-400');
+                }
+            });
+
+            // Hitung skor (0-100)
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Tampilkan hasil
+            document.getElementById('actionArea').classList.add('hidden');
+            const resultArea = document.getElementById('resultArea');
+            resultArea.classList.remove('hidden');
+            
+            // Animasi angka skor simpel
+            let currentScore = 0;
+            const scoreElement = document.getElementById('scoreDisplay');
+            try {
+                scoreElement.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            const messageElement = document.getElementById('scoreMessage');
+            
+            // Menentukan pesan berdasarkan skor
+            if(score >= 85) {
+                messageElement.textContent = "Luar biasa! Pemahaman matematikamu sangat solid.";
+                messageElement.className = "text-lg text-green-600 mb-8 font-semibold";
+            } else if(score >= 60) {
+                messageElement.textContent = "Kerja bagus! Sedikit lagi latihan kamu akan jadi ahli.";
+                messageElement.className = "text-lg text-blue-600 mb-8 font-semibold";
+            } else {
+                messageElement.textContent = "Jangan menyerah! Baca pembahasannya pelan-pelan ya.";
+                messageElement.className = "text-lg text-orange-600 mb-8 font-semibold";
+            }
+
+            const timer = setInterval(() => {
+                if (currentScore >= score) {
+                    clearInterval(timer);
+                    scoreElement.textContent = score; try { scoreElement.setAttribute('data-final-score', score); } catch(e){}
+                } else {
+                    currentScore += 2; // Kecepatan hitung naik
+                    if(currentScore > score) currentScore = score;
+                    scoreElement.textContent = currentScore;
+                }
+            }, 20);
+
+            // Scroll mulus ke area hasil
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function resetQuiz() {
+            // Reset form input
+            document.getElementById('quizForm').reset();
+            
+            // Sembunyikan semua pembahasan dan hilangkan border indikator
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                explanationBox.classList.remove('show');
+                
+                // Kembalikan teks asli pembahasan (tanpa teks "Kunci Jawaban:")
+                const textContainer = document.getElementById(`text-${index}`);
+                textContainer.innerHTML = q.explanation;
+
+                const card = document.getElementById(`q-card-${index}`);
+                card.classList.remove('border-green-400', 'border-red-400');
+            });
+
+            // Reset UI actions
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('actionArea').classList.remove('hidden');
+            
+            // Scroll mulus ke bagian atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuestions);
+        } else {
+            renderQuestions();
+        }
+        window.onload = function() {
+            renderQuestions();
+        };
+    </script>
+</body>
+</html>

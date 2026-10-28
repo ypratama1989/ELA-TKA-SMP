@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Bahasa Inggris - Reading Comprehension</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/fontawesome.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-gray-600 hover:text-blue-600 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                <span class="font-medium hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-xl sm:text-2xl font-bold text-center text-blue-700 flex-1">Reading Comprehension Test</h1>
+            <div class="w-20"></div> <!-- Spacer for centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-r-lg shadow-sm">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-blue-800">Petunjuk Pengerjaan</h3>
+                        <div class="mt-2 text-sm text-blue-700">
+                            <p>Bacalah teks dengan saksama dan pilih jawaban yang paling tepat. Anda dapat langsung menekan tombol <strong>"Periksa Jawaban"</strong> di bagian bawah meskipun belum semua soal terisi untuk melihat pembahasan. Skor akan dihitung dari skala 0-100.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-8">
+                    <!-- Quiz content will be injected here by JavaScript -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 rounded-xl shadow-md border border-gray-100 text-center">
+                    <div id="result-area" class="hidden mb-6 py-6 border-b border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Nilai Akhir Kamu</h2>
+                        <div class="inline-flex items-center justify-center w-32 h-32 rounded-full border-8 border-blue-500 bg-blue-50 mb-4 text-4xl font-black text-blue-600">
+                            <span id="final-score">0</span>
+                        </div>
+                        <p id="score-message" class="text-lg font-medium text-gray-600"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-check-circle mr-2"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-sm transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-12 py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-gray-500 font-medium tracking-wide text-sm sm:text-base uppercase">
+                By EDUFILLAH, Unlock The Secret Of Curious Minds
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Soal, Teks, dan Pembahasan Edukatif
+        const quizData = [
+            {
+                type: "text",
+                title: "Text 1 (Questions 1-4)",
+                content: `
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">My Beloved Cat, Snowy</h3>
+                    <p class="text-gray-700 leading-relaxed mb-2">I have a pet cat named Snowy. It is a male Persian cat. Snowy has thick, fluffy white fur, which is why I named him Snowy. He has big, round blue eyes that sparkle when he is playful. His tail is long and bushy.</p>
+                    <p class="text-gray-700 leading-relaxed">Snowy is a very active and friendly cat. He loves playing with woolen balls and chasing insects in the garden. Every morning, he wakes me up by gently licking my cheek. Although he can be mischievous sometimes, especially when he scratches the sofa, he is a wonderful companion.</p>
+                `
+            },
+            {
+                type: "question", id: 1,
+                question: "What is the main reason the writer named the cat \"Snowy\"?",
+                options: {
+                    A: "Because he was born in winter.",
+                    B: "Because he has thick, fluffy white fur.",
+                    C: "Because his eyes are blue like ice.",
+                    D: "Because he likes playing in the snow."
+                },
+                correct: "B",
+                explanation: "Coba perhatikan paragraf pertama kalimat ketiga: <em>\"Snowy has thick, fluffy white fur, which is why I named him Snowy.\"</em> (Snowy memiliki bulu putih tebal dan mengembang, itulah sebabnya saya menamainya Snowy). Kata <strong>'Snow'</strong> sendiri artinya salju (berwarna putih). Jadi, alasan utamanya adalah karena bulunya yang putih lebat seperti salju."
+            },
+            {
+                type: "question", id: 2,
+                question: "\"Snowy has thick, <u>fluffy</u> white fur...\" (Paragraph 1)<br>The underlined word is closest in meaning to ....",
+                options: {
+                    A: "soft and light",
+                    B: "hard and rough",
+                    C: "thin and dirty",
+                    D: "dark and heavy"
+                },
+                correct: "A",
+                explanation: "Kata <strong>\"fluffy\"</strong> biasa digunakan untuk menggambarkan sesuatu yang mengembang, empuk, ringan, dan berbulu lembut (seperti kapas atau awan). Oleh karena itu, sinonim atau makna terdekatnya adalah <strong>soft (lembut) and light (ringan)</strong>. Opsi lain salah karena <em>hard</em> (keras), <em>thin</em> (tipis), dan <em>dark</em> (gelap) tidak sesuai dengan sifat bulu kucing."
+            },
+            {
+                type: "question", id: 3,
+                question: "Which part of the descriptive text structure is represented in the first sentence of the text?",
+                options: {
+                    A: "Description",
+                    B: "Resolution",
+                    C: "Identification",
+                    D: "Re-orientation"
+                },
+                correct: "C",
+                explanation: "Ingat kembali struktur Teks Deskriptif (Descriptive Text)! Strukturnya terdiri dari <strong>Identification</strong> (pengenalan objek) dan <strong>Description</strong> (penjabaran ciri-ciri). Kalimat pertama <em>\"I have a pet cat named Snowy\"</em> baru sekadar mengenalkan siapa yang akan diceritakan. Maka bagian ini disebut <strong>Identification</strong> (Identifikasi)."
+            },
+            {
+                type: "question", id: 4,
+                question: "What can we evaluate about the writer’s attitude towards Snowy's mischievous behavior?",
+                options: {
+                    A: "The writer is very angry and wants to sell the cat.",
+                    B: "The writer is tolerant and still loves Snowy despite his behavior.",
+                    C: "The writer ignores the cat because it scratches the sofa.",
+                    D: "The writer punishes Snowy every morning."
+                },
+                correct: "B",
+                explanation: "Ini adalah soal analisis (HOTS). Di paragraf terakhir disebutkan: walau Snowy kadang nakal (<em>mischievous</em>) dan mencakar sofa, penulis tetap menganggapnya sebagai <strong>\"a wonderful companion\"</strong> (teman yang luar biasa/menyenangkan). Ini membuktikan bahwa penulis sangat sabar (<strong>tolerant</strong>) dan tetap menyayangi kucingnya terlepas dari kenakalannya."
+            },
+            {
+                type: "text",
+                title: "Text 2 (Questions 5-8)",
+                content: `
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">The Majestic Borobudur Temple</h3>
+                    <p class="text-gray-700 leading-relaxed mb-2">Borobudur Temple is one of the most beautiful tourist destinations in Indonesia. It is located in Central Java. Borobudur Temple is a Buddhist temple built in the 9th century.</p>
+                    <p class="text-gray-700 leading-relaxed">The temple consists of nine stacked platforms, six square and three circular, topped by a central dome. It is decorated with 2,672 relief panels and 504 Buddha statues. The monument is a shrine to the Lord Buddha and a place for Buddhist pilgrimage. Millions of tourists from all over the world visit this magnificent temple every year.</p>
+                `
+            },
+            {
+                type: "question", id: 5,
+                question: "What is the primary purpose of the text?",
+                options: {
+                    A: "To explain how to get to Borobudur Temple.",
+                    B: "To describe the physical features and significance of Borobudur Temple.",
+                    C: "To entertain readers with a legend about Borobudur.",
+                    D: "To persuade tourists to build more temples in Java."
+                },
+                correct: "B",
+                explanation: "Teks ini adalah <strong>Descriptive Text</strong>. Tujuan utamanya (<em>purpose</em>) selalu untuk mendeskripsikan suatu hal secara spesifik. Di teks ini, penulis mendeskripsikan ciri fisik candi (jumlah platform, relief, patung) serta nilai pentingnya (sebagai tempat ziarah dan wisata). Jadi jawaban paling tepat adalah B."
+            },
+            {
+                type: "question", id: 6,
+                question: "How is the second paragraph of the text structured?",
+                options: {
+                    A: "It identifies the location of the temple.",
+                    B: "It describes the detailed physical parts and decoration of the temple.",
+                    C: "It tells the history of the kings who built the temple.",
+                    D: "It lists the facilities available for tourists."
+                },
+                correct: "B",
+                explanation: "Mari baca paragraf kedua! Di sana disebutkan tentang candi yang terdiri dari sembilan platform bersusun (<em>nine stacked platforms</em>), dihiasi 2.672 panel relief (<em>relief panels</em>) dan 504 patung Buddha. Paragraf ini murni berisi <strong>deskripsi detail fisik dan dekorasi</strong> candi."
+            },
+            {
+                type: "question", id: 7,
+                question: "\"...visit this <u>magnificent</u> temple every year.\" (Paragraph 2)<br>What is the antonym of the underlined word?",
+                options: {
+                    A: "Grand",
+                    B: "Ordinary",
+                    C: "Wonderful",
+                    D: "Expensive"
+                },
+                correct: "B",
+                explanation: "Hati-hati dengan kata <strong>'antonym'</strong> yang berarti lawan kata. Kata <em>\"magnificent\"</em> berarti sangat megah, indah, atau luar biasa (bersinonim dengan <em>grand, wonderful, luar biasa</em>). Karena yang ditanya adalah lawan kata, maka jawabannya adalah <strong>\"Ordinary\"</strong> yang berarti biasa-biasa saja."
+            },
+            {
+                type: "question", id: 8,
+                question: "Based on the text, why is Borobudur Temple considered highly significant?",
+                options: {
+                    A: "It is the only tourist destination in Central Java.",
+                    B: "It serves as both a historical monument and an active place of pilgrimage.",
+                    C: "It was built by modern technology in the 9th century.",
+                    D: "It has more than ten thousand Buddha statues."
+                },
+                correct: "B",
+                explanation: "Pentingnya (<em>significant</em>) candi Borobudur tercantum di paragraf 2: <em>\"The monument is a shrine to the Lord Buddha and a place for Buddhist pilgrimage.\"</em> Artinya, candi ini bukan sekadar bangunan bersejarah (monument), tapi tempat suci yang aktif digunakan untuk ibadah/ziarah umat Buddha."
+            },
+            {
+                type: "text",
+                title: "Text 3 (Questions 9-12)",
+                content: `
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">Ms. Kartika</h3>
+                    <p class="text-gray-700 leading-relaxed mb-2">Ms. Kartika is my English teacher at SMP Nusa Bangsa. She is in her early thirties, tall, and slim. She has an oval face, a pointed nose, and wavy black hair that she usually ties in a ponytail. Ms. Kartika always wears neat clothes and a warm smile.</p>
+                    <p class="text-gray-700 leading-relaxed">She is not only beautiful but also very patient and creative. She often uses games, songs, and movies to make English lessons fun. Because of her, many students who used to dislike English now love the subject. She is always ready to help students who struggle with their lessons.</p>
+                `
+            },
+            {
+                type: "question", id: 9,
+                question: "What does Ms. Kartika look like?",
+                options: {
+                    A: "She is short, fat, and has straight blonde hair.",
+                    B: "She is tall, slim, and has wavy black hair.",
+                    C: "She is in her fifties and has a round face.",
+                    D: "She always looks angry and wears untidy clothes."
+                },
+                correct: "B",
+                explanation: "Pertanyaan <em>\"What does she look like?\"</em> menanyakan ciri fisik (penampilan). Berdasarkan paragraf 1 kalimat kedua dan ketiga, disebutkan dengan jelas: <em>\"...tall, and slim. She has... wavy black hair...\"</em> (Tinggi, langsing, dan berambut hitam bergelombang)."
+            },
+            {
+                type: "question", id: 10,
+                question: "Why do students who used to dislike English now love the subject?",
+                options: {
+                    A: "Because Ms. Kartika gives them high grades for free.",
+                    B: "Because Ms. Kartika teaches using creative and fun methods.",
+                    C: "Because English is the easiest subject in the school.",
+                    D: "Because Ms. Kartika never gives them any homework."
+                },
+                correct: "B",
+                explanation: "Di paragraf kedua dijelaskan alasan siswa menjadi suka bahasa Inggris: <em>\"She often uses games, songs, and movies to make English lessons fun.\"</em> Ini menunjukkan bahwa metode pengajaran Ms. Kartika sangat kreatif dan menyenangkan (<strong>creative and fun methods</strong>)."
+            },
+            {
+                type: "question", id: 11,
+                question: "\"She is always ready to help students who <u>struggle</u> with their lessons.\" (Paragraph 2)<br>The underlined word can be best replaced by ....",
+                options: {
+                    A: "succeed",
+                    B: "have difficulty",
+                    C: "feel bored",
+                    D: "study easily"
+                },
+                correct: "B",
+                explanation: "Kata <strong>\"struggle\"</strong> secara harfiah berarti berjuang keras. Dalam konteks pelajaran, jika siswa \"struggle\", artinya mereka mengalami kesulitan dalam memahami pelajaran tersebut. Jadi, kata ganti yang paling tepat maknanya adalah <strong>\"have difficulty\"</strong> (memiliki kesulitan/kesusahan)."
+            },
+            {
+                type: "question", id: 12,
+                question: "What makes Ms. Kartika an exemplary teacher based on the text?",
+                options: {
+                    A: "Her physical beauty and young age.",
+                    B: "Her ability to transform students' attitudes towards English through engaging teaching.",
+                    C: "Her strict rules that make students afraid of her.",
+                    D: "Her habit of wearing expensive clothes to school."
+                },
+                correct: "B",
+                explanation: "Seorang guru teladan (<em>exemplary teacher</em>) dinilai dari kualitas mengajarnya. Hal terbaik dari Ms. Kartika di teks ini adalah kemampuannya mengubah sikap murid (<em>transform students' attitude</em>) yang awalnya tidak suka bahasa Inggris menjadi sangat suka, berkat cara mengajarnya yang interaktif dan menyenangkan (menggunakan game, lagu, film)."
+            },
+            {
+                type: "text",
+                title: "Text 4 (Questions 13-16)",
+                content: `
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">My Smart Robot</h3>
+                    <p class="text-gray-700 leading-relaxed mb-2">For my 14th birthday, my father gave me a smart toy robot named Robby. Robby is about 30 centimeters tall and made of durable blue and silver plastic. It has two glowing LED eyes that change color depending on its "mood"—blue for happy, red for low battery, and green when executing commands.</p>
+                    <p class="text-gray-700 leading-relaxed">Robby can walk, spin, and even dance to music played from its built-in Bluetooth speaker. I can control Robby using a smartphone application. It is rechargeable and can run for about two hours on a single charge. It is my favorite high-tech toy.</p>
+                `
+            },
+            {
+                type: "question", id: 13,
+                question: "How does the owner know if Robby's battery is running low?",
+                options: {
+                    A: "Robby starts to make loud noises.",
+                    B: "Robby's LED eyes turn red.",
+                    C: "Robby stops walking immediately.",
+                    D: "Robby sends a message to the smartphone."
+                },
+                correct: "B",
+                explanation: "Cari kata kunci <em>\"low battery\"</em> di paragraf pertama! Di sana tertulis: <em>\"...red for low battery...\"</em>. Artinya, pemilik akan tahu baterai robot Robby akan habis jika mata LED-nya berubah warna menjadi merah."
+            },
+            {
+                type: "question", id: 14,
+                question: "\"Robby is about 30 centimeters tall and <u>made of</u> durable blue and silver plastic.\" (Paragraph 1)<br>The phrase \"made of\" is used to describe the object's ....",
+                options: {
+                    A: "function",
+                    B: "material",
+                    C: "price",
+                    D: "weight"
+                },
+                correct: "B",
+                explanation: "Frasa <strong>\"made of\"</strong> dalam bahasa Indonesia berarti \"terbuat dari\". Frasa ini selalu digunakan untuk menjelaskan bahan atau material dasar pembuat suatu benda. Pada kalimat tersebut, bahannya adalah plastik yang kuat (<em>durable plastic</em>)."
+            },
+            {
+                type: "question", id: 15,
+                question: "What is the main idea of the second paragraph?",
+                options: {
+                    A: "The history of how Robby was created.",
+                    B: "The physical appearance and color of Robby.",
+                    C: "The functions, capabilities, and control of Robby.",
+                    D: "The price and durability of the smart robot."
+                },
+                correct: "C",
+                explanation: "Ide pokok (<em>main idea</em>) paragraf kedua membahas apa saja yang bisa dilakukan Robby (berjalan, menari, speaker musik), serta cara mengontrolnya (melalui aplikasi smartphone). Oleh karena itu, paragraf ini berfokus pada <strong>fungsi, kemampuan (capabilities), dan cara kerja/kontrol alat</strong>."
+            },
+            {
+                type: "question", id: 16,
+                question: "If the user wants to play music through Robby, what must they ensure based on the text?",
+                options: {
+                    A: "They must paint Robby blue and silver.",
+                    B: "They must connect their smartphone to Robby's built-in Bluetooth speaker.",
+                    C: "They must charge Robby for more than five hours.",
+                    D: "They must make Robby's eyes turn green."
+                },
+                correct: "B",
+                explanation: "Teks menyebutkan: <em>\"dance to music played from its built-in Bluetooth speaker.\"</em> Karena Robby memutar musik lewat speaker Bluetooth, maka secara logika, pengguna harus memastikan perangkat mereka (smartphone) tersambung ke Bluetooth robot tersebut agar musik bisa berbunyi."
+            },
+            {
+                type: "text",
+                title: "Text 5 (Questions 17-20)",
+                content: `
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">The Komodo Dragon</h3>
+                    <p class="text-gray-700 leading-relaxed mb-2">The Komodo dragon is the largest living species of lizard on Earth. It is found only on the Indonesian islands of Komodo, Rinca, Flores, and Gili Motang. A fully grown Komodo dragon can weigh up to 70 kilograms and reach a length of 3 meters.</p>
+                    <p class="text-gray-700 leading-relaxed">It has a tough, scaly skin colored in grey, brown, or yellow. It has a long, powerful tail and sharp claws used for climbing and hunting. The Komodo dragon is a carnivore. It hunts prey such as deer, pigs, and even large water buffaloes. It uses its long, yellow, deeply forked tongue to detect scent and locate its prey from miles away.</p>
+                `
+            },
+            {
+                type: "question", id: 17,
+                question: "Where can we find the Komodo dragon in its natural habitat?",
+                options: {
+                    A: "All over the tropical rainforests of Asia.",
+                    B: "Only on specific islands in Indonesia.",
+                    C: "In the deserts of Australia.",
+                    D: "In modern zoos across Europe."
+                },
+                correct: "B",
+                explanation: "Paragraf pertama kalimat kedua secara eksplisit menyatakan: <em>\"It is found only on the Indonesian islands of Komodo, Rinca, Flores, and Gili Motang.\"</em> Ini berarti hewan endemik ini hanya bisa ditemukan di <strong>pulau-pulau tertentu (spesifik) di Indonesia</strong>, tidak di seluruh Asia apalagi Australia."
+            },
+            {
+                type: "question", id: 18,
+                question: "How does the Komodo dragon locate its prey from a long distance?",
+                options: {
+                    A: "By using its sharp claws to dig the ground.",
+                    B: "By using its long, deeply forked tongue to detect scent.",
+                    C: "By flying high to see the prey from above.",
+                    D: "By hearing the sound of the prey with its large ears."
+                },
+                correct: "B",
+                explanation: "Cara komodo melacak mangsa dari jarak jauh dijelaskan di kalimat terakhir: <em>\"It uses its long, yellow, deeply forked tongue to detect scent and locate its prey from miles away.\"</em> Mereka menjulurkan lidahnya yang bercabang untuk mencium aroma/bau mangsanya di udara!"
+            },
+            {
+                type: "question", id: 19,
+                question: "\"The Komodo dragon is a <u>carnivore</u>.\" (Paragraph 2)<br>This means that the animal ....",
+                options: {
+                    A: "eats only plants and fruits",
+                    B: "eats both plants and meat",
+                    C: "feeds on other animals' meat",
+                    D: "lives only in water"
+                },
+                correct: "C",
+                explanation: "Adik-adik ingat pelajaran IPA? Berdasarkan jenis makanannya, hewan dibagi menjadi Herbivora (pemakan tumbuhan), Omnivora (pemakan segalanya), dan <strong>Karnivora (pemakan daging/hewan lain)</strong>. Kalimat berikutnya juga membuktikan komodo berburu rusa, babi, dan kerbau air."
+            },
+            {
+                type: "question", id: 20,
+                question: "What makes the Komodo dragon a highly efficient predator based on its physical traits?",
+                options: {
+                    A: "Its friendly nature and slow movement.",
+                    B: "Its colorful skin that helps it hide in flowers.",
+                    C: "The combination of its powerful tail, sharp claws, and highly sensitive tongue.",
+                    D: "Its ability to live without food and water for years."
+                },
+                correct: "C",
+                explanation: "Di paragraf dua, penulis mendeskripsikan alat-alat berburu (ciri fisik) komodo: ekor yang kuat (<em>powerful tail</em>), cakar yang tajam untuk berburu (<em>sharp claws</em>), dan lidah bercabang untuk mencium bau mangsa dari jauh (<em>sensitive tongue</em>). Kombinasi ketiga hal mematikan inilah yang menjadikannya predator puncak yang sangat efisien."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+            
+            // Generate total question count for numbering
+            let questionNumber = 1;
+
+            quizData.forEach((item, index) => {
+                if (item.type === 'text') {
+                    // Render Reading Passage
+                    htmlContent += `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-8 mb-6">
+                            <div class="bg-blue-600 text-white px-5 py-3 font-semibold">
+                                <i class="fas fa-book-open mr-2"></i> ${item.title}
+                            </div>
+                            <div class="p-5 md:p-6 text-justify">
+                                ${item.content}
+                            </div>
+                        </div>
+                    `;
+                } else if (item.type === 'question') {
+                    // Render Question
+                    htmlContent += `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 md:p-6 relative group hover:border-blue-300 transition-colors">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                                    ${questionNumber}
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-gray-800 font-medium text-lg mb-4 leading-relaxed">${item.question}</h4>
+                                    <div class="space-y-3">
+                    `;
+                    
+                    // Render Options
+                    for (const [key, value] of Object.entries(item.options)) {
+                        // Create option text including the alphabet letter (e.g. "A. Option text") as requested for matching style but applied to MC
+                        htmlContent += `
+                            <label class="relative flex cursor-pointer">
+                                <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                                <div class="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all">
+                                    <div class="radio-circle w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex-shrink-0 transition-colors"></div>
+                                    <span class="font-bold text-gray-700 mr-2">${key}.</span>
+                                    <span class="text-gray-700">${value}</span>
+                                </div>
+                            </label>
+                        `;
+                    }
+
+                    // Explanation Container (Hidden by default)
+                    htmlContent += `
+                                    </div>
+                                    <div id="exp-container-${item.id}" class="hidden mt-5 p-4 rounded-lg text-sm border-l-4 animation-fade-in">
+                                        <div class="flex items-start">
+                                            <div id="exp-icon-${item.id}" class="mr-3 text-lg mt-0.5"></div>
+                                            <div>
+                                                <h5 id="exp-title-${item.id}" class="font-bold mb-1"></h5>
+                                                <p id="exp-text-${item.id}" class="leading-relaxed"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    questionNumber++;
+                }
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalQuestions = 0;
+
+            quizData.forEach(item => {
+                if (item.type === 'question') {
+                    totalQuestions++;
+                    const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                    const expContainer = document.getElementById(`exp-container-${item.id}`);
+                    const expTitle = document.getElementById(`exp-title-${item.id}`);
+                    const expText = document.getElementById(`exp-text-${item.id}`);
+                    const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                    
+                    expContainer.classList.remove('hidden', 'bg-green-50', 'border-green-500', 'text-green-800', 'bg-red-50', 'border-red-500', 'text-red-800', 'bg-yellow-50', 'border-yellow-500', 'text-yellow-800');
+
+                    if (!selected) {
+                        // User didn't answer
+                        expContainer.classList.add('bg-yellow-50', 'border-yellow-500', 'text-yellow-800');
+                        expIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                        expTitle.innerText = "Kamu belum menjawab soal ini!";
+                        expText.innerHTML = `Jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><strong>Pembahasan:</strong><br>${item.explanation}`;
+                    } else if (selected.value === item.correct) {
+                        // Correct Answer
+                        correctCount++;
+                        expContainer.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
+                        expIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                        expTitle.innerText = "Tepat Sekali! Kamu Benar!";
+                        expText.innerHTML = item.explanation;
+                    } else {
+                        // Wrong Answer
+                        expContainer.classList.add('bg-red-50', 'border-red-500', 'text-red-800');
+                        expIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                        expTitle.innerText = `Jawaban kurang tepat. Jawaban yang benar adalah ${item.correct}.`;
+                        expText.innerHTML = `<strong>Mari kita bahas:</strong><br>${item.explanation}`;
+                    }
+                    
+                    // Disable all radios in this question to prevent changing after checking
+                    const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                    radios.forEach(r => r.disabled = true);
+                }
+            });
+
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Display Score
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            scoreDisplay.innerText = score;
+
+            // Give feedback based on score
+            if (score === 100) {
+                scoreMessage.innerHTML = "Luar Biasa! Sempurna! 🌟";
+                scoreMessage.className = "text-xl font-bold text-green-600";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "Kerja Bagus! Hampir Sempurna! 👏";
+                scoreMessage.className = "text-xl font-bold text-blue-600";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "Cukup Baik! Mari perbanyak latihan membaca ya! 👍";
+                scoreMessage.className = "text-xl font-bold text-yellow-600";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Tetap semangat belajar bahasa Inggris! 💪";
+                scoreMessage.className = "text-xl font-bold text-red-600";
+            }
+
+            // Toggle Buttons
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Scroll down to score slightly, smoothly
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function resetQuiz() {
+            // Re-enable radios and uncheck them
+            quizData.forEach(item => {
+                if (item.type === 'question') {
+                    const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                    radios.forEach(r => {
+                        r.disabled = false;
+                        r.checked = false;
+                    });
+                    
+                    // Hide explanations
+                    const expContainer = document.getElementById(`exp-container-${item.id}`);
+                    expContainer.classList.add('hidden');
+                }
+            });
+
+            // Hide Score Area
+            document.getElementById('result-area').classList.add('hidden');
+            
+            // Toggle Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize quiz on load
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

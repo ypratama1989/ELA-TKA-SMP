@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Literasi Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Kustomisasi input radio agar bisa disembunyikan tapi bisa distyle labelnya */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Transisi kotak penjelasan */
+        .explanation-box {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2500px; /* Cukup besar untuk konten panjang */
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Gaya khusus untuk kutipan teks (soal cerita) */
+        .quote-box {
+            border-left: 4px solid #6366f1; /* indigo-500 */
+            background-color: #eef2ff; /* indigo-50 */
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+            font-style: italic;
+            color: #312e81; /* indigo-900 */
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #c7d2fe; /* indigo-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        /* Gaya untuk teks pre-formatted/Teks A & B */
+        .text-box {
+            background-color: #f8fafc;
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 text-center flex-1">Kuis Analisis Teks & Literasi</h1>
+            <div class="w-24"></div> <!-- Spacer untuk menyeimbangkan posisi judul -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Selamat Mengerjakan! &#x1F4DD;</h2>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                    Baca setiap kutipan teks dengan teliti. Perhatikan detil, suasana, dan logika di balik setiap cerita. 
+                    Kamu bisa memeriksa jawaban kapan saja. Soal yang terlewat akan ditandai. Semangat belajar!
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-12">
+                    <!-- Soal-soal akan di-generate oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Area Hasil -->
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban terverifikasi, dan Pembahasan yang diekspansi untuk edukasi SD/SMP
+        const quizData = [
+            {
+                text: "<strong>Teks berikut untuk soal nomor 1 s.d. 3.</strong><div class='quote-box'>Di sudut perpustakaan tua yang berdebu, Pak Karta memandangi deretan buku sejarah yang mulai menguning. Tangannya yang gemetar perlahan menyeka debu di salah satu sampul buku tebal. Baginya, setiap lembar kertas di ruangan ini adalah saksi bisu perjuangan bangsa yang mulai dilupakan oleh anak-anak muda yang kini lebih asyik menatap layar gawai mereka. Ketika seorang siswa masuk hanya untuk menumpang mengisi daya ponselnya tanpa melirik satu pun buku, Pak Karta hanya menghela napas panjang sambil tersenyum getir. Ia kembali merapikan kursi-kursi kayu yang kosong, berharap suatu hari nanti, derit pintu perpustakaan akan berbunyi karena langkah kaki pencari ilmu, bukan pencari sinyal.</div>Berdasarkan teks di atas, apa ide pokok yang tersirat dari paragraf tersebut?",
+                options: [
+                    "Keprihatinan seorang pustakawan terhadap rendahnya minat baca generasi muda terhadap sejarah.",
+                    "Fasilitas perpustakaan tua yang sudah tidak memadai untuk mendukung kegiatan belajar siswa.",
+                    "Perjuangan Pak Karta dalam mempertahankan eksistensi perpustakaan sekolah dari kepunahan.",
+                    "Perkembangan teknologi gawai yang berhasil menggeser fungsi buku fisik di sekolah-sekolah."
+                ],
+                answer: 0, // A
+                explanation: "Halo! \"Ide pokok tersirat\" artinya gagasan utama yang tidak ditulis secara langsung, melainkan harus kita simpulkan dari cerita.<br><br>Coba perhatikan alur ceritanya:<br>1. Pak Karta memandangi buku sejarah berdebu (sedih).<br>2. Ia melihat siswa masuk *hanya* untuk numpang men-charge HP, tanpa baca buku.<br>3. Pak Karta menghela napas panjang (tanda kecewa/prihatin).<br><br>Dari gabungan peristiwa itu, kita bisa menyimpulkan bahwa inti ceritanya adalah <strong>Pak Karta merasa prihatin/sedih melihat anak muda zaman sekarang yang kurang berminat membaca buku (terutama buku sejarah)</strong> karena lebih sibuk dengan HP-nya. Jadi, pilihan A adalah rangkuman yang paling tepat!"
+            },
+            {
+                text: "Karakter Pak Karta dalam kutipan teks tersebut digambarkan sebagai sosok yang....",
+                options: [
+                    "pemarah dan tidak peduli pada kemajuan teknologi siswa",
+                    "penyabar, setia pada tugasnya, dan penuh keprihatinan",
+                    "kolot dan menolak perubahan zaman yang serba digital",
+                    "optimis berlebihan hingga mengabaikan kenyataan yang ada"
+                ],
+                answer: 1, // B
+                explanation: "Mari kita analisis tindakan Pak Karta layaknya detektif!<br><br>- <em>\"menyeka debu... merapikan kursi yang kosong\"</em> &rarr; Menandakan ia rajin dan <strong>setia pada tugasnya</strong> meski tidak ada pengunjung.<br>- <em>\"menghela napas... tersenyum getir\"</em> saat melihat siswa main HP &rarr; Menandakan ia merasa <strong>prihatin</strong>, tapi ia tidak marah-marah, yang berarti ia sangat <strong>penyabar</strong>.<br><br>Tidak ada tanda-tanda ia marah atau benci pada teknologi, ia hanya sedih buku sejarahnya dilupakan. Maka, watak penyabar, setia, dan penuh keprihatinan (B) adalah jawaban yang paling akurat."
+            },
+            {
+                text: "Nilai moral yang dapat dievaluasi dan dipetik dari tindakan Pak Karta adalah....",
+                options: [
+                    "Kita harus selalu menolak teknologi demi melestarikan budaya membaca buku fisik.",
+                    "Menghargai warisan masa lalu dan ilmu pengetahuan adalah bentuk penghormatan terhadap sejarah.",
+                    "Kesabaran dalam bekerja akan selalu membuahkan hasil materi yang melimpah di kemudian hari.",
+                    "Menjaga kebersihan tempat kerja adalah tanggung jawab utama seorang pegawai perpustakaan."
+                ],
+                answer: 1, // B
+                explanation: "\"Nilai moral\" adalah pelajaran baik (pesan positif) yang bisa kita tiru dari sebuah cerita.<br><br>Perhatikan kalimat ini: <em>\"Baginya, setiap lembar kertas di ruangan ini adalah saksi bisu perjuangan bangsa...\"</em><br>Pak Karta sangat merawat buku tua itu karena buku itu berisi sejarah bangsa. Tindakan Pak Karta mengajarkan kita bahwa menjaga buku dan ilmu pengetahuan sama dengan <strong>menghargai warisan masa lalu dan menghormati sejarah (B)</strong>.<br><br>Pilihan A terlalu berlebihan (kita tidak disuruh menolak teknologi). Pilihan C dan D tidak sesuai dengan makna terdalam cerita ini."
+            },
+            {
+                text: "<strong>Teks berikut untuk soal nomor 4 s.d. 6.</strong><div class='text-box'>Penggunaan kantong plastik sekali pakai di pasar tradisional masih menjadi tantangan besar dalam pengelolaan sampah di Indonesia. Meskipun pemerintah daerah telah mengeluarkan larangan, implementasinya di lapangan masih sangat lemah. Pedagang merasa keberatan karena alternatif kantong ramah lingkungan dianggap terlalu mahal dan dapat mengurangi minat pembeli. Di sisi lain, konsumen enggan membawa kantong belanja sendiri dari rumah karena alasan kepraktisan. Akibatnya, gunungan sampah plastik di Tempat Pembuangan Akhir (TPA) terus meningkat, mengancam ekosistem tanah dan sumber air bersih di sekitarnya.</div>Gagasan pendukung yang paling tepat untuk menjelaskan mengapa kebijakan pelarangan kantong plastik sulit diterapkan di pasar tradisional adalah....",
+                options: [
+                    "Pemerintah daerah tidak serius dalam membuat regulasi tentang pengelolaan sampah.",
+                    "Keberatan pedagang terkait harga kantong ramah lingkungan dan kebiasaan praktis konsumen.",
+                    "Kerusakan ekosistem tanah dan air bersih di sekitar Tempat Pembuangan Akhir (TPA).",
+                    "Kurangnya sosialisasi dari aktivis lingkungan kepada masyarakat di pasar tradisional."
+                ],
+                answer: 1, // B
+                explanation: "Gagasan pendukung adalah kalimat-kalimat yang menjelaskan atau memberi alasan mengapa suatu masalah (ide pokok) bisa terjadi.<br><br>Di dalam teks, dibilang bahwa larangan plastik susah dijalankan. Kenapa? Ada dua alasan yang tertulis jelas:<br>1. Dari sisi <strong>Pedagang</strong>: Keberatan karena tas kain/ramah lingkungan mahal.<br>2. Dari sisi <strong>Konsumen (Pembeli)</strong>: Malas bawa tas sendiri karena ingin yang praktis.<br><br>Pilihan B merangkum kedua alasan kuat ini dengan sempurna!"
+            },
+            {
+                text: "Peristiwa apa yang kemungkinan besar akan terjadi di masa depan jika kondisi dalam teks tersebut terus dibiarkan tanpa ada solusi konkret?",
+                options: [
+                    "Pasar tradisional akan kehilangan seluruh pembeli dan digantikan oleh pasar modern.",
+                    "Harga kantong plastik sekali pakai akan melonjak naik karena pasokan yang menipis.",
+                    "Terjadinya krisis air bersih dan penurunan kualitas lingkungan hidup di sekitar wilayah TPA.",
+                    "Pemerintah akan menghapuskan seluruh pasar tradisional demi menyelamatkan lingkungan."
+                ],
+                answer: 2, // C
+                explanation: "Untuk memprediksi masa depan berdasarkan teks, bacalah kalimat paling akhir dari cerita (biasanya berisi akibat/dampak).<br><br>Teks diakhiri dengan kalimat: <em>\"Akibatnya, gunungan sampah plastik di TPA terus meningkat, <strong>mengancam ekosistem tanah dan sumber air bersih</strong> di sekitarnya.\"</em><br><br>Jika 'ancaman' ini tidak dihentikan (dibiarkan terus), apa yang terjadi? Tentu saja ancamannya jadi kenyataan! Tanah akan rusak dan air bersih akan tercemar (krisis air). Oleh sebab itu, prediksi logisnya ada pada pilihan C."
+            },
+            {
+                text: "Evaluasi yang paling tepat terhadap sikap konsumen dalam teks tersebut adalah....",
+                options: [
+                    "Konsumen sudah bertindak benar karena kepraktisan adalah hal utama dalam berbelanja.",
+                    "Sikap konsumen kurang mendukung kelestarian lingkungan karena mengutamakan kenyamanan sesaat.",
+                    "Konsumen seharusnya didenda dengan nominal tinggi agar jera dan mau membawa kantong sendiri.",
+                    "Sikap konsumen sangat wajar karena penyediaan kantong belanja adalah kewajiban mutlak pedagang."
+                ],
+                answer: 1, // B
+                explanation: "Mengevaluasi berarti kita memberikan penilaian (setuju/tidak setuju dan alasannya). <br><br>Sikap konsumen di teks adalah <em>\"enggan membawa kantong belanja sendiri karena alasan kepraktisan\"</em>.<br>Apakah ini sikap yang baik? Tidak. Sikap malas bawa kantong sendiri ini menyebabkan sampah plastik menumpuk dan merusak lingkungan.<br>Jadi, penilaian yang paling objektif dan kritis adalah <strong>sikap mereka tidak mendukung kelestarian alam hanya karena mementingkan rasa praktis/nyaman (B)</strong>."
+            },
+            {
+                text: "<strong>Teks berikut untuk soal nomor 7 s.d. 9.</strong><div class='text-box'><strong>Teks 1</strong><br>Pembelajaran daring memberikan fleksibilitas yang tinggi bagi siswa. Mereka dapat mengakses materi pelajaran kapan saja dan di mana saja. Namun, tanpa pengawasan yang ketat dari orang tua, fleksibilitas ini sering kali disalahgunakan untuk bermain game online atau berselancar di media sosial selama jam pelajaran berlangsung.</div><div class='text-box'><strong>Teks 2</strong><br>Pembelajaran tatap muka di kelas memungkinkan interaksi sosial yang sehat antara guru dan siswa. Guru dapat langsung memantau fokus belajar siswa dan memberikan umpan balik secara instan. Meskipun demikian, metode ini membutuhkan energi ekstra untuk mobilisasi fisik dan waktu tempuh yang sering kali melelahkan bagi siswa yang rumahnya jauh.</div>Berdasarkan kedua teks di atas, perbedaan fokus masalah yang dihadapi siswa dalam kedua metode pembelajaran tersebut adalah....",
+                options: [
+                    "Teks 1 berfokus pada masalah biaya internet, sedangkan Teks 2 berfokus pada masalah fasilitas kelas.",
+                    "Teks 1 menyoroti masalah kedisiplinan diri siswa, sedangkan Teks 2 menyoroti masalah kelelahan fisik dan waktu.",
+                    "Teks 1 membahas peran guru yang hilang, sedangkan Teks 2 membahas peran orang tua yang terlalu dominan.",
+                    "Teks 1 menekankan pentingnya teknologi, sedangkan Teks 2 menekankan pentingnya tugas kelompok."
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita bandingkan sisi *kekurangan/masalah* dari kedua teks!<br><br>- Masalah di Teks 1 (Daring): Siswa menyalahgunakan waktu untuk main game/medsos. Ini adalah masalah kurangnya <strong>kedisiplinan diri</strong>.<br>- Masalah di Teks 2 (Tatap Muka): Membutuhkan energi untuk berangkat dan waktu tempuh yang jauh. Ini adalah masalah <strong>kelelahan fisik dan habisnya waktu di jalan</strong>.<br><br>Pilihan B sangat akurat menggambarkan perbandingan fokus permasalahan pada kedua metode tersebut."
+            },
+            {
+                text: "Jika seorang siswa memiliki kesulitan dalam mengatur waktu secara mandiri dan mudah teralihkan konsentrasinya, metode pembelajaran mana yang paling efektif berdasarkan analisis kedua teks?",
+                options: [
+                    "Pembelajaran daring, karena siswa bebas mengatur waktu belajarnya sendiri tanpa tekanan.",
+                    "Pembelajaran tatap muka, karena adanya pengawasan langsung dari guru yang membantu menjaga fokus.",
+                    "Pembelajaran daring, karena materi dapat diulang-ulang secara mandiri di rumah saat malam hari.",
+                    "Pembelajaran tatap muka, karena siswa tidak perlu memikirkan kuota internet dan sinyal gawai."
+                ],
+                answer: 1, // B
+                explanation: "Siswa ini punya masalah: susah mengatur waktu dan gampang gagal fokus.<br><br>Jika dia pakai metode Daring (Teks 1), tanpa ada yang mengawasi, dia pasti akan tergoda main game, karena dia gampang teralihkan!<br>Maka, metode yang paling cocok untuknya adalah metode Tatap Muka (Teks 2). Kenapa? Karena di teks 2 disebutkan: <em>\"Guru dapat <strong>langsung memantau fokus</strong> belajar siswa.\"</em> Kehadiran guru di kelas akan membantu siswa ini agar tidak mudah teralihkan."
+            },
+            {
+                text: "Kesimpulan (inferensi) yang paling objektif mengenai hubungan kedua teks tersebut adalah....",
+                options: [
+                    "Pembelajaran tatap muka jauh lebih unggul dalam segala aspek dibandingkan pembelajaran daring.",
+                    "Pembelajaran daring sebaiknya dihapuskan karena merusak moral dan kedisiplinan belajar siswa.",
+                    "Kedua metode memiliki kelebihan dan kelemahan tersendiri yang saling melengkapi sesuai kebutuhan siswa.",
+                    "Kolaborasi orang tua dan guru hanya dibutuhkan pada metode pembelajaran tatap muka saja."
+                ],
+                answer: 2, // C
+                explanation: "Kesimpulan yang objektif (adil) tidak boleh berat sebelah. Kita harus melihat fakta dari kedua teks.<br><br>- Teks 1 punya hal baik (fleksibel) tapi ada sisi buruk (rawan bolos main game).<br>- Teks 2 punya hal baik (guru bisa mengawasi langsung) tapi ada sisi buruk (melelahkan fisik).<br><br>Artinya, tidak ada metode yang 100% sempurna. Kesimpulan yang paling logis dan adil adalah bahwa <strong>kedua metode tersebut sama-sama memiliki kelebihan dan kekurangan (kelemahan) tersendiri (Pilihan C)</strong>."
+            },
+            {
+                text: "<strong>Teks berikut untuk soal nomor 10 s.d. 12.</strong><div class='quote-box'>\"Sudahlah, Min,\" kata Ibu sambil mengusap punggung Aminah yang tergugu. \"Sawah kita memang sudah digusur untuk proyek jalan tol. Kita tidak bisa melawan mereka yang punya kuasa dan uang. Yang penting kita masih punya kesehatan untuk mulai dari awal lagi.\" Aminah menatap hamparan beton yang kini menggantikan padi-padi hijaunya yang hampir panen. Di matanya, beton-beton itu seperti raksasa abu-abu yang menelan seluruh keringat dan harapan masa depan keluarganya. Namun, melihat gurat lelah di wajah ibunya, Aminah menghapus air matanya. Ia mengangguk pelan, menyadari bahwa meratapi semen yang telah mengeras tidak akan pernah menumbuhkan kembali padi yang telah hilang.</div>Latar suasana yang paling menonjol dalam kutipan cerita di atas adalah....",
+                options: [
+                    "ketegangan yang mencekam antara warga dan aparat",
+                    "kesedihan mendalam yang diiringi kepasrahan dan ketegaran",
+                    "kemarahan yang meluap-luap akibat ketidakadilan sosial",
+                    "kekecewaan yang berujung pada keputusasaan tanpa arah"
+                ],
+                answer: 1, // B
+                explanation: "Untuk menebak suasana, perhatikan kata-kata kunci emosi dan tindakan tokoh:<br>- <em>\"tergugu\" (menangis tersedu-sedu)</em> &rarr; Suasana <strong>kesedihan</strong> yang mendalam.<br>- <em>\"Kita tidak bisa melawan...\"</em> &rarr; Sikap <strong>kepasrahan/menerima nasib</strong>.<br>- <em>\"Aminah menghapus air matanya. Ia mengangguk pelan...\"</em> &rarr; Sikap kuat untuk bangkit atau <strong>ketegaran</strong>.<br><br>Kombinasi tangisan sedih, sikap pasrah, namun berusaha tegar ini dirangkum dengan sangat indah pada Pilihan B."
+            },
+            {
+                text: "Simbol \"beton-beton itu seperti raksasa abu-abu yang menelan seluruh keringat dan harapan\" dalam teks tersebut merujuk pada....",
+                options: [
+                    "bencana alam yang merusak pertanian warga desa",
+                    "modernisasi dan pembangunan yang mengorbankan hajat hidup rakyat kecil",
+                    "kekuatan supranatural yang merusak keindahan alam pedesaan",
+                    "ketidakpedulian Aminah terhadap pembangunan infrastruktur negara"
+                ],
+                answer: 1, // B
+                explanation: "Mari kita artikan gaya bahasa (majas) ini!<br><br>- <strong>\"Beton-beton abu-abu\"</strong> = Ini merujuk pada bahan bangunan jalan tol yang menggantikan sawah (pembangunan/modernisasi).<br>- <strong>\"Menelan keringat dan harapan\"</strong> = Proyek tol itu menggusur sawah tempat mereka bekerja keras (keringat) yang seharusnya menjadi sumber kehidupan mereka (harapan).<br><br>Jadi, simbol ini mengkritik bahwa pembangunan infrastruktur besar (jalan tol) seringkali harus mengorbankan sawah dan sumber kehidupan rakyat kecil seperti Aminah (Pilihan B)."
+            },
+            {
+                text: "Evaluasi terhadap keputusan Aminah untuk \"menghapus air matanya dan mengangguk pelan\" menunjukkan bahwa ia....",
+                options: [
+                    "menyerah kalah karena merasa dirinya tidak memiliki kemampuan untuk bekerja lagi",
+                    "memiliki kedewasaan emosional untuk menerima kenyataan pahit demi menguatkan ibunya",
+                    "tidak lagi peduli pada nasib sawah warisan leluhurnya yang telah digusur",
+                    "merasa takut akan ancaman dari pihak pengembang proyek jalan tol"
+                ],
+                answer: 1, // B
+                explanation: "Kenapa Aminah tiba-tiba menghapus air matanya? Coba baca kalimat tepat sebelum itu: <em>\"Namun, <strong>melihat gurat lelah di wajah ibunya</strong>, Aminah menghapus air matanya.\"</em><br><br>Aminah sebenarnya sangat sedih, tapi ketika ia melihat ibunya yang juga lelah, ia memilih untuk pura-pura kuat agar ibunya tidak semakin sedih. Menahan ego dan kesedihan diri sendiri demi orang lain adalah tanda dari <strong>kedewasaan emosi/pikiran (B)</strong>. Ia tegar demi ibunya."
+            },
+            {
+                text: "<strong>Teks berikut untuk soal nomor 13 s.d. 15.</strong><div class='text-box'>(1) Di era digital ini, kemampuan literasi informasi menjadi benteng utama dari serangan hoaks. (2) Banyak orang dengan mudah membagikan berita tanpa memeriksa kebenarannya terlebih dahulu di mesin pencari. (3) Akibatnya, konflik sosial sering kali tersulut hanya karena kesalahpahaman yang dipicu oleh informasi palsu. (4) Oleh karena itu, edukasi mengenai cara menyaring informasi sebelum membagikannya harus digalakkan sejak dini di lingkungan sekolah.</div>Kalimat yang menunjukkan hubungan sebab-akibat (kausalitas) yang menjadi dasar perlunya literasi informasi dalam teks tersebut adalah kalimat nomor....",
+                options: [
+                    "(1)",
+                    "(2)",
+                    "(3)",
+                    "(4)"
+                ],
+                answer: 2, // C
+                explanation: "Hubungan kausalitas (sebab-akibat) sangat mudah dikenali karena biasanya ditandai oleh kata-kata penghubung (konjungsi) seperti: <em>karena, sebab, sehingga, maka, akibatnya</em>.<br><br>Coba perhatikan awal Kalimat (3): <em>\"<strong>Akibatnya</strong>, konflik sosial sering kali tersulut...\"</em><br>Kata \"Akibatnya\" ini jelas menunjukkan bahwa konflik sosial adalah hasil/akibat dari tindakan sembarangan membagikan berita (kalimat 2). Maka, kalimat (3) lah yang paling menonjolkan hubungan sebab-akibat (kausalitas)."
+            },
+            {
+                text: "Apa gagasan pendukung yang tersirat dari kalimat nomor (2)?",
+                options: [
+                    "Mesin pencari adalah satu-satunya sumber kebenaran informasi di dunia digital.",
+                    "Masyarakat cenderung malas melakukan verifikasi data sebelum menyebarkan berita.",
+                    "Berita hoaks sengaja dibuat oleh pihak tertentu untuk meraup keuntungan finansial.",
+                    "Sekolah belum mengajarkan cara menggunakan mesin pencari dengan bijak kepada siswa."
+                ],
+                answer: 1, // B
+                explanation: "Kalimat (2) berbunyi: <em>\"Banyak orang dengan mudah membagikan berita tanpa memeriksa kebenarannya terlebih dahulu...\"</em><br><br>Jika orang langsung nge-share (membagikan) sesuatu tanpa mengeceknya di Google/mesin pencari, sifat apa yang tersirat (tersembunyi) dari perilaku tersebut? Tentu saja sifat <strong>malas mencari tahu kebenaran atau malas melakukan verifikasi data (B)</strong>. Mereka hanya ingin cepat-cepat eksis atau panik."
+            },
+            {
+                text: "Jika kita mengevaluasi efektivitas solusi yang ditawarkan pada kalimat (4), mengapa lingkungan sekolah menjadi tempat yang paling strategis untuk memulai edukasi tersebut?",
+                options: [
+                    "Karena sekolah memiliki fasilitas komputer dan internet yang paling cepat dibandingkan rumah.",
+                    "Karena siswa adalah kelompok yang paling sering membuat dan menyebarkan berita hoaks.",
+                    "Karena sekolah dapat membentuk karakter berpikir kritis siswa secara sistematis sejak usia muda.",
+                    "Karena guru memiliki otoritas penuh untuk menghukum siswa yang menyebarkan berita bohong."
+                ],
+                answer: 2, // C
+                explanation: "Kalimat (4) menyarankan agar edukasi menyaring informasi dimulai \"sejak dini di lingkungan sekolah\". <br><br>Mengapa harus di sekolah? Sekolah adalah lembaga formal yang tugasnya tidak hanya mengajarkan mata pelajaran, tapi juga melatih cara berpikir anak-anak.<br>Di sekolah, anak-anak diajarkan cara membedakan mana yang benar dan salah secara terstruktur/sistematis. Melatih otak untuk meneliti informasi (berpikir kritis) saat masih muda (sejak dini) jauh lebih mudah, sehingga kelak mereka tidak mudah tertipu hoaks. (Pilihan C logis dan edukatif)."
+            },
+            {
+                text: "<strong>Teks berikut untuk soal nomor 16 s.d. 18.</strong><div class='text-box'><strong>Teks A</strong><br>Hutan mangrove di pesisir pantai memiliki peran krusial dalam mencegah abrasi. Akar-akar pohon mangrove yang kokoh mampu mencengkeram pasir pantai dan memecah ombak besar sebelum mencapai daratan. Selain itu, hutan ini menjadi habitat bagi berbagai biota laut seperti kepiting dan ikan kecil.</div><div class='text-box'><strong>Teks B</strong><br>Pembangunan tanggul beton di sepanjang garis pantai terus dikebut oleh pemerintah daerah untuk mengatasi banjir rob. Tanggul ini dirancang untuk menahan laju air laut yang naik saat pasang. Meskipun efektif dalam jangka pendek, pembangunan fisik ini membutuhkan biaya perawatan yang sangat besar dan mengubah estetika alami pantai.</div>Persamaan informasi yang dapat ditarik dari Teks A dan Teks B adalah....",
+                options: [
+                    "Kedua teks membahas tentang upaya perlindungan wilayah pesisir dari ancaman air laut.",
+                    "Kedua teks menyarankan penggunaan teknologi modern untuk mengatasi masalah abrasi pantai.",
+                    "Kedua teks menyoroti pentingnya menjaga kelestarian biota laut di sekitar pantai.",
+                    "Kedua teks mengkritik kebijakan pemerintah dalam menangani bencana banjir rob."
+                ],
+                answer: 0, // A
+                explanation: "Mari kita cari benang merah (persamaan) dari kedua teks!<br><br>- Teks A menceritakan hutan mangrove untuk melindungi daratan dari ombak/abrasi.<br>- Teks B menceritakan tanggul beton untuk menahan laju air laut/banjir rob.<br><br>Walaupun caranya beda (satu pakai tanaman, satu pakai beton), tapi tujuan akhirnya sama persis: <strong>Keduanya sedang membahas cara/upaya melindungi wilayah pesisir (pantai) dari ancaman terjangan air laut (A).</strong>"
+            },
+            {
+                text: "Berdasarkan analisis kedua teks, manakah pernyataan evaluatif yang paling tepat mengenai pemilihan solusi jangka panjang untuk perlindungan pantai?",
+                options: [
+                    "Tanggul beton lebih unggul karena pengerjaannya cepat dan langsung terlihat hasilnya.",
+                    "Hutan mangrove lebih berkelanjutan karena selain melindungi pantai juga menjaga ekosistem alam.",
+                    "Penggabungan kedua solusi tidak mungkin dilakukan karena metode biologis dan fisik saling bertentangan.",
+                    "Pemerintah sebaiknya fokus pada pembangunan tanggul beton karena hutan mangrove sulit tumbuh di daerah perkotaan."
+                ],
+                answer: 1, // B
+                explanation: "Kata kuncinya adalah <strong>solusi jangka panjang</strong> (bisa dipakai bertahun-tahun tanpa merusak).<br><br>- Tanggul beton (Teks B) memang kuat, tapi teks menyebutkan efeknya hanya \"efektif dalam jangka pendek\" dan butuh \"biaya perawatan besar\".<br>- Hutan mangrove (Teks A) adalah tanaman hidup. Ia akan terus tumbuh kuat, tidak butuh biaya perawatan besar, dan malah memberikan rumah bagi ikan-ikan (menjaga ekosistem).<br><br>Oleh karena itu, cara alamiah (mangrove) jauh lebih baik dan berkelanjutan untuk jangka panjang (Pilihan B)."
+            },
+            {
+                text: "Apa dampak negatif yang tersirat dari pembangunan tanggul beton berdasarkan Teks B?",
+                options: [
+                    "Punahnya populasi kepiting dan ikan kecil di pesisir pantai secara instan.",
+                    "Beban anggaran daerah yang terus-menerus untuk pemeliharaan struktur fisik tanggul.",
+                    "Penurunan kesadaran masyarakat untuk tidak membuang sampah ke laut.",
+                    "Hilangnya minat wisatawan untuk berkunjung ke pantai karena tidak ada lagi pohon mangrove."
+                ],
+                answer: 1, // B
+                explanation: "Dampak negatif dari tanggul beton bisa kita temukan di kalimat terakhir Teks B: <em>\"...pembangunan fisik ini <strong>membutuhkan biaya perawatan yang sangat besar</strong> dan mengubah estetika alami pantai.\"</em><br><br>Jika setiap saat harus mengeluarkan biaya perawatan yang besar, artinya pemerintah daerah harus terus-menerus mengeluarkan uang (anggaran). Ini akan menjadi beban anggaran yang berat bagi keuangan daerah (Pilihan B)."
+            },
+            {
+                text: "<strong>Teks berikut untuk soal nomor 19 dan 20.</strong><div class='quote-box'>Seekor burung pipit mencoba membawa air dengan paruh kecilnya untuk memadamkan api yang membakar hutan tempat tinggalnya. Seekor gajah yang melihatnya tertawa terbahak-bahak. \"Hai Pipit, bodoh sekali kamu! Air di paruhmu itu tidak akan mampu memadamkan api yang sebesar ini!\" seru Gajah. Pipit dengan tenang menjawab, \"Aku tahu air ini tidak akan cukup. Namun, setidaknya aku ingin menunjukkan di pihak mana aku berada saat hutan ini terbakar, bukan hanya berdiri menonton seperti dirimu.\"</div>Nilai karakter yang ditunjukkan oleh tokoh Pipit dalam fabel di atas adalah....",
+                options: [
+                    "kesombongan yang dibungkus dengan kepedulian sosial",
+                    "kepedulian, integritas, dan tanggung jawab moral terhadap lingkungannya",
+                    "kepasrahan terhadap takdir yang menimpa tempat tinggalnya",
+                    "keinginan untuk dipuji oleh hewan-hewan lain di dalam hutan"
+                ],
+                answer: 1, // B
+                explanation: "Fabel (cerita hewan) selalu punya pesan moral yang bagus!<br><br>Burung pipit tahu air dari paruhnya terlalu sedikit untuk memadamkan api. Tapi ia tetap melakukannya. Kenapa?<br>Karena itu adalah rumahnya, dan ia merasa punya <strong>tanggung jawab</strong> untuk berbuat sesuatu (kepedulian). Kalimatnya: <em>\"Aku ingin menunjukkan di pihak mana aku berada...\"</em> menandakan bahwa ia punya pendirian teguh untuk berbuat baik (integritas) walau usahanya kecil. Jawaban B sangat pas memuji karakter mulia Pipit."
+            },
+            {
+                text: "Jika tindakan Gajah dievaluasi berdasarkan perspektif moral, kesalahan terbesar Gajah adalah....",
+                options: [
+                    "tidak membantu memadamkan api sekaligus meremehkan usaha tulus makhluk lain",
+                    "membiarkan Pipit bekerja sendirian tanpa memberikan bantuan alat yang memadai",
+                    "melarikan diri dari hutan tanpa menyelamatkan hewan-hewan kecil terlebih dahulu",
+                    "menertawakan ukuran paruh Pipit yang memang secara alami berukuran kecil"
+                ],
+                answer: 0, // A
+                explanation: "Mari kita evaluasi perbuatan si Gajah.<br><br>1. Gajah punya badan dan belalai besar yang bisa menyemprotkan banyak air, tapi ia hanya <em>\"berdiri menonton\"</em> (apatis/tidak mau menolong).<br>2. Tidak hanya diam, ia malah <em>\"tertawa terbahak-bahak\"</em> dan menyebut Pipit bodoh (mengejek/meremehkan orang yang sedang berbuat baik).<br><br>Jadi, kesalahan fatal si Gajah dari segi moral ada dua: tidak mau membantu, ditambah lagi malah menghina niat baik orang lain (Pilihan A)."
+            }
+        ];
+
+        function processContent(text) {
+            // Ubah pattern [GAMBAR: data:image/...] menjadi elemen <img> dengan styling responsif
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<div class="my-5"><img src="$1" alt="Gambar Referensi" class="max-w-full h-auto mx-auto rounded-xl shadow-md border border-slate-200"></div>');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative';
+            questionDiv.id = `question-block-${index}`;
+
+            // Menyusun Pilihan Ganda (A, B, C, D)
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4 group">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            // Merakit struktur HTML per soal
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Penjelasan (Awalnya tersembunyi dengan transisi halus) -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}">
+                            <!-- Ikon & Status Jawaban (Benar/Salah) akan dirender di sini -->
+                        </h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Buka/Tampilkan kotak penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Mengunci semua input radio agar tidak bisa diubah lagi
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    // Highlight Kunci Jawaban yang Benar (Selalu Hijau)
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-blue-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // KONDISI: JAWABAN BENAR
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/50 border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-8 h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // KONDISI: JAWABAN SALAH
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/50 border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-8 h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Ups, Kurang Tepat! Kunci: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Tandai pilihan pengguna yang salah dengan warna merah
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // KONDISI: TIDAK DIJAWAB / TERLEWAT
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/50 border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-8 h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Terlewat! Kunci: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                // Masukkan teks pembahasan yang sudah diekspansi secara mendalam
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            // Hitung nilai skala 0-100
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            // Animasi perhitungan angka skor (Counter Animation)
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500; // Total waktu animasi (ms)
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Atur pesan motivasi dinamis
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Logika dan ketelitianmu dalam menganalisis teks sangat luar biasa!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja bagus! 👏 Kemampuan analisamu sudah sangat baik. Sedikit lagi menuju sempurna!";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya lebih tajam membedah isi teks. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Jangan patah semangat! Memahami teks butuh ketelitian. Ayo pahami pembahasannya dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            // Scroll otomatis yang mulus ke bagian bawah skor
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset input radio HTML form
+            form.reset();
+
+            // Sembunyikan penjelasan dan kembalikan warna UI soal seperti semula
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                // Reset semua styling label pilihan ganda
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors';
+                });
+            });
+
+            // Tampilkan kembali tombol periksa, sembunyikan kotak skor akhir
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Scroll mulus kembali ke ujung atas kuis
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

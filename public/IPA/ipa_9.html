@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Biologi: Sistem Pencernaan Manusia</title>
+    <style>
+        :root {
+            --primary: #059669; /* Emerald Green */
+            --primary-hover: #047857;
+            --bg-color: #F0FDF4; /* Sangat hijau muda */
+            --text-main: #1F2937;
+            --text-muted: #4B5563;
+            --correct-bg: #D1FAE5;
+            --correct-border: #10B981;
+            --wrong-bg: #FEE2E2;
+            --wrong-border: #EF4444;
+            --card-bg: #FFFFFF;
+            --border-light: #E5E7EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: absolute;
+            left: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        .math-block {
+            background-color: #F3F4F6;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 15px 0;
+            display: block;
+            font-size: 1rem;
+            white-space: pre;
+            overflow-x: auto;
+            border-left: 4px solid var(--primary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 0 1px var(--border-light);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 600px;
+        }
+        
+        table, th, td {
+            border: 1px solid var(--border-light);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #F9FAFB;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 18px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #F9FAFB;
+        }
+
+        .option-label:hover {
+            background-color: #F3F4F6;
+            border-color: #D1D5DB;
+        }
+
+        .option-label input[type="radio"] {
+            margin-top: 5px;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1.02rem;
+            line-height: 1.5;
+        }
+
+        .option-label.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: #065F46;
+        }
+
+        .option-label.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: #991B1B;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.98rem;
+            display: none; 
+            animation: slideDown 0.4s ease;
+            line-height: 1.7;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box.bg-green {
+            background-color: #ECFDF5;
+            border-left: 5px solid var(--correct-border);
+            color: #065F46;
+        }
+
+        .explanation-box.bg-red {
+            background-color: #FEF2F2;
+            border-left: 5px solid var(--wrong-border);
+            color: #991B1B;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .btn-submit, .btn-retry {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-submit:hover, .btn-retry:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            display: none;
+            animation: fadeIn 0.6s ease;
+            border-top: 6px solid var(--primary);
+        }
+
+        .score-display {
+            font-size: 5.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .score-message {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .header { flex-direction: column; padding: 15px; }
+            .btn-back { position: static; margin-bottom: 12px; width: 100%; justify-content: center;}
+            .container { margin: 15px auto; }
+            .question-card { padding: 20px 15px; }
+            .score-display { font-size: 4.5rem; }
+            .math-block { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button type="button" class="btn-back" onclick="history.back()">&#8592; Kembali</button>
+        <h1>Kuis Biologi: Sistem Pencernaan</h1>
+    </div>
+
+    <div class="container">
+        <form id="quizForm">
+            
+            <div class="question-card" id="q1">
+                <div class="question-text">1. Perhatikan aktivitas pencernaan berikut!<br>
+                (1) Gigi mengunyah makanan menjadi bagian yang lebih kecil.<br>
+                (2) Enzim ptialin mengubah amilum menjadi maltosa.<br>
+                (3) Otot kerongkongan melakukan gerakan meremas dan mendorong (peristaltik).<br>
+                (4) Enzim pepsin memecah protein menjadi pepton.<br><br>
+                Aktivitas yang menunjukkan proses <b>pencernaan kimiawi</b> secara tepat ditunjukkan oleh nomor....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q1" value="A"> <span class="option-text">A. (1) dan (2)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"> <span class="option-text">B. (1) dan (3)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"> <span class="option-text">C. (2) dan (4)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"> <span class="option-text">D. (3) dan (4)</span></label>
+                </div>
+                <div class="explanation-box" id="exp1" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Bayangkan pencernaan kimiawi seperti menggunakan "ramuan peleleh" (enzim) untuk mengubah zat makanan. Sedangkan pencernaan mekanis seperti menggunakan "palu" (gigi) atau memeras dengan tangan (otot).<br><br>
+                        - (1) dan (3) menggunakan otot dan gigi, ini adalah pencernaan <b>Mekanis</b>.<br>
+                        - (2) menggunakan <b>enzim ptialin</b> dan (4) menggunakan <b>enzim pepsin</b>. Karena menggunakan enzim, inilah yang disebut pencernaan <b>Kimiawi</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q2">
+                <div class="question-text">2. Pada saat kita mengunyah nasi secara terus-menerus tanpa lauk, lama-kelamaan nasi tersebut akan terasa manis di dalam mulut. Fenomena ini terjadi karena....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q2" value="A"> <span class="option-text">A. kelenjar ludah menghasilkan enzim lipase yang mengubah lemak menjadi asam lemak</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"> <span class="option-text">B. gigi menghancurkan nasi sehingga mengeluarkan kandungan gula alami di dalamnya</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"> <span class="option-text">C. enzim ptialin dalam air liur memecah karbohidrat kompleks (amilum) menjadi disakarida (maltosa)</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"> <span class="option-text">D. lidah menghasilkan zat asam yang merangsang reseptor rasa manis pada indra pengecap</span></label>
+                </div>
+                <div class="explanation-box" id="exp2" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Nasi asalnya dari beras yang mengandung zat pati (Amilum/Karbohidrat kompleks) yang rasanya tawar. <br><br>
+                        Di dalam mulut kita terdapat ludah yang mengandung <b>enzim ptialin (amilase mulut)</b>. Enzim ini bertugas seperti gunting, memotong rantai panjang amilum yang tawar itu menjadi potongan gula-gula pendek yang disebut <b>maltosa</b>. Nah, maltosa inilah yang memberikan sensasi rasa manis di lidah kita!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q3">
+                <div class="question-text">3. Lambung menghasilkan asam klorida (HCl) yang memiliki peran sangat penting dalam sistem pencernaan. Jika produksi HCl di dalam lambung mengalami penurunan drastis, dampak langsung yang akan terjadi adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q3" value="A"> <span class="option-text">A. pencernaan lemak terganggu karena empedu tidak dapat bekerja</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"> <span class="option-text">B. aktivitas enzim pepsin terhambat sehingga pencernaan protein tidak optimal</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"> <span class="option-text">C. usus halus tidak mampu menyerap sari-sari makanan berupa glukosa</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"> <span class="option-text">D. proses pembusukan sisa makanan di usus besar menjadi lebih cepat</span></label>
+                </div>
+                <div class="explanation-box" id="exp3" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Asam lambung (HCl) berfungsi membunuh kuman, tetapi tugas utamanya yang lain adalah sebagai <b>"Tombol On"</b> (pengaktif) untuk mesin pencerna protein bernama pepsin.<br><br>
+                        Enzim pencerna daging (pepsin) awalnya tidur lelap dalam bentuk <i>pepsinogen</i>. Dia baru akan terbangun dan bekerja mencerna protein jika tersiram asam yang kuat (HCl). Jadi, jika HCl sedikit, pepsin tidak bisa bekerja, akibatnya daging/protein tidak tercerna dengan baik.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q4">
+                <div class="question-text">4. Seorang siswa makan siang dengan menu nasi goreng yang mengandung mentega cukup tinggi. Di dalam saluran pencernaan, mentega tersebut akan diemulsikan terlebih dahulu sebelum dihidrolisis. Zat yang berperan mengemulsikan mentega dan organ yang menghasilkannya adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q4" value="A"> <span class="option-text">A. cairan empedu yang dihasilkan oleh kantung empedu</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"> <span class="option-text">B. cairan empedu yang dihasilkan oleh hati</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"> <span class="option-text">C. enzim lipase yang dihasilkan oleh pankreas</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"> <span class="option-text">D. enzim lipase yang dihasilkan oleh lambung</span></label>
+                </div>
+                <div class="explanation-box" id="exp4" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Pernahkah kamu mencuci piring berminyak? Tentu sangat sulit jika hanya menggunakan air, kita butuh sabun cuci piring. <br><br>
+                        Di dalam tubuh, minyak/mentega/lemak akan dihancurkan oleh "sabun cuci piring" alami bernama <b>Cairan Empedu</b> (proses emulsi). Ingat baik-baik: Cairan empedu ini pabrik pembuatnya (diproduksi) oleh organ <b>Hati (Liver)</b>, sedangkan Kantung Empedu hanyalah gudang tempat penyimpanannya saja!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q5">
+                <div class="question-text">5. Perhatikan grafik aktivitas enzim pepsin berikut!
+<pre class="math-block">
+Laju Reaksi Enzim
+   ^
+   |  /\
+   | /  \
+   |/    \
+___/______\____> pH
+0  2  4  6  8
+</pre>
+                Berdasarkan grafik tersebut, kesimpulan yang paling tepat mengenai karakteristik enzim pepsin di dalam lambung adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q5" value="A"> <span class="option-text">A. bekerja secara optimal pada lingkungan yang bersifat basa kuat</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"> <span class="option-text">B. mengalami denaturasi (kerusakan) pada lingkungan dengan pH di bawah 2</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"> <span class="option-text">C. bekerja secara optimal pada lingkungan asam dengan pH sekitar 2</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"> <span class="option-text">D. tidak dipengaruhi oleh tingkat keasaman (pH) lingkungan sekitarnya</span></label>
+                </div>
+                <div class="explanation-box" id="exp5" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Cara membaca grafiknya sangat mudah: Lihat posisi paling tinggi dari gunungnya (puncak laju reaksi).<br><br>
+                        Ujung atas gunung tersebut sejajar tepat di atas angka <b>pH 2</b>. Angka pH 2 berarti sifatnya <b>Asam Kuat</b>. Hal ini membuktikan bahwa enzim pepsin (yang hidup di lambung) menyukai suasana yang sangat asam untuk bekerja paling maksimal.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q6">
+                <div class="question-text">6. Setelah makanan dikunyah di dalam rongga mulut, makanan akan ditelan menuju kerongkongan (esofagus). Di dalam kerongkongan terjadi gerakan peristaltik yang berfungsi untuk....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q6" value="A"> <span class="option-text">A. menyaring kotoran yang terbawa bersama makanan</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"> <span class="option-text">B. mencampur makanan dengan enzim pencernaan dari tenggorokan</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"> <span class="option-text">C. mendorong bolus makanan menuju lambung melalui gerakan meremas-remas</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"> <span class="option-text">D. memecah makanan secara kimiawi menjadi partikel yang lebih halus</span></label>
+                </div>
+                <div class="explanation-box" id="exp6" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Mengapa saat kita menelan makanan sambil berbaring (atau bahkan terjungkir), makanan tetap masuk ke perut dan tidak jatuh ke hidung? <br><br>
+                        Itu karena dinding kerongkongan kita memiliki otot-otot yang secara otomatis mencubit, meremas, dan memijat makanan lurus ke bawah menuju lambung. Gerakan otot <b>meremas dan mendorong</b> inilah yang disebut sebagai gerakan peristaltik.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q7">
+                <div class="question-text">7. Pasien yang baru saja menjalani operasi pengangkatan kantung empedu (kolesistektomi) disarankan oleh dokter untuk membatasi konsumsi makanan yang mengandung lemak tinggi (seperti santan/gorengan). Alasan medis yang paling tepat di balik saran tersebut adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q7" value="A"> <span class="option-text">A. tubuh tidak lagi memproduksi enzim lipase untuk mencerna lemak</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"> <span class="option-text">B. hati berhenti memproduksi cairan empedu sehingga lemak tidak bisa dicerna sama sekali</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"> <span class="option-text">C. tidak adanya tempat penyimpanan empedu menyebabkan aliran empedu ke usus halus tidak optimal saat mengonsumsi lemak dalam jumlah banyak</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"> <span class="option-text">D. lambung akan memproduksi asam lambung berlebih jika mendeteksi adanya lemak tanpa empedu</span></label>
+                </div>
+                <div class="explanation-box" id="exp7" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Seperti yang dibahas sebelumnya, kantung empedu itu cuma "Gudang Penyimpanan" tempat cairan empedu ditampung dan dikentalkan. <br><br>
+                        Jika gudangnya dibuang, cairan pencuci lemak ini tetap diproduksi oleh organ Hati, namun akan terus menetes tanpa ditampung. Saat orang itu mendadak makan banyak sate kambing berlemak tinggi, empedu yang menetes tak akan cukup kuat menghancurkan lemak tersebut seketika, sehingga memicu sakit perut atau diare (steatorea).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q8">
+                <div class="question-text">8. Usus halus memiliki permukaan bagian dalam yang berlipat-lipat dan dipenuhi oleh banyak tonjolan halus yang disebut vili (jonjot usus). Struktur vili yang demikian sangat mendukung fungsi usus halus untuk....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q8" value="A"> <span class="option-text">A. mempercepat gerakan peristaltik makanan menuju usus besar</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"> <span class="option-text">B. memperluas bidang penyerapan sehingga sari-sari makanan dapat diserap secara maksimal</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"> <span class="option-text">C. menghasilkan lendir pelindung agar dinding usus tidak terluka oleh asam lambung</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"> <span class="option-text">D. menampung sisa-sisa makanan sebelum mengalami proses pembusukan</span></label>
+                </div>
+                <div class="explanation-box" id="exp8" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bayangkan tumpahan air di lantai. Apakah lebih cepat kering jika dilap dengan sehelai kertas licin, atau dilap dengan handuk mandi yang tebal dan berbulu-bulu?<br><br>
+                        Tentu handuk berbulu! Bulu-bulu pada handuk (yang mirip seperti Vili usus halus) memberikan <b>luas permukaan yang sangat besar</b> untuk menyedot nutrisi makanan dengan sangat cepat dan maksimal sebelum ampasnya dibuang.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q9">
+                <div class="question-text">9. Protein yang kita konsumsi mengalami pencernaan bertahap di dalam saluran pencernaan. Zat antara dan produk akhir dari pencernaan protein berturut-turut di lambung dan usus halus adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q9" value="A"> <span class="option-text">A. pepton di lambung, dan asam amino di usus halus</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"> <span class="option-text">B. asam amino di lambung, dan pepton di usus halus</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"> <span class="option-text">C. glukosa di lambung, dan asam lemak di usus halus</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"> <span class="option-text">D. pepton di lambung, dan gliserol di usus halus</span></label>
+                </div>
+                <div class="explanation-box" id="exp9" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Protein (seperti daging atau telur) itu rantainya sangat panjang dan sulit dicerna. <br><br>
+                        - Di Lambung: Daging dipotong menjadi bagian sedang (Zat Antara) yang dinamakan <b>Pepton</b> oleh enzim pepsin.<br>
+                        - Di Usus Halus: Pepton yang ukurannya sedang ini digunting lagi sampai sangat halus oleh enzim dari pankreas sehingga menjadi bentuk paling sederhana, yaitu <b>Asam Amino</b>. Asam amino inilah yang akan diserap oleh darah.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q10">
+                <div class="question-text">10. Perhatikan tabel hasil uji makanan berikut!
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Bahan Makanan</th>
+                            <th>Reagen Lugol</th>
+                            <th>Reagen Biuret</th>
+                            <th>Reagen Benedict (dipanaskan)</th>
+                        </tr>
+                        <tr><td>K</td><td>Biru tua/Hitam</td><td>Biru</td><td>Biru</td></tr>
+                        <tr><td>L</td><td>Cokelat</td><td>Ungu</td><td>Biru</td></tr>
+                        <tr><td>M</td><td>Cokelat</td><td>Biru</td><td>Merah bata</td></tr>
+                        <tr><td>N</td><td>Cokelat</td><td>Biru</td><td>Biru</td></tr>
+                    </table>
+                </div>
+                Berdasarkan data di atas, bahan makanan yang mengandung protein dan glukosa (gula) secara berturut-turut adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q10" value="A"> <span class="option-text">A. K dan L</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"> <span class="option-text">B. L dan M</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"> <span class="option-text">C. M dan N</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"> <span class="option-text">D. K dan N</span></label>
+                </div>
+                <div class="explanation-box" id="exp10" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Kamu wajib menghafal warna-warna indikator ini (sering keluar di ujian lho!):<br>
+                        1. <b>Amilum (Karbohidrat):</b> Menggunakan Lugol. Jika positif berubah jadi Biru Tua/Hitam (Bahan K).<br>
+                        2. <b>Protein:</b> Menggunakan Biuret. Jika positif berubah jadi warna <b>Ungu</b> (Bahan L).<br>
+                        3. <b>Glukosa (Gula):</b> Menggunakan Benedict lalu dipanaskan. Jika positif berubah warna jadi <b>Merah Bata / Oranye</b> (Bahan M).<br><br>
+                        Jadi, yang mengandung Protein dan Glukosa berurutan adalah bahan <b>L dan M</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q11">
+                <div class="question-text">11. Di dalam usus besar manusia terdapat bakteri <i>Escherichia coli</i> yang hidup bersimbiosis mutualisme dengan tubuh manusia. Peran penting bakteri tersebut adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q11" value="A"> <span class="option-text">A. membantu proses penyerapan air dan garam mineral</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"> <span class="option-text">B. menghasilkan enzim selulase untuk mencerna serat tumbuhan</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"> <span class="option-text">C. membusukkan sisa makanan dan membantu pembentukan vitamin K</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"> <span class="option-text">D. membunuh bakteri patogen yang masuk bersama makanan</span></label>
+                </div>
+                <div class="explanation-box" id="exp11" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Tidak semua bakteri itu jahat. Bakteri E. Coli di usus besar kita ibarat "petugas pengolah sampah". <br><br>
+                        Sisa-sisa ampas makanan yang tidak tercerna diserahkan pada mereka. Mereka memakannya sehingga sampah itu menjadi hancur dan busuk (menjadi tinja/feses). Sebagai ucapan terima kasih karena sudah diberi makan, bakteri ini memproduksi zat berguna yaitu <b>Vitamin K dan Vitamin B12</b> untuk diserap oleh tubuh kita. Keren, kan! (Simbiosis Mutualisme).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q12">
+                <div class="question-text">12. Seseorang sering mengalami kesulitan saat buang air besar (konstipasi/sembelit). Setelah dilakukan pemeriksaan, fesesnya bertekstur sangat keras dan kering. Gangguan ini umumnya disebabkan oleh....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q12" value="A"> <span class="option-text">A. infeksi bakteri pada dinding usus besar yang memicu sekresi air berlebih</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"> <span class="option-text">B. penyerapan air yang berlebihan pada usus besar akibat kurang mengonsumsi makanan berserat</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"> <span class="option-text">C. kurangnya produksi asam klorida (HCl) di dalam lambung sehingga makanan tidak hancur</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"> <span class="option-text">D. rusaknya vili usus halus sehingga proses penyerapan air terganggu</span></label>
+                </div>
+                <div class="explanation-box" id="exp12" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Salah satu tugas Usus Besar adalah menyerap sisa air pada feses agar feses memadat. <br><br>
+                        Namun, jika kamu malas makan sayur/buah (yang mengandung serat pengikat air), feses akan berjalan sangat lambat di usus besar. Akibatnya, air akan diserap secara berlebihan terus-menerus. Feses pun menjadi seperti bongkahan batu bata yang keras dan kering, memicu rasa sakit luar biasa saat buang air besar (Sembelit/Konstipasi).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q13">
+                <div class="question-text">13. Penderita penyakit maag (gastritis) sering kali merasakan perih dan nyeri di bagian ulu hati. Secara fisiologis, rasa perih tersebut disebabkan oleh....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q13" value="A"> <span class="option-text">A. iritasi pada dinding lambung akibat gesekan makanan kasar yang belum dikunyah dengan baik</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"> <span class="option-text">B. peradangan pada dinding lambung akibat peningkatan kadar asam lambung (HCl) yang mengikis lapisan mukosa</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"> <span class="option-text">C. penyumbatan saluran empedu sehingga lemak menumpuk di dalam lambung</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"> <span class="option-text">D. infeksi virus pada otot lambung yang menyebabkan otot berkontraksi terlalu kuat</span></label>
+                </div>
+                <div class="explanation-box" id="exp13" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Dinding lambung kita berlapis cairan lendir khusus yang menahan sifat "membakar" dari Asam Klorida (HCl).<br><br>
+                        Namun, jika kita telat makan atau stres, asam lambung akan diproduksi berlebihan dan menumpuk padahal tidak ada makanan yang dicerna. Asam ini akhirnya <b>memakan selaput dinding lambung kita sendiri</b>, mengikisnya, dan memicu peradangan berupa luka sariawan yang sangat perih di perut (Gastritis/Maag).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q14">
+                <div class="question-text">14. Seorang pasien obesitas ingin menurunkan berat badannya secara drastis dengan cara menghindari konsumsi lemak sama sekali dalam jangka waktu lama. Sebagai seorang ahli gizi, evaluasi yang paling tepat terhadap rencana diet tersebut adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q14" value="A"> <span class="option-text">A. diet tersebut sangat baik karena lemak tidak dibutuhkan oleh tubuh jika cadangan karbohidrat masih ada</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"> <span class="option-text">B. diet tersebut kurang tepat karena ketiadaan lemak akan menghambat penyerapan vitamin larut lemak (A, D, E, K) yang penting bagi tubuh</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"> <span class="option-text">C. diet tersebut sangat aman karena tubuh dapat mensintesis semua jenis asam lemak dari air yang kita minum</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"> <span class="option-text">D. diet tersebut berbahaya karena tanpa lemak, lambung tidak akan bisa melakukan pencernaan mekanis</span></label>
+                </div>
+                <div class="explanation-box" id="exp14" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Meski sering dianggap musuh, lemak alami dalam kadar yang wajar sangat dibutuhkan tubuh kita! <br><br>
+                        Ada beberapa vitamin spesial yang "hanya mau menumpang" bersama molekul lemak agar bisa masuk terserap usus darah kita, yaitu <b>Vitamin A, D, E, dan K (A-D-E-K)</b>. Jika kamu nol lemak, vitamin ajaib untuk mata, tulang, dan kulit ini tidak akan bisa masuk dan akan terbuang percuma melalui kotoran (malnutrisi).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q15">
+                <div class="question-text">15. Pankreas menghasilkan getah pankreas yang dialirkan ke dalam usus dua belas jari (duodenum). Di dalam getah pankreas terdapat enzim tripsinogen yang belum aktif. Zat yang berperan mengaktifkan tripsinogen menjadi tripsin aktif adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q15" value="A"> <span class="option-text">A. asam klorida (HCl)</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"> <span class="option-text">B. enterokinase</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"> <span class="option-text">C. empedu</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"> <span class="option-text">D. pepsin</span></label>
+                </div>
+                <div class="explanation-box" id="exp15" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ingat-ingat tombol "On" ajaib di dalam saluran pencernaan:<br>
+                        - Di lambung, <i>Pepsinogen</i> (non-aktif) dibangunkan oleh cairan asam <b>HCl</b> menjadi <i>Pepsin</i>.<br>
+                        - Di usus halus, <i>Tripsinogen</i> (non-aktif) dari pankreas dibangunkan oleh cairan dari dinding usus halus bernama <b>Enterokinase</b> menjadi <i>Tripsin</i> yang siap menghancurkan sisa-sisa protein (pepton).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q16">
+                <div class="question-text">16. Penyakit Celiac adalah kondisi autoimun di mana konsumsi gluten (protein dalam gandum) menyebabkan kerusakan pada vili usus halus. Dampak jangka panjang yang paling berbahaya bagi penderita penyakit ini jika tidak ditangani adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q16" value="A"> <span class="option-text">A. obesitas karena tubuh menimbun gluten yang tidak tercerna</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"> <span class="option-text">B. malnutrisi dan penurunan berat badan ekstrem karena kemampuan penyerapan nutrisi menurun drastis</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"> <span class="option-text">C. usus besar akan bekerja lebih keras untuk menyerap protein yang gagal diserap usus halus</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"> <span class="option-text">D. produksi asam lambung akan berhenti karena tidak ada sinyal dari usus halus</span></label>
+                </div>
+                <div class="explanation-box" id="exp16" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Seperti dibahas di awal, vili itu ibarat "bulu handuk penyerap" yang mengisap sari makanan. <br><br>
+                        Jika kamu terkena Celiac, tentara tubuhmu mengamuk dan malah membabat habis bulu-bulu usus ini (vili hancur rata). Tanpa vili, sari makanan akan meluncur lewat begitu saja dan terbuang ke toilet, menyebabkan penderitanya kekurangan gizi berat (malnutrisi) walau makannya banyak.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q17">
+                <div class="question-text">17. Hati dan pankreas dikategorikan sebagai organ pencernaan tambahan (aksesoris). Alasan pelabelan "tambahan" ini adalah karena kedua organ tersebut....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q17" value="A"> <span class="option-text">A. tidak dilewati secara langsung oleh bolus/makanan, namun menghasilkan sekresi kimiawi yang membantu pencernaan</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"> <span class="option-text">B. hanya bekerja saat organ pencernaan utama mengalami kerusakan atau gangguan fungsi</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"> <span class="option-text">C. memiliki ukuran yang lebih kecil dibandingkan organ pencernaan utama lainnya</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"> <span class="option-text">D. dapat diangkat dari tubuh manusia tanpa mengganggu kelangsungan hidup sistem pencernaan</span></label>
+                </div>
+                <div class="explanation-box" id="exp17" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Jalur kereta makanan utamanya adalah: Mulut $\rightarrow$ Kerongkongan $\rightarrow$ Lambung $\rightarrow$ Usus Halus $\rightarrow$ Usus Besar.<br><br>
+                        Makanan <b>tidak pernah</b> mampir masuk jalan-jalan ke dalam organ Hati maupun Pankreas. Tetapi, kedua pabrik kimia besar tersebut bertugas menyemprotkan cairan ajaibnya (empedu & getah pankreas) menggunakan pipa selang ke dalam Usus Halus tempat makanan lewat. Karenanya mereka disebut asisten/aksesoris.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q18">
+                <div class="question-text">18. Seorang pasien didiagnosis menderita pankreatitis kronis (peradangan pankreas) sehingga produksi enzim pencernaannya menurun drastis. Dokter meresepkan tablet suplemen enzim pencernaan yang harus diminum bersamaan dengan makanan. Evaluasi keefektifan pemberian suplemen ini adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q18" value="A"> <span class="option-text">A. tidak efektif karena asam lambung akan merusak semua enzim suplemen sebelum mencapai usus halus</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"> <span class="option-text">B. efektif jika tablet dirancang khusus tahan asam (enteric-coated) agar enzim aktif saat mencapai usus halus yang ber-pH netral/basa</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"> <span class="option-text">C. tidak efektif karena enzim pencernaan hanya bisa bekerja jika diproduksi langsung oleh sel-sel pankreas yang hidup</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"> <span class="option-text">D. efektif karena suplemen tersebut akan langsung menggantikan fungsi lambung dalam mencerna karbohidrat</span></label>
+                </div>
+                <div class="explanation-box" id="exp18" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Pankreas normalnya menuangkan enzimnya (Amilase, Lipase, Tripsin) lurus langsung ke usus halus yang lingkungannya aman (basa/netral).<br><br>
+                        Jika kita menelan enzim itu dari mulut, ia harus berenang melewati <b>"danau asam mematikan"</b> di lambung (pH 2). Supaya enzim ini tidak mati gosong di lambung, tabletnya dilapisi bahan kimia khusus setebal perisai (<i>Enteric Coated</i>) yang hanya bisa hancur ketika menyentuh usus halus!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q19">
+                <div class="question-text">19. Penyakit kolera yang disebabkan oleh bakteri <i>Vibrio cholerae</i> ditandai dengan gejala diare akut yang sangat parah hingga menyebabkan dehidrasi. Mekanisme patologis yang terjadi pada usus besar penderita kolera adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q19" value="A"> <span class="option-text">A. bakteri merangsang usus besar untuk menyerap air sebanyak-banyaknya dari pembuluh darah</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"> <span class="option-text">B. racun bakteri mengganggu penyerapan air dan memicu sekresi air serta elektrolit secara berlebihan ke dalam lumen usus besar</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"> <span class="option-text">C. bakteri menyumbat saluran pencernaan sehingga air tidak dapat mengalir ke organ ekskresi</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"> <span class="option-text">D. bakteri mempercepat gerakan peristaltik lambung sehingga makanan langsung dibuang tanpa melewati usus halus</span></label>
+                </div>
+                <div class="explanation-box" id="exp19" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Kolera sangat mengerikan karena bakteri jahat ini memuntahkan racun (Enterotoksin) yang merusak sistem pompa air di usus kita.<br><br>
+                        Alih-alih menyerap air ke tubuh, usus kita malah <b>memuntahkan cairan tubuh dan mineral (elektrolit) dalam jumlah mengerikan</b> ke saluran pencernaan. Airnya membanjiri isi perut, mengakibatkan kotoran cair hebat yang memicu dehidrasi parah yang bisa berujung kematian tanpa penanganan cairan (oralit/infus).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q20">
+                <div class="question-text">20. Beberapa tren diet menyarankan untuk menghindari konsumsi karbohidrat sama sekali (diet ketogenik ekstrem) dan menggantinya dengan protein serta lemak tinggi. Ditinjau dari fungsi fisiologis organ pencernaan dan metabolisme tubuh, evaluasi jangka panjang yang paling tepat terhadap diet ini adalah....</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q20" value="A"> <span class="option-text">A. sangat baik untuk ginjal dan hati karena protein adalah sumber energi utama yang paling bersih bagi sel tubuh</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"> <span class="option-text">B. dapat memperberat kerja hati dan ginjal untuk membuang sisa metabolisme protein (urea) serta berisiko menyebabkan asidosis akibat penumpukan keton</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"> <span class="option-text">C. tidak berpengaruh apa-apa karena tubuh manusia memiliki kemampuan adaptasi sempurna tanpa memerlukan karbohidrat</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"> <span class="option-text">D. meningkatkan efisiensi kerja lambung karena protein lebih mudah dicerna secara mekanis dibandingkan karbohidrat</span></label>
+                </div>
+                <div class="explanation-box" id="exp20" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Tubuh kita dirancang memprioritaskan Karbohidrat (nasi/kentang) sebagai bensin utama yang sangat bersih (seperti mobil listrik). <br><br>
+                        Jika kita menyingkirkan karbohidrat dan menggunakan Protein/Lemak sebagai bensin (dibakar menjadi zat keton), gas buang sisa pembakarannya ini kotor dan beracun! "Knalpot" tubuh (yaitu Hati dan Ginjal) harus bekerja lembur menyaring amonia/urea yang menumpuk. Jika berlebihan jangka panjang, darah akan menjadi sangat asam (asidosis keton) yang membahayakan tubuh.
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btn-submit" class="btn-submit" onclick="checkAnswers()">Periksa Jawaban</button>
+            
+            <div id="result" class="result-container">
+                <h2>Nilai Akhir Anda</h2>
+                <div class="score-display" id="score-display">0</div>
+                <p class="score-message" id="score-message">Terus semangat belajar, kamu pasti bisa!</p>
+                <button type="button" class="btn-retry" onclick="resetTest()">Ulangi Tes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer-text">
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </div>
+
+    <script>
+        const totalQuestions = 20;
+        const scorePerQuestion = 5;
+
+        // Fungsi saat user menekan 'Periksa Jawaban'
+        function checkAnswers() {
+            let totalScore = 0;
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Jawaban Telah Diperiksa";
+
+            // Evaluasi setiap soal
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                const correctAnswer = expBox.getAttribute('data-answer');
+                const radios = document.getElementsByName(`q${i}`);
+                
+                let isAnswered = false;
+                
+                // Cek tiap opsi
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    // Reset kelas dari state sebelumnya
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderColor = "";
+                    label.style.borderStyle = "";
+
+                    if (radio.checked) {
+                        isAnswered = true;
+                        if (radio.value === correctAnswer) {
+                            totalScore += scorePerQuestion;
+                            label.classList.add('correct');
+                            expBox.classList.add('bg-green');
+                            expBox.classList.remove('bg-red');
+                        } else {
+                            label.classList.add('wrong');
+                            expBox.classList.add('bg-red');
+                            expBox.classList.remove('bg-green');
+                        }
+                    }
+
+                    // Tampilkan secara visual kunci jawaban yang tepat pada user
+                    if (radio.value === correctAnswer) {
+                        label.style.borderColor = "var(--correct-border)";
+                        if(!radio.checked) {
+                             label.style.borderStyle = "dashed";
+                        }
+                    }
+                }
+
+                // JIka tidak ada opsi yang dipilih, kotak pembahasan bernuansa merah (salah/skip)
+                if (!isAnswered) {
+                    expBox.classList.add('bg-red');
+                }
+
+                // Memunculkan kotak pembahasan
+                expBox.classList.add('show');
+            }
+
+            // Tampilkan Skor Akhir
+            const resultDiv = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            
+            scoreDisplay.innerText = totalScore;
+            
+            // Logika pesan motivasi
+            if(totalScore >= 90) {
+                scoreMessage.innerText = "Sempurna! Kamu pantas menjadi dokter masa depan yang andal!";
+            } else if (totalScore >= 70) {
+                scoreMessage.innerText = "Bagus sekali! Pertahankan dan perbanyak membaca fakta tentang tubuh kita.";
+            } else {
+                scoreMessage.innerText = "Jangan berkecil hati, baca pelan-pelan pembahasannya, kesehatan itu menarik untuk dipelajari!";
+            }
+
+            resultDiv.style.display = 'block';
+
+            // Animasi scroll halus menuju bagian skor di bawah layar
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        }
+
+        // Fungsi reset untuk Mengulang Tes
+        function resetTest() {
+            const form = document.getElementById('quizForm');
+            form.reset();
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                expBox.classList.remove('show', 'bg-green', 'bg-red');
+
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderColor = "";
+                    label.style.borderStyle = "";
+                }
+            }
+
+            document.getElementById('result').style.display = 'none';
+            
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Periksa Jawaban";
+
+            // Scroll langsung ke paling atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t9',
+          topicIndex: 9,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

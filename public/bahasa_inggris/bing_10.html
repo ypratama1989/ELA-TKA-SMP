@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Determiners</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #334155; /* slate-700 */
+        }
+        
+        /* Custom Radio Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff; /* blue-50 */
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideInUp 0.4s ease-out forwards;
+        }
+        
+        /* Typography adjustments for readability */
+        .story-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-3 py-2 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 font-medium text-sm sm:text-base">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-800 flex-1 text-center tracking-tight">Kuis: Determiners</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shadow-inner">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-blue-900 mb-1.5">Petunjuk Mengerjakan</h3>
+                    <ul class="text-sm text-blue-800 space-y-1.5 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D) untuk melengkapi kalimat.</li>
+                        <li>Ingat konsep dasar penggunaan <em>A/An/The</em>, <em>This/That/These/Those</em>, dan <em>Some/Any/Much/Many/A few/A little</em>.</li>
+                        <li>Kamu bisa langsung klik <strong>"Periksa Jawaban"</strong> kapan saja tanpa harus mengisi semua soal. Soal yang kosong dianggap salah (poin 0).</li>
+                        <li>Baca dengan saksama pembahasan yang muncul setelah diperiksa!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <form id="quizForm" onsubmit="return false;">
+                
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Javascript akan merender soal di sini -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <!-- Decorative background element -->
+                    <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <div id="result-area" class="hidden mb-8 py-6 border-b border-slate-100 relative z-10">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <br>
+                        <p id="score-message" class="text-lg md:text-xl font-bold px-5 py-2 rounded-lg inline-block shadow-sm"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10 pt-2">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span>By EDUFILLAH</span>
+                <span class="hidden sm:inline w-1.5 h-1.5 rounded-full bg-slate-300 mx-1"></span> 
+                <span>Unlock The Secret Of Curious Minds</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Soal & Pembahasan
+        const quizData = [
+            {
+                id: 1,
+                question: "My father bought me ______ new laptop for my online classes. ______ laptop is very fast and reliable.",
+                options: {
+                    A: "a / The",
+                    B: "an / The",
+                    C: "the / A",
+                    D: "a / A"
+                },
+                correct: "A",
+                explanation: "<strong>Ingat Aturan Artikel!</strong> <br>Pada penyebutan kalimat pertama, laptop tersebut masih bersifat umum (belum spesifik diketahui yang mana), sehingga kita menggunakan <em>indefinite article</em>. Karena 'new laptop' berawalan bunyi konsonan, gunakan <strong>'a'</strong>.<br><br>Pada kalimat kedua, laptop yang dibicarakan sudah jelas/spesifik (yaitu laptop yang baru dibelikan ayah tadi), maka kita wajib menggunakan <em>definite article</em> <strong>'The'</strong>."
+            },
+            {
+                id: 2,
+                question: "\"Excuse me, could you please hand me ______ dictionary on the top shelf over there?\"",
+                options: {
+                    A: "this",
+                    B: "that",
+                    C: "these",
+                    D: "those"
+                },
+                correct: "B",
+                explanation: "<strong>Tips Analisis Jarak & Jumlah:</strong> <br>Perhatikan kata kunci <em>'dictionary'</em> (kamusnya cuma satu/tunggal) dan <em>'over there'</em> (di sebelah sana/jauh). <br>Kata tunjuk untuk <strong>Benda Tunggal</strong> + <strong>Jarak Jauh</strong> adalah <strong>'that'</strong> (itu). <br><em>(This = ini tunggal, These = ini jamak, Those = itu jamak).</em>"
+            },
+            {
+                id: 3,
+                question: "We wanted to make some pancakes, but we realized there wasn't ______ milk left in the refrigerator.",
+                options: {
+                    A: "some",
+                    B: "many",
+                    C: "any",
+                    D: "few"
+                },
+                correct: "C",
+                explanation: "<strong>Perhatikan Jenis Kalimatnya!</strong><br>Kalimat tersebut adalah kalimat <strong>negatif</strong> karena ada kata <em>wasn't (was not)</em>. Dalam bahasa Inggris, untuk kalimat negatif dan kalimat tanya, kita menggunakan <strong>'any'</strong> (tidak ada sama sekali) untuk benda yang tidak bisa dihitung (<em>uncountable</em> seperti <em>milk</em>)."
+            },
+            {
+                id: 4,
+                question: "How ______ time do we have left before the English exam starts?",
+                options: {
+                    A: "many",
+                    B: "much",
+                    C: "few",
+                    D: "several"
+                },
+                correct: "B",
+                explanation: "<strong>Uncountable vs Countable:</strong><br>Kata <em>'time'</em> (waktu) dalam konteks ini adalah benda yang tidak bisa dihitung satu per satu (<em>uncountable noun</em>). Untuk menanyakan 'berapa banyak' benda yang tidak bisa dihitung, gunakan <strong>'How much'</strong>.<br><em>Note: Kalau yang ditanya 'hours' (jam) atau 'minutes' (menit), baru pakai 'How many'.</em>"
+            },
+            {
+                id: 5,
+                question: "Although the task was difficult, ______ students were able to solve the extra-credit question.",
+                options: {
+                    A: "a little",
+                    B: "much",
+                    C: "any",
+                    D: "a few"
+                },
+                correct: "D",
+                explanation: "<strong>A few vs A little:</strong><br>Kata <em>'students'</em> adalah kata benda yang bisa dihitung dan bentuknya jamak (<em>countable plural</em>). Untuk menyatakan jumlah 'sedikit' tapi dalam makna positif (ada beberapa orang yang berhasil), kita gunakan <strong>'a few'</strong>.<br><em>'A little'</em> digunakan untuk benda tidak bisa dihitung (seperti air, gula, uang)."
+            },
+            {
+                id: 6,
+                question: "Read the following dialogue:<br><em>Siti: \"Do you have ______ interesting books to read?\"</em><br><em>Edo: \"Yes, I have ______ novels by Andrea Hirata. You can borrow them.\"</em><br><br>The correct determiners to complete the dialogue are ....",
+                options: {
+                    A: "any / some",
+                    B: "some / any",
+                    C: "much / many",
+                    D: "any / much"
+                },
+                correct: "A",
+                explanation: "<strong>Konsep Some vs Any:</strong><br>- Kalimat Siti adalah kalimat tanya (?), maka secara umum menggunakan <strong>'any'</strong> (<em>Do you have any...?</em>).<br>- Kalimat Edo adalah pernyataan positif (+), sehingga menggunakan <strong>'some'</strong> (<em>I have some novels</em>)."
+            },
+            {
+                id: 7,
+                question: "Look at ______ beautiful birds flying high in the sky over the beach!",
+                options: {
+                    A: "this",
+                    B: "that",
+                    C: "these",
+                    D: "those"
+                },
+                correct: "D",
+                explanation: "<strong>Demonstrative Pronoun:</strong><br>Kata kunci 1: <em>'birds'</em> (burungnya jamak/lebih dari satu).<br>Kata kunci 2: <em>'flying high in the sky'</em> (terbang tinggi di langit, berarti letaknya JAUH dari pembicara).<br>Benda <strong>Jamak + Jauh</strong> menggunakan kata tunjuk <strong>'those'</strong> (burung-burung itu)."
+            },
+            {
+                id: 8,
+                question: "\"I only have ______ money left in my wallet, so I can only buy a small bottle of water.\"",
+                options: {
+                    A: "a few",
+                    B: "a little",
+                    C: "many",
+                    D: "any"
+                },
+                correct: "B",
+                explanation: "<strong>Jebakan Kata 'Money':</strong><br>Dalam bahasa Inggris, kata benda <em>'money'</em> (uang) dianggap sebagai <strong>Uncountable Noun</strong> (tidak bisa dihitung). Kita tidak bisa bilang 'satu uang, dua uang'. <br>Untuk menyatakan 'sedikit' pada benda yang tidak bisa dihitung, kita menggunakan <strong>'a little'</strong>."
+            },
+            {
+                id: 9,
+                question: "Mr. Rahman is ______ honest man. He always tells ______ truth to everyone.",
+                options: {
+                    A: "a / a",
+                    B: "an / the",
+                    C: "a / the",
+                    D: "an / a"
+                },
+                correct: "B",
+                explanation: "<strong>Awas Jebakan Huruf Awal!</strong><br>1. Kata <em>'honest'</em> (jujur) memang diawali huruf konsonan 'h', TAPI saat diucapkan huruf 'h'-nya senyap (dibaca: <em>onest</em>). Karena <strong>BUNYI awalnya adalah vokal</strong> (huruf hidup), maka menggunakan artikel <strong>'an'</strong> (<em>an honest man</em>).<br>2. Kata <em>'truth'</em> (kebenaran) merupakan konsep spesifik yang paten menggunakan artikel pasti <strong>'the'</strong> (selalu disebut <em>the truth</em>)."
+            },
+            {
+                id: 10,
+                question: "\"Are ______ shoes under the table yours, Rian?\"<br>\"No, mine are the ones near the door.\"",
+                options: {
+                    A: "this",
+                    B: "that",
+                    C: "these",
+                    D: "those"
+                },
+                correct: "C",
+                explanation: "<strong>Analisis Konteks Percakapan:</strong><br>Kata 'shoes' adalah benda jamak (sepasang sepatu). Rian dan temannya sedang membicarakan sepatu yang berada <em>di bawah meja</em> (dekat dengan tempat mereka berbicara/berdiri), sementara sepatu Rian sendiri jauh (di dekat pintu). Maka kata tunjuk yang tepat untuk benda <strong>Jamak + Dekat</strong> adalah <strong>'these'</strong> (sepatu-sepatu ini)."
+            },
+            {
+                id: 11,
+                question: "Choose the sentence that uses determiners incorrectly.",
+                options: {
+                    A: "There are many apples in the basket.",
+                    B: "I don't have much homework tonight.",
+                    C: "She has a few friends in her new school.",
+                    D: "He gave me some advices for my future."
+                },
+                correct: "D",
+                explanation: "<strong>Mencari Kalimat yang SALAH secara Grammar:</strong><br>Kata <em>'advice'</em> (nasihat) adalah <em>Uncountable Noun</em> (tidak dapat dihitung) dalam tata bahasa Inggris. Benda <em>uncountable</em> <strong>TIDAK BOLEH ditambah akhiran -s</strong> untuk membuatnya jamak. Jadi tulisan <em>'advices'</em> pada opsi D salah total. Seharusnya cukup <em>'some advice'</em>."
+            },
+            {
+                id: 12,
+                question: "Read the sentences below:<br>(1) Would you like <em>some</em> tea?<br>(2) I don't have <em>some</em> money right now.<br>(3) She bought <em>an</em> useful book yesterday.<br>(4) <em>These</em> trousers are too tight for me.<br><br>Which sentences use the determiners correctly?",
+                options: {
+                    A: "(1) and (3)",
+                    B: "(2) and (3)",
+                    C: "(1) and (4)",
+                    D: "(2) and (4)"
+                },
+                correct: "C",
+                explanation: "<strong>Analisis Pilihan:</strong><br>- (1) BENAR. Kata <em>'some'</em> boleh dipakai dalam kalimat tanya JIKA tujuannya <em>menawarkan</em> sesuatu (Would you like...).<br>- (2) SALAH. Kalimat negatif harus pakai <em>'any'</em>, bukan <em>'some'</em>.<br>- (3) SALAH. Kata <em>'useful'</em> (berguna) dibaca <em>'yus-ful'</em> (bunyi konsonan Y), jadi harus pakai <em>'a useful'</em>, bukan 'an'.<br>- (4) BENAR. <em>Trousers</em> (celana panjang) selalu dianggap benda jamak, jadi cocok dengan kata tunjuk jamak <em>'These'</em>.<br>Jawaban yang benar adalah (1) dan (4)."
+            },
+            {
+                id: 13,
+                question: "\"We need to buy ______ sugar and ______ eggs to bake the cake.\"",
+                options: {
+                    A: "some / some",
+                    B: "any / some",
+                    C: "many / much",
+                    D: "a / some"
+                },
+                correct: "A",
+                explanation: "<strong>Fungsi Fleksibel 'Some':</strong><br>Kalimat tersebut adalah kalimat pernyataan positif. Kehebatan determiner <strong>'some'</strong> adalah ia <strong>fleksibel</strong>; bisa digunakan untuk benda yang tidak bisa dihitung (<em>some sugar</em>) dan bisa juga untuk benda jamak yang bisa dihitung (<em>some eggs</em>). Keduanya menyatakan jumlah 'beberapa / secukupnya'."
+            },
+            {
+                id: 14,
+                question: "Dialogue:<br><em>Teacher: \"How ______ pages of the report have you written, Budi?\"</em><br><em>Budi: \"Only two pages, Sir. I had ______ difficulties finding the sources.\"</em><br><br>The best determiners to fill in the blanks are ....",
+                options: {
+                    A: "much / many",
+                    B: "many / some",
+                    C: "much / some",
+                    D: "many / any"
+                },
+                correct: "B",
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Kata <em>'pages'</em> (halaman) memiliki akhiran -s, berarti bisa dihitung (<em>countable</em>). Maka gunakan awalan <strong>'How many'</strong> (Berapa banyak).<br>2. Kalimat Budi adalah kalimat positif (+) dan kata <em>'difficulties'</em> (kesulitan) berbentuk jamak. Untuk kalimat positif gunakan <strong>'some'</strong> (Saya mengalami <em>beberapa</em> kesulitan)."
+            },
+            {
+                id: 15,
+                question: "\"I have ______ information about the upcoming school trip, but I need to double-check the details first.\"",
+                options: {
+                    A: "some",
+                    B: "many",
+                    C: "an",
+                    D: "few"
+                },
+                correct: "A",
+                explanation: "<strong>Kata Benda Abstrak:</strong><br>Sama seperti <em>advice</em> dan <em>money</em>, kata <em>'information'</em> (informasi) adalah benda <em>Uncountable</em> (tidak bisa dihitung) dalam Bahasa Inggris. Karena ini adalah kalimat positif yang ingin menyatakan 'saya punya sedikit/beberapa informasi', maka determiner yang tepat adalah <strong>'some'</strong>. Pilihan <em>many</em> dan <em>few</em> hanya untuk benda yang bisa dihitung."
+            },
+            {
+                id: 16,
+                question: "Read the following sentence:<br><em>\"We couldn't take many photos because there was only ______ space left on my phone's memory card.\"</em><br><br>The most appropriate determiner to complete the sentence is ....",
+                options: {
+                    A: "a few",
+                    B: "a little",
+                    C: "many",
+                    D: "any"
+                },
+                correct: "B",
+                explanation: "<strong>Analisis Ruang (Space):</strong><br>Kata <em>'space'</em> (ruang penyimpanan/memori) adalah benda yang tidak bisa dihitung satuan (<em>uncountable noun</em>). Untuk menyatakan jumlah ruang yang tersisa sangat sedikit, kita menggunakan determiner <strong>'a little'</strong>. Jika ruangnya bisa dihitung (misal: hanya sisa beberapa <em>foto</em>), baru kita pakai <em>a few</em>."
+            },
+            {
+                id: 17,
+                question: "Evaluate the use of determiners in this sentence:<br><em>\"The school principal gave each students a certificate of appreciation.\"</em><br>What makes this sentence grammatically incorrect?",
+                options: {
+                    A: "The word \"each\" should be followed by a singular noun (\"student\").",
+                    B: "The determiner \"a\" should be replaced with \"an\".",
+                    C: "The word \"each\" should be replaced with \"all\".",
+                    D: "The determiner \"a\" is unnecessary before \"certificate\"."
+                },
+                correct: "A",
+                explanation: "<strong>Aturan Penggunaan 'Each' & 'Every':</strong><br>Setiap kali kamu menggunakan determiner pembagi seperti <em>'Each'</em> (masing-masing) atau <em>'Every'</em> (setiap), kata benda yang mengikutinya <strong>WAJIB TUNGGAL</strong> (Singular). Jadi, tulisan <em>'each students'</em> (pakai akhiran -s) adalah salah total. Seharusnya <em>'each student'</em> tanpa 's'."
+            },
+            {
+                id: 18,
+                question: "Which of the following sentences correctly uses the definite article \"the\"?",
+                options: {
+                    A: "I want to buy the new smartphone next week.",
+                    B: "The sun rises in the east every morning.",
+                    C: "She is the very kind person I know.",
+                    D: "They live in the small house in Jakarta."
+                },
+                correct: "B",
+                explanation: "<strong>Kapan Menggunakan Artikel 'The'?</strong><br>Artikel <em>'The'</em> (Definite Article) digunakan untuk benda yang sangat spesifik, unik, atau hanya ada satu-satunya di alam semesta. <br>Pilihan B sangat tepat karena <strong>Matahari (The sun)</strong> dan arah mata angin <strong>Timur (the east)</strong> adalah hal yang mutlak dan hanya ada satu. (Pilihan A, C, dan D menyebut hal yang masih umum/banyak macamnya)."
+            },
+            {
+                id: 19,
+                question: "Read the paragraph below:<br><em>\"To build a strong team, we need ______ determination. Even if we face ______ obstacles, we must not give up.\"</em><br><br>The correct determiners to fill in the blanks are ....",
+                options: {
+                    A: "much / many",
+                    B: "many / much",
+                    C: "some / much",
+                    D: "any / few"
+                },
+                correct: "A",
+                explanation: "<strong>Countable vs Uncountable (Lagi!):</strong><br>1. <em>'Determination'</em> (Keteguhan hati) adalah kata benda abstrak yang tidak bisa dihitung. Untuk menyatakan jumlah yang 'banyak' (butuh banyak keteguhan), gunakan <strong>'much'</strong>.<br>2. <em>'Obstacles'</em> (rintangan/halangan) berakhiran -s, berarti jamak dan bisa dihitung. Untuk hal yang bisa dihitung, gunakan <strong>'many'</strong> (banyak rintangan)."
+            },
+            {
+                id: 20,
+                question: "Evaluate these four sentences:<br>(1) There is <em>a little</em> water left in the bucket.<br>(2) I saw <em>an</em> one-eyed dog in the park.<br>(3) <em>Those</em> books on my desk are very interesting.<br>(4) Do you have <em>any</em> questions about the lesson?<br><br>Which of the sentences above contain errors in the use of determiners?",
+                options: {
+                    A: "(1) and (2)",
+                    B: "(2) and (3)",
+                    C: "(3) and (4)",
+                    D: "(1) and (4)"
+                },
+                correct: "B",
+                explanation: "<strong>Mencari Kesalahan (Error Analysis):</strong><br>- Kalimat (1) BENAR. <em>Water</em> tidak bisa dihitung, memakai <em>a little</em>.<br>- Kalimat (2) SALAH. Kata <em>'one'</em> dibaca berawalan suara huruf W (<em>'wan'</em>). Bunyi konsonan w harusnya pakai artikel <em>'a'</em> (<em>a one-eyed dog</em>), bukan <em>'an'</em>.<br>- Kalimat (3) SALAH. Kata <em>'on my desk'</em> (di atas mejaku) mengindikasikan bendanya dekat. Namun kata tunjuknya memakai <em>'Those'</em> (itu/jauh). Seharusnya memakai <em>'These'</em> (ini).<br>- Kalimat (4) BENAR. Kalimat tanya menggunakan <em>any</em>.<br>Kesalahan ada di (2) dan (3)."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            // Group UI to make it look like single block for questions
+            htmlContent += `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                    <div class="bg-indigo-600 text-white px-5 py-3 font-semibold flex items-center">
+                        <i class="fas fa-list-ol mr-3"></i> Soal Pilihan Ganda (Determiners)
+                    </div>
+                    <div class="p-5 md:p-8 space-y-8 bg-slate-50">
+            `;
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="relative group bg-white p-5 rounded-xl border border-slate-100 shadow-sm transition-shadow hover:shadow-md">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+                
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                htmlContent += `
+                                </div>
+                                
+                                <!-- Placeholder for Explanation (Hidden initially) -->
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-xl text-sm border-l-4 shadow-sm">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5 flex-shrink-0"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90 text-[15px]"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            htmlContent += `
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                // Reset classes before adding new ones
+                expContainer.className = 'mt-6 p-4 md:p-5 rounded-xl text-sm border-l-4 animate-slide-up shadow-sm';
+
+                if (!selected) {
+                    // Blank (0 pts)
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Soal terlewat / Belum dijawab";
+                    expText.innerHTML = `Kamu tidak memilih jawaban.<br>Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><div class="p-3 bg-white bg-opacity-60 rounded-lg mt-2 border border-amber-200">${item.explanation}</div>`;
+                } else if (selected.value === item.correct) {
+                    // Correct (+pts)
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Benar Sekali!";
+                    expText.innerHTML = `<div class="p-3 bg-white bg-opacity-60 rounded-lg mt-2 border border-emerald-200">${item.explanation}</div>`;
+                } else {
+                    // Incorrect (0 pts)
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat.`;
+                    expText.innerHTML = `Jawaban kamu (${selected.value}) salah. Kunci yang benar adalah <strong>${item.correct}</strong>.<br><br><div class="p-3 bg-white bg-opacity-60 rounded-lg mt-2 border border-rose-200">${item.explanation}</div>`;
+                }
+                
+                expContainer.classList.remove('hidden');
+
+                // Freeze inputs to prevent changing answers after checking
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            // Calculate Score (0-100)
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-slide-up');
+            
+            // Animation for Number Counter
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Dynamic Encouragement
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Sempurna! Pemahaman Grammar kamu luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-emerald-200";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Sangat Baik! Konsep Determiners sudah kamu kuasai.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-blue-200";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Bagus! Perhatikan lagi materi Uncountable Noun ya.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-indigo-200";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Jangan Menyerah! Ayo pelajari lagi penjelasan di setiap soal.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm border border-rose-200";
+            }
+
+            // Swap button visibility
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Scroll down to score smoothly
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // Ease out quad formula for smooth stopping
+                const easeProgress = progress * (2 - progress); 
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset form data
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable radio inputs & hide explanation boxes
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false; // explicitly uncheck
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+                expContainer.classList.remove('animate-slide-up');
+            });
+
+            // Hide Result panel
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Swap buttons back
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll to the very top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize quiz when DOM is loaded
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

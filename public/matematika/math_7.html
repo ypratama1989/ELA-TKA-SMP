@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Persamaan Linear Satu Variabel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        primaryHover: '#4338CA', // Indigo 700
+                        correct: '#10B981', // Emerald 500
+                        correctBg: '#D1FAE5', // Emerald 100
+                        wrong: '#EF4444', // Red 500
+                        wrongBg: '#FEE2E2', // Red 100
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F3F4F6;
+            color: #1F2937;
+        }
+        
+        /* Custom gaya untuk Base64 gambar sesuai instruksi (jika ada di masa depan) */
+        img[src^="data:image"] {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+        }
+
+        /* Custom Radio Button Styling */
+        .option-label {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .option-input:checked + .option-content {
+            border-color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+        
+        .option-input:checked + .option-content .radio-circle {
+            border-color: #4F46E5;
+            background-color: #4F46E5;
+        }
+
+        .option-input:checked + .option-content .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        /* Status Classes injected by JS */
+        .status-correct {
+            border-color: #10B981 !important;
+            background-color: #D1FAE5 !important;
+            color: #065F46 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10B981 !important;
+            background-color: #10B981 !important;
+        }
+
+        .status-wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEE2E2 !important;
+            color: #991B1B !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #EF4444 !important;
+            background-color: #EF4444 !important;
+        }
+
+        /* Animasi untuk kotak pembahasan */
+        .explanation-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .explanation-box.show {
+            max-height: 1000px; /* Cukup besar untuk menampung konten */
+            opacity: 1;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative pb-20">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <button onclick="goBack()" class="flex items-center text-gray-600 hover:text-primary transition-colors focus:outline-none">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="font-medium text-sm sm:text-base">Kembali</span>
+                </button>
+                <div class="font-bold text-lg text-primary truncate ml-4">
+                    Kuis Matematika
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-10 mb-8 border-t-4 border-primary">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 text-center">Persamaan Linear Satu Variabel (PLSV)</h1>
+            <p class="text-gray-600 text-center mb-6 text-sm sm:text-base">Kerjakan soal-soal di bawah ini dengan teliti. Anda dapat langsung menekan tombol "Periksa Jawaban" di bagian bawah untuk melihat hasil dan pembahasan mendetail, tanpa harus mengisi semua soal.</p>
+        </div>
+
+        <form id="quiz-form" class="space-y-6">
+            <!-- Tempat merender soal via JavaScript -->
+            <div id="quiz-container"></div>
+
+            <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mt-8 sticky bottom-4 z-40 border border-gray-100">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3 bg-primary text-white font-semibold rounded-xl shadow-md hover:bg-primaryHover hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                        Periksa Jawaban
+                    </button>
+                    
+                    <div id="score-display" class="hidden flex-col items-center sm:items-end">
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wide">Nilai Akhir Anda</span>
+                        <div class="text-4xl font-bold text-primary" id="final-score">0</div>
+                    </div>
+                </div>
+
+                <div id="action-buttons" class="hidden mt-6 pt-6 border-t border-gray-100 flex justify-center">
+                    <button type="button" id="reset-btn" class="flex items-center px-6 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors focus:outline-none">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-gray-900 text-gray-400 py-4 text-center text-xs sm:text-sm">
+        <p class="font-medium tracking-wide">By <span class="text-white font-bold">EDUFILLAH</span>, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                question: "Di antara kalimat terbuka di bawah ini, yang merupakan Persamaan Linear Satu Variabel adalah...",
+                options: [
+                    "2x + 5 = y - 3",
+                    "x<sup>2</sup> - 4 = 0",
+                    "3y - 7 = 2y + 5",
+                    "2a + 3b > 10"
+                ],
+                correct: 2, // Index 2 is Option C
+                explanation: `<strong>Jawaban Benar: C</strong><br><br>
+                Mari kita bedah konsep dasar Persamaan Linear Satu Variabel (PLSV):
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li><strong>Persamaan:</strong> Harus memuat tanda sama dengan (=).</li>
+                    <li><strong>Satu Variabel:</strong> Hanya boleh ada satu huruf (variabel) yang belum diketahui nilainya.</li>
+                    <li><strong>Linear:</strong> Pangkat tertinggi dari variabel tersebut adalah satu (tidak boleh dikuadratkan, diakar, dll).</li>
+                </ul>
+                <br>Analisis pilihan:
+                <br>A. Salah, karena ada <strong>dua variabel</strong> yaitu x dan y.
+                <br>B. Salah, karena x dipangkatkan dua (x<sup>2</sup>). Ini disebut persamaan kuadrat.
+                <br>C. <strong>Benar!</strong> Hanya menggunakan variabel 'y', pangkat tertingginya 1, dan memakai tanda '='.
+                <br>D. Salah, menggunakan tanda lebih dari (>), sehingga ini adalah pertidaksamaan, bukan persamaan.`
+            },
+            {
+                id: 2,
+                question: "Persamaan yang ekuivalen dengan persamaan 3x - 7 = 11 adalah...",
+                options: [
+                    "3x = 4",
+                    "3x = 18",
+                    "x = 4",
+                    "x = 18"
+                ],
+                correct: 1, // Index 1 is Option B
+                explanation: `<strong>Jawaban Benar: B</strong><br><br>
+                Persamaan yang ekuivalen artinya persamaan tersebut memiliki nilai penyelesaian (nilai x) yang sama. Cara mencarinya adalah dengan memanipulasi kedua ruas secara adil.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>Tujuan kita adalah mengelompokkan angka dengan angka. Mari kita pindahkan -7 dari ruas kiri ke ruas kanan. Ingat aturan pindah ruas: <strong>negatif berubah menjadi positif</strong>.
+                <br>3x - 7 = 11
+                <br>3x = 11 + 7
+                <br>3x = 18
+                <br><br>Maka, persamaan yang ekuivalen adalah <strong>3x = 18</strong>.`
+            },
+            {
+                id: 3,
+                question: "Nilai x yang memenuhi persamaan x + 9 = 5 adalah...",
+                options: ["4", "2", "-4", "-14"],
+                correct: 2, // Index 2 is Option C
+                explanation: `<strong>Jawaban Benar: -4</strong><br><br>
+                Kita perlu mencari nilai x agar persamaan bernilai benar. 
+                <br><strong>Langkah penyelesaian:</strong>
+                <br>Pindahkan angka +9 dari ruas kiri ke kanan. Ingat, saat pindah melewati tanda '=', tanda positif (+) berubah menjadi negatif (-).
+                <br>x + 9 = 5
+                <br>x = 5 - 9
+                <br>x = -4
+                <br><br><em>Cek logika:</em> Apakah -4 + 9 hasilnya 5? Ya, benar! Jadi uangmu kurang 4, ditambah uang 9, sisanya adalah 5.`
+            },
+            {
+                id: 4,
+                question: "Penyelesaian dari persamaan 5x - 7 = 2x + 5 adalah...",
+                options: ["x = 4", "x = 3", "x = 2", "x = 1"],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: x = 4</strong><br><br>
+                <strong>Trik Mengerjakan:</strong> Kelompokkan semua suku yang memiliki variabel (x) di sebelah kiri, dan semua angka biasa di sebelah kanan.
+                <br><br><strong>Langkah demi langkah:</strong>
+                <br>1. Persamaan awal: 5x - 7 = 2x + 5
+                <br>2. Pindahkan 2x ke kiri menjadi -2x. Pindahkan -7 ke kanan menjadi +7.
+                <br>&nbsp;&nbsp;&nbsp;5x - 2x = 5 + 7
+                <br>3. Sederhanakan masing-masing ruas:
+                <br>&nbsp;&nbsp;&nbsp;3x = 12
+                <br>4. Bagi kedua ruas dengan 3 untuk mendapatkan nilai x tunggal:
+                <br>&nbsp;&nbsp;&nbsp;x = 12 &divide; 3
+                <br>&nbsp;&nbsp;&nbsp;x = 4`
+            },
+            {
+                id: 5,
+                question: "Nilai y yang memenuhi persamaan 3(y - 2) = 4(y + 3) adalah...",
+                options: ["y = -18", "y = -6", "y = 6", "y = 18"],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: y = -18</strong><br><br>
+                Jika melihat angka di luar tanda kurung, gunakan sifat distributif alias "kali pelangi". Kalikan angka di luar dengan setiap angka di dalam kurung.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Kali pelangi ruas kiri: 3 &times; y dan 3 &times; (-2) &rarr; 3y - 6
+                <br>2. Kali pelangi ruas kanan: 4 &times; y dan 4 &times; 3 &rarr; 4y + 12
+                <br>3. Tulis ulang persamaan: 3y - 6 = 4y + 12
+                <br>4. Kelompokkan variabel (pindahkan 4y ke kiri, -6 ke kanan):
+                <br>&nbsp;&nbsp;&nbsp;3y - 4y = 12 + 6
+                <br>5. Sederhanakan:
+                <br>&nbsp;&nbsp;&nbsp;-1y = 18
+                <br>6. Karena nilai y masih negatif, kalikan atau bagi kedua ruas dengan -1:
+                <br>&nbsp;&nbsp;&nbsp;y = -18`
+            },
+            {
+                id: 6,
+                question: "Himpunan penyelesaian dari persamaan <sup>1</sup>&frasl;<sub>2</sub>x + 3 = 7 adalah...",
+                options: ["{2}", "{4}", "{8}", "{10}"],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: {8}</strong><br><br>
+                Jangan takut melihat pecahan! Cara termudah menyelesaikannya adalah mengisolasi variabel x tersebut terlebih dahulu.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Pindahkan angka +3 ke kanan menjadi -3:
+                <br>&nbsp;&nbsp;&nbsp;<sup>1</sup>&frasl;<sub>2</sub>x = 7 - 3
+                <br>&nbsp;&nbsp;&nbsp;<sup>1</sup>&frasl;<sub>2</sub>x = 4
+                <br>2. Persamaan dibaca: "Setengah dari x adalah 4". Untuk mendapatkan nilai x utuh (satu x), kita kalikan silang penyebut 2 ke sisi kanan:
+                <br>&nbsp;&nbsp;&nbsp;x = 4 &times; 2
+                <br>&nbsp;&nbsp;&nbsp;x = 8
+                <br>Jadi himpunan penyelesaiannya adalah {8}.`
+            },
+            {
+                id: 7,
+                question: "Jika (2x - 3) / 4 = (x + 5) / 3, maka nilai x adalah...",
+                options: ["11", "14.5", "17", "29"],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 14.5</strong><br><br>
+                <em>Catatan Edukasi: Berdasarkan perhitungan matematis yang tepat, hasil dari persamaan ini adalah pecahan desimal. Mari kita buktikan langkahnya.</em>
+                <br><br>Jika menemukan persamaan dalam bentuk pecahan di kedua sisi, cara paling ampuh adalah <strong>Perkalian Silang (Cross Multiplication)</strong>.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Kalikan pembilang kiri dengan penyebut kanan, dan sebaliknya:
+                <br>&nbsp;&nbsp;&nbsp;3 &times; (2x - 3) = 4 &times; (x + 5)
+                <br>2. Lakukan "kali pelangi" di kedua ruas:
+                <br>&nbsp;&nbsp;&nbsp;6x - 9 = 4x + 20
+                <br>3. Kelompokkan variabel x di sebelah kiri dan angka di kanan:
+                <br>&nbsp;&nbsp;&nbsp;6x - 4x = 20 + 9
+                <br>&nbsp;&nbsp;&nbsp;2x = 29
+                <br>4. Cari nilai x:
+                <br>&nbsp;&nbsp;&nbsp;x = 29 &divide; 2
+                <br>&nbsp;&nbsp;&nbsp;x = 14.5
+                <br><br>Meskipun hasilnya berupa desimal, pengerjaan matematika kita valid dan benar secara logika!`
+            },
+            {
+                id: 8,
+                question: "Jumlah tiga bilangan bulat berurutan adalah 72. Bilangan terbesar dari ketiga bilangan tersebut adalah...",
+                options: ["23", "24", "25", "26"],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: 25</strong><br><br>
+                <strong>Pemodelan Matematika:</strong>
+                <br>Bilangan bulat berurutan itu selisihnya selalu 1 (contoh: 5, 6, 7). 
+                <br>Mari kita misalkan:
+                <br>- Bilangan pertama = x
+                <br>- Bilangan kedua = x + 1
+                <br>- Bilangan ketiga (terbesar) = x + 2
+                <br><br><strong>Membangun Persamaan:</strong>
+                <br>Jumlah ketiganya adalah 72:
+                <br>x + (x + 1) + (x + 2) = 72
+                <br>3x + 3 = 72
+                <br>3x = 72 - 3
+                <br>3x = 69
+                <br>x = 23 (Ini adalah bilangan pertama/terkecil)
+                <br><br><strong>Jawaban Akhir:</strong>
+                <br>Yang ditanyakan adalah bilangan terbesar, yaitu (x + 2).
+                <br>Bilangan terbesar = 23 + 2 = <strong>25</strong>.`
+            },
+            {
+                id: 9,
+                question: "Umur Ibu sekarang 3 kali umur anaknya. Jika selisih umur mereka adalah 26 tahun, maka umur anak tersebut adalah...",
+                options: ["11 tahun", "13 tahun", "15 tahun", "17 tahun"],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 13 tahun</strong><br><br>
+                Mari kita ubah kalimat cerita menjadi bahasa matematika.
+                <br>- Misalkan umur anak saat ini = <strong>x</strong>
+                <br>- Karena umur Ibu 3 kalinya, maka umur Ibu = <strong>3x</strong>
+                <br><br><strong>Membangun Persamaan:</strong>
+                <br>Kata kunci: "Selisih umur mereka adalah 26". Selisih didapat dengan mengurangi nilai besar dengan nilai kecil (Umur Ibu - Umur Anak).
+                <br>3x - x = 26
+                <br>2x = 26
+                <br>x = 26 &divide; 2
+                <br>x = 13
+                <br><br>Karena 'x' mewakili umur anak, maka umur anak tersebut adalah <strong>13 tahun</strong>.`
+            },
+            {
+                id: 10,
+                question: "Sebuah persegi panjang memiliki ukuran panjang (3x + 2) cm dan lebar (x + 3) cm. Jika keliling persegi panjang tersebut adalah 50 cm, maka panjang persegi panjang tersebut adalah...",
+                options: ["17 cm", "15 cm", "12 cm", "8 cm"],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 17 cm</strong><br><br>
+                <strong>Ingat kembali rumus Keliling Persegi Panjang:</strong>
+                <br>Keliling = 2 &times; (Panjang + Lebar)
+                <br><br><strong>Langkah 1: Masukkan nilai ke dalam rumus</strong>
+                <br>50 = 2 &times; ( (3x + 2) + (x + 3) )
+                <br>50 = 2 &times; ( 4x + 5 ) <em>&rarr; gabungkan suku sejenis (3x+x) dan (2+3)</em>
+                <br><br><strong>Langkah 2: Selesaikan persamaan</strong>
+                <br>Bagi kedua ruas dengan 2 agar lebih mudah:
+                <br>25 = 4x + 5
+                <br>25 - 5 = 4x
+                <br>20 = 4x
+                <br>x = 5
+                <br><br><strong>Langkah 3: Hitung Panjang sebenarnya</strong>
+                <br>Panjang = 3x + 2 = 3(5) + 2 = 15 + 2 = <strong>17 cm</strong>.`
+            },
+            {
+                id: 11,
+                question: "Harga 3 buah buku tulis dan 2 pensil adalah Rp 14.500,00. Jika harga sebuah pensil adalah Rp 2.000,00, maka harga sebuah buku tulis adalah...",
+                options: ["Rp 3.000,00", "Rp 3.500,00", "Rp 4.000,00", "Rp 4.500,00"],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: Rp 3.500,00</strong><br><br>
+                Ini adalah penerapan dasar sistem persamaan (substitusi).
+                <br>- Misalkan harga 1 buku tulis = x
+                <br>- Diketahui harga 1 pensil = Rp 2.000
+                <br><br><strong>Membangun Persamaan:</strong>
+                <br>3 buku + 2 pensil = 14.500
+                <br>3x + 2(2.000) = 14.500
+                <br>3x + 4.000 = 14.500
+                <br><br><strong>Menyelesaikan Persamaan:</strong>
+                <br>3x = 14.500 - 4.000
+                <br>3x = 10.500
+                <br>x = 10.500 &divide; 3
+                <br>x = 3.500
+                <br><br>Jadi, harga sebuah buku tulis adalah <strong>Rp 3.500,00</strong>.`
+            },
+            {
+                id: 12,
+                question: "Perhatikan langkah penyelesaian persamaan 4(x - 1) = 2x + 8 berikut:<br><br>Langkah 1: 4x - 4 = 2x + 8<br>Langkah 2: 4x - 2x = 8 - 4<br>Langkah 3: 2x = 4<br>Langkah 4: x = 2<br><br>Kesalahan pengerjaan di atas mulai terjadi pada...",
+                options: ["Langkah 1", "Langkah 2", "Langkah 3", "Langkah 4"],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: Langkah 2</strong><br><br>
+                Mari kita periksa langkah demi langkah dengan teliti:
+                <br><br><strong>Langkah 1:</strong> 4(x - 1) &rarr; 4x - 4. (Ini BENAR, perkalian distributifnya tepat).
+                <br><strong>Langkah 2:</strong> Memindahkan suku. 
+                <br>- Pindah 2x dari kanan ke kiri menjadi -2x (Benar).
+                <br>- Pindah -4 dari kiri ke kanan, <strong>seharusnya menjadi +4</strong>.
+                <br>Jadi bentuk yang benar di Langkah 2 adalah: <strong>4x - 2x = 8 + 4</strong>.
+                <br><br>Pada soal tertulis 8 - 4, sehingga di sinilah <strong>kesalahan pertama</strong> terjadi yang membuat perhitungan selanjutnya menjadi salah total.`
+            },
+            {
+                id: 13,
+                question: "Diketahui persamaan (x - 3)/2 - (x + 1)/3 = 1. Dua orang siswa, Budi dan Andi, mencoba menyelesaikannya.<br><br>Budi mengalikan kedua ruas dengan 6 sehingga persamaannya menjadi: 3(x - 3) - 2(x + 1) = 6.<br>Andi mengalikan kedua ruas dengan 6 sehingga persamaannya menjadi: 3(x - 3) - 2(x + 1) = 1.<br><br>Pernyataan yang benar mengenai metode mereka adalah...",
+                options: [
+                    "Metode Budi salah, metode Andi benar",
+                    "Metode Budi benar, metode Andi salah",
+                    "Kedua metode benar",
+                    "Kedua metode salah"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: Metode Budi benar, metode Andi salah</strong><br><br>
+                <strong>Konsep Penting: Keadilan Persamaan!</strong>
+                <br>Saat kita ingin menghilangkan penyebut pecahan (2 dan 3), kita kalikan dengan KPK-nya (yaitu 6). Syarat mutlaknya: <strong>SEMUA elemen di ruas kiri DAN ruas kanan harus dikalikan 6.</strong>
+                <br><br>Mari kita periksa:
+                <br>- <strong>Ruas kiri dikali 6:</strong> 6 &times; [(x - 3)/2 - (x + 1)/3] = 3(x - 3) - 2(x + 1). (Budi & Andi benar di bagian ini).
+                <br>- <strong>Ruas kanan dikali 6:</strong> 6 &times; 1 = <strong>6</strong>.
+                <br><br>Ternyata, Budi mengalikan angka 1 (ruas kanan) dengan 6 menjadi 6. 
+                <br>Sedangkan Andi <strong>lupa</strong> mengalikan ruas kanannya, ia tetap menuliskan angka 1. Oleh karena itu metode Andi <strong>salah</strong>.`
+            },
+            {
+                id: 14,
+                question: "Jika x adalah penyelesaian dari persamaan 2(3x - 5) = 4(x + 1) - 2, maka nilai dari 3x - 2 adalah...",
+                options: ["10", "13", "16", "19"],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: 16</strong><br><br>
+                Ada dua langkah besar di soal ini. Pertama, cari nilai x. Kedua, masukkan nilai x ke pertanyaan (3x - 2).
+                <br><br><strong>Langkah 1: Mencari nilai x</strong>
+                <br>2(3x - 5) = 4(x + 1) - 2
+                <br>6x - 10 = 4x + 4 - 2 <em>(kali pelangi)</em>
+                <br>6x - 10 = 4x + 2 <em>(sederhanakan 4-2)</em>
+                <br>6x - 4x = 2 + 10 <em>(kumpulkan x di kiri, angka di kanan)</em>
+                <br>2x = 12
+                <br>x = 6
+                <br><br><strong>Langkah 2: Menghitung nilai akhir</strong>
+                <br>Nilai dari 3x - 2 = 3(6) - 2 = 18 - 2 = <strong>16</strong>.`
+            },
+            {
+                id: 15,
+                question: "Sebuah tangki air berisi <sup>1</sup>&frasl;<sub>5</sub> bagian. Setelah ditambah 24 liter air, tangki tersebut menjadi berisi <sup>1</sup>&frasl;<sub>2</sub> bagian. Kapasitas total tangki air tersebut adalah...",
+                options: ["48 liter", "60 liter", "80 liter", "120 liter"],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: 80 liter</strong><br><br>
+                Misalkan kapasitas penuh tangki tersebut adalah <strong>x</strong>.
+                <br><br><strong>Menerjemahkan cerita ke matematika:</strong>
+                <br>(Isi awal) + (Tambahan) = (Isi akhir)
+                <br><sup>1</sup>&frasl;<sub>5</sub>x + 24 = <sup>1</sup>&frasl;<sub>2</sub>x
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Pindahkan pecahan agar berkumpul:
+                <br>&nbsp;&nbsp;&nbsp;24 = <sup>1</sup>&frasl;<sub>2</sub>x - <sup>1</sup>&frasl;<sub>5</sub>x
+                <br>2. Samakan penyebut (menjadi 10):
+                <br>&nbsp;&nbsp;&nbsp;24 = <sup>5</sup>&frasl;<sub>10</sub>x - <sup>2</sup>&frasl;<sub>10</sub>x
+                <br>&nbsp;&nbsp;&nbsp;24 = <sup>3</sup>&frasl;<sub>10</sub>x
+                <br>3. Selesaikan nilai x:
+                <br>&nbsp;&nbsp;&nbsp;x = (24 &times; 10) &divide; 3
+                <br>&nbsp;&nbsp;&nbsp;x = 240 &divide; 3
+                <br>&nbsp;&nbsp;&nbsp;x = <strong>80 liter</strong>.`
+            },
+            {
+                id: 16,
+                question: "Dua buah toko menawarkan paket internet. Toko A mengenakan biaya registrasi Rp 20.000,00 ditambah Rp 5.000,00 per GB. Toko B tidak mengenakan biaya registrasi, namun tarifnya Rp 7.500,00 per GB. Kuota internet (dalam GB) yang harus dibeli agar total biaya di Toko A sama dengan Toko B adalah...",
+                options: ["6 GB", "8 GB", "10 GB", "12 GB"],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 8 GB</strong><br><br>
+                Ini adalah soal aplikatif yang sering terjadi di kehidupan sehari-hari!
+                <br>Misalkan jumlah kuota yang dibeli adalah <strong>x</strong> (dalam GB).
+                <br><br><strong>Biaya Toko A:</strong> Biaya tetap + (Biaya per GB &times; x)
+                <br>&rarr; 20.000 + 5.000x
+                <br><strong>Biaya Toko B:</strong> Biaya per GB &times; x
+                <br>&rarr; 7.500x
+                <br><br><strong>Persamaan (karena kita ingin biayanya SAMA):</strong>
+                <br>20.000 + 5.000x = 7.500x
+                <br>20.000 = 7.500x - 5.000x
+                <br>20.000 = 2.500x
+                <br>x = 20.000 &divide; 2.500
+                <br>x = <strong>8 GB</strong>.`
+            },
+            {
+                id: 17,
+                question: "Seseorang ingin membagi sejumlah uang kepada beberapa anak. Jika setiap anak menerima Rp 15.000,00, maka ia kekurangan Rp 10.000,00. Jika setiap anak menerima Rp 12.000,00, maka ia memiliki sisa Rp 14.000,00. Banyaknya anak yang akan menerima uang tersebut adalah...",
+                options: ["6 anak", "8 anak", "10 anak", "12 anak"],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 8 anak</strong><br><br>
+                Misalkan banyaknya anak adalah <strong>x</strong>. Karena jumlah uang di dompet orang tersebut tetap (tidak berubah), kita bisa membuat persamaan dari dua skenario cerita.
+                <br><br><strong>Skenario 1:</strong> Diberi 15rb/anak, tapi kurang 10rb. 
+                <br>Total uang = 15.000x - 10.000
+                <br><br><strong>Skenario 2:</strong> Diberi 12rb/anak, tersisa 14rb.
+                <br>Total uang = 12.000x + 14.000
+                <br><br><strong>Menyamakan Total Uang:</strong>
+                <br>15.000x - 10.000 = 12.000x + 14.000
+                <br>15.000x - 12.000x = 14.000 + 10.000
+                <br>3.000x = 24.000
+                <br>x = 24.000 &divide; 3.000
+                <br>x = <strong>8 anak</strong>.`
+            },
+            {
+                id: 18,
+                question: "Kalimat matematika \"Sebuah bilangan jika dikalikan 3 kemudian dikurangi 8 menghasilkan bilangan 16\" dapat dituliskan dalam bentuk persamaan...",
+                options: [
+                    "3(x - 8) = 16",
+                    "3x - 8 = 16",
+                    "8 - 3x = 16",
+                    "3x + 8 = 16"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 3x - 8 = 16</strong><br><br>
+                Mari kita terjemahkan kalimat per kalimat ke dalam bentuk simbol:
+                <ul class="list-none mt-2 space-y-1">
+                    <li>&bull; "Sebuah bilangan" &rarr; kita tulis sebagai variabel <strong>x</strong></li>
+                    <li>&bull; "dikalikan 3" &rarr; berarti 3 &times; x atau ditulis <strong>3x</strong></li>
+                    <li>&bull; "kemudian dikurangi 8" &rarr; berarti dikurang angka 8 (<strong>- 8</strong>)</li>
+                    <li>&bull; "menghasilkan bilangan 16" &rarr; berarti sama dengan 16 (<strong>= 16</strong>)</li>
+                </ul>
+                <br>Jika dirangkai secara berurutan sesuai teks, bentuknya adalah: <strong>3x - 8 = 16</strong>.
+                <br>*(Catatan: Opsi A salah karena itu berarti x dikurang 8 dulu baru hasilnya dikali 3, tidak sesuai urutan kalimat).*`
+            },
+            {
+                id: 19,
+                question: "Nilai x yang memenuhi persamaan 5(2x - 1) - 3(x + 2) = 3x + 5 adalah...",
+                options: ["x = 2", "x = 3", "x = 4", "x = 5"],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: x = 4</strong><br><br>
+                Soal ini menguji ketelitian kalian dalam mengalikan tanda negatif (minus)!
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Buka kurung dengan perkalian distributif:
+                <br>&nbsp;&nbsp;&nbsp;(5 &times; 2x) - (5 &times; 1) - (3 &times; x) - (3 &times; 2) = 3x + 5
+                <br>&nbsp;&nbsp;&nbsp;10x - 5 - 3x - 6 = 3x + 5
+                <br><em>(Awas: -3 dikali 2 adalah -6. Banyak yang keliru menulis +6 di sini).</em>
+                <br>2. Gabungkan suku sejenis di ruas kiri:
+                <br>&nbsp;&nbsp;&nbsp;(10x - 3x) + (-5 - 6) = 3x + 5
+                <br>&nbsp;&nbsp;&nbsp;7x - 11 = 3x + 5
+                <br>3. Pindahkan variabel ke kiri, angka ke kanan:
+                <br>&nbsp;&nbsp;&nbsp;7x - 3x = 5 + 11
+                <br>&nbsp;&nbsp;&nbsp;4x = 16
+                <br>&nbsp;&nbsp;&nbsp;x = 4`
+            },
+            {
+                id: 20,
+                question: "Seorang petani memiliki sebidang tanah berbentuk persegi panjang dengan panjang 5 meter lebihnya dari lebarnya. Jika keliling tanah tersebut adalah 70 meter, model matematika yang menyatakan hubungan tersebut dengan x sebagai lebar tanah adalah...",
+                options: [
+                    "2x + 5 = 70",
+                    "4x + 10 = 70",
+                    "4x + 5 = 70",
+                    "2x + 10 = 70"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 4x + 10 = 70</strong><br><br>
+                <strong>Menganalisis Soal:</strong>
+                <br>- Lebar = x
+                <br>- Panjang = 5 meter lebihnya dari lebar, berarti: Panjang = x + 5
+                <br><br><strong>Membangun Model Matematika Keliling:</strong>
+                <br>Keliling Persegi Panjang = 2 &times; (Panjang + Lebar)
+                <br>Masukkan nilai panjang dan lebar:
+                <br>K = 2 &times; ((x + 5) + x)
+                <br>K = 2 &times; (2x + 5)
+                <br>K = 4x + 10
+                <br><br>Karena diketahui kelilingnya adalah 70 meter, maka model persamaannya adalah:
+                <br><strong>4x + 10 = 70</strong>`
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        function renderQuiz() {
+            quizData.forEach((item, index) => {
+                const questionNum = index + 1;
+                
+                // Card Kontainer Soal
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 transition-all hover:shadow-md';
+                cardDiv.id = `card-${item.id}`;
+
+                // Header Soal (Nomor dan Pertanyaan)
+                const questionHeader = document.createElement('div');
+                questionHeader.className = 'flex items-start gap-4 mb-4';
+                questionHeader.innerHTML = `
+                    <div class="flex-shrink-0 bg-indigo-50 text-primary font-bold w-10 h-10 rounded-full flex items-center justify-center border border-indigo-100">
+                        ${questionNum}
+                    </div>
+                    <div class="pt-2 text-gray-800 font-medium leading-relaxed w-full">
+                        ${item.question}
+                    </div>
+                `;
+                cardDiv.appendChild(questionHeader);
+
+                // Opsi Jawaban (Grid layout untuk estetika)
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 pl-0 sm:pl-14';
+
+                item.options.forEach((opt, optIndex) => {
+                    const optionLabel = document.createElement('label');
+                    optionLabel.className = 'option-label relative flex items-center w-full';
+                    
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question-${item.id}`;
+                    optionInput.value = optIndex;
+                    optionInput.className = 'option-input opacity-0 absolute w-full h-full cursor-pointer z-10'; // Hide native, keep functional
+
+                    const optionContent = document.createElement('div');
+                    optionContent.className = 'option-content flex items-center w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50';
+                    // Custom Radio Circle
+                    const radioCircleDiv = `<div class="radio-circle flex-shrink-0 w-5 h-5 border-2 border-gray-300 rounded-full mr-3 relative transition-colors"></div>`;
+                    
+                    optionContent.innerHTML = radioCircleDiv + `<span class="text-sm text-gray-700 font-medium">${opt}</span>`;
+
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(optionContent);
+                    optionsGrid.appendChild(optionLabel);
+                });
+                cardDiv.appendChild(optionsGrid);
+
+                // Kotak Pembahasan (Awalnya tersembunyi)
+                const explanationDiv = document.createElement('div');
+                explanationDiv.id = `explanation-${item.id}`;
+                explanationDiv.className = 'explanation-box bg-gray-50 border-l-4 border-gray-400 rounded-r-lg mt-0 sm:ml-14 pl-4 text-sm text-gray-700 leading-relaxed';
+                explanationDiv.innerHTML = `<div class="p-4">${item.explanation}</div>`;
+                cardDiv.appendChild(explanationDiv);
+
+                quizContainer.appendChild(cardDiv);
+            });
+        }
+
+        // Jalankan render soal saat halaman dimuat
+        renderQuiz();
+
+        const quizForm = document.getElementById('quiz-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScoreEl = document.getElementById('final-score');
+        const actionButtons = document.getElementById('action-buttons');
+
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah form reload halaman
+
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                let selectedValue = null;
+                
+                // Cari mana yang dipilih
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        selectedValue = parseInt(radios[i].value);
+                        break;
+                    }
+                }
+
+                // Ambil elemen opsi untuk dimanipulasi CSS-nya
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                
+                // Reset class sebelumnya jika user klik ulang tes tanpa me-reset penuh
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                // Styling untuk jawaban benar (selalu tampilkan mana yang benar)
+                optionLabels[item.correct].classList.add('status-correct');
+
+                if (selectedValue === item.correct) {
+                    correctCount++;
+                } else if (selectedValue !== null) {
+                    // Jika salah, tandai merah pilihan user
+                    optionLabels[selectedValue].classList.add('status-wrong');
+                }
+
+                // Tampilkan pembahasan
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.add('show');
+                
+                // Ubah warna border sebelah kiri berdasarkan benar/salah user
+                if (selectedValue === item.correct) {
+                    explanationBox.classList.replace('border-gray-400', 'border-correct');
+                    explanationBox.classList.replace('border-wrong', 'border-correct');
+                } else {
+                    explanationBox.classList.replace('border-gray-400', 'border-wrong');
+                    explanationBox.classList.replace('border-correct', 'border-wrong');
+                }
+
+                // Disable radio button agar tidak bisa diubah setelah di-submit
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = true;
+                }
+            });
+
+            // Hitung dan tampilkan skor (skala 0-100)
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            try {
+                finalScoreEl.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            // Animasi angka (opsional tapi bagus untuk UX)
+            let currentScore = 0;
+            finalScoreEl.innerText = 0;
+            scoreDisplay.classList.remove('hidden');
+            scoreDisplay.classList.add('flex');
+            
+            // Warna dinamis berdasarkan skor
+            if(score >= 80) finalScoreEl.className = 'text-4xl font-bold text-correct';
+            else if(score >= 60) finalScoreEl.className = 'text-4xl font-bold text-yellow-500';
+            else finalScoreEl.className = 'text-4xl font-bold text-wrong';
+
+            const animateScore = setInterval(() => {
+                if (currentScore < score) {
+                    currentScore++;
+                    finalScoreEl.innerText = currentScore;
+                } else {
+                    clearInterval(animateScore);
+                    finalScoreEl.innerText = score;
+                }
+            }, 15);
+
+            // Sembunyikan tombol submit, munculkan tombol reset
+            submitBtn.classList.add('hidden');
+            actionButtons.classList.remove('hidden');
+            
+            // Auto scroll ke bawah agar hasil terlihat jelas di mobile
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', function() {
+            // Reset form selections
+            quizForm.reset();
+
+            // Aktifkan kembali radio buttons dan hapus styling warna
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = false;
+                }
+
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                // Sembunyikan pembahasan dan kembalikan border ke warna netral
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.remove('show');
+                explanationBox.classList.replace('border-correct', 'border-gray-400');
+                explanationBox.classList.replace('border-wrong', 'border-gray-400');
+            });
+
+            // Sembunyikan area skor dan tombol ulangi, munculkan kembali tombol periksa
+            scoreDisplay.classList.add('hidden');
+            scoreDisplay.classList.remove('flex');
+            actionButtons.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Scroll mulus kembali ke atas halaman
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+    
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'CLOSE_MODAL' }, '*');
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+</script>
+</body>
+</html>

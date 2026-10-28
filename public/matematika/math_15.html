@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Teorema Pythagoras</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        
+        /* Animasi fade in untuk kemunculan elemen yang halus */
+        .fade-in {
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Menyembunyikan radio button asli agar bisa dikustomisasi UI-nya */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling untuk opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.125rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e2e8f0; /* slate-200 */
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            position: relative;
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9; /* slate-100 */
+            border-color: #cbd5e1; /* slate-300 */
+            transform: translateY(-1px);
+        }
+
+        /* Styling saat opsi dipilih (Checked) */
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Desain lingkaran radio button kustom */
+        .radio-circle {
+            width: 1.35rem;
+            height: 1.35rem;
+            border: 2px solid #94a3b8; /* slate-400 */
+            border-radius: 50%;
+            margin-right: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        /* Efek saat lingkaran radio dipilih */
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.65rem;
+            height: 0.65rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-200">
+
+    <!-- Header & Tombol Kembali -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 transition px-3 py-1.5 rounded-lg font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[95px]"></div> <!-- Spacer agar judul tepat di tengah -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-10">
+        <!-- Judul Kuis -->
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-indigo-100 text-indigo-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block tracking-wide">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Teorema Pythagoras</h2>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto">Selesaikan persoalan berikut dengan teliti. Anda dapat menekan tombol periksa jawaban kapan saja untuk melihat evaluasi dan pembahasan lengkap.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer Soal (Akan diisi via JavaScript) -->
+            </div>
+
+            <!-- Tombol Aksi di Bawah -->
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center sticky bottom-4 z-40">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <!-- Area Hasil Evaluasi -->
+                <div id="resultArea" class="hidden mt-2 fade-in">
+                    <p class="text-lg font-semibold text-slate-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8 drop-shadow-sm">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-slate-200 hover:border-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-12 border-t-4 border-blue-500">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-1 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Diberikan sebuah segitiga siku-siku dengan panjang sisi siku-siku adalah a dan b, serta panjang sisi miring (hipotenusa) adalah c. Hubungan antarpanjang sisi segitiga tersebut yang benar menurut Teorema Pythagoras adalah...",
+                options: [
+                    "A. a<sup>2</sup> = b<sup>2</sup> + c<sup>2</sup>",
+                    "B. b<sup>2</sup> = a<sup>2</sup> + c<sup>2</sup>",
+                    "C. c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>",
+                    "D. c<sup>2</sup> = a<sup>2</sup> - b<sup>2</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Ingat Rumus Dasar!</strong><br>Menurut Teorema Pythagoras pada segitiga siku-siku, kuadrat dari sisi terpanjang atau sisi miring (hipotenusa) selalu <strong>sama dengan jumlah</strong> kuadrat dari kedua sisi penyikunya.<br><br>Jika hipotenusanya adalah c, maka rumus mutlaknya adalah: <strong>c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup></strong>."
+            },
+            {
+                question: "Sebuah segitiga siku-siku memiliki panjang sisi siku-siku masing-masing 6 cm dan 8 cm. Panjang sisi miring segitiga tersebut adalah...",
+                options: [
+                    "A. 10 cm",
+                    "B. 12 cm",
+                    "C. 14 cm",
+                    "D. 15 cm"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Kita ketahui sisi siku-sikunya a = 6 dan b = 8. Kita mencari sisi miring (c).<br>2. Masukkan ke rumus: c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup><br>   c<sup>2</sup> = 6<sup>2</sup> + 8<sup>2</sup><br>   c<sup>2</sup> = 36 + 64<br>   c<sup>2</sup> = 100<br>3. Untuk mencari c, kita akar-kuadratkan nilai 100.<br>   c = &radic;100 = <strong>10 cm</strong>."
+            },
+            {
+                question: "Diketahui sebuah segitiga siku-siku memiliki panjang sisi miring 13 cm dan salah satu sisi siku-sikunya adalah 5 cm. Panjang sisi siku-siku yang lainnya adalah...",
+                options: [
+                    "A. 8 cm",
+                    "B. 10 cm",
+                    "C. 12 cm",
+                    "D. 14 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>Jika yang dicari adalah <em>sisi siku-siku</em> (bukan sisi miring), maka rumusnya dibalik menjadi dikurang (-).<br>1. Sisi miring (c) = 13, sisi siku-siku (a) = 5. Kita cari b.<br>2. Rumus: b<sup>2</sup> = c<sup>2</sup> - a<sup>2</sup><br>   b<sup>2</sup> = 13<sup>2</sup> - 5<sup>2</sup><br>   b<sup>2</sup> = 169 - 25<br>   b<sup>2</sup> = 144<br>3. b = &radic;144 = <strong>12 cm</strong>."
+            },
+            {
+                question: "Di antara kelompok ukuran panjang sisi-sisi berikut, yang merupakan tripel Pythagoras adalah...",
+                options: [
+                    "A. 4 cm, 6 cm, 8 cm",
+                    "B. 6 cm, 8 cm, 10 cm",
+                    "C. 8 cm, 10 cm, 12 cm",
+                    "D. 9 cm, 12 cm, 17 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Apa itu Tripel Pythagoras?</strong><br>Sebuah kelompok tiga bilangan disebut tripel Pythagoras jika kuadrat bilangan paling besar sama dengan jumlah kuadrat dua bilangan lainnya (c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>).<br><br>Mari kita uji Opsi B (6, 8, 10):<br>&bull; Sisi terpanjang (c) = 10 &rarr; c<sup>2</sup> = 100<br>&bull; Dua sisi lainnya = 6 dan 8 &rarr; 6<sup>2</sup> + 8<sup>2</sup> = 36 + 64 = 100.<br><br>Karena hasilnya <strong>sama</strong> (100 = 100), maka kelompok bilangan 6, 8, 10 sah disebut sebagai Tripel Pythagoras."
+            },
+            {
+                question: "Sebuah segitiga memiliki panjang sisi-sisi 7 cm, 9 cm, dan 12 cm. Berdasarkan ukuran tersebut, jenis segitiga yang terbentuk adalah...",
+                options: [
+                    "A. Segitiga lancip",
+                    "B. Segitiga siku-siku",
+                    "C. Segitiga tumpul",
+                    "D. Segitiga sama kaki"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Aturan Penentu Jenis Segitiga:</strong><br>Pisahkan sisi terpanjang (c) dari dua sisi lainnya (a dan b).<br>&bull; Jika c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup> &rarr; Segitiga Siku-siku<br>&bull; Jika c<sup>2</sup> < a<sup>2</sup> + b<sup>2</sup> &rarr; Segitiga Lancip<br>&bull; Jika c<sup>2</sup> > a<sup>2</sup> + b<sup>2</sup> &rarr; Segitiga Tumpul<br><br><strong>Mari Uji:</strong><br>Sisi terpanjang (c) = 12 &rarr; 12<sup>2</sup> = <strong>144</strong>.<br>Sisi lainnya (7 dan 9) &rarr; 7<sup>2</sup> + 9<sup>2</sup> = 49 + 81 = <strong>130</strong>.<br><br>Karena <strong>144 > 130</strong> (nilai c<sup>2</sup> lebih besar), maka segitiga ini akan melebar dan membentuk <strong>Segitiga Tumpul</strong>."
+            },
+            {
+                question: "Sebuah tangga yang panjangnya 10 meter disandarkan pada dinding tembok. Jika jarak ujung bawah tangga ke dinding adalah 6 meter, maka tinggi dinding yang dicapai oleh ujung atas tangga adalah...",
+                options: [
+                    "A. 5 meter",
+                    "B. 7 meter",
+                    "C. 8 meter",
+                    "D. 9 meter"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Ilustrasi:</strong> Bayangkan tangga bersandar di dinding. Tangga adalah <strong>sisi miring (c = 10)</strong>, sedangkan jarak ke dinding adalah alas <strong>(a = 6)</strong>. Kita ditugaskan mencari tinggi dinding <strong>(b)</strong>.<br><br>Karena kita mencari sisi tegak lurus, gunakan rumus pengurangan:<br>b<sup>2</sup> = c<sup>2</sup> - a<sup>2</sup><br>b<sup>2</sup> = 10<sup>2</sup> - 6<sup>2</sup><br>b<sup>2</sup> = 100 - 36 = 64<br>b = &radic;64 = <strong>8 meter</strong>."
+            },
+            {
+                question: "Sebuah lapangan berbentuk persegi panjang memiliki ukuran panjang 12 meter dan lebar 9 meter. Panjang diagonal lapangan tersebut adalah...",
+                options: [
+                    "A. 15 meter",
+                    "B. 16 meter",
+                    "C. 18 meter",
+                    "D. 20 meter"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Garis diagonal pada persegi panjang akan membelah lapangan menjadi dua buah segitiga siku-siku. Panjang dan lebarnya akan menjadi sisi alas dan sisi tegak, sementara <strong>diagonalnya menjadi sisi miring</strong>.<br><br>d<sup>2</sup> = p<sup>2</sup> + l<sup>2</sup><br>d<sup>2</sup> = 12<sup>2</sup> + 9<sup>2</sup><br>d<sup>2</sup> = 144 + 81<br>d<sup>2</sup> = 225<br>d = &radic;225 = <strong>15 meter</strong>."
+            },
+            {
+                question: "Koordinat titik P adalah (2, 3) dan koordinat titik Q adalah (8, 11). Jarak antara titik P dan titik Q pada bidang Kartesius adalah...",
+                options: [
+                    "A. 8 satuan",
+                    "B. 10 satuan",
+                    "C. 12 satuan",
+                    "D. 14 satuan"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Konsep Jarak pada Koordinat:</strong> Jarak dua titik bisa dihitung dengan membuat segitiga imajiner di antara kedua titik tersebut.<br>1. Cari selisih x (alas) &rarr; &Delta;x = 8 - 2 = 6.<br>2. Cari selisih y (tinggi) &rarr; &Delta;y = 11 - 3 = 8.<br>3. Jaraknya adalah sisi miring dari segitiga (6 dan 8) ini.<br><br>Jarak<sup>2</sup> = &Delta;x<sup>2</sup> + &Delta;y<sup>2</sup><br>Jarak<sup>2</sup> = 6<sup>2</sup> + 8<sup>2</sup><br>Jarak<sup>2</sup> = 36 + 64 = 100<br>Jarak = &radic;100 = <strong>10 satuan</strong>."
+            },
+            {
+                question: "Dua buah kapal meninggalkan pelabuhan yang sama. Kapal A berlayar ke arah utara sejauh 120 km, sedangkan kapal B berlayar ke arah timur sejauh 90 km. Jarak terdekat antara kedua kapal tersebut setelah menempuh perjalanan tersebut adalah...",
+                options: [
+                    "A. 130 km",
+                    "B. 150 km",
+                    "C. 170 km",
+                    "D. 210 km"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Arah mata angin Utara dan Timur saling tegak lurus membentuk sudut siku-siku (90&deg;). Rute kapal ini membentuk segitiga siku-siku raksasa di laut!<br><br>Jarak kedua kapal adalah sisi miring (hipotenusa) dari jarak tempuh masing-masing.<br>Jarak<sup>2</sup> = 120<sup>2</sup> + 90<sup>2</sup><br>Jarak<sup>2</sup> = 14.400 + 8.100<br>Jarak<sup>2</sup> = 22.500<br>Jarak = &radic;22.500 = <strong>150 km</strong>.<br><br><em>(Trik Cepat: Ini sebenarnya adalah tripel Pythagoras (3, 4, 5) yang dikalikan 30. 90, 120, pasti pasangannya 150!)</em>"
+            },
+            {
+                question: "Sebuah segitiga sama kaki memiliki panjang alas 16 cm dan keliling 36 cm. Luas segitiga tersebut adalah...",
+                options: [
+                    "A. 48 cm<sup>2</sup>",
+                    "B. 60 cm<sup>2</sup>",
+                    "C. 80 cm<sup>2</sup>",
+                    "D. 96 cm<sup>2</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Soal ini menantang! Kita cari dulu tinggi segitiganya untuk menghitung luas.<br><br>1. <strong>Cari Panjang Kaki Segitiga:</strong><br>Keliling = alas + kaki kiri + kaki kanan<br>36 = 16 + 2s &rarr; 20 = 2s &rarr; s = 10 cm.<br><br>2. <strong>Cari Tinggi dengan Pythagoras:</strong><br>Tarik garis lurus dari puncak ke tengah alas (membelah alas 16 cm menjadi dua, masing-masing 8 cm). Kita dapat segitiga siku-siku dengan sisi miring 10 dan alas 8.<br>t<sup>2</sup> = 10<sup>2</sup> - 8<sup>2</sup> = 100 - 64 = 36 &rarr; t = &radic;36 = <strong>6 cm</strong>.<br><br>3. <strong>Hitung Luas:</strong><br>Luas = &frac12; &times; alas &times; tinggi = &frac12; &times; 16 &times; 6 = <strong>48 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Sebuah persegi memiliki panjang sisi 10 cm. Panjang diagonal persegi tersebut adalah...",
+                options: [
+                    "A. &radic;10 cm",
+                    "B. 10&radic;2 cm",
+                    "C. 10&radic;3 cm",
+                    "D. 20 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Trik Kilat Persegi!</strong><br>Jika sebuah persegi memiliki sisi berukuran <em>s</em>, maka panjang diagonalnya pasti <strong>s&radic;2</strong>.<br><br><strong>Bukti dengan Pythagoras:</strong><br>d<sup>2</sup> = s<sup>2</sup> + s<sup>2</sup><br>d<sup>2</sup> = 10<sup>2</sup> + 10<sup>2</sup> = 100 + 100 = 200.<br>d = &radic;200 = &radic;(100 &times; 2) = <strong>10&radic;2 cm</strong>."
+            },
+            {
+                question: "Sebuah belah ketupat memiliki panjang diagonal masing-masing 16 cm dan 30 cm. Keliling belah ketupat tersebut adalah...",
+                options: [
+                    "A. 34 cm",
+                    "B. 60 cm",
+                    "C. 68 cm",
+                    "D. 136 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Kedua diagonal pada belah ketupat saling berpotongan tegak lurus di tengah, membentuk 4 segitiga siku-siku berukuran sama.<br><br>1. <strong>Tentukan sisi segitiga siku-siku:</strong><br>Gunakan setengah dari masing-masing diagonal. Alas = 16/2 = 8 cm. Tinggi = 30/2 = 15 cm.<br><br>2. <strong>Cari sisi miring (sisi belah ketupat):</strong><br>s<sup>2</sup> = 8<sup>2</sup> + 15<sup>2</sup> = 64 + 225 = 289<br>s = &radic;289 = <strong>17 cm</strong>.<br><br>3. <strong>Hitung Keliling:</strong><br>Keliling belah ketupat = 4 &times; sisi = 4 &times; 17 = <strong>68 cm</strong>."
+            },
+            {
+                question: "Seorang tukang kayu ingin memastikan apakah bingkai pintu yang dibuatnya sudah benar-benar siku-siku (membentuk sudut 90&deg;). Bingkai tersebut memiliki ukuran tinggi 200 cm dan lebar 90 cm. Ia mengukur panjang diagonal bingkai tersebut dan mendapatkan hasil 220 cm. Evaluasi yang tepat terhadap hasil kerja tukang kayu tersebut adalah...",
+                options: [
+                    "A. Bingkai sudah siku-siku karena diagonalnya mendekati nilai teoritis.",
+                    "B. Bingkai belum siku-siku karena panjang diagonal teoritis seharusnya sekitar 219,3 cm.",
+                    "C. Bingkai belum siku-siku karena panjang diagonal teoritis seharusnya tepat 250 cm.",
+                    "D. Bingkai sudah siku-siku karena selisih pengukurannya sangat kecil dan dapat diabaikan."
+                ],
+                correctAnswer: 1, // B
+                explanation: "Dalam pertukangan, untuk memastikan sudut siku-siku sempurna, hasil ukur diagonal di lapangan <strong>harus sama persis</strong> dengan hitungan Pythagoras.<br><br>Mari hitung diagonal teoritisnya:<br>d<sup>2</sup> = 200<sup>2</sup> + 90<sup>2</sup><br>d<sup>2</sup> = 40.000 + 8.100 = 48.100<br>d = &radic;48.100 &asymp; <strong>219,31 cm</strong>.<br><br>Karena ukuran nyata (220 cm) meleset jauh dari 219,3 cm (selisih nyaris 7 mm bisa membuat pintu susah ditutup), maka bingkai tersebut <strong>belum benar-benar siku-siku</strong> (pintu menjadi sedikit jajar genjang)."
+            },
+            {
+                question: "Sebuah segitiga siku-siku sama kaki memiliki panjang hipotenusa 8 cm. Panjang sisi siku-sikunya adalah...",
+                options: [
+                    "A. 4 cm",
+                    "B. 4&radic;2 cm",
+                    "C. 8 cm",
+                    "D. 8&radic;2 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Kata kuncinya adalah \"segitiga siku-siku <strong>sama kaki</strong>\". Artinya, sisi alas dan tingginya sama panjang (a = b = s).<br><br>Berdasarkan rumus Pythagoras:<br>s<sup>2</sup> + s<sup>2</sup> = hipotenusa<sup>2</sup><br>2s<sup>2</sup> = 8<sup>2</sup><br>2s<sup>2</sup> = 64<br>s<sup>2</sup> = 32<br>s = &radic;32 = &radic;(16 &times; 2) = <strong>4&radic;2 cm</strong>."
+            },
+            {
+                question: "Sebuah tiang bendera setinggi 2,4 meter disangga oleh tali yang diikatkan pada ujung atas tiang dan dipatok di tanah. Jika panjang tali penyangga adalah 2,5 meter, maka jarak patok tanah ke bagian bawah tiang bendera adalah...",
+                options: [
+                    "A. 0,5 meter",
+                    "B. 0,7 meter",
+                    "C. 0,9 meter",
+                    "D. 1,2 meter"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Pemetaan Visual:</strong><br>&bull; Tali yang mengikat = Sisi Miring (c = 2,5 m)<br>&bull; Tiang = Sisi Tegak (b = 2,4 m)<br>&bull; Jarak Patok = Alas (a = ... m)<br><br><strong>Hitungan:</strong><br>a<sup>2</sup> = c<sup>2</sup> - b<sup>2</sup><br>a<sup>2</sup> = (2,5)<sup>2</sup> - (2,4)<sup>2</sup><br>a<sup>2</sup> = 6,25 - 5,76<br>a<sup>2</sup> = 0,49<br>a = &radic;0,49 = <strong>0,7 meter</strong>."
+            },
+            {
+                question: "Perhatikan gambar trapesium sama kaki ABCD dengan panjang sisi sejajar AB = 10 cm dan CD = 22 cm. Jika panjang kaki trapesium AD = BC = 10 cm, maka luas trapesium tersebut adalah...",
+                options: [
+                    "A. 96 cm<sup>2</sup>",
+                    "B. 128 cm<sup>2</sup>",
+                    "C. 160 cm<sup>2</sup>",
+                    "D. 192 cm<sup>2</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Untuk mencari luas trapesium, kita butuh nilai <strong>Tinggi</strong>. Tinggi bisa dicari dengan Pythagoras dengan membuat garis tegak dari sudut atas ke alas.<br><br>1. <strong>Cari alas segitiga kecil di pojok:</strong><br>Alas pojok (x) = (Sisi Bawah - Sisi Atas) / 2<br>x = (22 - 10) / 2 = 12 / 2 = 6 cm.<br><br>2. <strong>Cari Tinggi Trapesium:</strong><br>Kaki trapesium adalah sisi miring (10 cm).<br>Tinggi (t) = &radic;(10<sup>2</sup> - 6<sup>2</sup>) = &radic;(100 - 36) = &radic;64 = 8 cm.<br><br>3. <strong>Hitung Luas:</strong><br>Luas = &frac12; &times; (Jumlah Sisi Sejajar) &times; Tinggi<br>Luas = &frac12; &times; (10 + 22) &times; 8<br>Luas = &frac12; &times; 32 &times; 8 = 16 &times; 8 = <strong>128 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Di antara kelompok bilangan berikut, manakah yang BUKAN merupakan tripel Pythagoras?",
+                options: [
+                    "A. 3, 4, 5",
+                    "B. 5, 12, 13",
+                    "C. 8, 15, 17",
+                    "D. 7, 24, 26"
+                ],
+                correctAnswer: 3, // D
+                explanation: "Mari kita tes opsi D (7, 24, 26).<br><br>Jika ini adalah tripel Pythagoras, maka kuadrat bilangan terbesar harus sama dengan jumlah kuadrat dua lainnya.<br>26<sup>2</sup> = 676.<br>7<sup>2</sup> + 24<sup>2</sup> = 49 + 576 = 625.<br><br>Ternyata <strong>676 &ne; 625</strong>. Jadi, kelompok bilangan 7, 24, 26 BUKAN tripel Pythagoras. (Yang benar seharusnya 7, 24, 25)."
+            },
+            {
+                question: "Seorang arsitek merancang rangka atap berbentuk segitiga sama kaki dengan panjang alas 12 meter dan keliling 30 meter. Ia ingin mengevaluasi tinggi rangka atap tersebut untuk memastikan ruang loteng cukup luas. Tinggi rangka atap tersebut adalah...",
+                options: [
+                    "A. 3&radic;5 meter",
+                    "B. 6 meter",
+                    "C. 3&radic;13 meter",
+                    "D. 9 meter"
+                ],
+                correctAnswer: 0, // A
+                explanation: "1. <strong>Cari Panjang Kaki Atap (Sisi Miring):</strong><br>Keliling = Alas + (2 &times; Sisi Miring)<br>30 = 12 + 2s &rarr; 18 = 2s &rarr; s = 9 meter.<br><br>2. <strong>Cari Tinggi dengan Pythagoras:</strong><br>Tarik garis tengah yang membelah alas (12 meter) menjadi dua, yaitu 6 meter.<br>Tinggi<sup>2</sup> = (Sisi Miring)<sup>2</sup> - (Setengah Alas)<sup>2</sup><br>Tinggi<sup>2</sup> = 9<sup>2</sup> - 6<sup>2</sup><br>Tinggi<sup>2</sup> = 81 - 36 = 45<br>Tinggi = &radic;45 = &radic;(9 &times; 5) = <strong>3&radic;5 meter</strong>."
+            },
+            {
+                question: "Sebuah balok memiliki ukuran panjang 12 cm, lebar 9 cm, dan tinggi 8 cm. Panjang diagonal ruang balok tersebut adalah...",
+                options: [
+                    "A. 15 cm",
+                    "B. 17 cm",
+                    "C. 20 cm",
+                    "D. 25 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Diagonal Ruang Balok (Pythagoras 3 Dimensi):</strong><br>Rumus cepat untuk mencari diagonal ruang balok adalah mengakarkan jumlah kuadrat ketiga dimensinya (Panjang, Lebar, Tinggi).<br><br>d = &radic;(p<sup>2</sup> + l<sup>2</sup> + t<sup>2</sup>)<br>d = &radic;(12<sup>2</sup> + 9<sup>2</sup> + 8<sup>2</sup>)<br>d = &radic;(144 + 81 + 64)<br>d = &radic;289 = <strong>17 cm</strong>."
+            },
+            {
+                question: "Sebuah kawat sepanjang 17 meter dihubungkan dari puncak menara setinggi 15 meter ke sebuah patok di tanah. Karena adanya pergeseran tanah, patok tersebut bergeser menjauh sejauh 3 meter dari posisi semula. Evaluasi panjang kawat baru minimum yang dibutuhkan agar tetap dapat terhubung dari puncak menara ke patok baru adalah...",
+                options: [
+                    "A. &radic;346 meter",
+                    "B. 19 meter",
+                    "C. 20 meter",
+                    "D. &radic;414 meter"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Ini soal bertahap (Dua kali menggunakan Pythagoras).<br><br>1. <strong>Cari Jarak Awal Patok ke Menara:</strong><br>Jarak Awal = &radic;(Panjang Kawat<sup>2</sup> - Tinggi Menara<sup>2</sup>)<br>Jarak Awal = &radic;(17<sup>2</sup> - 15<sup>2</sup>) = &radic;(289 - 225) = &radic;64 = 8 meter.<br><br>2. <strong>Jarak Baru:</strong><br>Patok bergeser menjauh 3 meter, jadi Jarak Baru = 8 + 3 = 11 meter.<br><br>3. <strong>Cari Panjang Kawat Baru:</strong><br>Kawat Baru = &radic;(Tinggi Menara<sup>2</sup> + Jarak Baru<sup>2</sup>)<br>Kawat Baru = &radic;(15<sup>2</sup> + 11<sup>2</sup>) = &radic;(225 + 121) = <strong>&radic;346 meter</strong>."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 relative overflow-hidden group hover:border-blue-300 transition-colors">
+                        <!-- Pita warna di kiri -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl opacity-80"></div>
+                        
+                        <!-- Soal -->
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.5rem] h-10 rounded-xl bg-blue-50 text-blue-700 font-bold mr-4 text-base border border-blue-100 shadow-sm">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-[1.1rem] font-medium text-slate-800 leading-relaxed pt-1 w-full">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <!-- Opsi Jawaban -->
+                        <div class="space-y-3 ml-0 md:ml-14">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-[0.95rem] md:text-base text-slate-700 select-none">
+                                        <div class="radio-circle"></div>
+                                        <span class="flex-1">${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kotak Pembahasan (Hidden Awalnya) -->
+                        <div id="explanation_${index}" class="hidden mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border fade-in text-sm md:text-base relative overflow-hidden">
+                            <!-- Injeksi JS untuk isi pembahasan -->
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Render pertama kali
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Kunci semua radio input (Cegah ganti jawaban)
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                
+                let isCorrect = false;
+                let statusHeader = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        // Jawaban Benar
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusHeader = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">JAWABAN TEPAT</span>`;
+                        bgClass = "bg-emerald-50";
+                        borderClass = "border-emerald-300";
+                        textClass = "text-emerald-900";
+                    } else {
+                        // Jawaban Salah
+                        statusHeader = `<span class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">JAWABAN KELIRU</span>`;
+                        bgClass = "bg-rose-50";
+                        borderClass = "border-rose-300";
+                        textClass = "text-rose-900";
+                        
+                        // Highlight Visual ke jawaban yang seharusnya
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5";
+                        correctLabel.style.borderColor = "#10b981";
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                    }
+                } else {
+                    // Dikosongkan
+                    statusHeader = `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">TIDAK DIJAWAB</span>`;
+                    bgClass = "bg-amber-50";
+                    borderClass = "border-amber-300";
+                    textClass = "text-amber-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                }
+
+                // Masukkan HTML Pembahasan
+                explanationDiv.innerHTML = `
+                    <div class="font-bold mb-4 pb-3 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-6 h-6 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : (selectedOption ? `<svg class="w-6 h-6 mr-2 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`
+                                              : `<svg class="w-6 h-6 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`)
+                        }
+                        ${statusHeader}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass} relative z-10">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                // Tampilkan Div
+                explanationDiv.className = `mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border ${bgClass} ${borderClass} fade-in text-[0.95rem] md:text-base block`;
+            });
+
+            // Set UI Skor Akhir
+            const finalScore = Math.round(score);
+            scoreDisplay.innerText = finalScore;
+            
+            scoreDisplay.className = "text-7xl font-black mb-8 drop-shadow-sm transition-colors duration-700 ";
+            if(finalScore >= 80) scoreDisplay.className += "text-emerald-500";
+            else if(finalScore >= 60) scoreDisplay.className += "text-blue-500";
+            else if(finalScore >= 40) scoreDisplay.className += "text-amber-500";
+            else scoreDisplay.className += "text-rose-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Scroll otomatis menuju area skor
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 350);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Mereset state form dan style radio dengan merender ulang DOM
+            quizForm.reset();
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Scroll ke atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

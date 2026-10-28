@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Latihan Barisan dan Deret</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="radio"] {
+            display: none; /* Sembunyikan radio asli */
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e5e7eb; /* gray-200 */
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-label:hover {
+            background-color: #f8fafc; /* slate-50 */
+            border-color: #cbd5e1; /* slate-300 */
+            transform: translateY(-1px);
+        }
+
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+        }
+
+        .radio-circle {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col selection:bg-blue-200 selection:text-blue-900">
+
+    <!-- Header dengan Tombol Kembali -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-2 rounded-lg transition font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[90px]"></div> <!-- Spacer agar judul tepat di tengah -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-12">
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">Evaluasi: Barisan & Deret</h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Kerjakan soal-soal di bawah ini dengan teliti. Anda dapat memeriksa jawaban kapan saja untuk melihat pembahasan lengkapnya.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer soal (Di-generate oleh JS) -->
+            </div>
+
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-md border border-gray-200 text-center sticky bottom-4 z-40 transform transition-all">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-2 fade-in">
+                    <p class="text-xl font-semibold text-gray-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8 drop-shadow-sm">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-gray-200 hover:border-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 py-8 mt-12 border-t-4 border-blue-600">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-2 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Diketahui barisan bilangan aritmetika: 4, 11, 18, 25, ...<br>Suku ke-12 dari barisan tersebut adalah...",
+                options: [
+                    "A. 74",
+                    "B. 81",
+                    "C. 88",
+                    "D. 95"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Pertama, tentukan suku pertama (a) dan beda (b).<br> &nbsp;&nbsp; Suku pertama (a) = 4.<br> &nbsp;&nbsp; Beda (b) adalah selisih angka berurutan: 11 - 4 = <strong>7</strong>.<br>2. Ingat kembali rumus suku ke-n (U<sub>n</sub>) barisan aritmetika: <br> &nbsp;&nbsp; <strong>U<sub>n</sub> = a + (n - 1) &times; b</strong><br>3. Kita ingin mencari suku ke-12 (n = 12):<br> &nbsp;&nbsp; U<sub>12</sub> = 4 + (12 - 1) &times; 7<br> &nbsp;&nbsp; U<sub>12</sub> = 4 + (11 &times; 7)<br> &nbsp;&nbsp; U<sub>12</sub> = 4 + 77 = <strong>81</strong>.<br><br><em>Konsep: Barisan aritmetika adalah barisan yang selalu ditambahkan angka yang sama (konstan) pada setiap langkahnya.</em>"
+            },
+            {
+                question: "Rumus suku ke-n dari barisan bilangan 3, 7, 11, 15, ... adalah...",
+                options: [
+                    "A. U<sub>n</sub> = 4n - 1",
+                    "B. U<sub>n</sub> = 4n + 1",
+                    "C. U<sub>n</sub> = 3n + 1",
+                    "D. U<sub>n</sub> = 3n - 1"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Langkah Penyelesaian:</strong><br>1. Mari kita identifikasi data barisannya:<br> &nbsp;&nbsp; Suku pertama (a) = 3<br> &nbsp;&nbsp; Beda (b) = 7 - 3 = <strong>4</strong>.<br>2. Masukkan ke dalam rumus umum: <strong>U<sub>n</sub> = a + (n - 1)b</strong><br> &nbsp;&nbsp; U<sub>n</sub> = 3 + (n - 1) &times; 4<br>3. Kalikan angka 4 ke dalam kurung (sifat distributif):<br> &nbsp;&nbsp; U<sub>n</sub> = 3 + 4n - 4<br>4. Gabungkan angka yang tidak memiliki huruf n (yaitu 3 - 4 = -1):<br> &nbsp;&nbsp; U<sub>n</sub> = <strong>4n - 1</strong>.<br><br><em>Trik Cepat: Karena bedanya selalu bertambah 4, pasti rumusnya diawali dengan '4n'. Cek untuk suku pertama (n=1), 4(1) biar jadi 3 harus dikurang 1. Jadilah 4n - 1.</em>"
+            },
+            {
+                question: "Jumlah 10 suku pertama dari deret aritmetika 2 + 5 + 8 + 11 + ... adalah...",
+                options: [
+                    "A. 145",
+                    "B. 155",
+                    "C. 165",
+                    "D. 175"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Perhatikan Kata Kunci!</strong> Kata \"Jumlah\" dan tanda tambah (+) menandakan ini adalah <strong>Deret</strong>, jadi kita mencari S<sub>n</sub>, bukan U<sub>n</sub>.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Data yang diketahui: a = 2, b = 5 - 2 = 3, n = 10.<br>2. Rumus jumlah deret aritmetika: <strong>S<sub>n</sub> = <sup>n</sup>&frasl;<sub>2</sub> &times; [2a + (n - 1)b]</strong><br>3. Masukkan angkanya:<br> &nbsp;&nbsp; S<sub>10</sub> = <sup>10</sup>&frasl;<sub>2</sub> &times; [2(2) + (10 - 1) &times; 3]<br> &nbsp;&nbsp; S<sub>10</sub> = 5 &times; [4 + (9 &times; 3)]<br> &nbsp;&nbsp; S<sub>10</sub> = 5 &times; [4 + 27]<br> &nbsp;&nbsp; S<sub>10</sub> = 5 &times; 31 = <strong>155</strong>."
+            },
+            {
+                question: "Di dalam sebuah aula sekolah terdapat 15 baris kursi. Baris paling depan terdiri dari 12 kursi, baris kedua 15 kursi, baris ketiga 18 kursi, dan seterusnya selalu bertambah 3 kursi pada baris di belakangnya. Jumlah seluruh kursi di dalam aula tersebut adalah...",
+                options: [
+                    "A. 495 kursi",
+                    "B. 510 kursi",
+                    "C. 540 kursi",
+                    "D. 570 kursi"
+                ],
+                correctAnswer: 0, // A - (Dikoreksi dari data awal berdasarkan hitungan matematis)
+                explanation: "Ini adalah penerapan barisan aritmetika pada kehidupan nyata.<br>• Baris kursi menyusun barisan: 12, 15, 18, ...<br>• Suku pertama (a) = 12<br>• Beda penambahan (b) = 3<br>• Total baris (n) = 15<br><br>Karena ditanya \"jumlah seluruh kursi\", kita pakai rumus deret (S<sub>n</sub>):<br>S<sub>n</sub> = <sup>n</sup>&frasl;<sub>2</sub> &times; [2a + (n - 1)b]<br>S<sub>15</sub> = <sup>15</sup>&frasl;<sub>2</sub> &times; [2(12) + (15 - 1) &times; 3]<br>S<sub>15</sub> = 7,5 &times; [24 + 14 &times; 3]<br>S<sub>15</sub> = 7,5 &times; [24 + 42]<br>S<sub>15</sub> = 7,5 &times; 66<br><br>Cara hitung mudahnya: (15 &times; 66) &divide; 2 = 15 &times; 33 = <strong>495 kursi</strong>."
+            },
+            {
+                question: "Suku ke-6 dari barisan geometri 2, 6, 18, 54, ... adalah...",
+                options: [
+                    "A. 162",
+                    "B. 486",
+                    "C. 1.458",
+                    "D. 4.374"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Konsep Barisan Geometri:</strong> Barisan ini tidak ditambah-tambah, melainkan <strong>dikali</strong> dengan bilangan yang tetap (disebut Rasio atau r).<br><br><strong>Langkah Penyelesaian:</strong><br>1. Suku pertama (a) = 2<br>2. Rasio (r) = Suku ke-2 &divide; Suku ke-1 = 6 &divide; 2 = <strong>3</strong>.<br>3. Rumus suku ke-n (Geometri): <strong>U<sub>n</sub> = a &times; r<sup>n-1</sup></strong><br>4. Kita mencari suku ke-6 (U<sub>6</sub>):<br> &nbsp;&nbsp; U<sub>6</sub> = 2 &times; 3<sup>6-1</sup><br> &nbsp;&nbsp; U<sub>6</sub> = 2 &times; 3<sup>5</sup><br> &nbsp;&nbsp; U<sub>6</sub> = 2 &times; (3 &times; 3 &times; 3 &times; 3 &times; 3) = 2 &times; 243 = <strong>486</strong>."
+            },
+            {
+                question: "Jumlah 6 suku pertama dari deret geometri 3 + 6 + 12 + 24 + ... adalah...",
+                options: [
+                    "A. 189",
+                    "B. 192",
+                    "C. 378",
+                    "D. 381"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Ini adalah Deret Geometri (dijumlahkan dan polanya perkalian).<br>• Suku awal (a) = 3<br>• Rasio (r) = 6 &divide; 3 = <strong>2</strong> (Polanya dikali 2).<br><br>Karena rasionya lebih besar dari 1 (r > 1), kita gunakan rumus Deret Geometri:<br><strong>S<sub>n</sub> = a &times; (r<sup>n</sup> - 1) &divide; (r - 1)</strong><br><br>Menghitung 6 suku pertama (S<sub>6</sub>):<br>S<sub>6</sub> = 3 &times; (2<sup>6</sup> - 1) &divide; (2 - 1)<br>S<sub>6</sub> = 3 &times; (64 - 1) &divide; 1<br>S<sub>6</sub> = 3 &times; 63 = <strong>189</strong>."
+            },
+            {
+                question: "Dari suatu barisan aritmetika, diketahui suku ke-3 adalah 11 dan suku ke-8 adalah 31. Jumlah 20 suku pertama dari barisan tersebut adalah...",
+                options: [
+                    "A. 780",
+                    "B. 820",
+                    "C. 860",
+                    "D. 900"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Kita seperti bermain detektif! Kita cari tahu dulu 'a' (awal) dan 'b' (beda)-nya dengan metode eliminasi:<br><br>Ingat rumus U<sub>n</sub> = a + (n-1)b<br>• U<sub>8</sub> : a + 7b = 31<br>• U<sub>3</sub> : a + 2b = 11<br>------------------------ (Dikurangi)<br>5b = 20 &rarr; <strong>b = 4</strong>.<br><br>Sekarang cari a dengan mensubstitusi b=4 ke U<sub>3</sub>:<br>a + 2(4) = 11 &rarr; a + 8 = 11 &rarr; <strong>a = 3</strong>.<br><br>Tujuan akhir: Cari S<sub>20</sub> (Jumlah 20 suku).<br>S<sub>20</sub> = <sup>20</sup>&frasl;<sub>2</sub> &times; [2(3) + (20-1)&times;4]<br>S<sub>20</sub> = 10 &times; [6 + 19 &times; 4]<br>S<sub>20</sub> = 10 &times; [6 + 76]<br>S<sub>20</sub> = 10 &times; 82 = <strong>820</strong>."
+            },
+            {
+                question: "Sebuah bakteri membelah diri menjadi 2 setiap 15 menit. Jika pada awal pengamatan terdapat 10 bakteri, maka jumlah bakteri setelah 2 jam adalah...",
+                options: [
+                    "A. 1.280 bakteri",
+                    "B. 2.560 bakteri",
+                    "C. 5.120 bakteri",
+                    "D. 10.240 bakteri"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Ini adalah aplikasi barisan geometri dalam sains (Pertumbuhan Populasi).<br><br>1. <strong>Waktu Total:</strong> 2 jam = 120 menit.<br>2. <strong>Berapa kali pembelahan terjadi? (n)</strong><br> &nbsp;&nbsp; n = 120 menit &divide; 15 menit = <strong>8 kali</strong> membelah.<br>3. <strong>Data Barisan:</strong> Awalnya ada 10 bakteri (Suku awal / a = 10). Membelah jadi 2 artinya rasio (r) = 2.<br><br>Karena bakteri membelah sebanyak 8 kali setelah jumlah awal, kita memakai rumus:<br>Jumlah Akhir = a &times; r<sup>n</sup> (Note: Pangkat n, bukan n-1 karena 'a' adalah jumlah sebelum pembelahan pertama dimulai).<br>Jumlah = 10 &times; 2<sup>8</sup><br>Jumlah = 10 &times; 256 = <strong>2.560 bakteri</strong>."
+            },
+            {
+                question: "Seutas tali dipotong menjadi 5 bagian sehingga panjang masing-masing bagian membentuk barisan aritmetika. Jika potongan tali terpendek adalah 10 cm dan potongan tali terpanjang adalah 90 cm, maka panjang tali semula sebelum dipotong adalah...",
+                options: [
+                    "A. 210 cm",
+                    "B. 230 cm",
+                    "C. 250 cm",
+                    "D. 270 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Menyatukan kelima tali tersebut sama artinya dengan menjumlahkan semuanya (mencari S<sub>5</sub>).<br><br>Informasi yang sangat membantu dari soal ini:<br>• Jumlah potongan (n) = 5.<br>• Potongan paling pendek (Suku awal / a) = 10 cm.<br>• Potongan paling panjang (Suku terakhir / U<sub>n</sub>) = 90 cm.<br><br>Ada rumus deret aritmetika versi cepat jika suku pertama dan suku terakhir sudah diketahui!<br><strong>S<sub>n</sub> = <sup>n</sup>&frasl;<sub>2</sub> &times; (a + U<sub>n</sub>)</strong><br>S<sub>5</sub> = <sup>5</sup>&frasl;<sub>2</sub> &times; (10 + 90)<br>S<sub>5</sub> = <sup>5</sup>&frasl;<sub>2</sub> &times; 100<br>S<sub>5</sub> = 5 &times; 50 = <strong>250 cm</strong>."
+            },
+            {
+                question: "Jumlah n suku pertama dari sebuah deret aritmetika dirumuskan dengan S<sub>n</sub> = 2n<sup>2</sup> + n. Suku ke-5 dari deret tersebut adalah...",
+                options: [
+                    "A. 19",
+                    "B. 21",
+                    "C. 45",
+                    "D. 55"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Penting:</strong> Jika kita tahu jumlah 5 suku pertama (S<sub>5</sub>) dan kita tahu jumlah 4 suku pertama (S<sub>4</sub>), maka selisihnya pastilah merupakan nilai Suku ke-5 (U<sub>5</sub>) itu sendiri!<br>Rumus: <strong>U<sub>n</sub> = S<sub>n</sub> - S<sub>n-1</sub></strong> &rarr; U<sub>5</sub> = S<sub>5</sub> - S<sub>4</sub>.<br><br>Mari kita hitung satu per satu dengan rumus S<sub>n</sub> = 2n<sup>2</sup> + n:<br>1. S<sub>5</sub> = 2(5)<sup>2</sup> + 5 = 2(25) + 5 = 50 + 5 = <strong>55</strong>.<br>2. S<sub>4</sub> = 2(4)<sup>2</sup> + 4 = 2(16) + 4 = 32 + 4 = <strong>36</strong>.<br><br>3. Hitung suku ke-5:<br>U<sub>5</sub> = 55 - 36 = <strong>19</strong>."
+            },
+            {
+                question: "Sebuah bola dijatuhkan dari ketinggian 16 meter. Setiap kali memantul, bola mencapai ketinggian 1/2 kali dari tinggi sebelumnya. Total panjang lintasan bola yang bergerak ke arah bawah saja hingga pantulan ke-4 (termasuk tinggi awal saat dijatuhkan) adalah...",
+                options: [
+                    "A. 28 meter",
+                    "B. 30 meter",
+                    "C. 31 meter",
+                    "D. 32 meter"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Hati-hati dengan kata-kata soal! Yang dihitung HANYA arah pergerakan bola saat turun/jatuh ke bawah.<br><br>Mari kita petakan tinggi bola saat turun (Barisan Geometri):<br>• Turun ke-1 (Awal dijatuhkan) = 16 meter.<br>• Turun ke-2 (Setelah memantul 1/2 kali) = 16 &times; 1/2 = 8 meter.<br>• Turun ke-3 = 8 &times; 1/2 = 4 meter.<br>• Turun ke-4 = 4 &times; 1/2 = 2 meter.<br>• Turun ke-5 (Jatuh setelah pantulan ke-4) = 2 &times; 1/2 = 1 meter.<br><br>Karena ditanya total sampai pantulan ke-4 (artinya kita menjumlahkan 5 kali gerakan turun):<br>Total = 16 + 8 + 4 + 2 + 1 = <strong>31 meter</strong>.<br><br><em>(Jika menggunakan rumus S<sub>5</sub> dari deret geometri hasilnya juga akan sama persis: 31).</em>"
+            },
+            {
+                question: "Keuntungan sebuah toko kelontong setiap bulannya bertambah secara tetap. Keuntungan pada bulan pertama adalah Rp 500.000,00 dan keuntungan pada bulan ketiga adalah Rp 600.000,00. Total keuntungan toko tersebut selama 1 tahun pertama adalah...",
+                options: [
+                    "A. Rp 8.100.000,00",
+                    "B. Rp 9.300.000,00",
+                    "C. Rp 10.500.000,00",
+                    "D. Rp 11.700.000,00"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Karena penambahannya <em>tetap</em>, ini adalah Deret Aritmetika.<br><br>1. Kita cari dulu nilai penambahan per bulannya (b):<br> &nbsp;&nbsp; Bulan 1 (a) = 500.000<br> &nbsp;&nbsp; Bulan 3 (U<sub>3</sub>) = a + 2b = 600.000<br> &nbsp;&nbsp; 500.000 + 2b = 600.000<br> &nbsp;&nbsp; 2b = 100.000 &rarr; <strong>b = 50.000</strong>.<br><br>2. Hitung total keuntungan 1 tahun (n = 12 bulan / S<sub>12</sub>):<br> &nbsp;&nbsp; S<sub>12</sub> = <sup>12</sup>&frasl;<sub>2</sub> &times; [2(500.000) + (12 - 1) &times; 50.000]<br> &nbsp;&nbsp; S<sub>12</sub> = 6 &times; [1.000.000 + 11 &times; 50.000]<br> &nbsp;&nbsp; S<sub>12</sub> = 6 &times; [1.000.000 + 550.000]<br> &nbsp;&nbsp; S<sub>12</sub> = 6 &times; 1.550.000 = <strong>Rp 9.300.000,00</strong>."
+            },
+            {
+                question: "Tiga buah bilangan membentuk barisan aritmetika. Jumlah ketiga bilangan tersebut adalah 36, sedangkan hasil kali ketiga bilangan tersebut adalah 1.536. Bilangan terbesar dari ketiga bilangan tersebut adalah...",
+                options: [
+                    "A. 14",
+                    "B. 16",
+                    "C. 18",
+                    "D. 20"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Trik Jitu Tiga Bilangan Berurutan:</strong><br>Jika ada 3 bilangan aritmetika, permisalkan bentuknya menjadi: <strong>(x - b), x, (x + b)</strong> agar mudah dihitung.<br><br>1. Dari soal \"Jumlahnya 36\":<br> &nbsp;&nbsp; (x - b) + x + (x + b) = 36<br> &nbsp;&nbsp; 3x = 36 &rarr; <strong>x = 12</strong>. (Kita langsung tahu nilai tengahnya!)<br><br>2. Jadi bilangannya: (12 - b), 12, (12 + b). Dari soal \"Hasil kalinya 1.536\":<br> &nbsp;&nbsp; (12 - b) &times; 12 &times; (12 + b) = 1.536<br> &nbsp;&nbsp; Bagi kedua ruas dengan 12:<br> &nbsp;&nbsp; (12 - b) &times; (12 + b) = 128<br> &nbsp;&nbsp; 144 - b<sup>2</sup> = 128 (Ini sifat aljabar: (a-b)(a+b) = a&sup2;-b&sup2;)<br> &nbsp;&nbsp; b<sup>2</sup> = 16 &rarr; <strong>b = 4</strong>.<br><br>3. Mari lihat ketiga bilangannya:<br> &nbsp;&nbsp; Terkecil = 12 - 4 = 8.<br> &nbsp;&nbsp; Tengah = 12.<br> &nbsp;&nbsp; Terbesar = 12 + 4 = <strong>16</strong>."
+            },
+            {
+                question: "Dua buah perusahaan menawarkan sistem kontrak kerja selama 6 bulan dengan sistem gaji yang berbeda:<br>- Perusahaan A: Gaji bulan pertama Rp 3.000.000,00 dengan kenaikan tetap Rp 200.000,00 setiap bulan berikutnya.<br>- Perusahaan B: Gaji bulan pertama Rp 2.800.000,00 dengan kenaikan tetap 10% dari gaji bulan sebelumnya.<br>Sebagai calon pekerja, evaluasilah penawaran mana yang memberikan total penghasilan paling besar selama 6 bulan!",
+                options: [
+                    "A. Perusahaan A lebih menguntungkan karena total gajinya Rp 21.000.000,00 sedangkan Perusahaan B hanya Rp 20.800.000,00.",
+                    "B. Perusahaan B lebih menguntungkan karena total gajinya mencapai sekitar Rp 21.604.000,00 sedangkan Perusahaan A hanya Rp 21.000.000,00.",
+                    "C. Kedua perusahaan memberikan total keuntungan finansial yang sama persis yaitu Rp 21.000.000,00.",
+                    "D. Perusahaan B lebih menguntungkan karena kenaikan persentase 10% selalu menghasilkan nilai yang lebih besar sejak bulan kedua."
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mari kita hitung satu per satu untuk masa 6 bulan (n=6).<br><br><strong>Perusahaan A (Aritmetika - Penambahan Rp200rb/bln):</strong><br>a = 3.000.000, b = 200.000.<br>S<sub>6</sub> = <sup>6</sup>&frasl;<sub>2</sub> &times; [2(3juta) + 5(200rb)]<br>S<sub>6</sub> = 3 &times; [6juta + 1juta] = 3 &times; 7.000.000 = <strong>Rp 21.000.000</strong>.<br><br><strong>Perusahaan B (Geometri - Kenaikan Persentase 10% / Rasio = 1,1):</strong><br>a = 2.800.000, r = 1,1.<br>S<sub>6</sub> = a &times; (r<sup>6</sup> - 1) &divide; (r - 1)<br>S<sub>6</sub> = 2.800.000 &times; (1,1<sup>6</sup> - 1) &divide; (1,1 - 1)<br>S<sub>6</sub> = 2.800.000 &times; (1,771561 - 1) &divide; 0,1<br>S<sub>6</sub> = 2.800.000 &times; 0,771561 &times; 10 = 28.000.000 &times; 0,771561 &asymp; <strong>Rp 21.603.708</strong>.<br><br>Kesimpulan: Total gaji dari Perusahaan B (Geometri) lebih besar!"
+            },
+            {
+                question: "Sebuah pabrik masker medis memproduksi 2.000 boks masker pada bulan Januari. Karena penurunan kasus pandemi, jumlah produksi dikurangi secara konsisten sehingga membentuk deret geometri dengan rasio 4/5 setiap bulannya. Manajemen memutuskan bahwa jika total produksi selama 4 bulan pertama kurang dari 6.000 boks, maka pabrik harus melakukan efisiensi biaya operasional. Evaluasilah keputusan manajemen tersebut berdasarkan data produksi yang ada!",
+                options: [
+                    "A. Pabrik harus melakukan efisiensi karena total produksi selama 4 bulan hanya mencapai 5.120 boks.",
+                    "B. Pabrik tidak perlu melakukan efisiensi karena total produksi selama 4 bulan mencapai 5.904 boks.",
+                    "C. Pabrik harus melakukan efisiensi karena total produksi selama 4 bulan hanya mencapai 5.904 boks (kurang dari 6.000 boks).",
+                    "D. Pabrik tidak perlu melakukan efisiensi karena total produksi selama 4 bulan mencapai 6.120 boks."
+                ],
+                correctAnswer: 2, // C
+                explanation: "Mari kita hitung total produksi masker selama 4 bulan pertama (Deret Geometri).<br>• Suku Awal (a) = 2.000 boks.<br>• Rasio (r) = 4/5 (Rasionya kurang dari 1, jadi rumus terbalik).<br>• Waktu (n) = 4.<br><br><strong>S<sub>n</sub> = a &times; (1 - r<sup>n</sup>) &divide; (1 - r)</strong><br>S<sub>4</sub> = 2.000 &times; [1 - (4/5)<sup>4</sup>] &divide; [1 - 4/5]<br>S<sub>4</sub> = 2.000 &times; [1 - (256/625)] &divide; [1/5]<br>S<sub>4</sub> = 2.000 &times; (369/625) &times; 5 (pembagian pecahan dibalik jadi kali)<br>S<sub>4</sub> = 10.000 &times; 369 &divide; 625<br>S<sub>4</sub> = 16 &times; 369 = <strong>5.904 boks</strong>.<br><br>Karena 5.904 kurang dari target 6.000 boks, pabrik <strong>WAJIB</strong> melakukan efisiensi."
+            },
+            {
+                question: "Diketahui sebuah deret geometri memiliki suku pertama (a) = 4 dan suku ke-4 adalah 32. Jumlah 5 suku pertama dari deret tersebut adalah...",
+                options: [
+                    "A. 120",
+                    "B. 124",
+                    "C. 128",
+                    "D. 132"
+                ],
+                correctAnswer: 1, // B
+                explanation: "1. <strong>Cari Rasio (r) terlebih dahulu:</strong><br> &nbsp;&nbsp; Rumus Geometri: U<sub>n</sub> = a &times; r<sup>n-1</sup><br> &nbsp;&nbsp; U<sub>4</sub> = 4 &times; r<sup>3</sup> = 32<br> &nbsp;&nbsp; r<sup>3</sup> = 32 &divide; 4 = 8.<br> &nbsp;&nbsp; Akar pangkat tiga dari 8 adalah 2. Jadi, <strong>r = 2</strong>.<br><br>2. <strong>Cari Jumlah 5 Suku (S<sub>5</sub>):</strong><br> &nbsp;&nbsp; S<sub>n</sub> = a &times; (r<sup>n</sup> - 1) &divide; (r - 1)<br> &nbsp;&nbsp; S<sub>5</sub> = 4 &times; (2<sup>5</sup> - 1) &divide; (2 - 1)<br> &nbsp;&nbsp; S<sub>5</sub> = 4 &times; (32 - 1) &divide; 1<br> &nbsp;&nbsp; S<sub>5</sub> = 4 &times; 31 = <strong>124</strong>."
+            },
+            {
+                question: "Seorang petani mencatat hasil panen padinya selama beberapa tahun. Pada tahun pertama, hasil panennya adalah 10 ton. Karena sistem irigasi yang membaik, hasil panen meningkat secara konisten sebesar 1,5 ton setiap tahunnya. Petani tersebut menargetkan bahwa dalam waktu 8 tahun, total seluruh hasil panennya harus mampu menutupi biaya operasional dan kebutuhan hidup keluarganya yang setara dengan nilai 120 ton padi. Evaluasilah apakah target petani tersebut dapat tercapai!",
+                options: [
+                    "A. Target tidak tercapai karena total hasil panen selama 8 tahun hanya 115 ton.",
+                    "B. Target tercapai karena total hasil panen selama 8 tahun mencapai 122 ton.",
+                    "C. Target tidak tercapai karena total hasil panen selama 8 tahun hanya 120 ton (pas-pasan dan berisiko).",
+                    "D. Target tidak tercapai karena total hasil panen selama 8 tahun hanya 106 ton."
+                ],
+                correctAnswer: 1, // B
+                explanation: "Ini adalah studi kasus Deret Aritmetika (bertambah konstan).<br>• Panen awal (a) = 10 ton<br>• Kenaikan rutin (b) = 1,5 ton<br>• Total waktu (n) = 8 tahun<br><br>Hitung total hasil panen selama 8 tahun tersebut (S<sub>8</sub>):<br>S<sub>8</sub> = <sup>8</sup>&frasl;<sub>2</sub> &times; [2(10) + (8 - 1) &times; 1,5]<br>S<sub>8</sub> = 4 &times; [20 + 7 &times; 1,5]<br>S<sub>8</sub> = 4 &times; [20 + 10,5]<br>S<sub>8</sub> = 4 &times; 30,5<br>S<sub>8</sub> = <strong>122 ton</strong>.<br><br>Total panennya 122 ton, sementara kebutuhannya 120 ton. Jadi, <strong>Target Tercapai</strong> (malah ada surplus 2 ton)."
+            },
+            {
+                question: "Dari barisan geometri 1/2, 1, 2, 4, ..., suku ke-n yang nilainya sama dengan 64 adalah suku ke...",
+                options: [
+                    "A. 7",
+                    "B. 8",
+                    "C. 9",
+                    "D. 10"
+                ],
+                correctAnswer: 1, // B
+                explanation: "1. <strong>Identifikasi Barisan:</strong><br> &nbsp;&nbsp; Suku pertama (a) = 1/2.<br> &nbsp;&nbsp; Rasio (r) = 1 &divide; (1/2) = <strong>2</strong> (Setiap angka dikali 2).<br><br>2. <strong>Gunakan Rumus U<sub>n</sub>:</strong><br> &nbsp;&nbsp; U<sub>n</sub> = a &times; r<sup>n-1</sup><br> &nbsp;&nbsp; 64 = 1/2 &times; 2<sup>n-1</sup><br> &nbsp;&nbsp; <em>Kalikan kedua sisi dengan 2 agar pecahan hilang:</em><br> &nbsp;&nbsp; 128 = 2<sup>n-1</sup><br> &nbsp;&nbsp; Ubah 128 menjadi bentuk pangkat 2 &rarr; 128 itu sama dengan 2<sup>7</sup>.<br> &nbsp;&nbsp; 2<sup>7</sup> = 2<sup>n-1</sup><br><br>3. <strong>Samakan Pangkatnya:</strong><br> &nbsp;&nbsp; 7 = n - 1<br> &nbsp;&nbsp; <strong>n = 8</strong>. Jadi, 64 adalah suku ke-8."
+            },
+            {
+                question: "Jumlah semua bilangan bulat kelipatan 3 yang terletak di antara 10 dan 100 adalah...",
+                options: [
+                    "A. 1.620",
+                    "B. 1.650",
+                    "C. 1.665",
+                    "D. 1.680"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Langkah 1: Tentukan Batas Barisan Kelipatan 3 (Beda / b = 3)</strong><br>• Angka pertama setelah 10 yang bisa dibagi 3 adalah <strong>12</strong>. Jadi, a = 12.<br>• Angka terakhir sebelum 100 yang bisa dibagi 3 adalah <strong>99</strong>. Jadi, U<sub>n</sub> = 99.<br><br><strong>Langkah 2: Cari Tahu Ada Berapa Banyak Angkanya (n)</strong><br>U<sub>n</sub> = a + (n - 1)b<br>99 = 12 + (n - 1) &times; 3<br>99 - 12 = 3(n - 1)<br>87 = 3(n - 1) &rarr; Bagi dengan 3<br>29 = n - 1 &rarr; <strong>n = 30</strong>.<br><br><strong>Langkah 3: Hitung Jumlah Totalnya (S<sub>n</sub>)</strong><br>Gunakan rumus cepat karena 'a' dan 'U<sub>n</sub>' sudah diketahui:<br>S<sub>n</sub> = <sup>n</sup>&frasl;<sub>2</sub> &times; (a + U<sub>n</sub>)<br>S<sub>30</sub> = <sup>30</sup>&frasl;<sub>2</sub> &times; (12 + 99)<br>S<sub>30</sub> = 15 &times; 111 = <strong>1.665</strong>."
+            },
+            {
+                question: "Seorang siswa mencoba menyelesaikan soal deret aritmetika berikut: \"Tentukan jumlah 15 suku pertama dari deret 5 + 9 + 13 + ...\".<br>Siswa tersebut menuliskan langkah penyelesaian sebagai berikut:<br>1) Menentukan suku pertama a = 5 dan beda b = 4.<br>2) Menentukan suku ke-15 dengan rumus U<sub>n</sub> = a + n &times; b, sehingga U<sub>15</sub> = 5 + 15 &times; 4 = 65.<br>3) Menghitung jumlah suku dengan rumus S<sub>n</sub> = <sup>n</sup>&frasl;<sub>2</sub> &times; (a + U<sub>n</sub>), sehingga S<sub>15</sub> = <sup>15</sup>&frasl;<sub>2</sub> &times; (5 + 65) = 525.<br>Evaluasilah kebenaran dari langkah pengerjaan siswa tersebut!",
+                options: [
+                    "A. Langkah siswa tersebut sudah benar sepenuhnya dan hasil akhirnya tepat 525.",
+                    "B. Langkah siswa salah pada bagian (2) karena rumus suku ke-15 seharusnya U<sub>n</sub> = a + (n-1)b, sehingga hasil akhirnya salah.",
+                    "C. Langkah siswa salah pada bagian (3) karena rumus S<sub>n</sub> seharusnya S<sub>n</sub> = n/2 * (2a + (n+1)b).",
+                    "D. Langkah siswa salah pada bagian (1) karena beda (b) dari deret tersebut seharusnya adalah 5."
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mari kita koreksi pekerjaan siswa ini layaknya seorang guru!<br><br>• <strong>Langkah 1:</strong> a=5, b=4. (Sudah benar).<br>• <strong>Langkah 2: Kesalahan Fatal Ada di Sini!</strong><br>Rumus standar barisan aritmetika adalah U<sub>n</sub> = a + <strong>(n - 1)</strong>b, bukan dikali 'n' langsung.<br>Seharusnya hitungan yang benar: U<sub>15</sub> = 5 + (15 - 1) &times; 4 = 5 + (14 &times; 4) = 5 + 56 = <strong>61</strong> (Bukan 65).<br>• <strong>Langkah 3:</strong> Rumus penjumlahannya (S<sub>n</sub>) sudah benar secara struktur, tetapi karena nilai U<sub>15</sub>-nya salah dari langkah 2, maka hasil 525 itu juga salah.<br>Hitungan yang seharusnya: S<sub>15</sub> = <sup>15</sup>&frasl;<sub>2</sub> &times; (5 + 61) = 7,5 &times; 66 = <strong>495</strong>.<br><br>Jadi, pernyataan evaluasi yang paling tepat adalah <strong>B</strong>."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-8 relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <!-- Pita warna di kiri sebagai aksen -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 opacity-80 rounded-l-2xl"></div>
+                        
+                        <!-- Header Soal (Nomor & Teks) -->
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.5rem] h-10 rounded-xl bg-blue-100 text-blue-700 font-bold mr-4 text-base shadow-sm">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-xl font-medium text-gray-800 leading-relaxed pt-1 w-full">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <!-- Opsi Jawaban -->
+                        <div class="space-y-3 ml-0 md:ml-14">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-gray-700 text-base md:text-lg select-none">
+                                        <div class="radio-circle"></div>
+                                        <span class="flex-1">${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Area Penjelasan (Disembunyikan secara default) -->
+                        <div id="explanation_${index}" class="hidden mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border fade-in text-sm md:text-base relative overflow-hidden">
+                            <!-- SVG Dekoratif di pojok kotak penjelasan -->
+                            <div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none w-24 h-24">
+                                <svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="50" cy="50" r="50"/>
+                                </svg>
+                            </div>
+                            <div class="explanation-content relative z-10"></div>
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Panggil render saat pertama kali dimuat
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Kunci semua radio input agar tidak ada kecurangan merubah jawaban setelah diperiksa
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                const explanationContent = explanationDiv.querySelector('.explanation-content');
+                
+                let isCorrect = false;
+                let statusBadge = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusBadge = `<span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Jawaban Tepat</span>`;
+                        bgClass = "bg-green-50";
+                        borderClass = "border-green-300";
+                        textClass = "text-green-900";
+                    } else {
+                        statusBadge = `<span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Jawaban Keliru</span>`;
+                        bgClass = "bg-red-50";
+                        borderClass = "border-red-300";
+                        textClass = "text-red-900";
+                        
+                        // Tandai kunci jawaban yang benar
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5"; 
+                        correctLabel.style.borderColor = "#10b981"; 
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                    }
+                } else {
+                    // Kondisi jika pengguna sengaja mengosongkan soal
+                    statusBadge = `<span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Dikosongkan</span>`;
+                    bgClass = "bg-orange-50";
+                    borderClass = "border-orange-300";
+                    textClass = "text-orange-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                }
+
+                // Injeksi penjelasan ke dalam kotak HTML
+                explanationContent.innerHTML = `
+                    <div class="font-bold mb-4 pb-3 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-6 h-6 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : (selectedOption ? `<svg class="w-6 h-6 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`
+                                              : `<svg class="w-6 h-6 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`)
+                        }
+                        ${statusBadge}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass}">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                // Tampilkan kotak penjelasan
+                explanationDiv.className = `mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border ${bgClass} ${borderClass} fade-in text-sm md:text-base relative overflow-hidden block`;
+            });
+
+            // Tampilkan Skor secara dinamis
+            scoreDisplay.innerText = Math.round(score);
+            scoreDisplay.className = "text-7xl font-black mb-8 drop-shadow-sm transition-colors duration-500 ";
+            
+            // Logika Warna Skor
+            if(score >= 80) scoreDisplay.className += "text-green-500";
+            else if(score >= 60) scoreDisplay.className += "text-blue-500";
+            else if(score >= 40) scoreDisplay.className += "text-orange-400";
+            else scoreDisplay.className += "text-red-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Auto scroll yang smooth ke arah skor akhir di bawah
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset state input form
+            quizForm.reset();
+            
+            // Karena ada perubahan inline style CSS via Javascript (highlight hijau/merah),
+            // Merender ulang innerHTML dari awal adalah cara terbaik dan terbersih untuk reset.
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Scroll kembali dengan halus ke atas agar siap mengerjakan lagi
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

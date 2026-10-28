@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        
+        /* Custom styling for checked radio buttons */
+        .radio-custom:checked + div {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .radio-custom:checked + div .dot {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        
+        /* Fallback for Base64 Images just in case */
+        img[src^="data:image"] {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 hidden sm:block">Kuis Geometri & Transformasi</h1>
+            <div class="w-20"></div> <!-- Spacer to keep title centered -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-2">Uji Pemahamanmu!</h2>
+            <p class="text-slate-600">Jawablah pertanyaan-pertanyaan di bawah ini. Kamu bisa menekan tombol "Periksa Jawaban" kapan saja di akhir halaman, meskipun belum semua soal diisi.</p>
+        </div>
+
+        <form id="quiz-form" onsubmit="event.preventDefault();">
+            <div id="quiz-container" class="space-y-6">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="mt-10 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 text-center">
+                
+                <button id="btn-submit" type="button" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:scale-105">
+                    Periksa Jawaban
+                </button>
+
+                <div id="score-container" class="hidden mt-4">
+                    <h3 class="text-xl font-medium text-slate-500 mb-2">Nilai Akhir Anda:</h3>
+                    <div class="text-6xl font-black text-indigo-700 mb-4" id="final-score">100</div>
+                    <div id="score-message" class="text-lg font-medium mb-8"></div>
+                    
+                    <button id="btn-reset" type="button" class="w-full sm:w-auto px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2 -mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12">
+        <div class="text-center px-4">
+            <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        // Array Data Soal dan Pembahasan yang Diperkaya
+        const quizData = [
+            {
+                q: "Perhatikan gambar segitiga siku-siku berikut! Jika segitiga ABC siku-siku di B, maka hubungan panjang ketiga sisi segitiga tersebut berdasarkan Teorema Pythagoras yang benar adalah...",
+                options: [
+                    "AC<sup>2</sup> = AB<sup>2</sup> + BC<sup>2</sup>", 
+                    "AB<sup>2</sup> = AC<sup>2</sup> + BC<sup>2</sup>", 
+                    "BC<sup>2</sup> = AB<sup>2</sup> + AC<sup>2</sup>", 
+                    "AC<sup>2</sup> = AB<sup>2</sup> - BC<sup>2</sup>"
+                ],
+                ans: 0,
+                exp: "<b>Jawaban Benar: AC<sup>2</sup> = AB<sup>2</sup> + BC<sup>2</sup></b><br><br><b>Pengingat Konsep:</b><br>Teorema Pythagoras menyatakan bahwa pada segitiga siku-siku, kuadrat sisi miring (sisi paling panjang/hipotenusa) sama dengan jumlah kuadrat dari dua sisi lainnya (sisi tegak dan sisi alas).<br>Jika siku-sikunya di B, maka sisi miringnya pasti <b>AC</b>. Sehingga, rumusnya adalah <b>AC<sup>2</sup> = AB<sup>2</sup> + BC<sup>2</sup></b>."
+            },
+            {
+                q: "Di antara kelompok bilangan berikut, manakah yang merupakan tripel Pythagoras?",
+                options: ["3, 4, 6", "5, 12, 13", "7, 8, 9", "8, 15, 18"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 5, 12, 13</b><br><br><b>Langkah Penyelesaian:</b><br>Tripel Pythagoras adalah tiga bilangan yang memenuhi aturan <i>a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></i> (dengan <i>c</i> sebagai angka terbesar). Mari kita uji opsi B (5, 12, 13):<br>&bull; 5<sup>2</sup> + 12<sup>2</sup> = 25 + 144 = <b>169</b>.<br>&bull; Sisi terpanjang: 13<sup>2</sup> = <b>169</b>.<br>Karena hasilnya seimbang (169 = 169), maka 5, 12, dan 13 adalah keluarga Tripel Pythagoras sejati!"
+            },
+            {
+                q: "Dalam sebuah segitiga siku-siku, sisi yang berada di depan sudut siku-siku disebut dengan...",
+                options: ["Sisi tegak", "Sisi alas", "Hipotenusa (sisi miring)", "Sisi pembagi"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Hipotenusa (sisi miring)</b><br><br><b>Pengingat Konsep:</b><br>Pada segitiga siku-siku, sisi yang posisinya persis berhadapan (berada di depan) sudut 90&deg; adalah sisi yang ukurannya <b>paling panjang</b>. Sisi ini memiliki sebutan ilmiah yaitu <b>Hipotenusa</b> atau biasa kita kenal dengan sebutan sisi miring."
+            },
+            {
+                q: "Pergeseran setiap titik pada bidang dengan jarak dan arah yang tetap disebut dengan...",
+                options: ["Refleksi", "Translasi", "Rotasi", "Dilatasi"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Translasi</b><br><br><b>Pengingat Konsep:</b><br>Mari kita ingat istilah Transformasi Geometri:<br>&bull; <b>Translasi</b> = Pergeseran (seperti menggeser meja tanpa mengubah bentuknya).<br>&bull; <b>Refleksi</b> = Pencerminan (bayangan di cermin).<br>&bull; <b>Rotasi</b> = Perputaran (seperti jarum jam).<br>&bull; <b>Dilatasi</b> = Perubahan ukuran / <i>Zoom in-out</i>."
+            },
+            {
+                q: "Jika titik A(x, y) dicerminkan terhadap sumbu Y, maka koordinat bayangan titik A' adalah...",
+                options: ["(-x, y)", "(x, -y)", "(-x, -y)", "(y, x)"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: (-x, y)</b><br><br><b>Logika Penyelesaian:</b><br>Bayangkan Sumbu Y adalah sebuah cermin yang berdiri tegak (vertikal). Jika kamu berdiri di sebelah kanan cermin (x positif), bayanganmu pasti akan ada di sebelah kiri cermin (x negatif). <br>Namun, tinggimu (y) tidak mungkin berubah, kan? Maka dari itu, hanya nilai <b>x</b>-nya saja yang berubah tanda, menjadi <b>A'(-x, y)</b>."
+            },
+            {
+                q: "Hasil rotasi suatu titik sebesar 90&deg; searah jarum jam dengan pusat O(0,0) akan memetakan titik P(x, y) ke titik P' yaitu...",
+                options: ["(-y, x)", "(y, -x)", "(-x, -y)", "(y, x)"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: (y, -x)</b><br><br><b>Pengingat Konsep Aturan Rotasi 90&deg;:</b><br>Rotasi sejauh 90&deg; <b>searah</b> jarum jam (berarti putarannya negatif / ke kanan bawah) memiliki rumus patokan: Posisinya ditukar, dan koordinat belakangnya dinegatifkan.<br>Jadi, dari <b>(x, y)</b> akan berubah bentuk menjadi <b>(y, -x)</b>."
+            },
+            {
+                q: "Transformasi geometri yang mengubah ukuran suatu bangun (memperbesar atau memperkecil) tetapi tidak mengubah bentuk bangun tersebut dinamakan...",
+                options: ["Translasi", "Refleksi", "Rotasi", "Dilatasi"],
+                ans: 3,
+                exp: "<b>Jawaban Benar: Dilatasi</b><br><br><b>Pengingat Konsep:</b><br>Seperti yang dibahas sebelumnya, satu-satunya transformasi geometri yang berurusan dengan <b>Perubahan Ukuran (Skala)</b> adalah <b>Dilatasi</b>. Ibarat kamu sedang melebarkan atau mengecilkan foto (<i>Zoom</i>) di layar <i>smartphone</i>-mu. Bentuk fotonya tidak berubah, hanya ukurannya saja."
+            },
+            {
+                q: "Rumus yang tepat untuk menghitung volume sebuah tabung dengan jari-jari alas r dan tinggi t adalah...",
+                options: [
+                    "V = &pi; &times; r &times; t", 
+                    "V = &pi; &times; r<sup>2</sup> &times; t", 
+                    "V = 1/3 &times; &pi; &times; r<sup>2</sup> &times; t", 
+                    "V = 4/3 &times; &pi; &times; r<sup>3</sup>"
+                ],
+                ans: 1,
+                exp: "<b>Jawaban Benar: V = &pi; &times; r<sup>2</sup> &times; t</b><br><br><b>Pengingat Konsep:</b><br>Konsep dasar volume bangun ruang berbentuk prisma (lurus dari bawah ke atas) adalah: <b>Volume = Luas Alas &times; Tinggi</b>.<br>Karena alas tabung berbentuk <i>Lingkaran</i>, maka luas alasnya adalah (&pi; &times; r<sup>2</sup>).<br>Jadi, rumus volume tabungnya adalah <b>V = &pi; &times; r<sup>2</sup> &times; t</b>."
+            },
+            {
+                q: "Rumus volume kerucut yang memiliki jari-jari alas r dan tinggi t adalah...",
+                options: [
+                    "V = 1/3 &times; &pi; &times; r<sup>2</sup> &times; t", 
+                    "V = &pi; &times; r<sup>2</sup> &times; t", 
+                    "V = 2/3 &times; &pi; &times; r<sup>2</sup> &times; t", 
+                    "V = 1/3 &times; &pi; &times; r &times; t"
+                ],
+                ans: 0,
+                exp: "<b>Jawaban Benar: V = 1/3 &times; &pi; &times; r<sup>2</sup> &times; t</b><br><br><b>Pengingat Konsep:</b><br>Kerucut itu memiliki ujung yang lancip. Bangun ruang apa pun yang ujungnya meruncing (seperti limas dan kerucut), volumenya <b>selalu sepertiga (1/3)</b> dari bangun ruang lurus padanannya (tabung).<br>Jadi, tambahkan angka 1/3 di depan rumus tabung: <b>V = 1/3 &times; &pi; &times; r<sup>2</sup> &times; t</b>."
+            },
+            {
+                q: "Jika sebuah tabung dan sebuah kerucut memiliki jari-jari alas dan tinggi yang sama, maka perbandingan volume kerucut terhadap volume tabung adalah...",
+                options: ["1 : 2", "1 : 3", "2 : 3", "3 : 1"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 1 : 3</b><br><br><b>Langkah Logis:</b><br>Melanjutkan penjelasan di soal sebelumnya, volume kerucut tepat sepertiga dari tabung.<br>Artinya, butuh <b>3 buah gelas berbentuk kerucut</b> penuh air untuk bisa memenuhi <b>1 buah gelas berbentuk tabung</b> (dengan catatan tinggi dan jari-jarinya sama).<br>Maka perbandingannya (Kerucut : Tabung) = <b>1 : 3</b>."
+            },
+            {
+                q: "Rumus volume bola dengan jari-jari r adalah...",
+                options: [
+                    "V = 1/3 &times; &pi; &times; r<sup>3</sup>", 
+                    "V = 2/3 &times; &pi; &times; r<sup>3</sup>", 
+                    "V = 4/3 &times; &pi; &times; r<sup>3</sup>", 
+                    "V = &pi; &times; r<sup>3</sup>"
+                ],
+                ans: 2,
+                exp: "<b>Jawaban Benar: V = 4/3 &times; &pi; &times; r<sup>3</sup></b><br><br><b>Pengingat Konsep:</b><br>Bola adalah bangun ruang istimewa yang tidak punya alas berbentuk datar. Rumus volumenya sangat khas dan sering muncul di ujian, yaitu menggunakan pengali <b>4/3</b> dan jari-jarinya dipangkatkan tiga (r<sup>3</sup>)."
+            },
+            {
+                q: "Dua buah sudut dikatakan saling berpenyiku (komplementer) jika jumlah besar kedua sudut tersebut adalah...",
+                options: ["45&deg;", "90&deg;", "180&deg;", "360&deg;"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 90&deg;</b><br><br><b>Pengingat Konsep:</b><br>Trik menghafal!<br>&bull; Sudut ber<b>PENYIKU</b> (Komplementer) -> Dari kata dasar \"Siku\", berarti jika digabungkan membentuk sudut siku-siku alias <b>90&deg;</b>.<br>&bull; Sudut ber<b>PELURUS</b> (Suplementer) -> Dari kata dasar \"Lurus\", berarti jika digabungkan membentuk garis lurus alias <b>180&deg;</b>."
+            },
+            {
+                q: "Perhatikan gambar dua garis sejajar yang dipotong oleh sebuah garis transversal berikut! Pasangan sudut yang terbentuk dan disebut sebagai sudut dalam berseberangan memiliki sifat...",
+                options: [
+                    "Jumlah kedua sudut adalah 180&deg;", 
+                    "Kedua sudut memiliki besar yang sama", 
+                    "Jumlah kedua sudut adalah 90&deg;", 
+                    "Kedua sudut saling bertolak belakang"
+                ],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Kedua sudut memiliki besar yang sama</b><br><br><b>Pengingat Konsep:</b><br>Ibaratkan dua garis sejajar itu adalah rel kereta api. Jika ada garis miring yang memotongnya, maka sudut yang posisinya <b>berseberangan secara silang (seperti huruf Z)</b>, baik itu di bagian dalam maupun bagian luar garis sejajar, besar sudutnya <b>PASTI SAMA BESAR</b> (kongruen)."
+            },
+            {
+                q: "Jumlah seluruh sudut dalam pada bangun datar segitiga adalah...",
+                options: ["90&deg;", "180&deg;", "270&deg;", "360&deg;"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 180&deg;</b><br><br><b>Fakta Unik Matematika:</b><br>Tahukah kamu? Segitiga bentuk apa pun (sama sisi, siku-siku, sembarang) jika ketiga sudut ujungnya dipotong lalu digabungkan menjadi satu titik, mereka pasti akan membentuk sebuah garis lurus yang sempurna. Oleh karena itu, jumlah sudut dalam segitiga <b>selalu bernilai 180&deg;</b>."
+            },
+            {
+                q: "Perhatikan gambar jaring-jaring kubus berikut! Manakah di antara gambar berikut yang merupakan jaring-jaring kubus yang benar?",
+                options: [
+                    "Gambar berbentuk huruf T dengan 6 persegi pas", 
+                    "Gambar berbentuk tangga dengan 5 persegi", 
+                    "Gambar berbentuk persegi panjang utuh", 
+                    "Gambar berbentuk salib dengan 7 persegi"
+                ],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Gambar berbentuk huruf T dengan 6 persegi pas</b><br><br><b>Analisis Logis:</b><br>Kubus seperti dadu memiliki tepat <b>6 buah sisi (persegi)</b>. Opsi B salah karena cuma punya 5 sisi. Opsi D salah karena punya 7 sisi (kelebihan). Opsi C tidak bisa dilipat menjadi ruang. Pola huruf \"T\" atau salib yang memanjang (4 sejajar + 1 di kiri + 1 di kanan) adalah pola jaring-jaring kubus yang paling umum dan bisa dilipat menutup sempurna."
+            },
+            {
+                q: "Jaring-jaring bangun ruang tabung terdiri atas...",
+                options: [
+                    "Dua buah lingkaran dan satu buah persegi panjang", 
+                    "Satu buah lingkaran dan satu buah selimut melengkung", 
+                    "Dua buah lingkaran dan satu buah segitiga", 
+                    "Satu buah lingkaran dan satu buah persegi panjang"
+                ],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Dua buah lingkaran dan satu buah persegi panjang</b><br><br><b>Analisis Logis:</b><br>Bayangkan kamu sedang membongkar sebuah kaleng susu tabung.<br>1. Tutup atas kaleng berbentuk <b>lingkaran</b>.<br>2. Alas bawah kaleng berbentuk <b>lingkaran</b>.<br>3. Badannya (selimutnya), jika dipotong lurus dari atas ke bawah lalu dibentangkan, akan berbentuk bidang <b>persegi panjang</b>."
+            },
+            {
+                q: "Dua buah bangun datar dikatakan kongruen jika memenuhi syarat...",
+                options: [
+                    "Sudut-sudut bersesuaian sama besar & sisi-sisi bersesuaian senilai", 
+                    "Sisi bersesuaian sama panjang & sudut bersesuaian tidak sama besar", 
+                    "Sisi-sisi bersesuaian sama panjang & sudut-sudut bersesuaian sama besar", 
+                    "Bentuknya sama tetapi ukurannya berbeda"
+                ],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Sisi-sisi bersesuaian sama panjang & sudut-sudut bersesuaian sama besar</b><br><br><b>Pengingat Konsep:</b><br>Kongruen (&#8773;) itu artinya <b>KEMBAR IDENTIK</b>. Bangunnya ibarat hasil <i>copy-paste</i> dari aslinya. Karena kembar identik, maka baik ukuran sudut mau pun panjang sisi-sisinya <b>harus 100% sama</b>. Tidak boleh ada yang lebih besar, tidak boleh ada yang lebih kecil."
+            },
+            {
+                q: "Di bawah ini yang merupakan salah satu syarat dua segitiga dinyatakan kongruen adalah...",
+                options: [
+                    "Sisi - Sisi - Sisi (Sisi yang bersesuaian sama panjang)", 
+                    "Sudut - Sudut - Sudut (Sudut yang bersesuaian sama besar)", 
+                    "Sisi - Sudut - Sisi dengan sudut yang tidak diapit", 
+                    "Sisi - Sisi - Sudut dengan sudut sembarang"
+                ],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Sisi - Sisi - Sisi (Sisi yang bersesuaian sama panjang)</b><br><br><b>Pengingat Konsep:</b><br>Ada beberapa syarat (postulat) jaminan dua segitiga pasti kongruen:<br>1. S-S-S (Ketiga sisinya sama persis panjangnya).<br>2. S-Sd-S (Dua sisi dan satu sudut di antara sisi tersebut sama).<br>3. Sd-S-Sd (Dua sudut dan satu sisi di antaranya sama).<br>Opsi \"Sudut-Sudut-Sudut\" TIDAK menjamin kongruen, karena bisa saja yang satu besar dan yang satu kecil (sebangun)."
+            },
+            {
+                q: "Dua buah bangun datar dikatakan sebangun jika...",
+                options: [
+                    "Bentuk dan ukurannya harus sama persis", 
+                    "Sudut bersesuaian sama besar & sisi bersesuaian memiliki perbandingan senilai", 
+                    "Sisi-sisi bersesuaian sama panjang saja tanpa memperhatikan sudut", 
+                    "Keliling kedua bangun tersebut harus sama"
+                ],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Sudut bersesuaian sama besar & sisi bersesuaian memiliki perbandingan senilai</b><br><br><b>Pengingat Konsep:</b><br>Sebangun (&#8764;) ibarat pas foto. Kamu mencetak pas foto ukuran 2x3 dan 4x6. Bentuknya sama (sudutnya sama-sama 90&deg;), wajahnmu tidak jadi melar, tapi <b>ukurannya berbeda</b>. Ukuran yang berbeda ini memiliki perbandingan skala/rasio yang konsisten (senilai)."
+            },
+            {
+                q: "Rumus luas trapesium dengan panjang sisi sejajar a dan b, serta tinggi t adalah...",
+                options: [
+                    "L = a &times; b &times; t", 
+                    "L = 1/2 &times; (a + b) &times; t", 
+                    "L = (a + b) &times; t", 
+                    "L = 1/2 &times; a &times; b &times; t"
+                ],
+                ans: 1,
+                exp: "<b>Jawaban Benar: L = 1/2 &times; (a + b) &times; t</b><br><br><b>Langkah Mengingat:</b><br>Rumus luas trapesium cukup panjang, tapi mudah diingat: <b>Setengah dikali (jumlah dua garis sejajar atas dan bawah) dikalikan dengan tingginya.</b>"
+            },
+            {
+                q: "Rumus keliling lingkaran dengan diameter d atau jari-jari r yang benar adalah...",
+                options: [
+                    "K = &pi; &times; r", 
+                    "K = 2 &times; &pi; &times; d", 
+                    "K = &pi; &times; d", 
+                    "K = &pi; &times; r<sup>2</sup>"
+                ],
+                ans: 2,
+                exp: "<b>Jawaban Benar: K = &pi; &times; d</b><br><br><b>Pengingat Konsep:</b><br>Keliling lingkaran punya dua versi rumus yang maknanya sama:<br>1. Jika memakai jari-jari (r): <b>K = 2 &times; &pi; &times; r</b>.<br>2. Karena diameter (d) itu dua kalinya jari-jari (2 &times; r), maka rumusnya disingkat jadi <b>K = &pi; &times; d</b>. (Opsi D salah karena itu rumus Luas, bukan keliling)."
+            },
+            {
+                q: "Sebuah persegi panjang memiliki panjang 10 cm dan lebar 6 cm. Luas persegi panjang tersebut adalah...",
+                options: ["16 cm<sup>2</sup>", "32 cm<sup>2</sup>", "60 cm<sup>2</sup>", "100 cm<sup>2</sup>"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 60 cm<sup>2</sup></b><br><br><b>Langkah Penyelesaian:</b><br>Sangat mudah! Rumus Luas Persegi Panjang = Panjang &times; Lebar.<br>Luas = 10 cm &times; 6 cm = <b>60 cm<sup>2</sup></b>.<br>(Hati-hati, jika yang ditanya Keliling, maka 10+10+6+6 = 32 cm)."
+            },
+            {
+                q: "Sebuah segitiga siku-siku memiliki panjang sisi tegak 3 cm dan sisi alas 4 cm. Panjang hipotenusa (sisi miring) segitiga tersebut adalah...",
+                options: ["5 cm", "6 cm", "7 cm", "25 cm"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: 5 cm</b><br><br><b>Langkah Penyelesaian:</b><br>Gunakan Teorema Pythagoras (c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>). Kita mencari c (sisi miring).<br>1. c<sup>2</sup> = 3<sup>2</sup> + 4<sup>2</sup><br>2. c<sup>2</sup> = 9 + 16<br>3. c<sup>2</sup> = 25<br>4. Untuk mencari c, angkanya harus diakar-kuadratkan (&radic;25).<br>Hasilnya c = <b>5 cm</b>. (Ini juga dikenal dengan Tripel Pythagoras 3-4-5)."
+            },
+            {
+                q: "Sebuah kubus memiliki panjang rusuk 5 cm. Volume kubus tersebut adalah...",
+                options: ["25 cm<sup>3</sup>", "125 cm<sup>3</sup>", "150 cm<sup>3</sup>", "250 cm<sup>3</sup>"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 125 cm<sup>3</sup></b><br><br><b>Langkah Penyelesaian:</b><br>Rumus Volume Kubus adalah <i>Sisi dipangkatkan tiga</i> (s &times; s &times; s).<br>Volume = 5 &times; 5 &times; 5.<br>&bull; 5 &times; 5 = 25<br>&bull; 25 &times; 5 = <b>125</b> cm<sup>3</sup>."
+            },
+            {
+                q: "Sudut yang memiliki besar sudut di antara 90&deg; dan 180&deg; disebut dengan...",
+                options: ["Sudut lancip", "Sudut siku-siku", "Sudut tumpul", "Sudut refleks"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Sudut tumpul</b><br><br><b>Pengingat Konsep:</b><br>&bull; <b>Lancip:</b> Antara 0&deg; - 89&deg; (seperti ujung jarum yang tajam).<br>&bull; <b>Siku-siku:</b> Tepat 90&deg;.<br>&bull; <b>Tumpul:</b> Antara 91&deg; - 179&deg; (bentuknya rebah / mengangkang lebar).<br>&bull; <b>Lurus:</b> Tepat 180&deg;."
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitBtn = document.getElementById('btn-submit');
+        const resetBtn = document.getElementById('btn-reset');
+        const form = document.getElementById('quiz-form');
+        const scoreContainer = document.getElementById('score-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessageEl = document.getElementById('score-message');
+
+        function initQuiz() {
+            quizContainer.innerHTML = '';
+            quizData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 transition-all';
+                qDiv.id = `question-box-${index}`;
+
+                let optionsHTML = '';
+                item.options.forEach((opt, optIndex) => {
+                    const letters = ['A', 'B', 'C', 'D'];
+                    optionsHTML += `
+                        <label class="relative flex items-center cursor-pointer group">
+                            <input type="radio" name="q${index}" value="${optIndex}" class="radio-custom sr-only peer" />
+                            <div class="w-full flex items-center p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-200 bg-slate-50 hover:bg-slate-100 transition-all peer-focus-visible:ring-2 ring-indigo-500">
+                                <div class="w-6 h-6 flex-shrink-0 rounded-full border-2 border-slate-300 mr-4 flex items-center justify-center bg-white transition-colors">
+                                    <div class="dot w-2 h-2 rounded-full transition-colors"></div>
+                                </div>
+                                <span class="font-semibold text-slate-500 mr-3">${letters[optIndex]}.</span>
+                                <span class="text-slate-700 font-medium">${opt}</span>
+                            </div>
+                        </label>
+                    `;
+                });
+
+                qDiv.innerHTML = `
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+                            ${index + 1}
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-800 leading-snug">${item.q}</h3>
+                    </div>
+                    <div class="space-y-3 pl-0 md:pl-12">
+                        ${optionsHTML}
+                    </div>
+                    <div id="explanation-${index}" class="hidden mt-6 pl-0 md:pl-12">
+                        <div class="p-5 rounded-xl text-sm md:text-base border-l-4"></div>
+                    </div>
+                `;
+                quizContainer.appendChild(qDiv);
+            });
+        }
+
+        submitBtn.addEventListener('click', () => {
+            let correctCount = 0;
+
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const expDiv = document.getElementById(`explanation-${index}`);
+                const expBox = expDiv.querySelector('div');
+                const qBox = document.getElementById(`question-box-${index}`);
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+
+                // Disable all inputs after submit
+                inputs.forEach(input => input.disabled = true);
+
+                let isCorrect = false;
+                if (selectedOption) {
+                    if (parseInt(selectedOption.value) === item.ans) {
+                        isCorrect = true;
+                        correctCount++;
+                    }
+                }
+
+                // Show Explanation Box with dynamic coloring
+                expDiv.classList.remove('hidden');
+                
+                if (isCorrect) {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-green-50 border-green-500 text-green-900 leading-relaxed';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-green-700 font-bold mb-3 text-lg">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Tepat Sekali!
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-green-300', 'bg-green-50/30');
+                } else {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-red-50 border-red-500 text-red-900 leading-relaxed';
+                    let headerText = selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Anda Belum Menjawab';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-red-700 font-bold mb-3 text-lg">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            ${headerText}
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-red-300', 'bg-red-50/30');
+                }
+            });
+
+            // Calculate Score (Scale to 100)
+            const finalScore = Math.round((correctCount / quizData.length) * 100);
+            finalScoreEl.textContent = finalScore;
+
+            if (finalScore === 100) {
+                scoreMessageEl.innerHTML = "Luar biasa! Kamu menguasai materi Geometri & Transformasi dengan sempurna! 🌟";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-green-600";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerHTML = "Kerja bagus! Tingkat pemahamanmu sangat tinggi. Pertahankan prestasimu! 🔥";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-indigo-600";
+            } else if (finalScore >= 60) {
+                scoreMessageEl.innerHTML = "Lumayan! Jangan lupa pelajari lagi kotak pembahasannya agar semakin paham. 💪";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-yellow-600";
+            } else {
+                scoreMessageEl.innerHTML = "Jangan menyerah! Ayo baca lagi pembahasannya perlahan-lahan dan ulangi tesnya. Buktikan kamu bisa! 🚀";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-red-500";
+            }
+
+            // UI Adjustments
+            submitBtn.classList.add('hidden');
+            scoreContainer.classList.remove('hidden');
+            
+            // Smooth scroll to score container
+            setTimeout(() => {
+                document.getElementById('score-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            
+            // Clear styles and hide explanations
+            quizData.forEach((item, index) => {
+                const expDiv = document.getElementById(`explanation-${index}`);
+                expDiv.classList.add('hidden');
+                
+                const qBox = document.getElementById(`question-box-${index}`);
+                qBox.classList.remove('border-green-300', 'bg-green-50/30', 'border-red-300', 'bg-red-50/30');
+
+                // Enable inputs again
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+                inputs.forEach(input => input.disabled = false);
+            });
+
+            // Restore original UI state
+            scoreContainer.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Smooth scroll to top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

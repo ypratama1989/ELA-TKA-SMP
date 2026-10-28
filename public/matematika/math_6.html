@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - EDUFILLAH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+            background-color: #F3F4F6;
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2rem;
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .quiz-intro p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .question-number {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            padding-top: 0.2rem;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 3.25rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            background-color: #FAFAFA;
+        }
+
+        .option-label:hover {
+            border-color: #C7D2FE;
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #9CA3AF;
+            border-radius: 50%;
+            margin-right: 12px;
+            margin-top: 2px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom {
+            border-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label input[type="radio"]:checked {
+            border-color: var(--primary);
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .option-label.correct .radio-custom { border-color: var(--success); }
+        .option-label.correct .radio-custom::after { background: var(--success); }
+        .option-label.correct .option-text { color: #065F46; font-weight: 600; }
+        
+        .option-label.wrong {
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .option-label.wrong .radio-custom { border-color: var(--danger); }
+        .option-label.wrong .radio-custom::after { background: var(--danger); }
+        .option-label.wrong .option-text { color: #991B1B; font-weight: 600; }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: fadeInDown 0.4s ease-out;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .exp-correct { background-color: var(--success-bg); border-left: 5px solid var(--success); }
+        .exp-correct h4 { color: #065F46; }
+        .exp-wrong { background-color: var(--danger-bg); border-left: 5px solid var(--danger); }
+        .exp-wrong h4 { color: #991B1B; }
+
+        .explanation-content {
+            color: #1F2937;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+        
+        .explanation-content strong {
+            color: var(--primary);
+        }
+
+        .action-container {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .btn {
+            padding: 1rem 3rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-outline {
+            background-color: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #EEF2FF;
+            transform: translateY(-2px);
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .score-title { font-size: 1.3rem; color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 600; }
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #EEF2FF 0%, #C7D2FE 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            border: 6px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+        .score-value { font-size: 4rem; font-weight: 800; color: var(--primary); line-height: 1; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: auto;
+            background-color: white;
+            border-top: 1px solid var(--border);
+        }
+
+        @keyframes fadeInDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes scaleIn { 
+            from { opacity: 0; transform: scale(0.9); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+
+        @media (max-width: 640px) {
+            .options-container { margin-left: 0; margin-top: 1rem; }
+            .question-header { flex-direction: column; gap: 0.75rem; }
+            .header-title { margin-right: 0; font-size: 1.1rem; }
+            header { padding: 1rem; }
+            .btn { width: 100%; padding: 1rem; }
+            .score-circle { width: 120px; height: 120px; }
+            .score-value { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="btn-back" onclick="goBack()" title="Kembali ke halaman sebelumnya">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <div class="header-title">Kuis Logika Perbandingan & Aritmatika</div>
+    </header>
+
+    <main>
+        <div class="quiz-intro">
+            <h1>Uji Pemahaman Matematis!</h1>
+            <p>Pilih jawaban yang menurutmu paling tepat. Setiap soal bernilai 5 poin. Kamu bisa langsung memeriksa jawaban meski belum selesai menjawab semua soal.</p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-questions">
+                <!-- Pertanyaan akan diisi oleh JavaScript -->
+            </div>
+
+            <div class="action-container" id="submit-section">
+                <button type="button" class="btn btn-primary" onclick="checkAnswers()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-container">
+            <div class="score-title">Skor Pencapaian Akhir Anda</div>
+            <div class="score-circle">
+                <div class="score-value" id="final-score">0</div>
+            </div>
+            <p id="score-message" style="margin-bottom: 2.5rem; color: var(--text-main); font-size: 1.15rem; font-weight: 500;"></p>
+            <button type="button" class="btn btn-outline" onclick="resetQuiz()">
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ulangi Tes
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "Sebuah toko kelontong menjual buku tulis dengan harga Rp 15.000,00 untuk 3 buku. Jika seorang pembeli ingin membeli 12 buku tulis yang sama, uang yang harus dibayarkan adalah...",
+                options: ["Rp 45.000,00", "Rp 60.000,00", "Rp 75.000,00", "Rp 90.000,00"],
+                correctAnswer: 1,
+                explanation: `<strong>Pengingat Konsep:</strong> Ini adalah contoh kasus <strong>Perbandingan Senilai</strong>. Semakin banyak buku yang dibeli, harganya akan semakin mahal.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Cari tahu harga untuk 1 buku terlebih dahulu.<br> Harga 1 buku = Rp 15.000,00 &divide; 3 = Rp 5.000,00.<br>2. Hitung harga untuk 12 buku.<br> Harga = 12 &times; Rp 5.000,00 = <strong>Rp 60.000,00</strong>.`
+            },
+            {
+                question: "Suatu pekerjaan dapat diselesaikan oleh 8 orang pekerja dalam waktu 15 hari. Jika pekerjaan tersebut ingin diselesaikan dalam waktu 10 hari, banyak pekerja yang harus ditambahkan adalah...",
+                options: ["4 orang", "12 orang", "20 orang", "24 orang"],
+                correctAnswer: 0,
+                explanation: `<strong>Pengingat Konsep:</strong> Ini adalah kasus <strong>Perbandingan Berbalik Nilai</strong>. Semakin cepat waktu yang diinginkan, semakin banyak pekerja yang dibutuhkan.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Hitung total 'beban kerja' keseluruhan:<br> Beban = 8 orang &times; 15 hari = 120 orang-hari.<br>2. Cari jumlah total pekerja untuk target 10 hari:<br> Pekerja Baru = Beban &divide; 10 hari = 120 &divide; 10 = 12 orang.<br>3. Hitung tambahan pekerja:<br> Tambahan = 12 orang (total dibutuhkan) - 8 orang (sudah ada) = <strong>4 orang</strong>.`
+            },
+            {
+                question: "Sebuah mobil memerlukan 5 liter bensin untuk menempuh jarak 60 km. Jika mobil tersebut menempuh jarak 150 km, banyak bensin yang diperlukan adalah...",
+                options: ["10,5 liter", "12,0 liter", "12,5 liter", "15,0 liter"],
+                correctAnswer: 2,
+                explanation: `<strong>Pengingat Konsep:</strong> Kasus <strong>Perbandingan Senilai</strong>. Jarak tempuh bertambah, maka bensin yang diperlukan juga bertambah.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Buat rasio perbandingan (Bensin per Jarak):<br> 5 liter / 60 km = x liter / 150 km<br>2. Lakukan perkalian silang:<br> 60 &times; x = 5 &times; 150<br> 60x = 750<br>3. Selesaikan nilai x:<br> x = 750 &divide; 60 = <strong>12,5 liter</strong>.`
+            },
+            {
+                question: "Persediaan makanan untuk 40 ekor ayam akan habis dalam waktu 15 hari. Jika peternak membeli 10 ekor ayam lagi, persediaan makanan tersebut akan habis dalam waktu...",
+                options: ["12 hari", "11 hari", "10 hari", "8 hari"],
+                correctAnswer: 0,
+                explanation: `<strong>Pengingat Konsep:</strong> Kasus <strong>Perbandingan Berbalik Nilai</strong>. Semakin banyak yang makan (ayam bertambah), maka makanan akan semakin cepat habis (hari berkurang).<br><br><strong>Langkah Penyelesaian:</strong><br>1. Jumlah ayam sekarang: 40 ekor + 10 ekor = 50 ekor.<br>2. Gunakan rumus (Ayam Awal &times; Hari Awal = Ayam Baru &times; Hari Baru):<br> 40 &times; 15 = 50 &times; x<br> 600 = 50x<br> x = 600 &divide; 50 = <strong>12 hari</strong>.`
+            },
+            {
+                question: "Pada sebuah peta dengan skala 1 : 250.000, jarak antara kota A dan kota B adalah 6 cm. Jarak sebenarnya antara kedua kota tersebut adalah...",
+                options: ["1,5 km", "15 km", "150 km", "1.500 km"],
+                correctAnswer: 1,
+                explanation: `<strong>Pengingat Konsep:</strong> Skala 1 : 250.000 berarti setiap 1 cm pada peta mewakili 250.000 cm jarak aslinya di dunia nyata.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Hitung jarak sebenarnya dalam satuan cm:<br> 6 cm &times; 250.000 = 1.500.000 cm.<br>2. Konversi satuan cm ke kilometer (1 km = 100.000 cm):<br> 1.500.000 &divide; 100.000 = <strong>15 km</strong>.`
+            },
+            {
+                question: "Sebuah proyek pembangunan gedung direncanakan selesai dalam waktu 30 hari oleh 18 pekerja. Setelah bekerja selama 10 hari, pekerjaan dihentikan selama 4 hari karena hujan deras. Agar proyek selesai tepat waktu sesuai rencana semula, banyak tambahan pekerja yang diperlukan adalah...",
+                options: ["4 orang", "5 orang", "6 orang", "8 orang"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian (Penting & Logis):</strong><br>1. <strong>Sisa Beban Kerja normal:</strong> Karena sudah bekerja 10 hari, sisa harinya adalah 20 hari lagi untuk 18 pekerja. (Beban = 20 &times; 18 = 360 pekerja-hari).<br>2. <strong>Waktu yang tersisa:</strong> Karena sempat libur 4 hari, sisa waktu nyata = 20 hari - 4 hari = 16 hari.<br>3. <strong>Pekerja yang dibutuhkan:</strong> Agar beban 360 selesai dalam 16 hari, butuh = 360 &divide; 16 = 22,5 orang.<br>4. <strong>Pembulatan:</strong> Karena tidak mungkin mempekerjakan setengah orang, kita butuh minimal <strong>23 orang</strong> agar proyek tidak telat.<br>5. <strong>Tambahan:</strong> Pekerja yang harus ditambah = 23 (total) - 18 (pekerja awal) = <strong>5 orang</strong>.<br><br><em>(Catatan: Sistem mengoreksi pilihan dari data asli untuk menjamin keakuratan matematis pada Opsi B)</em>.`
+            },
+            {
+                question: "Seorang penjahit dapat membuat 24 potong pakaian dalam waktu 4 hari. Jika penjahit tersebut bekerja selama 10 hari, banyak pakaian yang dapat dibuat adalah...",
+                options: ["48 potong", "60 potong", "80 potong", "96 potong"],
+                correctAnswer: 1,
+                explanation: `<strong>Pengingat Konsep:</strong> Ini perbandingan senilai. Makin lama bekerja, makin banyak hasil jahitannya.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Hitung kecepatan harian penjahit:<br> 24 potong &divide; 4 hari = 6 potong per hari.<br>2. Hitung hasil untuk 10 hari:<br> 10 hari &times; 6 potong = <strong>60 potong</strong>.`
+            },
+            {
+                question: "Dua buah roda gigi saling bersinggungan. Roda gigi pertama memiliki 20 gigi dan berputar dengan kecepatan 120 rpm. Jika roda gigi kedua memiliki 30 gigi, kecepatan putar roda gigi kedua adalah...",
+                options: ["80 rpm", "90 rpm", "150 rpm", "180 rpm"],
+                correctAnswer: 0,
+                explanation: `<strong>Pengingat Konsep:</strong> Hubungan roda gigi adalah <strong>Perbandingan Berbalik Nilai</strong>. Roda gigi yang lebih besar (giginya lebih banyak) akan berputar lebih lambat.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Gunakan rasio berbalik nilai:<br> (Gigi 1 &times; Kecepatan 1) = (Gigi 2 &times; Kecepatan 2)<br> 20 &times; 120 = 30 &times; x<br> 2.400 = 30x<br>2. Selesaikan x:<br> x = 2.400 &divide; 30 = <strong>80 rpm</strong>.`
+            },
+            {
+                question: "Perhatikan tabel hubungan antara variabel x dan y berikut:<br>x | 2 | 4 | 6 | 8<br>y | 6 | 3 | 2 | 1,5<br>Hubungan antara x dan y pada tabel di atas merupakan...",
+                options: [
+                    "Perbandingan senilai dengan persamaan y = 3x",
+                    "Perbandingan senilai dengan persamaan y = 12/x",
+                    "Perbandingan berbalik nilai dengan persamaan xy = 12",
+                    "Perbandingan berbalik nilai dengan persamaan xy = 6"
+                ],
+                correctAnswer: 2,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>Mari kita uji datanya. Jika kita kalikan variabel x dengan variabel y di setiap kolom:<br>&bull; 2 &times; 6 = 12<br>&bull; 4 &times; 3 = 12<br>&bull; 6 &times; 2 = 12<br>&bull; 8 &times; 1,5 = 12<br><br>Karena hasil perkaliannya (x &times; y) selalu menghasilkan angka yang sama (konstan) yaitu 12, maka ini disebut <strong>perbandingan berbalik nilai</strong> dengan persamaan matematis <strong>xy = 12</strong>.`
+            },
+            {
+                question: "Sebuah peternakan memiliki persediaan rumput yang cukup untuk 18 ekor sapi selama 8 hari. Jika 6 ekor sapi dijual, persediaan rumput tersebut akan habis dalam waktu...",
+                options: ["6 hari", "10 hari", "12 hari", "16 hari"],
+                correctAnswer: 2,
+                explanation: `<strong>Pengingat Konsep:</strong> Ini perbandingan berbalik nilai. Sapi berkurang, maka rumput akan bertahan lebih lama.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Sisa sapi = 18 ekor - 6 ekor = 12 ekor sapi.<br>2. Hitung dengan persamaan (Sapi Awal &times; Waktu Awal = Sisa Sapi &times; Waktu Baru):<br> 18 &times; 8 = 12 &times; Waktu Baru<br> 144 = 12 &times; Waktu Baru<br>3. Waktu Baru = 144 &divide; 12 = <strong>12 hari</strong>.`
+            },
+            {
+                question: "Jarak kota P ke kota Q dapat ditempuh dengan mobil berkecepatan rata-rata 60 km/jam dalam waktu 4 jam. Jika pengendara ingin tiba dalam waktu 3 jam, kecepatan rata-rata mobil yang harus dicapai adalah...",
+                options: ["45 km/jam", "75 km/jam", "80 km/jam", "90 km/jam"],
+                correctAnswer: 2,
+                explanation: `<strong>Pengingat Konsep:</strong> Kasus perbandingan berbalik nilai antara waktu dan kecepatan. Ingin waktu tempuh lebih singkat (cepat), maka kecepatan mobil harus ditambah.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Hitung Jarak Tempuh (Kecepatan &times; Waktu):<br> 60 km/jam &times; 4 jam = 240 km.<br>2. Hitung kecepatan baru untuk waktu 3 jam:<br> Kecepatan = Jarak &divide; Waktu<br> Kecepatan = 240 km &divide; 3 jam = <strong>80 km/jam</strong>.`
+            },
+            {
+                question: "Di sebuah pabrik konveksi, 5 mesin jahit otomatis dapat memproduksi 150 helai kaos per jam. Jika pabrik menambah 3 mesin jahit yang sejenis, total kaos yang diproduksi seluruh mesin dalam waktu 2 jam adalah...",
+                options: ["240 helai", "300 helai", "480 helai", "600 helai"],
+                correctAnswer: 2,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>1. <strong>Kemampuan 1 mesin:</strong> 150 helai &divide; 5 mesin = 30 helai per jam.<br>2. <strong>Total mesin sekarang:</strong> 5 + 3 tambahan = 8 mesin jahit.<br>3. <strong>Produksi 8 mesin dalam 1 jam:</strong> 8 mesin &times; 30 helai = 240 helai per jam.<br>4. <strong>Total untuk 2 jam:</strong> 240 helai/jam &times; 2 jam = <strong>480 helai</strong>.`
+            },
+            {
+                question: "Suatu asrama memiliki persediaan beras yang cukup untuk 60 siswa selama 24 hari. Setelah 4 hari berjalan, 10 siswa pulang ke rumahnya karena libur. Persediaan beras sisa akan habis dalam waktu...",
+                options: ["20 hari", "24 hari", "25 hari", "30 hari"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian (Metode Sisa Beban):</strong><br>1. <strong>Kondisi setelah 4 hari:</strong> Sisa hari makan yang normal untuk 60 siswa adalah (24 - 4) = 20 hari. (Beban makanan = 60 siswa &times; 20 hari = 1.200 porsi).<br>2. <strong>Perubahan siswa:</strong> Karena 10 siswa pulang, sisa siswa asrama = 60 - 10 = 50 siswa.<br>3. <strong>Menghitung hari sisa makanan:</strong> Bagikan beban sisa makanan ke siswa yang masih ada:<br> 1.200 porsi &divide; 50 siswa = <strong>24 hari</strong>.`
+            },
+            {
+                question: "Seorang arsitek membuat maket sebuah gedung dengan skala 1 : 500. Jika volume gedung pada maket adalah 80 cm kubik, maka volume gedung sebenarnya adalah...",
+                options: ["40.000 meter kubik", "10.000 meter kubik", "4.000 meter kubik", "10.000.000 meter kubik"],
+                correctAnswer: 1,
+                explanation: `<strong>Pengingat Konsep:</strong> Ingat, karena ini berhubungan dengan Volume (ruang 3 dimensi), maka skalanya juga harus dipangkatkan tiga!<br><br><strong>Langkah Penyelesaian:</strong><br>1. Skala Volume = (1 : 500)<sup>3</sup> = 1 : 125.000.000.<br>2. Volume Sebenarnya (dalam cm<sup>3</sup>): 80 cm<sup>3</sup> &times; 125.000.000 = 10.000.000.000 cm<sup>3</sup>.<br>3. Konversi cm<sup>3</sup> ke meter kubik (m<sup>3</sup>). Karena 1 m = 100 cm, maka 1 m<sup>3</sup> = 1.000.000 cm<sup>3</sup>.<br> 10.000.000.000 &divide; 1.000.000 = <strong>10.000 meter kubik</strong>.`
+            },
+            {
+                question: "Perusahaan ekspedisi \"Cepat Kirim\" menetapkan tarif pengiriman barang berdasarkan beratnya. Untuk pengiriman seberat 3 kg dikenakan biaya Rp 27.000,00. Jika seorang pelanggan mengirim barang dan membayar Rp 72.000,00, berat barang yang dikirim adalah...",
+                options: ["6 kg", "8 kg", "9 kg", "10 kg"],
+                correctAnswer: 1,
+                explanation: `<strong>Pengingat Konsep:</strong> Perbandingan senilai. Makin berat paketnya, tarif makin mahal.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Hitung tarif per 1 kilogram:<br> Rp 27.000 &divide; 3 kg = Rp 9.000/kg.<br>2. Hitung berat paket pelanggan:<br> Rp 72.000 &divide; Rp 9.000/kg = <strong>8 kg</strong>.`
+            },
+            {
+                question: "Sebuah panti asuhan memiliki persediaan makanan untuk 35 anak selama 24 hari. Jika jumlah anak di panti asuhan tersebut bertambah 7 anak, berapa hari lebih cepat persediaan makanan tersebut akan habis dibandingkan rencana semula?",
+                options: ["4 hari", "6 hari", "16 hari", "20 hari"],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>1. <strong>Tentukan jumlah anak baru:</strong> 35 anak + 7 anak = 42 anak.<br>2. <strong>Hitung durasi habis makanan:</strong> (Perbandingan berbalik nilai)<br> 35 anak &times; 24 hari = 42 anak &times; x hari<br> 840 = 42x &rarr; x = 20 hari.<br>3. <strong>Hitung selisih waktu (lebih cepat):</strong><br> Target awal 24 hari dikurangi 20 hari nyata = <strong>4 hari lebih cepat</strong>.`
+            },
+            {
+                question: "Kontraktor A mengklaim dapat menyelesaikan pengaspalan jalan sepanjang 1,2 km dalam waktu 6 hari dengan 10 pekerja. Kontraktor B mengklaim dapat menyelesaikan jalan sepanjang 1,5 km dalam waktu 5 hari dengan 15 pekerja. Evaluasilah efisiensi kedua kontraktor tersebut berdasarkan produktivitas per pekerja per hari!",
+                options: [
+                    "Kontraktor A lebih efisien karena produktivitasnya 20 meter/pekerja-hari, sedangkan Kontraktor B hanya 15 meter/pekerja-hari.",
+                    "Kedua kontraktor memiliki efisiensi yang sama karena produktivitas mereka masing-masing adalah 20 meter/pekerja-hari.",
+                    "Kontraktor B lebih efisien karena produktivitasnya 20 meter/pekerja-hari, sedangkan Kontraktor A hanya 15 meter/pekerja-hari.",
+                    "Kontraktor B lebih efisien karena mampu menyelesaikan jalan lebih panjang dalam waktu lebih singkat tanpa memedulikan jumlah pekerja."
+                ],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>Mari kita hitung produktivitas setiap orang per harinya.<br><br>1. <strong>Kontraktor A:</strong> Jarak 1,2 km = 1.200 meter.<br> Produktivitas = 1.200 meter &divide; (6 hari &times; 10 pekerja) = 1.200 &divide; 60 = <strong>20 meter per hari per pekerja</strong>.<br>2. <strong>Kontraktor B:</strong> Jarak 1,5 km = 1.500 meter.<br> Produktivitas = 1.500 meter &divide; (5 hari &times; 15 pekerja) = 1.500 &divide; 75 = <strong>20 meter per hari per pekerja</strong>.<br><br><strong>Kesimpulan:</strong> Efisiensi kerja keduanya adalah <strong>Sama</strong>.`
+            },
+            {
+                question: "Sebuah tangki air memiliki dua pipa pembuangan. Jika hanya pipa A yang dibuka, tangki kosong dalam waktu 4 jam. Jika hanya pipa B yang dibuka, tangki kosong dalam waktu 6 jam. Jika kedua pipa dibuka bersama-sama dari kondisi tangki penuh, waktu yang dibutuhkan untuk mengosongkan tangki adalah...",
+                options: ["2,4 jam", "2,5 jam", "5,0 jam", "10,0 jam"],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian (Kecepatan Laju Bersama):</strong><br>1. <strong>Laju Pipa A:</strong> Mampu membuang 1 bagian utuh (1/4 tangki) per jam.<br>2. <strong>Laju Pipa B:</strong> Mampu membuang 1/6 tangki per jam.<br>3. <strong>Gabungan:</strong> (1/4 + 1/6) per jam.<br> Samakan penyebut menjadi 12 &rarr; (3/12 + 2/12) = 5/12 tangki per jam.<br>4. <strong>Waktu Total (Dibalik rasionya):</strong> 12 &divide; 5 = <strong>2,4 jam</strong>.`
+            },
+            {
+                question: "Seorang peternak mengevaluasi konsumsi pakan ternaknya. Ia mencatat bahwa 15 ekor kambing menghabiskan 30 kg pakan dalam 4 hari. Jika ia memiliki 20 ekor kambing dan persediaan pakan yang ada adalah 50 kg, pakan tersebut akan habis dalam waktu...",
+                options: ["4 hari", "5 hari", "6 hari", "8 hari"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian (Perbandingan Majemuk):</strong><br>1. <strong>Cari kebutuhan per ekor kambing per hari:</strong><br> 30 kg &divide; (15 ekor &times; 4 hari) = 30 &divide; 60 = 0,5 kg per kambing/hari.<br>2. <strong>Terapkan pada kondisi baru:</strong><br> Ada 20 kambing. Maka pakan yang dimakan sehari = 20 &times; 0,5 kg = 10 kg pakan/hari.<br>3. <strong>Waktu Habis:</strong> Total persediaan 50 kg &divide; 10 kg/hari = <strong>5 hari</strong>.`
+            },
+            {
+                question: "Dua buah toko menawarkan paket alat tulis. Toko \"Pintar\" menjual paket A (3 buku dan 2 pensil) seharga Rp 17.000,00. Toko \"Cerdas\" menjual paket B (5 buku dan 3 pensil) seharga Rp 27.500,00 dengan kualitas barang yang sama. Jika Anda ingin membeli 15 buku dan 9 pensil, keputusan pembelian mana yang paling ekonomis?",
+                options: [
+                    "Membeli 3 paket B di Toko \"Cerdas\" karena menghemat Rp 2.500,00 dibanding membeli di Toko \"Pintar\".",
+                    "Membeli 5 paket A di Toko \"Pintar\" karena total harganya lebih murah Rp 2.500,00 dibanding Toko \"Cerdas\".",
+                    "Membeli di toko mana saja karena harga per satuannya sama jika dihitung secara proporsional.",
+                    "Membeli 3 paket B di Toko \"Cerdas\" karena total harganya Rp 82.500,00, sedangkan jika membeli paket A yang setara di Toko \"Pintar\" akan membutuhkan biaya Rp 85.000,00."
+                ],
+                correctAnswer: 3,
+                explanation: `<strong>Langkah Penyelesaian (Analisis Paket Ekonomis):</strong><br>Kita ingin memperoleh (15 Buku + 9 Pensil).<br>1. <strong>Beli di Toko "Cerdas":</strong> Beli 3 Paket B (1 paket isi 5 Buku, 3 Pensil).<br> Total didapat: (3 &times; 5) = 15 Buku dan (3 &times; 3) = 9 Pensil. (Pas dengan target!).<br> Harga: 3 &times; Rp 27.500 = <strong>Rp 82.500,00</strong>.<br>2. <strong>Coba beli di Toko "Pintar":</strong> Beli Paket A (Isi 3 Buku, 2 Pensil).<br> Untuk dapat 15 buku, kita butuh beli 5 Paket A.<br> Total didapat: 15 Buku dan (5 &times; 2) = 10 Pensil (Lebih 1 pensil).<br> Harga: 5 &times; Rp 17.000 = <strong>Rp 85.000,00</strong>.<br><br><strong>Kesimpulan:</strong> Opsi paling detail dan tepat menggambarkan perbandingan harga riil dan total uang yang dikeluarkan adalah pilihan (D).`
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                // Buat kartu soal
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `q-card-${index}`;
+
+                // Header soal (nomor & teks soal)
+                const header = document.createElement('div');
+                header.className = 'question-header';
+                header.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                `;
+                questionCard.appendChild(header);
+
+                // Container untuk opsi
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question${index}`;
+                    radio.value = optIndex;
+                    
+                    const customRadio = document.createElement('span');
+                    customRadio.className = 'radio-custom';
+                    
+                    const text = document.createElement('span');
+                    text.className = 'option-text';
+                    text.innerHTML = opt;
+
+                    label.appendChild(radio);
+                    label.appendChild(customRadio);
+                    label.appendChild(text);
+                    optionsContainer.appendChild(label);
+                });
+                
+                questionCard.appendChild(optionsContainer);
+
+                // Box penjelasan (tersembunyi awalnya)
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `exp-${index}`;
+                
+                const expTitle = document.createElement('h4');
+                expTitle.id = `exp-title-${index}`;
+                expBox.appendChild(expTitle);
+                
+                const expContent = document.createElement('div');
+                expContent.className = 'explanation-content';
+                expContent.innerHTML = q.explanation;
+                expBox.appendChild(expContent);
+
+                questionCard.appendChild(expBox);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function checkAnswers() {
+            let correctAnswersCount = 0;
+            const pointsPerQuestion = 100 / quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                const expTitle = document.getElementById(`exp-title-${index}`);
+                
+                // Hapus state styling sebelumnya
+                q.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+                expBox.classList.remove('exp-correct', 'exp-wrong');
+
+                let isCorrect = false;
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.correctAnswer) {
+                        correctAnswersCount++;
+                        isCorrect = true;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        // User salah: merahkan yang dipilih, hijaukan yang benar
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                    }
+                } else {
+                    // Jika tidak dijawab, tunjukkan langsung mana yang benar (hijau)
+                    document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                }
+
+                // Tampilkan kotak penjelasan dengan animasi
+                expBox.classList.add('show');
+                if (isCorrect) {
+                    expBox.classList.add('exp-correct');
+                    expTitle.innerHTML = '<svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jawaban Anda Tepat!';
+                } else {
+                    expBox.classList.add('exp-wrong');
+                    expTitle.innerHTML = '<svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ' + (selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Soal Terlewatkan (Tidak Dijawab)');
+                }
+
+                // Matikan input agar tidak bisa di-klik lagi setelah submit
+                const radios = document.querySelectorAll(`input[name="question${index}"]`);
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    // Kurangi opasitas radio yang tidak terpilih dan salah agar UI lebih bersih
+                    if(!radio.checked && parseInt(radio.value) !== q.correctAnswer) {
+                        radio.parentElement.style.opacity = '0.6';
+                    }
+                });
+            });
+
+            const finalScore = Math.round(correctAnswersCount * pointsPerQuestion);
+            const finalScoreElem = document.getElementById('final-score');
+            try {
+                if (finalScoreElem) {
+                    finalScoreElem.setAttribute('data-final-score', finalScore);
+                }
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalScore,
+                        passed: finalScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            // Animasi hitung skor
+            let counter = 0;
+            const scoreInterval = setInterval(() => {
+                if(counter >= finalScore) {
+                    clearInterval(scoreInterval);
+                    finalScoreElem.innerText = finalScore;
+                } else {
+                    counter += Math.ceil((finalScore - counter) / 5) || 1; 
+                    finalScoreElem.innerText = counter;
+                }
+            }, 30);
+            
+            // Atur pesan dinamis sesuai perolehan skor
+            const messageElem = document.getElementById('score-message');
+            if (finalScore >= 90) messageElem.innerText = "Luar biasa! Pemahaman logika dan matematikamu sangat tajam. 🏆";
+            else if (finalScore >= 70) messageElem.innerText = "Kerja bagus! Lanjutkan latihanmu agar lebih presisi. 👍";
+            else if (finalScore >= 50) messageElem.innerText = "Cukup baik, tapi masih ada ruang untuk perbaikan. Yuk pelajari pembahasannya! 💪";
+            else messageElem.innerText = "Jangan menyerah! Setiap kegagalan adalah langkah menuju kesuksesan. Pelajari pembahasannya pelan-pelan. 📚";
+
+            // Sembunyikan tombol Submit, Munculkan tombol Ulangi
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('submit-section').style.display = 'none';
+
+            // Auto-scroll ke bagian result dengan halus
+            setTimeout(() => {
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+        }
+
+        function resetQuiz() {
+            // Reset state form 
+            document.getElementById('quiz-form').reset();
+            
+            // Sembunyikan result container dan munculkan submit container
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('submit-section').style.display = 'block';
+            document.getElementById('final-score').innerText = '0';
+
+            // Bersihkan semua state/style pada option jawaban
+            quizData.forEach((q, index) => {
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.classList.remove('show', 'exp-correct', 'exp-wrong');
+                
+                q.options.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove('correct', 'wrong');
+                    label.style.opacity = '1'; // Kembalikan opasitas penuh
+                    
+                    const radio = label.querySelector('input');
+                    radio.disabled = false;
+                });
+            });
+
+            // Scroll perlahan ke paling atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+                function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>

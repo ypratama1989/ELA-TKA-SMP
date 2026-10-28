@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Conditional Sentences - EDUFILLAH</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc; /* Lighter modern slate */
+        }
+        
+        /* Custom Radio Button Styling */
+        .custom-radio {
+            accent-color: #0284c7;
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        /* Highlight checked option */
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #0369a1; 
+        }
+        
+        .option-label:hover {
+            background-color: #f0f9ff;
+        }
+
+        /* Animation for explanations and score */
+        .explanation {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+        
+        .score-anim {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive image styling for base64 if needed */
+        img[src^="data:image"] {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* Context box styling */
+        .context-box {
+            background-color: #e0f2fe; 
+            border-left: 4px solid #0284c7; 
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-slate-600 hover:text-sky-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-lg sm:text-xl font-bold text-sky-700 hidden sm:block">Latihan Soal Conditional Sentences</h1>
+            <div class="w-20 sm:hidden"></div> <!-- Balancer for mobile view -->
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Uji Penguasaan If Clauses</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Kerjakan 20 soal grammar di bawah ini. Fokus pada rumus Type 0, Type 1, Type 2, dan bentuk Imperative. Semangat belajar!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <!-- Soal 1 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">1. If you ... water to 100 degrees Celsius, it boils.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio">
+                            <span class="ml-3">A. heat</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio">
+                            <span class="ml-3">B. heated</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio">
+                            <span class="ml-3">C. heats</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio">
+                            <span class="ml-3">D. heating</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (heat)</strong><br><br>
+                        <strong>Mari kita ingat rumusnya!</strong><br>
+                        Kalimat ini membicarakan fakta ilmiah atau hukum alam (jika air dipanaskan 100&deg;C, pasti mendidih). Untuk fakta mutlak, kita menggunakan <strong>Zero Conditional (Type 0)</strong>.<br>
+                        Rumusnya: <strong>If + Simple Present, Simple Present</strong>.<br>
+                        Karena subjeknya adalah <em>"you"</em>, maka kata kerjanya tetap bentuk dasar (Verb 1) tanpa tambahan -s/-es. Jadi jawabannya adalah <strong>heat</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">2. We will miss the school bus if we ... wake up early.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio">
+                            <span class="ml-3">A. did not</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio">
+                            <span class="ml-3">B. do not</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio">
+                            <span class="ml-3">C. will not</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio">
+                            <span class="ml-3">D. are not</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (do not)</strong><br><br>
+                        <strong>Tebak Tipenya:</strong><br>
+                        Ada kata <em>"will miss"</em> (Future Tense). Berarti ini adalah <strong>Conditional Type 1</strong> (menyatakan kemungkinan di masa depan).<br>
+                        Rumus Type 1: <strong>Future Tense (will + V1) + If + Simple Present</strong>.<br>
+                        Kita butuh Simple Present bentuk negatif untuk subjek <em>"we"</em>. Pasangan yang tepat untuk membuat kalimat negatif Simple Present adalah <strong>do not (don't)</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">3. If my father has free time tonight, he ... me to the bookstore.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio">
+                            <span class="ml-3">A. would take</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio">
+                            <span class="ml-3">B. took</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio">
+                            <span class="ml-3">C. will take</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio">
+                            <span class="ml-3">D. takes</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (will take)</strong><br><br>
+                        <strong>Bedah Rumusnya:</strong><br>
+                        Lihat bagian <em>If-clause</em> nya: "If my father <em>has</em>..." (menggunakan Simple Present). Kejadiannya juga ditandai dengan "tonight" (nanti malam), yang berarti kemungkinan masih bisa terjadi.<br>
+                        Ini adalah <strong>Conditional Type 1</strong>. Pasangan dari Simple Present di Type 1 adalah <strong>Future Tense (will + Verb 1)</strong>. Jadi jawabannya adalah <em>will take</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 4 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">4. "If you want to pass the exam, study hard."<br>What does this sentence express?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio">
+                            <span class="ml-3">A. A general truth</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio">
+                            <span class="ml-3">B. A suggestion/imperative</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio">
+                            <span class="ml-3">C. An impossible dream</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio">
+                            <span class="ml-3">D. A past regret</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (A suggestion/imperative)</strong><br><br>
+                        <strong>Perhatikan struktur kalimatnya:</strong><br>
+                        Kalimat ini tidak memakai kata "will". Setelah tanda koma, kalimat langsung diawali dengan kata kerja <em>"study hard"</em> (belajarlah dengan keras).<br>
+                        Pola <strong>If + Simple Present, Imperative (Kata Kerja Perintah)</strong> berfungsi untuk memberikan saran kuat, instruksi, atau perintah kepada seseorang.
+                    </div>
+                </div>
+
+                <!-- Soal 5 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">5. If I ... a lot of money, I would buy a new laptop for my online classes. But in reality, I don't have enough money.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio">
+                            <span class="ml-3">A. have</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio">
+                            <span class="ml-3">B. had</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio">
+                            <span class="ml-3">C. will have</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio">
+                            <span class="ml-3">D. having</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (had)</strong><br><br>
+                        <strong>Selamat datang di dunia khayalan (Type 2)!</strong><br>
+                        Keterangan <em>"But in reality, I don't have enough money"</em> menunjukkan bahwa ini adalah angan-angan yang <strong>tidak nyata di masa sekarang</strong> (faktanya dia bokek).<br>
+                        Untuk berkhayal di masa sekarang, kita pakai <strong>Conditional Type 2</strong>. Rumusnya: <strong>If + Simple Past (V2), S + would + V1</strong>.<br>
+                        Bentuk lampau (Verb 2) dari kata <em>"have"</em> adalah <strong>had</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 6 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">6. If you feel dizzy, ... some medicine and take a rest.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio">
+                            <span class="ml-3">A. taking</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio">
+                            <span class="ml-3">B. took</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio">
+                            <span class="ml-3">C. take</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio">
+                            <span class="ml-3">D. will take</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (take)</strong><br><br>
+                        <strong>Perhatikan baik-baik ciri kalimatnya:</strong><br>
+                        Setelah tanda koma, tidak ada subjek (I, You, They, dll). Ini menandakan bahwa klausa utamanya adalah sebuah <strong>Kalimat Perintah (Imperative)</strong>.<br>
+                        Untuk membuat kalimat perintah dalam bahasa Inggris, kita harus langsung menggunakan <strong>Kata Kerja Dasar (Verb 1)</strong> tanpa embel-embel apapun. Jadi, jawabannya adalah <em>take</em> (minumlah obat).
+                    </div>
+                </div>
+
+                <!-- Soal 7 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <div class="context-box">
+                        Roni: "I am so thirsty."<br>
+                        Sita: "If you are thirsty, ... some water in the kitchen."
+                    </div>
+                    <p class="font-semibold text-lg mb-4">7. Complete the dialogue above!</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio">
+                            <span class="ml-3">A. drink</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio">
+                            <span class="ml-3">B. drank</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio">
+                            <span class="ml-3">C. will drink</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio">
+                            <span class="ml-3">D. would drink</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (drink)</strong><br><br>
+                        <strong>Sama seperti soal sebelumnya!</strong><br>
+                        Sita memberikan solusi atau perintah/saran secara langsung (Imperative) kepada Roni yang sedang haus.<br>
+                        Pola untuk memberi saran/perintah langsung adalah memulai kalimat dengan <strong>Verb 1</strong> (kata kerja dasar). Maka dari itu, jawaban yang paling pas adalah <em>"drink"</em> (minumlah).
+                    </div>
+                </div>
+
+                <!-- Soal 8 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <div class="context-box">
+                        Look at the situation: <em>Rendra does not have a camera, so he cannot take photos of the beautiful scenery.</em>
+                    </div>
+                    <p class="font-semibold text-lg mb-4">8. Which conditional sentence matches the situation?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio">
+                            <span class="ml-3">A. If Rendra has a camera, he will take photos of the beautiful scenery.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio">
+                            <span class="ml-3">B. If Rendra had a camera, he would take photos of the beautiful scenery.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio">
+                            <span class="ml-3">C. If Rendra doesn't have a camera, he won't take photos of the beautiful scenery.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio">
+                            <span class="ml-3">D. If Rendra had a camera, he wouldn't take photos of the beautiful scenery.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Trik Mengerjakan Soal Fakta vs Pengandaian:</strong><br>
+                        Fakta saat ini: Rendra <strong>tidak punya</strong> kamera (negatif) &rarr; dia <strong>tidak bisa</strong> memotret (negatif).<br>
+                        Pengandaiannya harus berlawanan dengan fakta! "Seandainya Rendra <em>punya</em> kamera (positif), dia <em>akan</em> memotret (positif)."<br>
+                        Karena khayalan di masa sekarang, kita pakai <strong>Type 2</strong> (If + V2, would + V1). Maka kalimat yang benar adalah opsi B: <em>If Rendra <strong>had</strong> a camera, he <strong>would take</strong>...</em>
+                    </div>
+                </div>
+
+                <!-- Soal 9 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">9. If she ... the map, she will not get lost in the city.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio">
+                            <span class="ml-3">A. read</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio">
+                            <span class="ml-3">B. reads</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio">
+                            <span class="ml-3">C. reading</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio">
+                            <span class="ml-3">D. will read</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (reads)</strong><br><br>
+                        <strong>Cek Pasangannya!</strong><br>
+                        Klausa kedua menggunakan <em>"will not get lost"</em> (Future Tense). Berarti ini adalah <strong>Conditional Type 1</strong>.<br>
+                        Pasangan *will* di Type 1 adalah <strong>Simple Present</strong> pada bagian *If-clause*.<br>
+                        Hati-hati! Subjek kalimatnya adalah <strong>"she"</strong> (dia perempuan tunggal). Dalam Simple Present, subjek <em>He, She, It</em> wajib diikuti kata kerja yang ditambah huruf <strong>-s/-es</strong>. Maka "read" menjadi <strong>reads</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 10 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">10. If I ... you, I would apologize to the teacher for being late.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio">
+                            <span class="ml-3">A. am</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio">
+                            <span class="ml-3">B. was</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio">
+                            <span class="ml-3">C. were</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio">
+                            <span class="ml-3">D. be</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (were)</strong><br><br>
+                        <strong>Ini Aturan Spesial Type 2!</strong><br>
+                        "Jika aku menjadi dirimu..." Ini adalah khayalan murni tingkat tinggi (karena mustahil aku berubah wujud menjadi dirimu). Ini termasuk <strong>Type 2</strong> (ditandai dengan kata <em>would apologize</em>).<br>
+                        Dalam grammar bahasa Inggris baku, khusus untuk Conditional Type 2, <em>To Be</em> untuk <strong>semua subjek</strong> (I, You, They, We, He, She, It) adalah <strong>WERE</strong>. Penggunaan <em>were</em> menegaskan bahwa situasinya adalah 100% imajinasi (*unreal*).
+                    </div>
+                </div>
+
+                <!-- Soal 11 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">11. Evaluate the following sentences. Which one is grammatically CORRECT?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio">
+                            <span class="ml-3">A. If it rain tomorrow, we will stay at home.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio">
+                            <span class="ml-3">B. If it rains tomorrow, we would stay at home.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio">
+                            <span class="ml-3">C. If it rains tomorrow, we will stay at home.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio">
+                            <span class="ml-3">D. If it rained tomorrow, we will stay at home.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita periksa satu per satu:</strong><br>
+                        Kejadian ini tentang kemungkinan besok (Type 1: <em>If + Simple Present, Future</em>).<br>
+                        &cross; A salah karena subjek <em>"it"</em> harusnya diikuti verb+s (rains), bukan rain.<br>
+                        &cross; B salah karena mencampur aduk tenses (rains = Present, would = Past). Gak nyambung!<br>
+                        &cross; D salah karena mencampur "rained" (Past) dengan "will" (Future).<br>
+                        &check; <strong>C benar!</strong> Gramatikalnya sempurna: <em>If it rains</em> (Present) dipasangkan dengan <em>we will stay</em> (Future).
+                    </div>
+                </div>
+
+                <!-- Soal 12 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <div class="context-box">
+                        Tania: "I have a terrible toothache."<br>
+                        Dodi: "If you have a terrible toothache, you should see a dentist."
+                    </div>
+                    <p class="font-semibold text-lg mb-4">12. What is the function of the if-clause in Dodi's response?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio">
+                            <span class="ml-3">A. To show a scientific fact.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio">
+                            <span class="ml-3">B. To give a command/imperative.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio">
+                            <span class="ml-3">C. To offer a suggestion/advice.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio">
+                            <span class="ml-3">D. To express a future promise.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (To offer a suggestion/advice)</strong><br><br>
+                        <strong>Bedah Makna Sosialnya:</strong><br>
+                        Perhatikan kata yang digunakan Dodi: <strong>"should"</strong> (seharusnya/sebaiknya).<br>
+                        Dalam bahasa Inggris, kata <em>should</em> adalah <em>modal auxiliary</em> yang paling umum dipakai untuk memberikan nasihat atau saran (*suggestion/advice*). "Jika kamu sakit gigi parah, kamu *sebaiknya* pergi ke dokter gigi." Sangat jelas, kan?
+                    </div>
+                </div>
+
+                <!-- Soal 13 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">13. If you mix blue and yellow, you ... green.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio">
+                            <span class="ml-3">A. got</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio">
+                            <span class="ml-3">B. get</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio">
+                            <span class="ml-3">C. will got</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio">
+                            <span class="ml-3">D. would get</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (get)</strong><br><br>
+                        <strong>Fakta Tak Terbantahkan (Type 0)!</strong><br>
+                        Mencampur warna biru dan kuning pasti akan menghasilkan warna hijau. Sampai kapanpun itu adalah fakta ilmiah mutlak.<br>
+                        Untuk fakta ilmiah, kita wajib pakai <strong>Zero Conditional</strong> dengan rumus: <strong>If + Simple Present, Simple Present</strong>.<br>
+                        Subjeknya <em>"you"</em>, jadi kata kerjanya tetap bentuk awal (V1) yaitu <strong>get</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 14 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">14. What is the correct meaning of this sentence:<br><em>"If I knew her phone number, I would call her now."</em>?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio">
+                            <span class="ml-3">A. I know her phone number, so I will call her.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio">
+                            <span class="ml-3">B. I don't know her phone number, so I cannot call her.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio">
+                            <span class="ml-3">C. I knew her phone number, but I forgot to call her.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio">
+                            <span class="ml-3">D. I will know her phone number, and I will call her.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Balikkan Faktanya!</strong><br>
+                        Kalimat di atas menggunakan <strong>Type 2</strong> (*knew* = V2, *would call*). Ingat, Type 2 digunakan untuk mengkhayalkan sesuatu yang <strong>berlawanan dengan fakta saat ini</strong>.<br>
+                        Pengandaian: "Jika aku tahu nomornya (positif), aku akan meneleponnya (positif)."<br>
+                        Fakta asli (kebalikannya): "Aku <strong>tidak tahu</strong> nomornya (negatif), jadi aku <strong>tidak bisa</strong> meneleponnya (negatif)." Opsi B adalah terjemahan fakta yang paling tepat!
+                    </div>
+                </div>
+
+                <!-- Soal 15 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">15. If the weather ... good tomorrow, we will go for a picnic in the park.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio">
+                            <span class="ml-3">A. is</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio">
+                            <span class="ml-3">B. are</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio">
+                            <span class="ml-3">C. was</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio">
+                            <span class="ml-3">D. be</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (is)</strong><br><br>
+                        <strong>Tentukan To Be-nya:</strong><br>
+                        Kalimat ini adalah <strong>Type 1</strong> (karena ada <em>will go</em>). Berarti klausa <em>If</em> nya harus memakai Simple Present.<br>
+                        Subjek pada klausa <em>If</em> adalah <strong>"the weather"</strong> (cuaca). Cuaca adalah benda tunggal yang tidak bisa dihitung (sama seperti *it*).<br>
+                        Pasangan <em>To Be</em> bentuk Present untuk subjek tunggal (He/She/It) adalah <strong>is</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 16 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <div class="context-box">
+                        Andi: "I want to speak English fluently like you."<br>
+                        Budi: "If you want to speak English fluently, ... every day."
+                    </div>
+                    <p class="font-semibold text-lg mb-4">16. Complete the dialogue!</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio">
+                            <span class="ml-3">A. you would practice</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio">
+                            <span class="ml-3">B. practice it</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio">
+                            <span class="ml-3">C. you practiced</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio">
+                            <span class="ml-3">D. practicing it</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (practice it)</strong><br><br>
+                        <strong>Instruksi Langsung (Imperative):</strong><br>
+                        Andi curhat ingin bisa bahasa Inggris lancar. Budi membalas dengan memberikan saran/instruksi yang harus dilakukan Andi.<br>
+                        Pola untuk memberi saran (Imperative) adalah: <strong>If + Simple Present, Verb 1 (kata kerja dasar)</strong>.<br>
+                        Satu-satunya opsi yang langsung diawali dengan kata kerja dasar adalah <strong>"practice it"</strong> (berlatihlah).
+                    </div>
+                </div>
+
+                <!-- Soal 17 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">17. Evaluate these four conditional sentences. Which one represents an unreal or imaginary situation in the present?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio">
+                            <span class="ml-3">A. If you freeze water, it becomes ice.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio">
+                            <span class="ml-3">B. If I have time, I will help you with your homework.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio">
+                            <span class="ml-3">C. If I were the president, I would make education free for everyone.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio">
+                            <span class="ml-3">D. If you don't eat, you get hungry.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mencari Kalimat Khayalan (Type 2):</strong><br>
+                        Soal meminta kita mencari situasi <em>unreal/imaginary</em> (tidak nyata/khayalan) di masa sekarang. Ini adalah definisi dari <strong>Conditional Type 2</strong>.<br>
+                        Ciri Type 2: <em>If + V2 (were), S + would + V1</em>.<br>
+                        Mari kita periksa: A dan D adalah fakta (Type 0). B adalah kemungkinan masa depan (Type 1). Opsi <strong>C</strong> (Jika aku jadi presiden, aku akan...) adalah khayalan murni karena faktanya dia bukan presiden. Ini jawaban yang tepat!
+                    </div>
+                </div>
+
+                <!-- Soal 18 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <div class="context-box">
+                        Situation: <em>My sister wants to bake a cake, but she doesn't have any eggs.</em>
+                    </div>
+                    <p class="font-semibold text-lg mb-4">18. What should you say to her using a conditional sentence (Type 1)?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio">
+                            <span class="ml-3">A. If you want to bake a cake, buy some eggs first.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio">
+                            <span class="ml-3">B. If you wanted to bake a cake, you would buy some eggs.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio">
+                            <span class="ml-3">C. If you don't have eggs, you would bake a cake.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio">
+                            <span class="ml-3">D. If you buy some eggs, you didn't bake a cake.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Berikan Solusi yang Logis!</strong><br>
+                        Situasinya kakak ingin buat kue, tapi kehabisan telur. Sebagai adik yang baik, kita harus memberi saran realistis yang bisa dilakukan sekarang (Type 1 Imperative).<br>
+                        Saran yang paling logis adalah: "Jika kamu ingin membuat kue, <strong>belilah beberapa telur dulu</strong>." (<em>If you want to bake a cake, buy some eggs first</em>). Kalimat lainnya memiliki *grammar* yang kacau (gabung-gabung tenses) dan makna yang tidak nyambung.
+                    </div>
+                </div>
+
+                <!-- Soal 19 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">19. If you do not study hard for the final test, you ... get a good score.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio">
+                            <span class="ml-3">A. will</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio">
+                            <span class="ml-3">B. would</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio">
+                            <span class="ml-3">C. won't</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio">
+                            <span class="ml-3">D. wouldn't</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (won't)</strong><br><br>
+                        <strong>Uji Logikamu:</strong><br>
+                        Ini adalah Type 1 (If + Present, Future). Secara logika: "Jika kamu <em>tidak</em> belajar keras, kamu <strong>tidak akan</strong> mendapatkan nilai bagus."<br>
+                        Kita butuh kata "tidak akan" (bentuk negatif dari <em>will</em>). Bentuk singkatan resmi dari <em>will not</em> dalam bahasa Inggris adalah <strong>won't</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 20 -->
+                <div class="question-block mb-14" data-answer="C">
+                    <div class="context-box">
+                        "We need to protect our environment. If we cut down all the trees in the forest, many wild animals will lose their homes and global warming will get worse."
+                    </div>
+                    <p class="font-semibold text-lg mb-4">20. Based on the text, what will happen if humans preserve the forest?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio">
+                            <span class="ml-3">A. Wild animals will lose their homes.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio">
+                            <span class="ml-3">B. Global warming will get worse.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio">
+                            <span class="ml-3">C. Wild animals will keep their homes.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio">
+                            <span class="ml-3">D. The forest will be destroyed.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Main Logika Kebalikan:</strong><br>
+                        Teks bilang: Jika ditebang (negatif) &rarr; hewan kehilangan rumah (negatif) & pemanasan global makin parah (negatif).<br>
+                        Soal bertanya: Apa yang terjadi jika manusia <strong>melestarikan</strong> hutan (positif)?<br>
+                        Logikanya, dampaknya juga harus positif atau kebalikan dari teks. Kebalikan dari "kehilangan rumah" adalah "menjaga/tetap memiliki rumahnya". Jadi jawabannya: <strong>Wild animals will keep their homes</strong>.
+                    </div>
+                </div>
+
+                <!-- Hasil Skor -->
+                <div id="score-container" class="hidden mb-10 p-8 bg-sky-50 rounded-2xl border-2 border-sky-200 text-center shadow-inner">
+                    <h3 class="text-2xl sm:text-3xl font-semibold text-slate-700 mb-2">Skor Akhir Kamu:</h3>
+                    <div id="score-display" class="text-7xl sm:text-8xl font-extrabold text-sky-600 mb-4 drop-shadow-sm">0</div>
+                    <p id="score-message" class="text-lg text-slate-600 font-medium"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pb-6">
+                    <button type="button" id="check-btn" class="bg-sky-600 hover:bg-sky-700 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-slate-700 hover:bg-slate-800 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="py-8 text-center text-slate-500 font-medium mt-auto w-full bg-slate-50 border-t border-slate-200">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // 20 Questions, 5 points each (max 100)
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach((q) => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    // Inject rationale 
+                    explanationDiv.innerHTML = rationaleHTML; 
+
+                    radios.forEach(radio => {
+                        // Lock inputs
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Correct style
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-emerald-50 text-emerald-900 border-emerald-500 block shadow-sm';
+                            } else {
+                                // Incorrect style
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                            }
+                        }
+                    });
+
+                    // If not answered
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                        explanationDiv.innerHTML = '<strong class="text-rose-700 flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Oops, kamu belum menjawab pertanyaan ini!</strong><hr class="border-rose-200 my-3">' + rationaleHTML;
+                    }
+                });
+
+                // Calculate Score
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                
+                // Animate Score Counter
+                let currentScore = 0;
+                const scoreInterval = setInterval(() => {
+                    if (currentScore >= finalScore) {
+                        clearInterval(scoreInterval);
+                        scoreDisplay.textContent = finalScore;
+                    } else {
+                        currentScore++;
+                        scoreDisplay.textContent = currentScore;
+                    }
+                }, 20); 
+
+                // Feedback Message
+                if (finalScore === 100) {
+                    scoreMessage.innerHTML = "🎉 Luar biasa! Penguasaan materi If Clauses-mu sangat sempurna.";
+                } else if (finalScore >= 80) {
+                    scoreMessage.innerHTML = "🌟 Hebat! Kamu sudah sangat menguasai materi ini.";
+                } else if (finalScore >= 60) {
+                    scoreMessage.innerHTML = "👍 Cukup baik. Yuk, perhatikan lagi pola rumus Tipe 1 dan 2 di pembahasannya ya!";
+                } else {
+                    scoreMessage.innerHTML = "💪 Jangan menyerah! Pelajari pelan-pelan rumusnya, pasti kamu bisa!";
+                }
+
+                // Show Score & Toggle Buttons
+                scoreContainer.classList.remove('hidden');
+                scoreContainer.classList.add('score-anim'); // apply animation
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Smooth scroll to score
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset form
+                form.reset();
+
+                // Revert state
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; 
+                    });
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.classList.remove('block');
+                    explanationDiv.classList.add('hidden');
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Hide score, swap buttons
+                scoreContainer.classList.add('hidden');
+                scoreContainer.classList.remove('score-anim');
+                scoreDisplay.textContent = '0';
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

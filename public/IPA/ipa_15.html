@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Pewarisan Sifat & Bioteknologi</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        pre::-webkit-scrollbar { height: 8px; }
+        pre::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        pre::-webkit-scrollbar-track { background: #f1f5f9; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar / Header -->
+    <header class="bg-violet-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
+            <button onclick="history.back()" class="p-2 bg-violet-700 hover:bg-violet-800 rounded-full transition duration-200 cursor-pointer" title="Kembali">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <div>
+                <h1 class="text-xl font-bold">Latihan Soal Biologi</h1>
+                <p class="text-xs text-violet-200">Pewarisan Sifat (Genetika) & Bioteknologi</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-violet-100">
+            <p class="text-sm text-gray-600">Pilihlah jawaban yang paling tepat. Anda tidak perlu mengisi semua soal terlebih dahulu; cukup tekan tombol <strong>Periksa Jawaban</strong> di bagian bawah untuk melihat skor skala 0&ndash;100 dan pembahasan lengkapnya secara instan.</p>
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="C" id="q1">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">1.</span>Seorang peneliti menyilangkan tanaman kacang ercis berbiji bulat (BB) dengan tanaman kacang ercis berbiji keriput (bb). Sifat bulat dominan terhadap keriput. Jika F<sub>1</sub> disilangkan sesamanya, persentase fenotipe F<sub>2</sub> yang berbiji bulat adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q1" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 25%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q1" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 50%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q1" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 75%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q1" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 100%</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Hukum I Mendel - Monohibrid):</strong></p>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li><strong>Parental (P<sub>1</sub>):</strong> BB (bulat) &times; bb (keriput) $\rightarrow$ Gamet: B dan b.</li>
+                            <li><strong>Filial 1 (F<sub>1</sub>):</strong> Bb (100% berbiji bulat karena sifat bulat dominan).</li>
+                            <li><strong>Filial 2 (F<sub>2</sub>):</strong> Persilangan sesama F<sub>1</sub> ($\text{Bb} \times \text{Bb}$). Kombinasi genotipe: BB, Bb, Bb, bb.</li>
+                            <li><strong>Fenotipe F<sub>2</sub>:</strong> 3 bagian bulat (BB, Bb, Bb) dan 1 bagian keriput (bb).</li>
+                            <li>Persentase bulat = $\frac{3}{4} \times 100\% =$ <strong>75%</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="A" id="q2">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">2.</span>Persilangan antara tanaman bunga <em>Mirabilis jalapa</em> berwarna merah (MM) dengan berwarna putih (mm) menghasilkan keturunan F<sub>1</sub> yang seluruhnya berwarna merah muda. Peristiwa ini menunjukkan adanya sifat intermediet. Jika F<sub>1</sub> disilangkan dengan sesamanya, perbandingan fenotipe merah : merah muda : putih pada F<sub>2</sub> adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q2" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 1 : 2 : 1</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q2" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 3 : 1</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q2" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 1 : 1 : 2</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q2" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 9 : 3 : 4</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Intermediet / Dominansi Tidak Sempurna):</strong></p>
+                        <p>Pada sifat intermediet, gen dominan tidak menutupi gen resesif secara penuh, sehingga saat heterozigot (Mm), warna yang muncul adalah percampuran (merah muda).</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Persilangan F<sub>1</sub> &times; F<sub>1</sub> ($\text{Mm} \times \text{Mm}$).</li>
+                            <li>Genotipe F<sub>2</sub>: 1 MM (Merah), 2 Mm (Merah muda), 1 mm (Putih).</li>
+                            <li>Karena fenotipe mengikuti genotipenya, rasio fenotipe F<sub>2</sub> adalah <strong>1 : 2 : 1</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q3">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">3.</span>Perhatikan genotipe berikut: AaBbCcDD. Jumlah gamet yang dapat terbentuk dari individu dengan genotipe tersebut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q3" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 4</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q3" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 8</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q3" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 16</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q3" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 32</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Rumus Gamet):</strong></p>
+                        <p>Jumlah macam gamet dapat dihitung menggunakan rumus cepat matematika genetika: $2^n$, di mana $n$ adalah jumlah pasangan alel yang bersifat <strong>heterozigot</strong> (berbeda huruf besar-kecil).</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Aa &rarr; Heterozigot (1)</li>
+                            <li>Bb &rarr; Heterozigot (2)</li>
+                            <li>Cc &rarr; Heterozigot (3)</li>
+                            <li>DD &rarr; Homozigot (bukan heterozigot)</li>
+                        </ul>
+                        <p>Jumlah heterozigot ($n$) = 3. Maka jumlah gamet = $2^3 =$ <strong>8 macam gamet</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q4">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">4.</span>Tanaman mangga berbuah manis-batang tinggi (MMTT) disilangkan dengan mangga berbuah masam-batang pendek (mmtt). Sifat manis dan tinggi bersifat dominan. Jika F<sub>1</sub> disilangkan dengan sesamanya, rasio fenotipe F<sub>2</sub> yang memiliki sifat manis-batang pendek adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q4" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 9/16</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q4" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 3/16</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q4" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 1/16</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q4" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 12/16</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Hukum II Mendel - Dihibrid):</strong></p>
+                        <p>Persilangan dihibrid heterozigot ganda ($\text{MmTt} \times \text{MmTt}$) selalu menghasilkan total 16 kotak kombinasi dengan perbandingan fenotipe standar <strong>9 : 3 : 3 : 1</strong>:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>9 bagian Manis - Tinggi ($\text{M\_T\_}$)</li>
+                            <li>3 bagian Manis - Pendek ($\text{M\_tt}$)</li>
+                            <li>3 bagian Masam - Tinggi ($\text{mmT\_}$)</li>
+                            <li>1 bagian Masam - Pendek ($\text{mmtt}$)</li>
+                        </ul>
+                        <p>Maka, pecahan rasio untuk sifat manis-batang pendek adalah <strong>3/16</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="C" id="q5">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">5.</span>Seorang petani ingin mendapatkan bibit unggul padi yang memiliki sifat tahan hama dan berumur genjah (cepat panen). Sifat tahan hama (H) dominan terhadap tidak tahan hama (h), dan umur genjah (G) dominan terhadap umur dalam (g). Petani tersebut menyilangkan padi galur murni tahan hama-umur dalam (HHgg) dengan padi tidak tahan hama-umur genjah (hhGG). Agar petani mendapatkan tanaman padi F<sub>2</sub> yang bersifat homozigot dominan untuk kedua sifat unggul tersebut (tahan hama dan umur genjah) untuk dijadikan bibit unggul mandiri, genotipe yang harus ia pilih adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q5" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. HHGg</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q5" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. HhGG</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q5" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. HHGG</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q5" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. HhGg</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Pemuliaan Tanaman):</strong></p>
+                        <p>Bibit unggul mandiri mensyaratkan sifat tersebut harus murni atau <strong>homozigot</strong> (huruf besar semua) agar ketika ditanam kembali di musim berikutnya, sifat unggul tersebut tidak pecah atau tersegregasi menjadi sifat asalnya.</p>
+                        <p>Genotipe homozigot dominan ganda untuk sifat tahan hama (H) dan umur genjah (G) adalah <strong>HHGG</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="A" id="q6">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">6.</span>Perhatikan silsilah keluarga (pedigree) berikut!<br>
+                Seorang laki-laki penderita hemophilia (penyakit darah sukar membeku yang terpaut kromosom X resesif) menikah dengan seorang wanita normal homozigot. Kemungkinan anak laki-laki mereka menderita hemophilia adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q6" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 0%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q6" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 25%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q6" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 50%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q6" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 100%</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Penyakit Menurun - Hemofilia):</strong></p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Ayah penderita hemofilia: $\text{X}^h\text{Y}$</li>
+                            <li>Ibu normal homozigot: $\text{X}^H\text{X}^H$</li>
+                            <li>Anak laki-laki hanya menerima kromosom X dari ibu ($\text{X}^H$) dan kromosom Y dari ayah.</li>
+                            <li>Semua anak laki-laki dipastikan mendapat $\text{X}^H$ dari ibu, sehingga genotipe anak laki-laki mereka adalah $\text{X}^H\text{Y}$ (normal).</li>
+                        </ul>
+                        <p>Maka, peluang anak laki-laki menderita hemofilia adalah <strong>0%</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="D" id="q7">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">7.</span>Sepasang suami istri memiliki golongan darah A heterozigot (I<sup>A</sup>I<sup>O</sup>) dan B heterozigot (I<sup>B</sup>I<sup>O</sup>). Kemungkinan golongan darah anak-anak mereka yang lahir adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q7" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Hanya A dan B</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q7" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Hanya AB dan O</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q7" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. A, B, dan AB saja</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q7" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. A, B, AB, dan O</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Golongan Darah Sistem ABO):</strong></p>
+                        <p>Persilangan golongan darah $\text{I}^A\text{I}^O \times \text{I}^B\text{I}^O$:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>$\text{I}^A\text{I}^B$ &rarr; Golongan darah AB</li>
+                            <li>$\text{I}^A\text{I}^O$ &rarr; Golongan darah A</li>
+                            <li>$\text{I}^B\text{I}^O$ &rarr; Golongan darah B</li>
+                            <li>$\text{I}^O\text{I}^O$ &rarr; Golongan darah O</li>
+                        </ul>
+                        <p>Karena keempat kemungkinan fenotipe tersebut dapat muncul (masing-masing peluang 25%), maka anak-anak mereka bisa memiliki golongan darah <strong>A, B, AB, dan O</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="C" id="q8">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">8.</span>Penyakit buta warna disebabkan oleh gen resesif (c) yang terpaut pada kromosom X. Jika seorang wanita pembawa sifat (carrier) buta warna (X<sup>C</sup>X<sup>c</sup>) menikah dengan seorang laki-laki buta warna (X<sup>c</sup>Y), persentase anak perempuan mereka yang menderita buta warna adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q8" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 0%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q8" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 25%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q8" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 50%</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q8" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 100%</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Buta Warna Terpaut Kromosom X):</strong></p>
+                        <p>Persilangan: $\text{X}^C\text{X}^c \times \text{X}^c\text{Y}$. Khusus untuk melihat persentase <strong>anak perempuan</strong>, kita hanya meninjau keturunan berjenis kelamin perempuan saja:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>$\text{X}^C\text{X}^c$ (Perempuan pembawa / carrier normal)</li>
+                            <li>$\text{X}^c\text{X}^c$ (Perempuan menderita buta warna)</li>
+                        </ul>
+                        <p>Dari total anak perempuan yang lahir, 1 dari 2 kemungkinan bergenotipe $\text{X}^c\text{X}^c$, sehingga persentasenya adalah $\frac{1}{2} \times 100\% =$ <strong>50%</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q9">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">9.</span>Pada persilangan labu putih (P_K_) dengan labu kuning (ppK_) diperoleh keturunan dengan rasio fenotipe putih : kuning : hijau = 12 : 3 : 1. Peristiwa penyimpangan semu hukum Mendel ini disebut....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q9" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Kriptomeri</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q9" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Epistasis dominan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q9" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Polimeri</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q9" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Komplementer</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Penyimpangan Semu Hukum Mendel):</strong></p>
+                        <p>Rasio fenotipe 12 : 3 : 1 adalah ciri khas mutlak dari peristiwa <strong>Epistasis Dominan</strong>, di mana satu gen dominan (misal gen P untuk warna putih) menutupi ekspresi gen lain (gen K untuk warna kuning).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q10">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">10.</span>Seorang pemulia tanaman ingin menghasilkan varietas jeruk baru yang memiliki rasa sangat manis dan tidak berbiji. Metode perbanyakan tanaman manakah yang paling efektif mempertahankan sifat unggul tersebut tanpa mengalami perubahan genetik akibat segregasi bebas?</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q10" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Melakukan penyerbukan silang antar varietas jeruk manis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q10" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Melakukan perbanyakan vegetatif dengan cara mencangkok atau kultur jaringan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q10" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Menanam biji hasil persilangan jeruk manis dan jeruk asam</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q10" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Melakukan radiasi sinar gamma pada biji jeruk manis sebelum ditanam</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Perbanyakan Tanaman):</strong></p>
+                        <p>Untuk mempertahankan sifat unggul 100% identik tanpa perubahan genetik, metode yang paling tepat adalah <strong>perbanyakan vegetatif</strong> (seperti mencangkok, menyetek, atau kultur jaringan). Perbanyakan vegetatif tidak melibatkan proses fertilisasi/meiosis, sehingga tidak terjadi pemisahan atau segregasi gen.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="C" id="q11">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">11.</span>Bioteknologi konvensional memanfaatkan mikroorganisme secara langsung tanpa rekayasa genetika. Pasangan yang tepat antara bahan baku, mikroorganisme, dan produk bioteknologi yang dihasilkan adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q11" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Kedelai &ndash; <em>Saccharomyces cerevisiae</em> &ndash; Tempe</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q11" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Singkong &ndash; <em>Neurospora crassa</em> &ndash; Tapai</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q11" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Susu &ndash; <em>Lactobacillus bulgaricus</em> &ndash; Yoghurt</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q11" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Air kelapa &ndash; <em>Acetobacter aceti</em> &ndash; Kecap</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Mikroorganisme Pangan):</strong></p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Susu diolah menjadi Yoghurt menggunakan bakteri asam laktat <em>Lactobacillus bulgaricus</em> dan <em>Streptococcus thermophilus</em> (<strong>Benar</strong>).</li>
+                            <li>Tempe menggunakan jamur <em>Rhizopus oligosporus</em>.</li>
+                            <li>Tapai menggunakan ragi <em>Saccharomyces cerevisiae</em>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q12">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">12.</span>Pembuatan nata de coco memanfaatkan bakteri <em>Acetobacter xylinum</em>. Peran utama bakteri tersebut dalam proses pembuatan nata de coco adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q12" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Mengubah protein susu menjadi asam laktat yang menggumpal</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q12" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Mengubah glukosa dalam air kelapa menjadi jalinan serat selulosa</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q12" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Memfermentasi alkohol menjadi asam cuka yang beraroma khas</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q12" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Memecah amilum menjadi glukosa sederhana yang rasanya manis</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Nata de Coco):</strong></p>
+                        <p>Bakteri <em>Acetobacter xylinum</em> menggunakan glukosa dari air kelapa untuk disintesis menjadi jutaan benang-benang selulosa murni (polisakarida). Jalinan serat selulosa inilah yang membentuk lapisan putih kenyal yang kita kenal sebagai nata de coco.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="A" id="q13">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">13.</span>Perhatikan tabel perbedaan bioteknologi konvensional dan modern berikut!<br>
+                1) Alat yang digunakan: Sederhana (Konvensional) vs Canggih (Modern)<br>
+                2) Prinsip ilmiah: Fermentasi (Konvensional) vs Rekayasa Genetika (Modern)<br>
+                3) Skala produksi: Industri besar (Konvensional) vs Rumah tangga (Modern)<br>
+                4) Contoh produk: Kloning (Konvensional) vs Pembuatan tempe (Modern)<br>
+                Perbedaan yang benar antara bioteknologi konvensional dan modern ditunjukkan oleh nomor....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q13" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. 1 dan 2</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q13" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. 1 dan 3</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q13" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. 2 dan 4</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q13" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. 3 dan 4</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Pernyataan (1) dan (2) sudah benar. Sedangkan (3) dan (4) tertukar posisinya (konvensional berskala kecil/rumah tangga dengan produk tempe, sedangkan modern berskala besar dengan produk kloning).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q14">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">14.</span>Salah satu teknik bioteknologi modern adalah teknik plasmid (DNA rekombinan) pada pembuatan insulin sintetis. Proses ini dilakukan dengan cara....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q14" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Memasukkan seluruh inti sel manusia ke dalam sel bakteri <em>Escherichia coli</em></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q14" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Menyisipkan gen pengode insulin dari sel manusia ke dalam plasmid bakteri <em>Escherichia coli</em></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q14" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Memfusikan sel pankreas manusia dengan sel kanker agar membelah dengan cepat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q14" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Mengisolasi hormon insulin langsung dari kelenjar ludah bakteri</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (DNA Rekombinan):</strong></p>
+                        <p>Dalam pembuatan insulin manusia, gen yang mengatur pembuatan insulin dipotong dari DNA sel pankreas manusia, lalu disisipkan ke dalam cincin DNA plasmid bakteri <em>Escherichia coli</em>. Bakteri transgenik ini kemudian membelah diri dengan cepat sambil memproduksi insulin manusia secara massal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q15">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">15.</span>Bioremediasi merupakan salah satu penerapan bioteknologi lingkungan. Contoh penerapan bioremediasi yang tepat di bawah ini adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q15" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Penggunaan tanaman eceng gondok untuk menyerap logam berat di perairan bebas</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q15" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Pemanfaatan bakteri <em>Pseudomonas putida</em> untuk mendegradasi tumpahan minyak di laut</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q15" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Penggunaan pestisida biologi berbahan aktif <em>Bacillus thuringiensis</em> untuk membasmi ulat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q15" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Pembuatan biogas dari kotoran ternak menggunakan bakteri metanogenik</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Bioremediasi):</strong></p>
+                        <p>Bioremediasi adalah proses pembersihan polutan lingkungan (seperti limbah minyak bumi atau bahan beracun) menggunakan agen biologis (mikroorganisme atau tanaman). Contoh klasiknya adalah penggunaan bakteri <em>Pseudomonas putida</em> untuk mengurai tumpahan minyak di laut.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="C" id="q16">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">16.</span>Tanaman transgenik <em>Golden Rice</em> dikembangkan untuk mengatasi masalah malnutrisi di negara-negara berkembang. Evaluasi ilmiah yang mendukung pengembangan tanaman ini adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q16" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Mengandung gen penghasil racun serangga sehingga petani tidak perlu membeli pestisida kimia</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q16" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Mengandung kadar zat besi yang tinggi untuk mencegah penyakit anemia pada ibu hamil</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q16" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Mampu mensintesis beta-karoten (pro-vitamin A) di dalam endosperma padi untuk mencegah kebutaan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q16" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Memiliki ketahanan yang sangat tinggi terhadap kekeringan dan salinitas tanah yang ekstrem</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Golden Rice):</strong></p>
+                        <p><em>Golden Rice</em> (Padi Emas) adalah beras rekayasa genetika yang disisipi gen penghasil beta-karoten (pembentuk vitamin A) pada bagian endospermanya untuk menanggulangi kasus defisiensi vitamin A dan kebutaan pada anak-anak di negara berkembang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q17">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">17.</span>Penggunaan tanaman transgenik tahan hama (misalnya jagung Bt yang disisipi gen dari <em>Bacillus thuringiensis</em>) secara terus-menerus dalam skala besar dapat menimbulkan dampak negatif bagi ekosistem, yaitu....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q17" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Meningkatnya populasi serangga non-target yang menguntungkan karena hilangnya kompetitor</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q17" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Terjadinya resistensi pada hama target dan hilangnya keanekaragaman hayati akibat aliran gen (<em>gene flow</em>) ke kerabat liar tanaman</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q17" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Penurunan kualitas nutrisi pada biji jagung sehingga tidak aman dikonsumsi manusia</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q17" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Tanah pertanian menjadi steril dan tidak dapat ditanami kembali oleh tanaman non-transgenik</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Dampak Ekologis Transgenik):</strong></p>
+                        <p>Risiko ekologis utama tanaman transgenik meliputi munculnya hama super yang resisten terhadap racun tanaman, serta potensi penyebaran serbuk sari transgenik ke tanaman liar kerabat dekatnya (aliran gen / <em>gene flow</em>) yang dapat mengancam keanekaragaman hayati asli.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q18">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">18.</span>Kloning domba Dolly merupakan salah satu pencapaian besar dalam bioteknologi modern. Teknik ini dilakukan dengan cara....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q18" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Memfusikan sel sperma domba jantan dengan sel telur domba betina di luar tubuh (bayi tabung)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q18" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Memasukkan inti sel tubuh (somatis) donor ke dalam sel telur yang telah dihilangkan inti selnya, kemudian diimplantasikan ke rahim induk pengganti</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q18" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Mengubah susunan genetik sel telur dengan menyisipkan gen pertumbuhan dari spesies lain</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q18" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Membelah embrio pada tahap blastula menjadi beberapa bagian untuk ditanam pada induk yang berbeda</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Kloning SCNT):</strong></p>
+                        <p>Kloning Domba Dolly menggunakan teknik Transfer Inti Sel Somatis (<em>Somatic Cell Nuclear Transfer</em>). Inti sel kelenjar susu domba donor dimasukkan ke dalam sel telur domba lain yang inti aslinya telah dibuang, lalu dirangsang listrik agar membelah dan ditanam ke rahim induk pengganti.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q19">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">19.</span>Perkembangan bioteknologi kedokteran saat ini telah mencapai terapi sel punca (<em>stem cell</em>). Evaluasi yang paling tepat mengenai potensi pemanfaatan sel punca dalam dunia medis adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q19" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Sel punca hanya dapat digunakan untuk mendeteksi penyakit genetik sebelum bayi lahir</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q19" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Sel punca memiliki kemampuan berdiferensiasi menjadi berbagai jenis sel spesifik sehingga berpotensi meregenerasi jaringan organ yang rusak</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q19" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Terapi sel punca dapat langsung menyembuhkan seluruh penyakit menular tanpa memerlukan antibiotik</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q19" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Sel punca dapat diproduksi secara massal dari bahan sintetik kimia tanpa memerlukan sel hidup</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Terapi Sel Punca):</strong></p>
+                        <p>Sel punca (<em>stem cell</em>) adalah sel induk yang belum terspesialisasi namun memiliki kemampuan luar biasa untuk berdiferensiasi menjadi berbagai jenis sel jaringan tubuh, sehingga sangat potensial untuk menyembuhkan penyakit degeneratif dan meregenerasi organ yang rusak.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-violet-100 transition-colors question-item" data-answer="B" id="q20">
+                <p class="font-semibold text-lg mb-4"><span class="text-violet-600 mr-2">20.</span>Pembuatan antibodi monoklonal dilakukan dengan teknik hibridoma, yaitu memfusikan sel limfosit B dengan sel mieloma (sel kanker). Alasan penggunaan sel mieloma dalam proses ini adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q20" value="A" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> A. Sel mieloma memiliki kemampuan menghasilkan antibodi dalam jumlah yang sangat spesifik</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q20" value="B" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> B. Sel mieloma dapat membelah dengan sangat cepat dan tidak terbatas di laboratorium</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q20" value="C" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> C. Sel mieloma berfungsi untuk membunuh sel limfosit B yang tidak aktif</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-violet-50 transition"><input type="radio" name="q20" value="D" class="mt-1 mr-3 w-4 h-4 text-violet-600 shrink-0"> D. Sel mieloma mempermudah proses identifikasi antigen asing di dalam tubuh</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif (Teknik Hibridoma):</strong></p>
+                        <p>Limfosit B penghasil antibodi normalnya berumur pendek dan sulit dibiakkan. Oleh karena itu, ia difusikan dengan sel mieloma (sel kanker) yang memiliki sifat unggul yaitu mampu <strong>membelah diri dengan sangat cepat dan abadi (tidak terbatas)</strong> di laboratorium.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Area -->
+            <div class="flex justify-center mb-10 mt-8">
+                <button type="button" id="btnSubmit" class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-transform transform hover:scale-105 text-lg cursor-pointer">
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Container (Hidden Default) -->
+        <div id="resultContainer" class="hidden bg-white rounded-xl shadow-lg border-2 border-violet-500 p-8 text-center mb-12 transform transition-all animate-fade-in">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Evaluasi Selesai!</h2>
+            <p class="text-gray-600 mb-8">Periksa rincian pembahasan di atas untuk memahami materi lebih dalam. Berikut adalah skor akhir Anda (0&ndash;100):</p>
+            
+            <div class="inline-block bg-violet-50 border-4 border-violet-200 rounded-full h-40 w-40 flex items-center justify-center mb-8 shadow-inner mx-auto">
+                <span id="scoreDisplay" class="text-5xl font-black text-violet-600 drop-shadow-sm">0</span>
+            </div>
+            
+            <div class="flex justify-center">
+                <button type="button" id="btnReset" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition border border-gray-300 shadow-sm hover:shadow cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Ulangi Tes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-sm font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const quizForm = document.getElementById('quizForm');
+            const resultContainer = document.getElementById('resultContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-item');
+            
+            const TOTAL_QUESTIONS = questions.length; // 20 soal
+            const POINT_PER_QUESTION = 100 / TOTAL_QUESTIONS; // 5 poin per soal
+
+            quizForm.addEventListener('submit', (e) => e.preventDefault());
+
+            btnSubmit.addEventListener('click', () => {
+                let currentScore = 0;
+
+                questions.forEach((q) => {
+                    const qId = q.id;
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const selectedOption = q.querySelector(`input[name="${qId}"]:checked`);
+                    
+                    const explanationBox = q.querySelector('.explanation');
+                    const statusText = explanationBox.querySelector('.status');
+
+                    explanationBox.classList.remove('hidden', 'bg-violet-50', 'border-violet-300', 'bg-red-50', 'border-red-300', 'text-violet-800', 'text-red-800');
+                    q.classList.remove('border-violet-300', 'border-red-300', 'bg-violet-50/20', 'bg-red-50/20');
+
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        if (userAnswer === correctAnswer) {
+                            currentScore += POINT_PER_QUESTION;
+                            explanationBox.classList.add('bg-violet-50', 'border-violet-300', 'text-violet-800');
+                            q.classList.add('border-violet-300', 'bg-violet-50/20'); 
+                            statusText.innerHTML = `✅ Pintar Sekali! Jawaban Anda Benar (Opsi ${userAnswer})`;
+                        } else {
+                            explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                            q.classList.add('border-red-300', 'bg-red-50/20');
+                            statusText.innerHTML = `❌ Kurang Tepat. Pilihan Anda: ${userAnswer} | Kunci Jawaban Benar: ${correctAnswer}`;
+                        }
+                    } else {
+                        explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                        q.classList.add('border-red-300', 'bg-red-50/20');
+                        statusText.innerHTML = `⚠️ Anda belum menjawab soal ini. Kunci Jawaban Benar: ${correctAnswer}`;
+                    }
+                    
+                    explanationBox.style.display = 'block';
+                });
+
+                scoreDisplay.innerText = Math.round(currentScore);
+                
+                btnSubmit.parentElement.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 100);
+            });
+
+            btnReset.addEventListener('click', () => {
+                quizForm.reset();
+
+                questions.forEach(q => {
+                    const explanationBox = q.querySelector('.explanation');
+                    explanationBox.style.display = 'none';
+                    explanationBox.classList.add('hidden');
+                    explanationBox.classList.remove('bg-violet-50', 'border-violet-300', 'bg-red-50', 'border-red-300', 'text-violet-800', 'text-red-800');
+                    q.classList.remove('border-violet-300', 'border-red-300', 'bg-violet-50/20', 'bg-red-50/20');
+                });
+
+                resultContainer.classList.add('hidden');
+                btnSubmit.parentElement.classList.remove('hidden');
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t15',
+          topicIndex: 15,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

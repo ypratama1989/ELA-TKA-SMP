@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz: Simple Present Tense</title>
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive images & Base64 handler */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Animation */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+        
+        /* Math Fraction Styling for Rearranging Words (Question 16) */
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            margin: 0 0.3em;
+        }
+        .fraction span {
+            display: block;
+            padding: 0.2em 0.5em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid #94a3b8;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-2 py-1 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-center text-slate-800 flex-1">Quiz: Simple Present Tense</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for perfect centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-900 mb-1">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-indigo-800 space-y-1 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).</li>
+                        <li>Sistem skoring menggunakan skala <strong>0 - 100</strong>.</li>
+                        <li>Kamu <strong>tidak perlu</strong> mengisi semua soal untuk memeriksa jawaban. Soal yang kosong akan dianggap salah.</li>
+                        <li>Jangan lupa baca pembahasan di akhir untuk memperdalam pemahamanmu!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Soal akan dirender di sini via JS -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-lg border border-slate-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <!-- Result Area -->
+                    <div id="result-area" class="hidden mb-8 py-4 border-b border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <p id="score-message" class="text-lg font-bold px-4 py-2 rounded-lg inline-block"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                By EDUFILLAH 
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 mx-2"></span> 
+                Unlock The Secret Of Curious Minds
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                question: "Water ______ at 100 degrees Celsius under standard atmospheric pressure.",
+                options: {
+                    A: "boil",
+                    B: "boils",
+                    C: "boiled",
+                    D: "is boiling"
+                },
+                correct: "B",
+                explanation: "Kalimat ini menyatakan **kebenaran umum / fakta ilmiah (General Truth)** bahwa air mendidih pada suhu 100 derajat Celcius. <br>• Subjek kalimat adalah <em>'Water'</em>. Air adalah benda yang tidak bisa dihitung (<em>uncountable noun</em>), sehingga selalu dianggap sebagai **Subjek Tunggal (Singular)** (setara dengan <em>It</em>).<br>• Rumus Simple Present Tense untuk subjek tunggal (He/She/It): **Verb 1 + s/es**.<br>• Jadi, <em>boil</em> harus ditambah '-s' menjadi <strong>boils</strong>."
+            },
+            {
+                id: 2,
+                context: "My father is a dedicated doctor. He ______ at the regional hospital every day, starting from 7 a.m.",
+                question: "Choose the correct verb!",
+                options: {
+                    A: "work",
+                    B: "works",
+                    C: "working",
+                    D: "is work"
+                },
+                correct: "B",
+                explanation: "Kalimat ini menceritakan **rutinitas atau kebiasaan (Habitual Action)**, ditandai dengan keterangan waktu <em>'every day'</em>. Oleh karena itu, kita harus menggunakan Simple Present Tense.<br>• Subjek kalimatnya adalah <strong>He</strong> (Dia laki-laki/Tunggal).<br>• Aturan dasarnya: Jika subjeknya <em>He, She, It</em>, kata kerjanya wajib ditambah akhiran <strong>-s/-es</strong>.<br>• Maka kata kerja yang benar adalah <strong>works</strong>."
+            },
+            {
+                id: 3,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rian:</strong> "How often do you clean your bedroom?"<br>
+                    <strong>Santi:</strong> "I ______ clean it every Saturday morning to keep it tidy."<br>
+                    <strong>Rian:</strong> "That's a good habit!"
+                </div>`,
+                question: "Complete the dialogue below!",
+                options: {
+                    A: "usually",
+                    B: "never",
+                    C: "seldom",
+                    D: "rarely"
+                },
+                correct: "A",
+                explanation: "Mari kita analisis logikanya!<br>Rian merespons kebiasaan Santi dengan pujian: <em>\"That's a good habit!\"</em> (Itu kebiasaan yang bagus!).<br>• Ini berarti Santi melakukan aktivitas membersihkan kamar secara rutin dan sering.<br>• <strong>Usually</strong> = biasanya (rutin).<br>• <em>Never</em> (tidak pernah), <em>Seldom/Rarely</em> (jarang) adalah kata keterangan frekuensi yang negatif, sehingga tidak cocok dengan pujian Rian."
+            },
+            {
+                id: 4,
+                question: "Identify the grammatically CORRECT sentence below.",
+                options: {
+                    A: "She do not likes eating spicy food because it hurts her stomach.",
+                    B: "She does not likes eating spicy food because it hurts her stomach.",
+                    C: "She does not like eating spicy food because it hurts her stomach.",
+                    D: "She do not like eating spicy food because it hurts her stomach."
+                },
+                correct: "C",
+                explanation: "Yuk kita ingat kembali rumus **Kalimat Negatif** pada Simple Present Tense!<br>• Rumusnya: <strong>Subject + do not / does not + Verb 1 (tanpa s/es)</strong>.<br>• Karena subjeknya <strong>She</strong> (tunggal), maka kita gunakan <strong>does not</strong>.<br>• <strong>Penting:</strong> Jika sudah ada kata <em>'does'</em>, maka kata kerja utamanya HARUS kembali ke bentuk dasar (tidak boleh ada tambahan -s/-es lagi).<br>• Jadi yang benar adalah: <em>\"She does not <strong>like</strong>...\"</em> (Opsi C). Opsi B salah karena masih ada s pada kata <em>likes</em>."
+            },
+            {
+                id: 5,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Teacher:</strong> "Why ______ the Earth revolve around the Sun?"<br>
+                    <strong>Student:</strong> "It is because of the Sun's strong gravitational pull, Sir."
+                </div>`,
+                question: "Choose the correct auxiliary verb!",
+                options: {
+                    A: "do",
+                    B: "does",
+                    C: "is",
+                    D: "are"
+                },
+                correct: "B",
+                explanation: "Ini adalah kalimat tanya (Interrogative Sentence).<br>• Subjek yang ditanyakan adalah <strong>the Earth</strong> (Bumi). Bumi hanya ada satu, sehingga ini adalah subjek **Tunggal (Singular)**.<br>• Dalam Simple Present Tense, kata bantu (auxiliary verb) untuk subjek tunggal (He/She/It/Benda Tunggal) adalah <strong>does</strong>.<br>• Kata bantu <em>'do'</em> hanya digunakan untuk subjek jamak atau I/You/They/We."
+            },
+            {
+                id: 6,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Andi:</strong> "Do your parents allow you to go camping this weekend?"<br>
+                    <strong>Budi:</strong> "No, they ______. They think the weather is too unpredictable."
+                </div>`,
+                question: "Complete the dialogue!",
+                options: {
+                    A: "don't",
+                    B: "doesn't",
+                    C: "aren't",
+                    D: "isn't"
+                },
+                correct: "A",
+                explanation: "Kalimat ini adalah bentuk Jawaban Pendek (Short Answer) dari pertanyaan <em>Yes/No Question</em>.<br>• Subjek kalimat jawabannya adalah <strong>they</strong> (mereka), yang merujuk pada <em>parents</em> (orang tua - jamak).<br>• Sesuai aturan Simple Present Tense, jika subjeknya <em>I, You, They, We</em>, maka bentuk negatifnya menggunakan <strong>do not (don't)</strong>.<br>• Jadi jawaban yang tepat adalah: <em>\"No, they don't.\"</em>"
+            },
+            {
+                id: 7,
+                context: `<div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-sm md:text-base text-slate-800 mb-3 shadow-sm">
+                    <strong>Student's Schedule:</strong><br>
+                    <table class="w-full mt-2 border-collapse text-sm">
+                        <tr class="bg-yellow-100"><th class="border border-yellow-300 p-2 text-left w-1/3">Day</th><th class="border border-yellow-300 p-2 text-left">Activity</th></tr>
+                        <tr><td class="border border-yellow-300 p-2">Monday - Friday</td><td class="border border-yellow-300 p-2">Practice basketball (3 PM - 5 PM)</td></tr>
+                        <tr><td class="border border-yellow-300 p-2">Saturday</td><td class="border border-yellow-300 p-2">Help parents at the shop</td></tr>
+                        <tr><td class="border border-yellow-300 p-2">Sunday</td><td class="border border-yellow-300 p-2">Rest at home</td></tr>
+                    </table>
+                </div>`,
+                question: "Based on the schedule, which statement is true about the student's routine?",
+                options: {
+                    A: "He practices basketball on weekends.",
+                    B: "He always helps his parents on weekdays.",
+                    C: "He does not practice basketball on Saturdays.",
+                    D: "He rests at home twice a week."
+                },
+                correct: "C",
+                explanation: "Mari kita cocokkan opsi dengan jadwal (Tabel Fakta):<br>• Opsi A: Salah. Dia latihan basket hari Senin-Jumat (weekdays), bukan akhir pekan (weekends).<br>• Opsi B: Salah. Dia membantu orang tuanya di hari Sabtu, bukan hari kerja (weekdays).<br>• Opsi D: Salah. Dia istirahat (rest at home) hanya 1 kali seminggu, yaitu hari Minggu.<br>• <strong>Opsi C: Benar.</strong> Dia membantu orang tuanya di hari Sabtu, yang berarti dia <strong>tidak</strong> latihan basket di hari Sabtu (<em>He does not practice basketball on Saturdays</em>)."
+            },
+            {
+                id: 8,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    (1) My uncle is a wildlife photographer.<br> 
+                    (2) He travels to various national parks to capture rare animals.<br> 
+                    (3) He always carry a heavy camera bag with him.<br> 
+                    (4) He loves his job very much.
+                </div>`,
+                question: "Which sentence in the text contains a grammatical error in the use of Simple Present Tense?",
+                options: {
+                    A: "Sentence (1)",
+                    B: "Sentence (2)",
+                    C: "Sentence (3)",
+                    D: "Sentence (4)"
+                },
+                correct: "C",
+                explanation: "Kesalahan tata bahasa (*grammatical error*) terdapat pada <strong>Kalimat (3)</strong>.<br>• Kalimatnya: <em>\"He always <strong>carry</strong> a heavy camera bag with him.\"</em><br>• Karena subjeknya adalah <strong>He</strong> (Tunggal), kata kerjanya WAJIB mendapat akhiran -s/-es.<br>• Kata dasar <em>carry</em> (berakhiran huruf 'y' yang didahului huruf konsonan 'r') harus diubah 'y' menjadi 'i' lalu ditambah '-es'.<br>• Seharusnya yang benar adalah: <em>\"He always <strong>carries</strong>...\"</em>"
+            },
+            {
+                id: 9,
+                question: "I ______ that honesty is the best policy in any relationship.",
+                options: {
+                    A: "believes",
+                    B: "believing",
+                    C: "believe",
+                    D: "am believing"
+                },
+                correct: "C",
+                explanation: "Kata <strong>believe</strong> (percaya) termasuk dalam kelompok <em>Stative Verbs</em> (Kata kerja yang menyatakan keadaan, pikiran, atau perasaan, bukan tindakan fisik).<br>• Aturan penting: <em>Stative Verbs</em> umumnya <strong>tidak boleh</strong> ditambahkan akhiran -ing (tidak bisa dijadikan Continuous Tense). Jadi opsi B dan D salah.<br>• Karena subjek kalimatnya adalah <strong>I</strong> (Saya), maka kata kerjanya tetap dalam bentuk dasar tanpa tambahan -s/-es.<br>• Jawaban yang tepat adalah <strong>believe</strong>."
+            },
+            {
+                id: 10,
+                question: "Which of the following sentences shows the correct placement of the adverb of frequency?",
+                options: {
+                    A: "Maya goes usually to the library on Friday afternoons.",
+                    B: "Maya usually goes to the library on Friday afternoons.",
+                    C: "Usually Maya to the library goes on Friday afternoons.",
+                    D: "Maya goes to the library on Friday afternoons usually."
+                },
+                correct: "B",
+                explanation: "Soal ini menguji posisi <em>Adverb of Frequency</em> (seperti: always, usually, often, sometimes, never).<br>• Aturan penempatan bakunya adalah: diletakkan <strong>setelah Subjek</strong> dan <strong>sebelum Kata Kerja Utama (Main Verb)</strong>.<br>• Pola: <strong>Subject + Adverb + Verb</strong>.<br>• Jadi susunan yang benar adalah: <em>Maya (Subject) + <strong>usually (Adverb)</strong> + goes (Verb)</em>."
+            },
+            
+            {
+                id: 11,
+                question: "Wood ______ on water, but a stone ______ immediately.",
+                options: {
+                    A: "float / sink",
+                    B: "floats / sink",
+                    C: "floats / sinks",
+                    D: "float / sinks"
+                },
+                correct: "C",
+                explanation: "Kalimat ini menyatakan hukum fisika dasar (Fakta Alam / General Truth).<br>• Subjek pertama: <em>'Wood'</em> (Kayu - Uncountable Noun / Tunggal) &rarr; kata kerja harus pakai -s &rarr; <strong>floats</strong>.<br>• Subjek kedua: <em>'a stone'</em> (Sebuah batu - Tunggal) &rarr; kata kerja harus pakai -s &rarr; <strong>sinks</strong>.<br>• Keduanya adalah subjek tunggal, jadi butuh kata kerja <strong>floats</strong> dan <strong>sinks</strong> (Opsi C)."
+            },
+            {
+                id: 12,
+                question: "The members of the English Club ______ their speaking skills by practicing every Wednesday.",
+                options: {
+                    A: "improves",
+                    B: "improve",
+                    C: "improving",
+                    D: "is improving"
+                },
+                correct: "B",
+                explanation: "Langkah pertama: Temukan subjek aslinya!<br>• Subjek kalimatnya adalah frasa yang panjang: <em>\"The members of the English Club\"</em>.<br>• Inti dari subjek ini ada pada kata <strong>members</strong> (anggota-anggota). Karena ada huruf '-s', berarti subjeknya <strong>Jamak (Plural)</strong> / lebih dari satu (setara dengan <em>They</em>).<br>• Untuk subjek jamak, kata kerja <strong>tidak boleh</strong> ditambah akhiran -s/-es.<br>• Maka kata kerja yang benar adalah <strong>improve</strong>."
+            },
+            {
+                id: 13,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Situation:</strong><br>
+                    Roni always gets 100 on his English tests, never misses a class, and always submits his homework on time.
+                </div>`,
+                question: "Which sentence best describes Roni's routine behavior?",
+                options: {
+                    A: "Roni is lazy and rarely studies English.",
+                    B: "Roni always studies hard and respects his school rules.",
+                    C: "Roni sometimes forgets to do his English homework.",
+                    D: "Roni does not like English lessons at all."
+                },
+                correct: "B",
+                explanation: "(Soal HOTS - Evaluasi Teks). Mari kita baca kebiasaan Roni:<br>• Selalu dapat nilai 100 (*always gets 100*).<br>• Tidak pernah bolos kelas (*never misses a class*).<br>• Selalu kumpul PR tepat waktu (*always submits his homework on time*).<br>• Semua fakta di atas membuktikan bahwa Roni adalah anak yang rajin dan taat aturan.<br>• Kesimpulan yang paling logis adalah opsi B: <em>\"Roni always studies hard and respects his school rules.\"</em>"
+            },
+            {
+                id: 14,
+                context: `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm md:text-base text-blue-900 font-medium mb-3 text-center italic shadow-sm">
+                    "The sun rises in the east and sets in the west."
+                </div>`,
+                question: "What is the communicative function of the sentence above?",
+                options: {
+                    A: "To describe a temporary habit.",
+                    B: "To express a general truth or scientific fact.",
+                    C: "To explain a future plan.",
+                    D: "To report an ongoing event."
+                },
+                correct: "B",
+                explanation: "Fungsi kalimat (*communicative function*) dari Simple Present Tense ada beberapa macam. Kalimat <em>\"Matahari terbit di timur dan tenggelam di barat\"</em> adalah sebuah kenyataan alam yang tidak bisa diubah.<br>Oleh karena itu, fungsi kalimat ini adalah untuk menyatakan <strong>Fakta ilmiah atau Kebenaran umum (To express a general truth or scientific fact)</strong>."
+            },
+            {
+                id: 15,
+                question: "Everyone in this class ______ to pass the final examination with excellent grades.",
+                options: {
+                    A: "want",
+                    B: "wants",
+                    C: "wanting",
+                    D: "are wanting"
+                },
+                correct: "B",
+                explanation: "Hati-hati dengan kata ganti tak tentu (*Indefinite Pronouns*)!<br>• Kata-kata seperti <em>Everyone, Everybody, Someone, Somebody, Nobody</em> secara logika mungkin terkesan banyak orang, TAPI dalam tata bahasa Inggris secara ketat dianggap sebagai <strong>Subjek Tunggal (Singular)</strong>.<br>• Karena dianggap subjek tunggal (setara He/She/It), maka kata kerjanya wajib mendapat tambahan akhiran -s/-es.<br>• Jadi, <em>want</em> berubah menjadi <strong>wants</strong>."
+            },
+            {
+                id: 16,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base font-medium mb-3 text-center py-6">
+                    Rearrange these words into a grammatically correct sentence!<br><br>
+                    <div class="inline-flex flex-wrap justify-center gap-3 mt-4 text-lg font-bold">
+                        <div class="fraction"><span>seldom</span><span class="fdn text-xs font-normal text-slate-500">1</span></div>
+                        <span class="mt-1 text-slate-300">&bull;</span>
+                        <div class="fraction"><span>my brother</span><span class="fdn text-xs font-normal text-slate-500">2</span></div>
+                        <span class="mt-1 text-slate-300">&bull;</span>
+                        <div class="fraction"><span>his room</span><span class="fdn text-xs font-normal text-slate-500">3</span></div>
+                        <span class="mt-1 text-slate-300">&bull;</span>
+                        <div class="fraction"><span>on weekends</span><span class="fdn text-xs font-normal text-slate-500">4</span></div>
+                        <span class="mt-1 text-slate-300">&bull;</span>
+                        <div class="fraction"><span>cleans</span><span class="fdn text-xs font-normal text-slate-500">5</span></div>
+                    </div>
+                </div>`,
+                question: "Choose the correct sequence:",
+                options: {
+                    A: "2 - 1 - 5 - 3 - 4",
+                    B: "2 - 5 - 1 - 3 - 4",
+                    C: "1 - 2 - 5 - 3 - 4",
+                    D: "2 - 3 - 1 - 5 - 4"
+                },
+                correct: "A",
+                explanation: "Mari kita susun kalimat ini menggunakan pola standar <strong>S - Adverb - V - O - Keterangan</strong>.<br>• <strong>Subject (S):</strong> <em>my brother</em> (2)<br>• <strong>Adverb of Frequency:</strong> <em>seldom</em> (1) (Ingat, diletakkan sebelum kata kerja!)<br>• <strong>Verb (V):</strong> <em>cleans</em> (5)<br>• <strong>Object (O):</strong> <em>his room</em> (3)<br>• <strong>Adverb of Time:</strong> <em>on weekends</em> (4)<br>Susunan lengkapnya: <em>\"My brother seldom cleans his room on weekends\"</em> (Adik laki-lakiku jarang membersihkan kamarnya di akhir pekan). Urutan: 2 - 1 - 5 - 3 - 4."
+            },
+            {
+                id: 17,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Siti:</strong> "Does your sister study at State University?"<br>
+                    <strong>Lina:</strong> "No, she doesn't. She ______ at a private college."<br>
+                    <strong>Siti:</strong> "Oh, I see."
+                </div>`,
+                question: "The most appropriate verb to complete the dialogue is...",
+                options: {
+                    A: "study",
+                    B: "studies",
+                    C: "studying",
+                    D: "studied"
+                },
+                correct: "B",
+                explanation: "Kalimat yang rumpang adalah: <em>\"She ______ at a private college.\"</em><br>• Ini adalah kalimat positif dalam Simple Present Tense.<br>• Subjek kalimat adalah <strong>She</strong> (Tunggal).<br>• Kata kerja asalnya adalah <em>study</em>. Karena berakhiran huruf 'y' yang sebelumnya didahului huruf konsonan 'd', maka huruf 'y' dicoret diganti 'i' lalu ditambah '-es'.<br>• Maka kata kerjanya menjadi <strong>studies</strong>."
+            },
+            {
+                id: 18,
+                question: "A chef ______ delicious meals and ______ the kitchen staff in a restaurant.",
+                options: {
+                    A: "prepare / manage",
+                    B: "prepares / manages",
+                    C: "preparing / managing",
+                    D: "prepares / manage"
+                },
+                correct: "B",
+                explanation: "Ini adalah bentuk kalimat majemuk setara. Perhatikan kata penghubung <strong>'and'</strong> (dan).<br>• Subjek kalimatnya adalah <strong>A chef</strong> (Seorang koki = Tunggal / setara <em>He/She</em>).<br>• Karena subjeknya tunggal, <strong>kedua</strong> kata kerja yang dipisahkan oleh 'and' harus sama-sama mendapat tambahan akhiran -s/-es agar paralel/setara bentuknya.<br>• Oleh karena itu, pasangannya harus konsisten: <strong>prepares</strong> (menyiapkan) dan <strong>manages</strong> (mengelola)."
+            },
+            {
+                id: 19,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3 text-center">
+                    Base Verbs:<br>
+                    <span class="font-bold text-lg text-blue-700">Fly, Catch, Go</span>
+                </div>`,
+                question: "Choose the correct spelling of the verbs for the third-person singular (He/She/It) form!",
+                options: {
+                    A: "Flys, Catchs, Goes",
+                    B: "Flies, Catches, Gos",
+                    C: "Flies, Catches, Goes",
+                    D: "Flys, Catches, Goes"
+                },
+                correct: "C",
+                explanation: "Mari kita ingat aturan ejaan (Spelling Rules) untuk akhiran -s/-es:<br>1. <strong>Fly</strong>: Berakhiran 'y' didahului huruf konsonan (l). Ubah 'y' jadi 'i' + es &rarr; <strong>Flies</strong>.<br>2. <strong>Catch</strong>: Berakhiran bunyi desis/konsonan ganda (ch, sh, ss, x, z). Langsung tambah -es &rarr; <strong>Catches</strong>.<br>3. <strong>Go</strong>: Berakhiran huruf vokal 'o'. Langsung tambah -es &rarr; <strong>Goes</strong>.<br>Kombinasi yang benar adalah Opsi C."
+            },
+            {
+                id: 20,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    My mother ______ (1) up at 4:30 AM every day. She ______ (2) a cup of warm tea and then ______ (3) breakfast for the family. We all love her cooking.
+                </div>`,
+                question: "The correct verbs to complete the paragraph are...",
+                options: {
+                    A: "(1) wake, (2) drink, (3) cook",
+                    B: "(1) wakes, (2) drinks, (3) cooks",
+                    C: "(1) waking, (2) drinking, (3) cooking",
+                    D: "(1) wakes, (2) drink, (3) cooks"
+                },
+                correct: "B",
+                explanation: "Dalam teks cerita pendek ini, keseluruhan aktivitas merujuk pada subjek <strong>My mother</strong> dan kata ganti <strong>She</strong>.<br>• Keduanya merupakan Subjek Tunggal (Ketiga Tunggal).<br>• Karena ini adalah rutinitas (<em>every day</em>), maka SEMUA kata kerjanya harus berbentuk Verb 1 ditambah akhiran -s/-es.<br>• (1) wake &rarr; <strong>wakes</strong><br>• (2) drink &rarr; <strong>drinks</strong><br>• (3) cook &rarr; <strong>cooks</strong>."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:p-7 relative group hover:border-blue-300 transition-colors duration-300">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                ${item.context ? item.context : ''}
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+                
+                // Render Options
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                // Explanation Container (Hidden initially)
+                htmlContent += `
+                                </div>
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                // Clean classes
+                expContainer.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'bg-rose-50', 'border-rose-500', 'text-rose-900', 'bg-amber-50', 'border-amber-500', 'text-amber-900');
+
+                if (!selected) {
+                    // Unanswered handling (Counted as wrong but visually highlighted yellow)
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Soal terlewat / Belum dijawab!";
+                    expText.innerHTML = `Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-1"><i class="fas fa-lightbulb mr-1 text-amber-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                } else if (selected.value === item.correct) {
+                    // Correct answer
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Hebat! Jawaban Kamu Benar.";
+                    expText.innerHTML = item.explanation;
+                } else {
+                    // Incorrect answer
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat. Kunci yang benar adalah ${item.correct}.`;
+                    expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-1"><i class="fas fa-lightbulb mr-1 text-rose-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                }
+                
+                // Disable inputs after checking
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            // Calculate Score
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Score Counting Animation
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Conditional messages based on performance
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Nilai Sempurna! Pemahaman Grammarmu luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Sangat Baik! Kamu sudah memahami Simple Present Tense dengan sangat mantap.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Baca lagi pembahasannya agar lebih jago ya!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-reader mr-2 text-rose-500'></i> Tetap Semangat! Jangan menyerah, baca pelan-pelan pembahasannya dan coba lagi!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            }
+
+            // Button visibility toggle
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Auto scroll to results
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); // EaseOut quad function
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset forms natively
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable and uncheck all inputs, hide explanation boxes
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false;
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+            });
+
+            // Hide Result Board
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Swap Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll to Top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

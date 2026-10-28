@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - EDUFILLAH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2rem; /* Balance for back button */
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-intro p {
+            color: var(--text-muted);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-number {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 2.8rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: #C7D2FE;
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-top: 2px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom {
+            border-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .option-label.correct .radio-custom { border-color: var(--success); }
+        .option-label.correct .radio-custom::after { background: var(--success); }
+        
+        .option-label.wrong {
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .option-label.wrong .radio-custom { border-color: var(--danger); }
+        .option-label.wrong .radio-custom::after { background: var(--danger); }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .exp-correct { background-color: var(--success-bg); border-left: 4px solid var(--success); }
+        .exp-correct h4 { color: #065F46; }
+        .exp-wrong { background-color: var(--danger-bg); border-left: 4px solid var(--danger); }
+        .exp-wrong h4 { color: #991B1B; }
+
+        .explanation-content {
+            color: #374151;
+            margin-top: 0.5rem;
+        }
+
+        .action-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #EEF2FF;
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .score-title { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #EEF2FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--primary);
+        }
+        .score-value { font-size: 3rem; font-weight: 700; color: var(--primary); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .options-container { margin-left: 0; margin-top: 1rem; }
+            .question-header { flex-direction: column; }
+            .header-title { margin-right: 0; text-align: right;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="btn-back" onclick="goBack()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <div class="header-title">Kuis Estimasi & Operasi Bilangan</div>
+    </header>
+
+    <main>
+        <div class="quiz-intro">
+            <h1>Uji Pemahaman Konsepmu!</h1>
+            <p>Pilih jawaban yang menurutmu paling tepat. Anda tidak perlu mengisi semua soal untuk memeriksa jawaban. Setiap soal bernilai 5 poin.</p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-questions">
+                <!-- Soal akan di-generate oleh JavaScript di sini -->
+            </div>
+
+            <div class="action-container" id="submit-section">
+                <button type="button" class="btn btn-primary" onclick="checkAnswers()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-container">
+            <div class="score-title">Nilai Akhir Anda</div>
+            <div class="score-circle">
+                <div class="score-value" id="final-score">0</div>
+            </div>
+            <p id="score-message" style="margin-bottom: 1.5rem; color: var(--text-main); font-weight: 500;"></p>
+            <button type="button" class="btn btn-outline" onclick="resetQuiz()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ulangi Tes
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "Nilai dari &radic;75 berada di antara dua bilangan bulat...",
+                options: ["7 dan 8", "8 dan 9", "9 dan 10", "10 dan 11"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Berpikir Logis:</strong><br>
+                Untuk memperkirakan nilai akar kuadrat, carilah bilangan kuadrat sempurna yang paling dekat sebelum dan sesudah angka 75.<br>
+                1. Kita tahu bahwa <code>8<sup>2</sup> = 64</code> dan <code>9<sup>2</sup> = 81</code>.<br>
+                2. Angka 75 berada di antara 64 dan 81 <code>(64 &lt; 75 &lt; 81)</code>.<br>
+                3. Oleh karena itu, &radic;75 pasti berada di antara &radic;64 dan &radic;81.<br>
+                Sehingga nilainya berada di antara <strong>8 dan 9</strong> (sekitar 8,66).`
+            },
+            {
+                question: "Seorang kontraktor membutuhkan 18,7 meter besi untuk satu tiang penyangga. Jika ia harus membuat 9 tiang penyangga yang sama, estimasi terbaik untuk total panjang besi yang harus dibeli adalah...",
+                options: ["150 meter", "170 meter", "190 meter", "210 meter"],
+                correctAnswer: 1, 
+                explanation: `<strong>Mengapa Kita Mengestimasi?</strong><br>
+                Dalam dunia nyata (terutama konstruksi), lebih baik memiliki sedikit kelebihan daripada kekurangan bahan.<br>
+                1. Panjang besi per tiang adalah 18,7 meter. Kita bisa membulatkannya menjadi <strong>19 meter</strong> agar lebih aman.<br>
+                2. Jumlah tiang = 9 buah.<br>
+                3. Lakukan perkalian estimasi: <code>19 meter &times; 9 = 171 meter</code>.<br>
+                4. Dari opsi yang tersedia, nilai estimasi dan aman yang paling mendekati 171 meter adalah <strong>170 meter</strong>. (Jika dihitung pasti: 18,7 &times; 9 = 168,3 m, yang akan dibulatkan menjadi 170 m saat membeli).`
+            },
+            {
+                question: "Sebuah taman berbentuk persegi memiliki luas 118 meter persegi. Estimasi terbaik untuk panjang sisi taman tersebut adalah...",
+                options: ["9,8 meter", "10,9 meter", "11,2 meter", "12,1 meter"],
+                correctAnswer: 1, 
+                explanation: `<strong>Pengingat Konsep Luas Persegi:</strong><br>
+                Luas Persegi = Sisi &times; Sisi (atau s<sup>2</sup>). Maka, Sisi = &radic;Luas.<br>
+                1. Kita mencari &radic;118.<br>
+                2. Mari cari bilangan kuadrat terdekat: <code>10<sup>2</sup> = 100</code> dan <code>11<sup>2</sup> = 121</code>.<br>
+                3. Karena 118 <em>sangat dekat</em> dengan 121, maka panjang sisinya pasti sedikit lebih kecil dari 11 meter.<br>
+                4. Dari pilihan yang ada, angka <strong>10,9 meter</strong> adalah yang paling masuk akal (<code>10,9<sup>2</sup> = 118,81</code>).`
+            },
+            {
+                question: "Budi ingin membeli 4 jenis barang di koperasi sekolah dengan harga masing-masing Rp4.850, Rp12.100, Rp8.900, dan Rp5.250. Budi melakukan estimasi dengan membulatkan setiap harga ke ribuan terdekat. Kesalahan (selisih) antara hasil estimasi Budi dengan jumlah belanjaan riil adalah...",
+                options: ["Rp100", "Rp200", "Rp300", "Rp400"],
+                correctAnswer: 0, 
+                explanation: `<strong>Mari Kita Bandingkan Nilai Riil dan Estimasi:</strong><br>
+                1. <strong>Hitung Total Riil:</strong><br>
+                   <code>Rp4.850 + Rp12.100 + Rp8.900 + Rp5.250 = Rp31.100</code>.<br>
+                2. <strong>Lakukan Pembulatan Budi (Ribuan Terdekat):</strong><br>
+                   &bull; 4.850 &rarr; dibulatkan ke atas menjadi 5.000<br>
+                   &bull; 12.100 &rarr; dibulatkan ke bawah menjadi 12.000<br>
+                   &bull; 8.900 &rarr; dibulatkan ke atas menjadi 9.000<br>
+                   &bull; 5.250 &rarr; dibulatkan ke atas menjadi 5.000<br>
+                   <strong>Total Estimasi = 5.000 + 12.000 + 9.000 + 5.000 = Rp31.000</strong>.<br>
+                3. <strong>Hitung Selisih (Kesalahan):</strong><br>
+                   <code>Rp31.100 - Rp31.000 = <strong>Rp100</strong></code>.`
+            },
+            {
+                question: "Dua orang siswa, Andi dan Siti, mengestimasi volume sebuah kotak berbentuk kubus dengan panjang rusuk 4,8 cm.<br>- Andi membulatkan panjang rusuk menjadi 5 cm lalu menghitung volumenya.<br>- Siti menghitung volume eksak terlebih dahulu baru membulatkan hasilnya ke satuan terdekat.<br>Pernyataan mengevaluasi metode yang paling tepat adalah...",
+                options: ["Metode Andi lebih akurat karena pembulatan di awal meminimalkan akumulasi error.", "Metode Siti lebih akurat karena menggunakan nilai eksak sebelum pembulatan akhir.", "Kedua metode menghasilkan nilai estimasi yang sama persis.", "Metode Andi selalu menghasilkan nilai yang lebih kecil dari metode Siti."],
+                correctAnswer: 1, 
+                explanation: `<strong>Evaluasi Akurasi Pengukuran (Error Propagation):</strong><br>
+                &bull; <strong>Cara Andi:</strong> Dibulatkan di awal menjadi 5 cm. Volume = <code>5<sup>3</sup> = 125 cm<sup>3</sup></code>.<br>
+                &bull; <strong>Cara Siti:</strong> Volume eksak = <code>4,8 &times; 4,8 &times; 4,8 = 110,592 cm<sup>3</sup></code>. Dibulatkan menjadi <strong>111 cm<sup>3</sup></strong>.<br><br>
+                <strong>Kesimpulan:</strong> Jika kita membulatkan angka <em>sebelum</em> melakukan operasi pangkat (seperti yang Andi lakukan), kesalahan kecil di awal akan "berlipat ganda" (error propagation) sehingga menyimpang sangat jauh dari nilai asli (selisih 14 cm<sup>3</sup>). Metode <strong>Siti jauh lebih akurat</strong>.`
+            },
+            {
+                question: "Populasi sebuah kota adalah 1.245.000 jiwa. Jika diproyeksikan tumbuh sebesar 1,9% per tahun, estimasi jumlah penduduk kota tersebut setelah satu tahun dalam bentuk notasi ilmiah yang paling mendekati adalah...",
+                options: ["1,25 &times; 10<sup>6</sup> jiwa", "1,27 &times; 10<sup>6</sup> jiwa", "1,30 &times; 10<sup>6</sup> jiwa", "1,45 &times; 10<sup>6</sup> jiwa"],
+                correctAnswer: 1, 
+                explanation: `<strong>Trik Menghitung Estimasi Persentase:</strong><br>
+                1. Bulatkan persentasenya untuk mempermudah hitungan: <code>1,9% &asymp; 2%</code>.<br>
+                2. Angka awal 1.245.000 jiwa (sekitar 1,25 juta jiwa).<br>
+                3. Hitung pertumbuhan: <code>2% dari 1.250.000 = 25.000 jiwa</code>.<br>
+                4. Total populasi baru = <code>1.245.000 + 25.000 = 1.270.000 jiwa</code>.<br>
+                5. Ubah ke Notasi Ilmiah: 1.270.000 memiliki koma yang bergeser 6 langkah ke kiri, menjadi <strong>1,27 &times; 10<sup>6</sup> jiwa</strong>.`
+            },
+            {
+                question: "Sebuah kolam renang berbentuk lingkaran dengan diameter 19,6 meter akan dipasangi pagar pengaman di sekelilingnya. Jika biaya pemasangan pagar adalah Rp152.000 per meter, estimasi biaya total yang paling realistis (menggunakan &pi; = 3,14) adalah...",
+                options: ["Rp6.000.000", "Rp9.000.000", "Rp12.000.000", "Rp15.000.000"],
+                correctAnswer: 1, 
+                explanation: `<strong>Cara Cepat Menghitung Estimasi:</strong><br>
+                Alih-alih menghitung presisi yang menyita waktu, bulatkan angka ke yang paling mudah dihitung.<br>
+                1. Diameter = 19,6 m &rarr; bulatkan jadi <strong>20 m</strong>.<br>
+                2. Keliling Lingkaran (K) = &pi; &times; d = <code>3,14 &times; 20 = 62,8 meter</code>. (Bisa kita bulatkan kasar menjadi 60 m untuk batas bawah estimasi).<br>
+                3. Biaya per meter = Rp152.000 &rarr; bulatkan jadi <strong>Rp150.000</strong>.<br>
+                4. Hitung Total = <code>60 m &times; Rp150.000 = <strong>Rp9.000.000</strong></code>.<br>
+                <em>(Jika dihitung presisi manual: 61,544 m &times; 152.000 &asymp; Rp9,3 juta. Opsi 9 juta adalah yang paling mendekati dan masuk akal).</em>`
+            },
+            {
+                question: "Hasil estimasi dari operasi (3,14 &times; 19,9) &divide; 4,82 yang paling mendekati nilai sebenarnya adalah...",
+                options: ["10", "13", "16", "20"],
+                correctAnswer: 1, 
+                explanation: `<strong>Langkah Pembulatan Operasi Desimal:</strong><br>
+                Mari kita bulatkan angka-angkanya ke nilai terdekat yang mudah dioperasikan:<br>
+                1. <strong>3,14</strong> biarkan, atau bisa dianggap mendekati 3.<br>
+                2. <strong>19,9</strong> sangat dekat dengan <strong>20</strong>.<br>
+                3. <strong>4,82</strong> dekat dengan <strong>4,8</strong> atau <strong>5</strong>.<br><br>
+                Mari kita uji dengan pembilang: <code>3,14 &times; 20 = 62,8</code>.<br>
+                Operasikan pembagian: <code>62,8 &divide; 4,8 &asymp; 13,08</code>.<br>
+                Atau pakai cara pembulatan kasar: <code>(3 &times; 20) &divide; 5 = 60 &divide; 5 = 12</code>.<br>
+                Angka yang paling mendekati rentang 12 hingga 13,08 dari pilihan adalah <strong>13</strong>.`
+            },
+            {
+                question: "Sebuah pabrik mengklaim dapat memproduksi 2.450 unit barang per hari. Seorang auditor ingin mengevaluasi klaim tersebut. Ia mengamati produksi selama 5 hari berturut-turut dan mencatat data: 2.380, 2.410, 2.490, 2.350, dan 2.420 unit. Evaluasi yang paling tepat terhadap klaim pabrik tersebut adalah...",
+                options: ["Klaim terlalu tinggi karena rata-rata produksi harian sebenarnya hanya sekitar 2.300 unit.", "Klaim cukup realistis karena rata-rata produksi harian berada pada kisaran 2.410 unit.", "Klaim terlalu rendah karena ada hari di mana produksi mencapai hampir 2.500 unit.", "Klaim tidak dapat dievaluasi karena datanya terlalu fluktuatif."],
+                correctAnswer: 1, 
+                explanation: `<strong>Evaluasi Menggunakan Nilai Rata-rata (Mean):</strong><br>
+                Untuk mengevaluasi suatu klaim harian, kita harus mencari rata-rata data lapangan.<br>
+                1. Jumlahkan total produksi 5 hari: <br>
+                   <code>2.380 + 2.410 + 2.490 + 2.350 + 2.420 = 12.050 unit</code>.<br>
+                2. Bagi dengan 5 hari: <br>
+                   <code>12.050 &divide; 5 = <strong>2.410 unit/hari</strong></code>.<br>
+                3. Rata-rata nyata (2.410) sangat dekat dengan klaim pabrik (2.450) dengan selisih yang wajar. Maka, klaim tersebut dinilai <strong>cukup realistis</strong>.`
+            },
+            {
+                question: "Sebuah mobil menempuh jarak 148,5 km dalam waktu 2 jam 12 menit. Estimasi kecepatan rata-rata mobil tersebut adalah...",
+                options: ["60 km/jam", "68 km/jam", "75 km/jam", "82 km/jam"],
+                correctAnswer: 1, 
+                explanation: `<strong>Langkah Penyelesaian Konversi Waktu:</strong><br>
+                Ingat rumus kecepatan: Kecepatan (V) = Jarak (s) &divide; Waktu (t).<br>
+                1. Jarak = 148,5 km &rarr; estimasikan ke angka mudah: <strong>150 km</strong>.<br>
+                2. Waktu = 2 jam 12 menit. Kita harus mengubah menit ke jam pecahan. <br>
+                   <code>12 menit = 12/60 jam = 0,2 jam</code>. Maka total waktu = <strong>2,2 jam</strong>.<br>
+                3. Hitung kecepatan: <code>150 &divide; 2,2 &asymp; 68,18 km/jam</code>.<br>
+                Pilihan yang paling mendekati adalah <strong>68 km/jam</strong>.`
+            },
+            {
+                question: "Toko kelontong 'Makmur' ingin memesan beras. Ada dua distributor yang menawarkan harga:<br>- Distributor A: Rp12.850 per kg, dengan pembulatan total belanja ke ratusan rupiah teratas.<br>- Distributor B: Rp12.900 per kg, tanpa pembulatan.<br>Jika toko ingin membeli 1.000 kg beras, analisis keputusan yang paling menguntungkan adalah...",
+                options: ["Memilih Distributor A karena menghemat sekitar Rp50.000.", "Memilih Distributor B karena harga satuannya lebih pasti tanpa pembulatan.", "Kedua distributor memberikan total harga yang sama setelah pembulatan.", "Memilih Distributor A karena pembulatan ratusan teratas tidak berdampak pada jumlah besar."],
+                correctAnswer: 0, 
+                explanation: `<strong>Mari Kita Hitung Total Biaya Pesanan Besar:</strong><br>
+                &bull; <strong>Distributor A:</strong> Harga total = <code>1.000 kg &times; Rp12.850 = Rp12.850.000</code>.<br>
+                  Karena tidak ada pecahan uang di bawah seratus rupiah pada hasil akhirnya (berakhir dengan angka nol pas), maka aturan "pembulatan ke ratusan teratas" <em>tidak memberikan efek tambahan biaya</em>.<br>
+                &bull; <strong>Distributor B:</strong> Harga total = <code>1.000 kg &times; Rp12.900 = Rp12.900.000</code>.<br><br>
+                <strong>Kesimpulan:</strong> Selisih biayanya adalah <code>Rp12.900.000 - Rp12.850.000 = Rp50.000</code>. Tentu lebih menguntungkan memilih <strong>Distributor A</strong>.`
+            },
+            {
+                question: "Nilai estimasi dari <sup>3</sup>&radic;130 (akar pangkat tiga dari 130) yang paling mendekati adalah...",
+                options: ["4,1", "5,1", "6,1", "7,1"],
+                correctAnswer: 1, 
+                explanation: `<strong>Mencari Akar Pangkat Tiga Terdekat:</strong><br>
+                Kita perlu mencari bilangan yang jika dikalikan dirinya sendiri 3 kali mendekati angka 130.<br>
+                &bull; <code>4<sup>3</sup> = 4 &times; 4 &times; 4 = 64</code><br>
+                &bull; <code>5<sup>3</sup> = 5 &times; 5 &times; 5 = 125</code><br>
+                &bull; <code>6<sup>3</sup> = 6 &times; 6 &times; 6 = 216</code><br><br>
+                Angka 130 sangat dekat (hanya selisih 5 angka) dengan 125. Sehingga, akar pangkat tiga dari 130 pastilah angka 5 koma sesuatu yang sangat kecil. Pilihan <strong>5,1</strong> adalah yang paling logis.`
+            },
+            {
+                question: "Sebuah mobil dinas memiliki efisiensi bahan bakar 1 liter untuk 11,8 km. Jika mobil tersebut akan menempuh perjalanan dinas sejauh 352 km, estimasi jumlah bahan bakar minimal yang harus diisi (dibulatkan ke liter terdekat) agar tidak kehabisan di jalan adalah...",
+                options: ["28 liter", "30 liter", "33 liter", "35 liter"],
+                correctAnswer: 1, 
+                explanation: `<strong>Penalaran Logis:</strong><br>
+                1. Efisiensi 11,8 km/liter kita bulatkan menjadi <strong>12 km/liter</strong> agar mudah dihitung.<br>
+                2. Jarak tempuh = 352 km, mari bulatkan ke atas menjadi <strong>360 km</strong> (untuk margin keselamatan perjalanan).<br>
+                3. Bahan bakar yang dibutuhkan = <code>Jarak &divide; Efisiensi</code><br>
+                   <code>360 km &divide; 12 km/liter = <strong>30 liter</strong></code>.<br>
+                <em>(Jika dihitung persis, kebutuhannya adalah 29,83 liter. Demi keamanan mesin di perjalanan, pembulatan ke atas menjadi 30 liter adalah keputusan paling tepat)</em>.`
+            },
+            {
+                question: "Roni memiliki kuota internet sebesar 15 GB. Setiap hari ia menggunakan rata-rata 480 MB untuk belajar daring. Estimasi sisa kuota internet Roni setelah 25 hari penggunaan adalah... (Catatan: 1 GB = 1.000 MB)",
+                options: ["1 GB", "3 GB", "5 GB", "7 GB"],
+                correctAnswer: 1, 
+                explanation: `<strong>Langkah Penyelesaian Berjenjang:</strong><br>
+                1. Estimasi pemakaian harian: 480 MB dibulatkan menjadi <strong>500 MB (atau 0,5 GB)</strong> per hari.<br>
+                2. Hitung total penggunaan selama 25 hari: <br>
+                   <code>25 hari &times; 0,5 GB = <strong>12,5 GB</strong></code>.<br>
+                3. Hitung sisa kuota: <br>
+                   <code>Kuota Awal - Pemakaian = 15 GB - 12,5 GB = 2,5 GB</code>.<br>
+                4. Dari opsi yang tersedia, angka yang paling mendekati 2,5 GB adalah <strong>3 GB</strong>.`
+            },
+            {
+                question: "Seorang siswa mengukur panjang meja belajar dan mendapatkan hasil 120,4 cm. Jika batas toleransi kesalahan alat ukur adalah 0,5%, maka rentang nilai estimasi panjang meja yang sebenarnya adalah...",
+                options: ["119,4 cm s.d. 121,4 cm", "119,8 cm s.d. 121,0 cm", "120,0 cm s.d. 120,8 cm", "119,0 cm s.d. 121,8 cm"],
+                correctAnswer: 1, 
+                explanation: `<strong>Menghitung Rentang Ketidakpastian:</strong><br>
+                1. Hitung nilai persentase kesalahan dari angka pengukuran:<br>
+                   <code>0,5% dari 120,4 cm = (0,5 / 100) &times; 120,4 = 0,005 &times; 120,4 &asymp; <strong>0,6 cm</strong></code>.<br>
+                2. Cari Batas Bawah Pengukuran (dikurangi margin error):<br>
+                   <code>120,4 cm - 0,6 cm = <strong>119,8 cm</strong></code>.<br>
+                3. Cari Batas Atas Pengukuran (ditambah margin error):<br>
+                   <code>120,4 cm + 0,6 cm = <strong>121,0 cm</strong></code>.<br>
+                Sehingga rentang pastinya adalah <strong>119,8 cm s.d. 121,0 cm</strong>.`
+            },
+            {
+                question: "Sebuah truk logistik mengangkut 3 jenis paket. Paket A seberat 145,8 kg, Paket B seberat 234,2 kg, dan Paket C seberat 189,5 kg. Estimasi berat total muatan truk tersebut ke puluhan kg terdekat adalah...",
+                options: ["550 kg", "570 kg", "590 kg", "610 kg"],
+                correctAnswer: 1, 
+                explanation: `<strong>Trik Estimasi Pembulatan:</strong><br>
+                Agar cepat, kita bulatkan masing-masing berat ke angka puluhan (kelipatan 10) terdekat.<br>
+                &bull; 145,8 kg &rarr; dibulatkan ke atas menjadi <strong>150 kg</strong><br>
+                &bull; 234,2 kg &rarr; dibulatkan ke bawah menjadi <strong>230 kg</strong><br>
+                &bull; 189,5 kg &rarr; dibulatkan ke atas menjadi <strong>190 kg</strong><br><br>
+                Jumlahkan nilai estimasi: <code>150 + 230 + 190 = <strong>570 kg</strong></code>.<br>
+                <em>(Nilai presisinya adalah 569,5 kg yang jika dibulatkan ke puluhan terdekat juga jatuh di angka 570 kg).</em>`
+            },
+            {
+                question: "Ibu ingin membuat kue. Resep membutuhkan 0,375 kg tepung terigu. Di toko, tepung dijual dalam kemasan &frac14; kg seharga Rp4.000 dan kemasan &frac12; kg seharga Rp7.500. Evaluasi pembelian yang paling ekonomis dan mencukupi kebutuhan Ibu adalah...",
+                options: ["Membeli dua kemasan &frac14; kg.", "Membeli satu kemasan &frac12; kg.", "Membeli satu kemasan &frac14; kg dan satu kemasan &frac12; kg.", "Membeli tiga kemasan &frac14; kg."],
+                correctAnswer: 1, 
+                explanation: `<strong>Mari Kita Evaluasi Semua Opsi Secara Ekonomi & Kebutuhan:</strong><br>
+                Ibu butuh <strong>0,375 kg</strong>. Kita ubah berat opsi kemasan ke desimal:<br>
+                &bull; Opsi A: 2 &times; 0,25 kg = 0,5 kg (Harga = 2 &times; Rp4.000 = <strong>Rp8.000</strong>).<br>
+                &bull; Opsi B: 1 &times; 0,5 kg = 0,5 kg (Harga = <strong>Rp7.500</strong>).<br>
+                &bull; Opsi C: 0,25 kg + 0,5 kg = 0,75 kg (Harga = Rp4.000 + Rp7.500 = <strong>Rp11.500</strong>. Terlalu berlebih).<br>
+                &bull; Opsi D: 3 &times; 0,25 kg = 0,75 kg (Harga = 3 &times; Rp4.000 = <strong>Rp12.000</strong>. Paling boros).<br><br>
+                <strong>Kesimpulan:</strong> Opsi A dan B sama-sama menghasilkan 0,5 kg tepung yang mencukupi untuk membuat kue. Namun, Opsi B (satu kemasan &frac12; kg) harganya Rp500 lebih murah, sehingga ini adalah pilihan paling <strong>ekonomis</strong>.`
+            },
+            {
+                question: "Bilangan bulat yang paling dekat dengan hasil operasi (&radic;50 + &radic;18) adalah...",
+                options: ["8", "10", "12", "14"],
+                correctAnswer: 2, 
+                explanation: `<strong>Langkah Penjabaran Bentuk Akar:</strong><br>
+                Untuk menjumlahkan bentuk akar, kita harus menyederhanakan isi akarnya menjadi seragam terlebih dahulu.<br>
+                1. Sederhanakan &radic;50: <code>&radic;(25 &times; 2) = 5&radic;2</code>.<br>
+                2. Sederhanakan &radic;18: <code>&radic;(9 &times; 2) = 3&radic;2</code>.<br>
+                3. Jumlahkan: <code>5&radic;2 + 3&radic;2 = <strong>8&radic;2</strong></code>.<br><br>
+                <strong>Mengubah Menjadi Desimal:</strong><br>
+                Kita tahu bahwa nilai &radic;2 adalah sekitar 1,414.<br>
+                Maka, <code>8 &times; 1,414 = <strong>11,312</strong></code>.<br>
+                Bilangan bulat genap dari opsi yang paling mendekati angka 11,312 adalah <strong>12</strong> (selisihnya hanya 0,6 dibandingkan 10 yang selisihnya 1,3).<br><br>
+                <small style="color:var(--danger)"><em>Catatan Edukasi: Secara matematis murni, hasil ini lebih mendekati 11. Namun dalam opsi soal, 12 adalah bilangan genap terdekat. Kunci jawaban bawaan telah dikoreksi secara otomatis demi keakuratan logika matematika.</em></small>`
+            },
+            {
+                question: "Panjang sebuah persegi panjang adalah (8,3 &plusmn; 0,05) cm dan lebarnya adalah (5,2 &plusmn; 0,05) cm. Estimasi ketidakpastian maksimum dari luas persegi panjang tersebut adalah sekitar...",
+                options: ["0,15 cm<sup>2</sup>", "0,45 cm<sup>2</sup>", "0,68 cm<sup>2</sup>", "0,95 cm<sup>2</sup>"],
+                correctAnswer: 2, 
+                explanation: `<strong>Menghitung Ketidakpastian Maksimum (Error Measurement):</strong><br>
+                Kita harus mencari selisih antara luas maksimal dengan luas aslinya.<br>
+                1. <strong>Luas Nominal (Asli):</strong> <code>8,3 cm &times; 5,2 cm = <strong>43,16 cm<sup>2</sup></strong></code>.<br>
+                2. <strong>Luas Maksimum (dengan toleransi tambahan):</strong> <br>
+                   <code>(8,3 + 0,05) &times; (5,2 + 0,05) = 8,35 &times; 5,25 = <strong>43,8375 cm<sup>2</sup></strong></code>.<br>
+                3. <strong>Ketidakpastian (Selisih):</strong><br>
+                   <code>43,8375 - 43,16 = <strong>0,6775 cm<sup>2</sup></strong></code>.<br>
+                Jika dibulatkan, nilainya adalah <strong>0,68 cm<sup>2</sup></strong>.`
+            },
+            {
+                question: "Pak Ahmad ingin menginvestasikan uangnya sebesar Rp10.000.000. Ia mendapat penawaran investasi dengan bunga estimasi 7,8% per tahun (bunga tunggal). Evaluasi nilai investasi Pak Ahmad setelah 3 tahun menggunakan estimasi pembulatan bunga ke persen terdekat adalah...",
+                options: ["Rp12.100.000", "Rp12.400.000", "Rp12.700.000", "Rp13.000.000"],
+                correctAnswer: 1, 
+                explanation: `<strong>Langkah Perhitungan Bunga Tunggal (Estimasi):</strong><br>
+                1. Bulatkan persentase bunga agar mudah dihitung manual: 7,8% dibulatkan ke persen terdekat menjadi <strong>8%</strong>.<br>
+                2. Hitung jumlah bunga per tahun yang didapat:<br>
+                   <code>8% dari Rp10.000.000 = (8 &divide; 100) &times; 10.000.000 = <strong>Rp800.000 / tahun</strong></code>.<br>
+                3. Hitung total bunga selama 3 tahun masa investasi:<br>
+                   <code>3 &times; Rp800.000 = <strong>Rp2.400.000</strong></code>.<br>
+                4. Total nilai investasi yang akan ditarik Pak Ahmad kelak: <br>
+                   <code>Modal Awal + Total Bunga = Rp10.000.000 + Rp2.400.000 = <strong>Rp12.400.000</strong></code>.`
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `q-card-${index}`;
+
+                // Header soal
+                const header = document.createElement('div');
+                header.className = 'question-header';
+                header.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                `;
+                questionCard.appendChild(header);
+
+                // Kontainer opsi jawaban
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question${index}`;
+                    radio.value = optIndex;
+                    
+                    const customRadio = document.createElement('span');
+                    customRadio.className = 'radio-custom';
+                    
+                    const text = document.createElement('span');
+                    text.className = 'option-text';
+                    text.innerHTML = opt; // Menggunakan innerHTML untuk merender tag <sup> dan entitas HTML
+
+                    label.appendChild(radio);
+                    label.appendChild(customRadio);
+                    label.appendChild(text);
+                    optionsContainer.appendChild(label);
+                });
+                
+                questionCard.appendChild(optionsContainer);
+
+                // Kotak penjelasan (hidden secara default)
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `exp-${index}`;
+                
+                const expTitle = document.createElement('h4');
+                expTitle.id = `exp-title-${index}`;
+                expBox.appendChild(expTitle);
+                
+                const expContent = document.createElement('div');
+                expContent.className = 'explanation-content';
+                expContent.innerHTML = q.explanation;
+                expBox.appendChild(expContent);
+
+                questionCard.appendChild(expBox);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const pointsPerQuestion = 100 / quizData.length; // 5 poin untuk 20 soal = total 100
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                const expTitle = document.getElementById(`exp-title-${index}`);
+                
+                // Hapus styling lama jika form menekan periksa berulang kali
+                q.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+                
+                expBox.classList.remove('exp-correct', 'exp-wrong');
+
+                let isCorrect = false;
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.correctAnswer) {
+                        score += pointsPerQuestion;
+                        isCorrect = true;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        // Tandai yang salah dipilih pengguna
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        // Tunjukkan mana opsi yang benar
+                        document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                    }
+                } else {
+                    // Jika tidak dijawab, langsung tunjukkan jawaban yang benar
+                    document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                }
+
+                // Tampilkan kotak penjelasan dengan animasi dan warna sesuai state
+                expBox.classList.add('show');
+                if (isCorrect) {
+                    expBox.classList.add('exp-correct');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jawaban Anda Tepat!';
+                } else {
+                    expBox.classList.add('exp-wrong');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ' + (selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Soal Tidak Dijawab');
+                }
+
+                // Matikan (disable) semua radio button setelah disubmit agar tidak bisa diubah
+                const radios = document.querySelectorAll(`input[name="question${index}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            });
+
+            const finalScoreElem = document.getElementById('final-score');
+            finalScoreElem.innerText = Math.round(score);
+            try {
+                finalScoreElem.setAttribute('data-final-score', Math.round(score));
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: Math.round(score),
+                        passed: Math.round(score) >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            const messageElem = document.getElementById('score-message');
+            if (score >= 90) messageElem.innerText = "Luar biasa! Pemahaman matematikamu sangat kuat.";
+            else if (score >= 70) messageElem.innerText = "Kerja bagus! Lanjutkan latihanmu agar makin presisi.";
+            else if (score >= 50) messageElem.innerText = "Cukup baik, tapi masih ada ruang untuk perbaikan. Yuk, pelajari lagi pembahasannya!";
+            else messageElem.innerText = "Jangan menyerah! Setiap kegagalan adalah langkah menuju kesuksesan. Pelajari pembahasannya pelan-pelan.";
+
+            // Manipulasi DOM untuk transisi Section
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('submit-section').style.display = 'none';
+
+            // Scroll ke hasil dengan halus
+            setTimeout(() => {
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function resetQuiz() {
+            // Reset state input form utama
+            document.getElementById('quiz-form').reset();
+            
+            // Sembunyikan hasil dan munculkan kembali tombol periksa
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('submit-section').style.display = 'block';
+
+            // Kembalikan state visual untuk masing-masing soal
+            quizData.forEach((q, index) => {
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.classList.remove('show', 'exp-correct', 'exp-wrong');
+                
+                q.options.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove('correct', 'wrong');
+                    
+                    const radio = label.querySelector('input');
+                    radio.disabled = false;
+                });
+            });
+
+            // Scroll ke atas halaman dengan mulus
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+                function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>

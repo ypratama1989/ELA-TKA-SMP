@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Peluang Teoretis & Empiris</title>
+    
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="/tailwindcss.js"></script>
+    
+    <!-- Memuat Font Google (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Konfigurasi kustom Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+        
+        /* Menyembunyikan radio button bawaan */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling kustom untuk label opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            font-weight: 500;
+        }
+        
+        .option-label:hover {
+            border-color: #cbd5e1;
+            background-color: #f1f5f9;
+        }
+        
+        /* Styling saat opsi dipilih */
+        input[type="radio"]:checked + .option-label {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+        }
+        
+        /* Bulatan indikator kustom */
+        .radio-custom {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1rem;
+            margin-top: 0.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        
+        /* Titik dalam bulatan saat dipilih */
+        input[type="radio"]:checked + .option-label .radio-custom::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #4f46e5;
+            border-radius: 50%;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-custom {
+            border-color: #4f46e5;
+        }
+
+        /* Styling kotak pembahasan */
+        .explanation-box {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center">
+            <!-- Tombol Kembali -->
+            <button onclick="goBack()" class="text-slate-500 hover:text-slate-800 transition-colors mr-4 focus:outline-none" aria-label="Kembali">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 truncate">Kuis Peluang Teoretis & Empiris</h1>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        
+        <!-- Papan Petunjuk -->
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 mb-8 flex items-start shadow-sm">
+            <i class="fas fa-dice text-indigo-500 text-3xl mr-4 mt-1"></i>
+            <div>
+                <h2 class="text-lg font-bold text-indigo-900 mb-1">Siap Menguji Logikamu?</h2>
+                <p class="text-indigo-800 text-sm md:text-base leading-relaxed">Pilihlah satu jawaban yang menurutmu paling tepat. Kamu bisa mengecek hasilnya kapan pun tanpa harus menjawab semua soal dengan menekan tombol <strong>"Periksa Jawaban"</strong> di bagian paling bawah halaman.</p>
+            </div>
+        </div>
+
+        <form id="quizForm" onsubmit="return false;">
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Soal akan dirender oleh JavaScript di sini -->
+            </div>
+
+            <!-- Tombol Aksi Periksa -->
+            <div class="mt-10 mb-12 flex justify-center" id="actionArea">
+                <button type="button" onclick="checkAnswers()" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-10 rounded-full shadow-xl transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 text-lg w-full md:w-auto flex items-center justify-center">
+                    <i class="fas fa-search-check mr-3"></i> Periksa Jawaban
+                </button>
+            </div>
+
+            <!-- Area Hasil Akhir -->
+            <div id="resultArea" class="hidden bg-white rounded-3xl shadow-xl p-8 mb-12 text-center border-t-8 border-primary-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mr-10 -mt-10 text-primary-100 opacity-40 transform rotate-12">
+                    <i class="fas fa-medal" style="font-size: 16rem;"></i>
+                </div>
+
+                <div class="relative z-10 flex flex-col items-center">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h3>
+                    <div class="relative inline-flex items-center justify-center w-40 h-40 rounded-full bg-primary-50 mb-6 shadow-inner border-4 border-primary-100">
+                        <span id="scoreDisplay" class="text-6xl font-extrabold text-primary-600">0</span>
+                    </div>
+                    <p id="scoreMessage" class="text-xl text-slate-600 mb-10 font-medium">Memproses Nilai...</p>
+                    
+                    <!-- Tombol Reset / Ulangi -->
+                    <button type="button" onclick="resetQuiz()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-slate-300 w-full md:w-auto shadow-md">
+                        <i class="fas fa-undo-alt mr-2"></i> Ulangi Tes dari Awal
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-medium text-sm md:text-base tracking-wide flex items-center justify-center">
+                By EDUFILLAH, Unlock The Secret Of Curious Minds
+                <i class="fas fa-key ml-2 text-amber-400"></i>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        // Data bank soal lengkap
+        const quizData = [
+            {
+                id: 1,
+                question: "Dalam sebuah eksperimen, Andi melempar satu koin logam sebanyak 100 kali. Muncul angka sebanyak 48 kali. Frekuensi relatif munculnya <strong>gambar</strong> pada eksperimen tersebut adalah...",
+                options: {
+                    a: "A. 12/25",
+                    b: "B. 13/25",
+                    c: "C. 24/25",
+                    d: "D. 1/2"
+                },
+                answer: "b",
+                explanation: "<strong>Mari kita bedah perlahan:</strong><br><br>1. Total pelemparan (Total Percobaan) = 100 kali.<br>2. Muncul Angka = 48 kali.<br>3. Karena koin hanya punya Angka dan Gambar, maka <strong>munculnya Gambar = Total Pelemparan &minus; Muncul Angka</strong>.<br>Muncul Gambar = 100 &minus; 48 = <strong>52 kali</strong>.<br><br><strong>Rumus Frekuensi Relatif:</strong><br>Banyaknya kejadian &divide; Total percobaan<br>= 52 &divide; 100<br><br>Sekarang kita sederhanakan pecahan tersebut dengan membagi pembilang dan penyebut dengan angka 4:<br>52 &divide; 4 = 13<br>100 &divide; 4 = 25<br>Jadi, frekuensi relatifnya adalah <strong>13/25</strong>."
+            },
+            {
+                id: 2,
+                question: "Sebuah dadu bersisi enam dilambungkan sekali. Peluang munculnya mata dadu yang merupakan <strong>bilangan prima</strong> adalah...",
+                options: {
+                    a: "A. 1/6",
+                    b: "B. 1/3",
+                    c: "C. 1/2",
+                    d: "D. 2/3"
+                },
+                answer: "c",
+                explanation: "<strong>Langkah penyelesaian:</strong><br><br>1. <strong>Ruang Sampel (Total kemungkinan)</strong> pada sebuah dadu adalah {1, 2, 3, 4, 5, 6}. Jadi, totalnya ada <strong>6</strong> kemungkinan.<br>2. <strong>Titik Sampel (Kejadian yang diharapkan)</strong> adalah bilangan prima. Bilangan prima adalah bilangan yang hanya bisa dibagi oleh 1 dan bilangan itu sendiri. Dari angka 1 sampai 6, bilangan primanya adalah <strong>{2, 3, 5}</strong>. Ingat, angka 1 <em>bukan</em> bilangan prima! Jadi ada <strong>3</strong> angka yang diharapkan.<br><br><strong>Rumus Peluang Teoretis:</strong><br>Kejadian diharapkan &divide; Total kemungkinan<br>= 3 &divide; 6<br><br>Sederhanakan dengan dibagi 3, hasilnya adalah <strong>1/2</strong>."
+            },
+            {
+                id: 3,
+                question: "Dari huruf-huruf pembentuk kata \"INDONESIA\", akan dipilih satu huruf secara acak. Peluang terpilihnya <strong>huruf vokal</strong> adalah...",
+                options: {
+                    a: "A. 4/9",
+                    b: "B. 5/9",
+                    c: "C. 1/2",
+                    d: "D. 2/3"
+                },
+                answer: "b",
+                explanation: "<strong>Mari berhitung hurufnya!</strong><br><br>1. <strong>Total huruf (Ruang Sampel):</strong> Kata I-N-D-O-N-E-S-I-A terdiri dari <strong>9</strong> huruf.<br>2. <strong>Huruf Vokal (A, I, U, E, O):</strong> Mari kita cari vokal dalam kata tersebut:<br>- I (ada 2)<br>- O (ada 1)<br>- E (ada 1)<br>- A (ada 1)<br>Total huruf vokal ada = 2 + 1 + 1 + 1 = <strong>5</strong> huruf.<br><br>Maka peluangnya = Huruf Vokal &divide; Total Huruf = <strong>5/9</strong>."
+            },
+            {
+                id: 4,
+                question: "Roni melakukan percobaan melempar sebuah dadu sebanyak 150 kali. Hasil pengamatannya menunjukkan mata dadu 5 muncul sebanyak 25 kali. Frekuensi relatif munculnya mata dadu 5 adalah...",
+                options: {
+                    a: "A. 1/6",
+                    b: "B. 1/5",
+                    c: "C. 1/4",
+                    d: "D. 1/3"
+                },
+                answer: "a",
+                explanation: "Sangat mudah jika kita ingat rumusnya!<br><br><strong>Frekuensi Relatif = (Banyak kejadian) &divide; (Banyak percobaan)</strong><br><br>1. Banyak kejadian muncul mata dadu 5 = 25 kali.<br>2. Total pelemparan = 150 kali.<br>3. Masukkan ke rumus: 25 / 150.<br><br>Bagi keduanya dengan angka 25 agar lebih sederhana:<br>(25 &divide; 25) / (150 &divide; 25) = <strong>1/6</strong>."
+            },
+            {
+                id: 5,
+                question: "Dalam sebuah kantong terdapat 5 kelereng merah, 3 kelereng biru, dan 2 kelereng kuning. Jika diambil satu kelereng secara acak, peluang terambilnya kelereng yang <strong>BUKAN</strong> berwarna kuning adalah...",
+                options: {
+                    a: "A. 1/5",
+                    b: "B. 2/5",
+                    c: "C. 3/5",
+                    d: "D. 4/5"
+                },
+                answer: "d",
+                explanation: "Ada dua cara jitu untuk menyelesaikan soal ini!<br><br><strong>Cara 1 (Hitung Langsung):</strong><br>Total seluruh kelereng = 5 + 3 + 2 = 10 butir.<br>Kelereng yang <em>bukan kuning</em> berarti Kelereng Merah + Kelereng Biru = 5 + 3 = 8 butir.<br>Peluang = 8/10 = <strong>4/5</strong>.<br><br><strong>Cara 2 (Peluang Komplemen):</strong><br>Peluang kuning = 2/10 = 1/5.<br>Peluang BUKAN kuning = 1 &minus; (Peluang kuning)<br>= 1 &minus; 1/5 = 5/5 &minus; 1/5 = <strong>4/5</strong>."
+            },
+            {
+                id: 6,
+                question: "Seorang penjaga gawang mampu menahan tendangan penalti dengan peluang 0,72. Jika dilakukan 50 kali tendangan penalti, perkiraan banyak tendangan yang <strong>GAGAL</strong> ditahan oleh penjaga gawang tersebut adalah...",
+                options: {
+                    a: "A. 14 kali",
+                    b: "B. 28 kali",
+                    c: "C. 36 kali",
+                    d: "D. 44 kali"
+                },
+                answer: "a",
+                explanation: "Ini adalah penerapan <strong>Peluang Komplemen</strong> dan <strong>Frekuensi Harapan</strong>.<br><br>1. Total peluang selalu bernilai mutlak <strong>1</strong>.<br>2. Peluang <em>BERHASIL menahan</em> = 0,72.<br>3. Peluang <em>GAGAL menahan</em> = 1 &minus; 0,72 = <strong>0,28</strong>.<br>4. Berapa kali gagal dari 50 tendangan?<br>Frekuensi Harapan = Peluang Gagal &times; Total Tendangan<br>= 0,28 &times; 50 = <strong>14 kali</strong>."
+            },
+            {
+                id: 7,
+                question: "Perhatikan tabel hasil pelemparan sebuah dadu berikut ini!<br><br>Mata Dadu (1): 15 kali<br>Mata Dadu (2): 18 kali<br>Mata Dadu (3): 12 kali<br>Mata Dadu (4): 20 kali<br>Mata Dadu (5): 17 kali<br>Mata Dadu (6): 18 kali<br><br>Berdasarkan data di atas, frekuensi relatif munculnya <strong>mata dadu prima</strong> adalah...",
+                options: {
+                    a: "A. 47/100",
+                    b: "B. 48/100",
+                    c: "C. 50/100",
+                    d: "D. 52/100"
+                },
+                answer: "a",
+                explanation: "<strong>Langkah 1: Hitung total semua lemparan.</strong><br>15 + 18 + 12 + 20 + 17 + 18 = <strong>100 kali lemparan.</strong><br><br><strong>Langkah 2: Cari kejadian mata dadu prima.</strong><br>Angka prima pada dadu adalah 2, 3, dan 5.<br>Mari kita jumlahkan frekuensinya:<br>&bull; Mata dadu 2 = 18 kali<br>&bull; Mata dadu 3 = 12 kali<br>&bull; Mata dadu 5 = 17 kali<br>Total kejadian prima = 18 + 12 + 17 = <strong>47 kali</strong>.<br><br><strong>Langkah 3: Hitung Frekuensi Relatif.</strong><br>Kejadian Prima &divide; Total Lemparan = <strong>47/100</strong>."
+            },
+            {
+                id: 8,
+                question: "Sebuah spinner dengan 8 sektor lingkaran yang sama besar diberi nomor 1 sampai 8. Spinner tersebut diputar sekali. Peluang jarum spinner menunjuk ke angka <strong>kelipatan 3</strong> adalah...",
+                options: {
+                    a: "A. 1/4",
+                    b: "B. 3/8",
+                    c: "C. 1/2",
+                    d: "D. 5/8"
+                },
+                answer: "a",
+                explanation: "<strong>Langkah penyelesaian:</strong><br><br>1. <strong>Ruang Sampel:</strong> Angka yang ada di spinner adalah {1, 2, 3, 4, 5, 6, 7, 8}. Total ada <strong>8</strong> angka.<br>2. <strong>Titik Sampel (Kelipatan 3):</strong> Dari angka-angka tersebut, yang merupakan kelipatan 3 hanyalah angka <strong>3</strong> dan <strong>6</strong>. Total ada <strong>2</strong> angka.<br><br>Peluang = (Kejadian yang diharapkan) &divide; (Total kemungkinan)<br>= 2 / 8.<br>Sederhanakan dengan membagi 2 menjadi <strong>1/4</strong>."
+            },
+            {
+                id: 9,
+                question: "Peluang hari esok akan turun hujan di Kota Bogor adalah 0,35. Peluang hari esok <strong>TIDAK</strong> turun hujan di Kota Bogor adalah...",
+                options: {
+                    a: "A. 0,35",
+                    b: "B. 0,55",
+                    c: "C. 0,65",
+                    d: "D. 0,75"
+                },
+                answer: "c",
+                explanation: "Ini adalah konsep <strong>Kejadian Komplemen (Saling Berlawanan)</strong>.<br><br>Dalam teori peluang, jumlah peluang sebuah kejadian terjadi <em>ditambah</em> peluang kejadian itu tidak terjadi hasilnya selalu pasti sama dengan <strong>1 (atau 100%)</strong>.<br><br>Peluang TIDAK hujan = 1 &minus; Peluang Hujan<br>= 1 &minus; 0,35 = <strong>0,65</strong>."
+            },
+            {
+                id: 10,
+                question: "Sebuah kotak berisi 12 bola bernomor 1 sampai 12. Jika diambil satu bola secara acak, peluang terambilnya bola dengan nomor yang <strong>habis dibagi 4</strong> adalah...",
+                options: {
+                    a: "A. 1/12",
+                    b: "B. 1/6",
+                    c: "C. 1/4",
+                    d: "D. 1/3"
+                },
+                answer: "c",
+                explanation: "<strong>Mari identifikasi bolanya!</strong><br><br>1. <strong>Total Bola:</strong> Ada 12 bola (dari nomor 1 s.d 12).<br>2. <strong>Bola yang \"Habis dibagi 4\":</strong> Artinya angka kelipatan 4, yaitu <strong>4, 8, dan 12</strong>. Total ada <strong>3</strong> bola.<br><br>Peluang terambilnya = (Jumlah bola kelipatan 4) &divide; (Total bola)<br>= 3 / 12.<br>Bagi keduanya dengan angka 3 untuk menyederhanakan pecahan, hasilnya adalah <strong>1/4</strong>."
+            },
+            {
+                id: 11,
+                question: "Empat orang siswa melakukan percobaan pelemparan koin logam dengan jumlah lemparan yang berbeda.<br>&bull; Adi: 10 kali lemparan, muncul angka 7 kali.<br>&bull; Budi: 50 kali lemparan, muncul angka 28 kali.<br>&bull; Cici: 200 kali lemparan, muncul angka 104 kali.<br>&bull; Dedi: 1000 kali lemparan, muncul angka 502 kali.<br><br>Siswa yang hasil frekuensi relatifnya paling mendekati nilai peluang teoretis pelemparan koin adalah...",
+                options: {
+                    a: "A. Adi",
+                    b: "B. Budi",
+                    c: "C. Cici",
+                    d: "D. Dedi"
+                },
+                answer: "d",
+                explanation: "Ini adalah pembuktian dari <strong>Hukum Bilangan Besar (Law of Large Numbers)</strong> dalam peluang!<br><br>Peluang teoretis munculnya angka pada sebuah koin adalah 1/2 atau <strong>0,50</strong>.<br>Hukum peluang menyatakan: <em>Semakin banyak jumlah percobaan dilakukan, maka hasil frekuensi relatif akan semakin mendekati nilai peluang teoretisnya.</em><br><br>Mari kita cek Dedi:<br>Dedi melempar paling banyak (1000 kali). Frekuensi relatifnya = 502 / 1000 = <strong>0,502</strong>. Angka 0,502 sangatlah dekat dan akurat dengan peluang teoretis 0,50 dibandingkan teman-temannya yang melempar lebih sedikit."
+            },
+            {
+                id: 12,
+                question: "Suatu kantong berisi beberapa bola berwarna merah dan putih. Peluang teoretis terambilnya bola merah adalah 3/8. Jika ke dalam kantong tersebut <strong>ditambahkan 4 bola putih</strong>, maka peluang teoretis terambilnya bola merah sekarang akan...",
+                options: {
+                    a: "A. Tetap sama karena jumlah bola merah tidak berubah.",
+                    b: "B. Menjadi lebih besar karena jumlah seluruh bola bertambah.",
+                    c: "C. Menjadi lebih kecil karena proporsi bola merah terhadap total bola berkurang.",
+                    d: "D. Tidak dapat ditentukan karena jumlah awal bola tidak diketahui."
+                },
+                answer: "c",
+                explanation: "Mari gunakan logika pecahan matematika!<br><br>Peluang Bola Merah dirumuskan sebagai: <strong>(Jumlah Bola Merah) / (Jumlah TOTAL Bola)</strong>.<br><br>Saat kita menambahkan 4 bola putih ke dalam kantong:<br>1. Pembilang (Jumlah Bola Merah) <strong>tetap</strong> (tidak ditambah apa-apa).<br>2. Penyebut (Jumlah TOTAL Bola) <strong>bertambah besar</strong>.<br><br>Dalam matematika, jika kita membagi angka yang sama dengan angka pembagi yang lebih besar, maka nilainya pasti akan <strong>semakin kecil</strong>. Proporsi/rasio bola merah semakin terhimpit oleh banyaknya bola putih."
+            },
+            {
+                id: 13,
+                question: "Sebuah dadu dilempar sebanyak 300 kali. Frekuensi harapan munculnya mata dadu <strong>faktor dari 6</strong> adalah...",
+                options: {
+                    a: "A. 100 kali",
+                    b: "B. 150 kali",
+                    c: "C. 200 kali",
+                    d: "D. 250 kali"
+                },
+                answer: "c",
+                explanation: "<strong>Langkah 1: Cari Peluang Teoretis terlebih dahulu.</strong><br>Angka faktor dari 6 (angka yang bisa membagi habis angka 6) adalah <strong>1, 2, 3, dan 6</strong>. Total ada <strong>4</strong> angka dari keseluruhan 6 mata dadu.<br>Peluangnya = 4/6 = <strong>2/3</strong>.<br><br><strong>Langkah 2: Hitung Frekuensi Harapan (Prediksi).</strong><br>Frekuensi Harapan = Peluang Teoretis &times; Total Percobaan<br>= 2/3 &times; 300 kali<br>= 2 &times; (300 &divide; 3) = 2 &times; 100 = <strong>200 kali</strong>."
+            },
+            {
+                id: 14,
+                question: "Seorang peneliti menguji sebuah dadu yang dicurigai tidak adil (bias). Dadu tersebut dilempar sebanyak 600 kali, dan mata dadu 6 muncul sebanyak 200 kali. Evaluasi yang paling tepat terhadap dadu tersebut adalah...",
+                options: {
+                    a: "A. Dadu tersebut adil karena semua mata dadu memiliki kesempatan yang sama.",
+                    b: "B. Dadu tersebut tidak adil karena frekuensi relatif munculnya mata dadu 6 jauh melebihi peluang teoretisnya (1/6).",
+                    c: "C. Dadu tersebut adil karena frekuensi relatifnya mendekati 1/3.",
+                    d: "D. Keputusan tidak dapat diambil karena jumlah pelemparan kurang banyak."
+                },
+                answer: "b",
+                explanation: "Mari kita bandingkan hasil Teori dengan hasil Eksperimen (Praktik).<br><br>1. <strong>Secara Teori (Harusnya):</strong> Peluang mata dadu 6 adalah <strong>1/6</strong>. Jika dilempar 600 kali, harapan munculnya hanya sekitar (1/6) &times; 600 = <strong>100 kali</strong>.<br>2. <strong>Secara Praktik/Empiris (Faktanya):</strong> Mata dadu 6 muncul <strong>200 kali</strong>! Artinya frekuensi relatifnya (200/600 = <strong>1/3</strong>).<br><br>Karena nilai 1/3 sangat jauh melesat melampaui 1/6 (padahal sudah dilempar sebanyak 600 kali), ini menjadi bukti kuat bahwa dadu tersebut <strong>tidak seimbang (bias)</strong> dan cenderung berat ke sisi tertentu yang menguntungkan angka 6."
+            },
+            {
+                id: 15,
+                question: "Dalam sebuah laci terdapat 8 kaos kaki hitam, 6 kaos kaki putih, dan 4 kaos kaki biru. Jika diambil satu kaos kaki secara acak, pernyataan berikut yang BENAR adalah...",
+                options: {
+                    a: "A. Peluang terambil kaos kaki hitam lebih kecil daripada kaos kaki putih.",
+                    b: "B. Peluang terambil kaos kaki biru adalah 1/9.",
+                    c: "C. Peluang terambil kaos kaki putih atau biru adalah 5/9.",
+                    d: "D. Peluang terambil kaos kaki bukan putih adalah 1/3."
+                },
+                answer: "c",
+                explanation: "Total seluruh kaos kaki = 8 + 6 + 4 = <strong>18</strong>.<br>Mari kita uji opsinya satu per satu secara matematis:<br><br>&bull; Opsi A: P(Hitam) = 8/18. P(Putih) = 6/18. Hitam <strong>lebih besar</strong>, bukan lebih kecil. (SALAH).<br>&bull; Opsi B: P(Biru) = 4/18 = <strong>2/9</strong>. (Bukan 1/9, SALAH).<br>&bull; <strong>Opsi C: P(Putih atau Biru) = (6+4)/18 = 10/18. Disederhanakan menjadi 5/9. (BENAR).</strong><br>&bull; Opsi D: P(Bukan Putih) = (Hitam+Biru) = 12/18 = <strong>2/3</strong>. (Bukan 1/3, SALAH)."
+            },
+            {
+                id: 16,
+                question: "Tabel berikut menunjukkan hasil eksperimen pengambilan satu kartu dari tumpukan kartu bernomor 1 sampai 10 secara acak sebanyak 80 kali.<br>Kartu Ganjil: 44 kali<br>Kartu Genap: 36 kali<br><br>Selisih antara frekuensi relatif munculnya kartu ganjil pada eksperimen dengan peluang teoretisnya adalah...",
+                options: {
+                    a: "A. 0,05",
+                    b: "B. 0,10",
+                    c: "C. 0,15",
+                    d: "D. 0,20"
+                },
+                answer: "a",
+                explanation: "Kita harus mencari dua nilai terlebih dahulu.<br><br>1. <strong>Peluang Teoretis:</strong> Dari kartu 1-10, ada 5 angka ganjil (1,3,5,7,9).<br>Peluangnya = 5/10 = 1/2 = <strong>0,50</strong>.<br><br>2. <strong>Frekuensi Relatif (Eksperimen):</strong> Muncul 44 kali dari 80 percobaan.<br>Nilainya = 44 / 80. Kita ubah ke desimal = 11/20 = 55/100 = <strong>0,55</strong>.<br><br>3. <strong>Selisih (Pengurangan):</strong><br>0,55 &minus; 0,50 = <strong>0,05</strong>."
+            },
+            {
+                id: 17,
+                question: "Dua orang anak, Rian dan Soni, bermain memutar spinner dengan 4 sektor warna: Merah, Kuning, Hijau, Biru yang sama luas. Rian memutar spinner 40 kali dan jarum menunjuk Merah sebanyak 12 kali. Soni memutar 100 kali dan menunjuk Merah 24 kali. Evaluasi yang paling tepat mengenai hasil kedua anak tersebut terhadap peluang teoretis warna Merah (1/4) adalah...",
+                options: {
+                    a: "A. Hasil Rian lebih mendekati peluang teoretis karena 12/40 lebih dekat ke 0,25 dibanding 24/100.",
+                    b: "B. Hasil Soni lebih mendekati peluang teoretis karena frekuensi relatifnya adalah 0,24 yang sangat dekat dengan 0,25.",
+                    c: "C. Kedua hasil sama-sama tidak akurat karena tidak tepat menghasilkan nilai 0,25.",
+                    d: "D. Hasil Rian lebih baik karena jumlah percobaannya lebih sedikit sehingga kesalahannya wajar."
+                },
+                answer: "b",
+                explanation: "Mari ubah hasil keduanya ke bentuk desimal agar mudah dibandingkan dengan peluang teoretis (1/4 = <strong>0,25</strong>).<br><br>&bull; <strong>Hasil Eksperimen Rian:</strong> 12/40 = 3/10 = <strong>0,30</strong>. (Selisih dengan teori adalah 0,05).<br>&bull; <strong>Hasil Eksperimen Soni:</strong> 24/100 = <strong>0,24</strong>. (Selisih dengan teori sangat tipis, hanya 0,01).<br><br>Ini kembali membuktikan Hukum Bilangan Besar. Semakin banyak diputar (Soni memutar 100 kali), hasilnya akan <strong>semakin akurat</strong> mendekati peluang teori. Maka hasil Soni lebih baik dan mendekati teori."
+            },
+            {
+                id: 18,
+                question: "Sebuah kantong berisi 15 kelereng yang terdiri dari kelereng hijau dan kelereng biru. Peluang teoretis terambilnya kelereng hijau adalah 3/5. Banyaknya kelereng <strong>biru</strong> di dalam kantong tersebut adalah...",
+                options: {
+                    a: "A. 3 butir",
+                    b: "B. 6 butir",
+                    c: "C. 9 butir",
+                    d: "D. 12 butir"
+                },
+                answer: "b",
+                explanation: "Jangan terkecoh! Kita disuruh mencari jumlah kelereng <strong>biru</strong>, bukan hijau.<br><br><strong>Langkah 1: Cari Kelereng Hijau</strong><br>Banyaknya Hijau = Peluang Hijau &times; Total Kelereng<br>= 3/5 &times; 15 butir<br>= 3 &times; 3 = <strong>9 butir</strong>.<br><br><strong>Langkah 2: Cari Kelereng Biru</strong><br>Karena hanya ada dua warna, maka:<br>Kelereng Biru = Total Kelereng &minus; Kelereng Hijau<br>= 15 &minus; 9 = <strong>6 butir</strong>."
+            },
+            {
+                id: 19,
+                question: "Sebuah perusahaan memproduksi lampu hias. Dari sampel 500 lampu yang diuji secara acak, ditemukan 15 lampu rusak. Jika perusahaan tersebut memproduksi 20.000 lampu, perkiraan jumlah lampu yang <strong>layak jual (tidak rusak)</strong> adalah...",
+                options: {
+                    a: "A. 600 lampu",
+                    b: "B. 19.400 lampu",
+                    c: "C. 19.700 lampu",
+                    d: "D. 19.850 lampu"
+                },
+                answer: "b",
+                explanation: "Kita bisa menyelesaikannya dengan mencari perkiraan lampu rusak secara massal terlebih dahulu.<br><br>1. <strong>Peluang lampu rusak dari sampel:</strong> 15 / 500. Disederhanakan menjadi <strong>3/100</strong> (alias 3%).<br>2. <strong>Berapa yang rusak jika produksi 20.000 lampu?</strong><br>3/100 &times; 20.000 = <strong>600 lampu rusak</strong>.<br>3. <strong>Berapa yang layak jual?</strong><br>Lampu layak = Total produksi &minus; Lampu rusak<br>20.000 &minus; 600 = <strong>19.400 lampu</strong>."
+            },
+            {
+                id: 20,
+                question: "Seorang guru meminta siswa memprediksi munculnya angka pada pelemparan koin yang tidak seimbang, di mana peluang muncul angka adalah 2/3. Jika koin tersebut dilempar sebanyak 120 kali, manakah pernyataan evaluasi yang paling tepat mengenai hasil eksperimen yang mungkin diperoleh?",
+                options: {
+                    a: "A. Hasil eksperimen pasti akan menghasilkan tepat 80 kali muncul angka.",
+                    b: "B. Hasil eksperimen kemungkinan besar akan berada di sekitar 80 kali muncul angka, namun jarang sekali tepat 80 kali karena adanya variasi acak empiris.",
+                    c: "C. Hasil eksperimen pasti akan menghasilkan tepat 40 kali muncul gambar.",
+                    d: "D. Frekuensi relatif munculnya angka akan selalu tepat bernilai 2/3 pada setiap kelipatan 3 kali pelemparan."
+                },
+                answer: "b",
+                explanation: "Ini adalah fondasi penting dalam membedakan teori dengan realita (empiris)!<br><br>Secara teori matematika (Frekuensi Harapan), kita menghitung prediksi murni:<br>Harapan Angka = (2/3) &times; 120 = <strong>80 kali</strong>.<br><br>Namun di dunia nyata, melempar koin dipengaruhi oleh <strong>variasi acak empiris</strong> (angin, kekuatan tangan, dll). Oleh karena itu, kita tidak bisa memakai kata \"PASTI\" (opsi A, C, D). Hasil eksperimen nyata yang paling logis adalah berkumpul di <strong>sekitar</strong> angka 80 (bisa 78, 81, atau 83), namun sangat jarang bisa tepat/mutlak mengenai angka 80 berulang-ulang."
+            }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            quizData.forEach((q, index) => {
+                // Regex pengaman jika ada base64 image (Sesuai instruksi)
+                let formattedQuestion = q.question.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" alt="Gambar Soal" style="max-width:100%; border-radius:8px;" class="mx-auto shadow-sm my-5 border border-slate-200">');
+
+                const questionHTML = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 transition-all duration-300 relative overflow-hidden group" id="q-card-${index}">
+                        
+                        <!-- Side marker indicator hover -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-primary-400 transition-colors duration-300" id="card-indicator-${index}"></div>
+                        
+                        <div class="flex items-start mb-6 pl-2">
+                            <span class="flex-shrink-0 bg-primary-100 text-primary-700 font-bold w-10 h-10 rounded-full flex items-center justify-center mr-4 mt-0.5 text-lg shadow-inner border border-primary-200">
+                                ${q.id}
+                            </span>
+                            <p class="text-lg font-medium text-slate-800 leading-relaxed w-full">${formattedQuestion}</p>
+                        </div>
+                        
+                        <div class="space-y-4 pl-2 md:pl-14">
+                            ${Object.entries(q.options).map(([key, value]) => `
+                                <div>
+                                    <input type="radio" name="q${index}" id="q${index}_${key}" value="${key}">
+                                    <label for="q${index}_${key}" class="option-label text-slate-700 hover:text-slate-900">
+                                        <div class="radio-custom"></div>
+                                        <span class="leading-relaxed font-normal">${value}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kotak Pembahasan (Tampil Setelah Periksa) -->
+                        <div id="explanation-${index}" class="explanation-box mt-8 p-6 rounded-xl border-l-4 ml-2 md:ml-14 bg-slate-50 border-slate-300">
+                            <div class="flex items-center mb-4">
+                                <i id="icon-${index}" class="fas mr-3 text-2xl"></i>
+                                <h4 id="title-${index}" class="font-bold text-xl"></h4>
+                            </div>
+                            <div class="text-base text-slate-700 leading-relaxed" id="text-${index}">
+                                <!-- Konten pembahasan injeksi Javascript -->
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += questionHTML;
+            });
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const icon = document.getElementById(`icon-${index}`);
+                const title = document.getElementById(`title-${index}`);
+                const textContainer = document.getElementById(`text-${index}`);
+                const card = document.getElementById(`q-card-${index}`);
+                const indicator = document.getElementById(`card-indicator-${index}`);
+
+                // Tampilkan kotak pembahasan secara animasi
+                explanationBox.classList.add('show');
+                
+                // Normalisasi kelas kotak dan kartu
+                explanationBox.className = 'explanation-box show mt-8 p-6 rounded-xl border-l-4 ml-2 md:ml-14';
+                card.classList.remove('border-emerald-400', 'border-rose-400', 'bg-emerald-50/20', 'bg-rose-50/20');
+
+                if (selectedOption && selectedOption.value === q.answer) {
+                    // Logic Jawaban Benar
+                    correctCount++;
+                    
+                    explanationBox.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    icon.className = 'fas fa-check-circle text-emerald-500';
+                    title.className = 'font-bold text-xl text-emerald-700';
+                    title.textContent = 'Luar Biasa, Tepat!';
+                    card.classList.add('border-emerald-400', 'bg-emerald-50/20');
+                    indicator.classList.replace('bg-slate-200', 'bg-emerald-500');
+                    indicator.classList.replace('group-hover:bg-primary-400', 'group-hover:bg-emerald-500');
+                    
+                    // Teks Pembahasan Asli
+                    textContainer.innerHTML = q.explanation;
+                } else {
+                    // Logic Jawaban Salah / Tidak Diisi
+                    explanationBox.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    icon.className = 'fas fa-times-circle text-rose-500';
+                    title.className = 'font-bold text-xl text-rose-700';
+                    
+                    if(!selectedOption) {
+                        title.innerHTML = 'Belum Dijawab';
+                    } else {
+                        title.innerHTML = 'Logika Kurang Tepat';
+                    }
+
+                    // Tampilkan kunci yang benar sebelum pembehasan
+                    textContainer.innerHTML = `
+                        <div class="mb-4 inline-block bg-white px-4 py-2.5 rounded-lg border border-rose-200 shadow-sm">
+                            <span class="font-bold text-rose-800"><i class="fas fa-key mr-2"></i>Kunci Jawaban:</span> 
+                            <span class="font-black text-rose-900 ml-1 bg-rose-100 px-3 py-1 rounded">${q.answer.toUpperCase()}</span>
+                        </div>
+                        <div class="mt-2 text-rose-800">${q.explanation}</div>`;
+                    
+                    card.classList.add('border-rose-400', 'bg-rose-50/20');
+                    indicator.classList.replace('bg-slate-200', 'bg-rose-500');
+                    indicator.classList.replace('group-hover:bg-primary-400', 'group-hover:bg-rose-500');
+                }
+            });
+
+            // Kalkulasi nilai berdasar persentase 0 - 100
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Atur Visibilitas
+            document.getElementById('actionArea').classList.add('hidden');
+            const resultArea = document.getElementById('resultArea');
+            resultArea.classList.remove('hidden');
+            
+            // Setting Animasi Skor
+            let currentScore = 0;
+            const scoreElement = document.getElementById('scoreDisplay');
+            try {
+                scoreElement.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            const messageElement = document.getElementById('scoreMessage');
+            
+            // Kustomisasi Feedback Berdasarkan Skor
+            if(score >= 85) {
+                messageElement.innerHTML = "Sempurna! Kamu pantas dijuluki master teori peluang! <i class='fas fa-trophy text-yellow-500 ml-1'></i>";
+                messageElement.className = "text-xl text-emerald-600 mb-10 font-bold";
+            } else if(score >= 60) {
+                messageElement.innerHTML = "Kerja bagus! Sedikit latihan lagi untuk asah ketelitianmu ya. <i class='fas fa-thumbs-up text-primary-500 ml-1'></i>";
+                messageElement.className = "text-xl text-primary-600 mb-10 font-bold";
+            } else {
+                messageElement.innerHTML = "Jangan menyerah! Baca pelan-pelan pembahasannya, kamu pasti bisa! <i class='fas fa-dumbbell text-rose-500 ml-1'></i>";
+                messageElement.className = "text-xl text-rose-600 mb-10 font-bold";
+            }
+
+            // Interval perhitungan angka agar dramatis
+            const timer = setInterval(() => {
+                if (currentScore >= score) {
+                    clearInterval(timer);
+                    scoreElement.textContent = score; try { scoreElement.setAttribute('data-final-score', score); } catch(e){}
+                } else {
+                    currentScore += (score > 50 ? 2 : 1);
+                    if(currentScore > score) currentScore = score; // Cap to exact score
+                    scoreElement.textContent = currentScore;
+                }
+            }, 25);
+
+            // Pengguliran otomatis ke hasil paling bawah
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function resetQuiz() {
+            // Bersihkan cek radio button form
+            document.getElementById('quizForm').reset();
+            
+            // Kembalikan ke tampilan default
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                explanationBox.classList.remove('show');
+                
+                // Hilangkan injeksi "Kunci Jawaban" di text dengan mengembalikan null
+                const textContainer = document.getElementById(`text-${index}`);
+                textContainer.innerHTML = ''; 
+
+                const card = document.getElementById(`q-card-${index}`);
+                card.classList.remove('border-emerald-400', 'border-rose-400', 'bg-emerald-50/20', 'bg-rose-50/20');
+                
+                const indicator = document.getElementById(`card-indicator-${index}`);
+                indicator.className = 'absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-primary-400 transition-colors duration-300';
+            });
+
+            // Tampilkan tombol aksi, sembunyikan hasil
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('actionArea').classList.remove('hidden');
+            
+            // Scroll instan ke puncak secara halus
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Jalankan render DOM ketika halaman sepenuhnya dimuat
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuestions);
+        } else {
+            renderQuestions();
+        }
+        window.onload = function() {
+            renderQuestions();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Klasifikasi & Pemisahan Materi</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        /* Kustomisasi scrollbar untuk pre/code ASCII art */
+        pre::-webkit-scrollbar { height: 8px; }
+        pre::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        pre::-webkit-scrollbar-track { background: #f1f5f9; }
+        
+        /* Animasi muncul */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar / Header -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
+            <button onclick="history.back()" class="p-2 bg-indigo-700 hover:bg-indigo-800 rounded-full transition duration-200" title="Kembali">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <div>
+                <h1 class="text-xl font-bold">Latihan Soal Sains</h1>
+                <p class="text-xs text-indigo-200">Klasifikasi Materi & Metode Pemisahan Campuran</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
+            <p class="text-sm text-gray-600">Pilihlah jawaban yang paling tepat. Anda dapat langsung menekan tombol <strong>Periksa Jawaban</strong> di bagian paling bawah untuk melihat hasil dan pembahasan tanpa harus mengisi semua soal.</p>
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q1">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">1.</span>Emas murni (24 karat) dikategorikan sebagai unsur karena ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q1" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. dapat diuraikan menjadi zat yang lebih sederhana melalui reaksi kimia biasa</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q1" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. terdiri atas dua atau lebih jenis atom yang bergabung secara kimia</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q1" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. hanya terdiri atas satu jenis atom yang tidak dapat dibagi lagi secara kimia biasa</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q1" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. memiliki titik didih dan titik leleh yang sangat rendah dibandingkan logam lain</span></label>
+                </div>
+                <!-- Penjelasan -->
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan:</strong></p>
+                        <p>Bayangkan sebuah kotak berisi mainan balok lego yang warnanya kuning semua dan tidak bisa dibongkar jadi bentuk lain lagi. Emas murni (24 karat) itu seperti balok lego tersebut.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Ia hanya tersusun dari <strong>satu jenis "balok" dasar</strong> yang bernama atom emas (Au).</li>
+                            <li>Karena hanya punya satu jenis atom tunggal, emas <strong>tidak bisa dipecah atau diuraikan lagi</strong> menjadi zat yang lebih sederhana meskipun menggunakan reaksi kimia biasa. Inilah ciri utama yang disebut dengan <strong>Unsur</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q2">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">2.</span>Air (H<sub>2</sub>O) merupakan senyawa, sedangkan air teh manis merupakan campuran. Pernyataan berikut yang paling tepat menjelaskan perbedaan sifat penyusun kedua zat tersebut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q2" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. air mempertahankan sifat hidrogen dan oksigen, sedangkan air teh manis kehilangan sifat teh dan gula</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q2" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. air kehilangan sifat hidrogen dan oksigen, sedangkan air teh manis mempertahankan sifat teh dan gula</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q2" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. air dan air teh manis sama-sama kehilangan sifat zat-zat penyusun asalnya</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q2" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. air dan air teh manis sama-sama mempertahankan sifat zat-zat penyusun asalnya</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Membedakan Senyawa dan Campuran:</strong></p>
+                        <p>Senyawa dan campuran punya sifat akhir yang sangat berbeda terhadap zat asalnya!</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Senyawa (Air/H<sub>2</sub>O):</strong> Terbentuk dari <em>reaksi kimia</em>. Gas hidrogen (mudah meledak) dan Gas oksigen (pembakar) bergabung membentuk air yang wujudnya cair dan sifatnya memadamkan api. <strong>Sifat zat asalnya hilang sepenuhnya</strong>.</li>
+                            <li><strong>Campuran (Air teh manis):</strong> Terbentuk dari <em>pencampuran fisik</em>. Setelah diaduk, airnya tetap cair (sifat air), warnanya menjadi cokelat dan wangi (sifat teh), dan rasanya menjadi manis (sifat gula). <strong>Sifat zat asalnya tetap dipertahankan</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q3">
+                <p class="font-semibold text-lg mb-2"><span class="text-indigo-600 mr-2">3.</span>Perhatikan beberapa zat berikut!</p>
+                <div class="mb-4 pl-8">
+                    <p>(1) Udara bersih</p>
+                    <p>(2) Garam dapur (NaCl)</p>
+                    <p>(3) Air sirup</p>
+                    <p>(4) Gas oksigen (O<sub>2</sub>)</p>
+                </div>
+                <p class="font-semibold text-lg mb-4">Zat yang tergolong ke dalam kelompok campuran homogen ditunjukkan oleh nomor ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q3" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. (1) dan (2)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q3" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. (1) dan (3)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q3" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. (2) dan (4)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q3" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. (3) dan (4)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Identifikasi Zat:</strong></p>
+                        <p><strong>Campuran homogen</strong> (sering disebut larutan) adalah campuran yang menyatu dengan sangat sempurna (serba sama). Kamu tidak bisa membedakan mana zat penyusun A dan mana zat B hanya dengan melihatnya.</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>(1) Udara bersih:</strong> Ini campuran berbagai gas (Nitrogen, Oksigen, dll) yang menyatu sempurna tanpa batas. <em>(Campuran Homogen)</em></li>
+                            <li><strong>(3) Air sirup:</strong> Setelah diaduk, cairan sirup dan air menyatu sempurna tanpa endapan. <em>(Campuran Homogen)</em></li>
+                            <li>*(Catatan: (2) Garam NaCl adalah Senyawa, sedangkan (4) Gas Oksigen adalah Unsur)*.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q4">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">4.</span>Seorang petani garam ingin mendapatkan kristal garam yang bersih dari air laut. Metode pemisahan campuran yang paling tepat digunakan oleh petani tersebut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q4" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. filtrasi (penyaringan)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q4" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. sublimasi (penyubliman)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q4" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. kristalisasi (pengkristalan)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q4" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. kromatografi (pemisahan warna)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan:</strong></p>
+                        <p>Air laut adalah larutan garam, artinya garamnya menyatu dan tidak bisa disaring (filtrasi). Bagaimana cara memisahkannya?</p>
+                        <p>Petani garam mengalirkan air laut ke tambak dangkal, lalu membiarkan panas matahari memanaskannya secara perlahan. Airnya (pelarut) akan <strong>menguap</strong> habis ke udara. Sementara butiran-butiran garam (zat terlarut) yang tertinggal akan memadat kembali membentuk kristal padat putih.</p>
+                        <p>Metode memisahkan zat padat terlarut dari cairannya melalui proses penguapan hingga terbentuk kristal ini disebut <strong>Kristalisasi</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q5">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">5.</span>Di antara rumus kimia berikut, kelompok yang semuanya merupakan rumus kimia <strong>senyawa</strong> adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q5" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. O<sub>2</sub>, N<sub>2</sub>, dan H<sub>2</sub></label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q5" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. CO<sub>2</sub>, H<sub>2</sub>O, dan NaCl</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q5" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. Fe, Cu, dan Au</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q5" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. HCl, O<sub>3</sub>, dan CO</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Mengenal Rumus Kimia:</strong></p>
+                        <p>Syarat mutlak sebuah zat disebut <strong>Senyawa</strong> adalah harus tersusun dari <strong>minimal dua jenis unsur yang BERBEDA</strong>. Ciri mudahnya: huruf kapital pada rumusnya minimal ada dua.</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Opsi B benar:</strong> CO<sub>2</sub> (Carbon + Oksigen), H<sub>2</sub>O (Hidrogen + Oksigen), NaCl (Natrium + Klorin). Semua berisi lebih dari 1 jenis unsur.</li>
+                            <li><em>Kenapa opsi lain salah?</em><br>
+                                - Opsi A & O<sub>3</sub> pada opsi D: Terdiri dari unsur yang sama (Oksigen saja, Nitrogen saja). Ini disebut <em>molekul unsur</em>.<br>
+                                - Opsi C: Semuanya huruf kapital satu (Fe=Besi, Cu=Tembaga, Au=Emas). Ini adalah <em>unsur</em> murni logam.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="A" id="q6">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">6.</span>Perhatikan gambar representasi partikel materi berikut!</p>
+                
+                <div class="mb-4 overflow-x-auto bg-gray-50 border p-4 rounded-lg flex justify-center">
+                    <div class="grid grid-cols-3 gap-8 text-center font-mono text-xl">
+                        <div>
+                            <p class="font-sans text-sm font-semibold mb-2 text-gray-500">(I)</p>
+                            <p>o-o</p>
+                            <p>o-o</p>
+                        </div>
+                        <div>
+                            <p class="font-sans text-sm font-semibold mb-2 text-gray-500">(II)</p>
+                            <p>o-x</p>
+                            <p>o-x</p>
+                        </div>
+                        <div>
+                            <p class="font-sans text-sm font-semibold mb-2 text-gray-500">(III)</p>
+                            <p>o&nbsp;&nbsp;&nbsp;x</p>
+                            <p>&nbsp;x&nbsp;&nbsp;o</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm italic text-gray-600 mb-4">*Keterangan: simbol 'o' dan 'x' mewakili jenis atom yang berbeda. Garis '-' menunjukkan ikatan kimia.*</p>
+                <p class="font-semibold text-lg mb-4">Berdasarkan gambar di atas, klasifikasi materi yang benar untuk (I), (II), dan (III) secara berturut-turut adalah ....</p>
+                
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q6" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. unsur, senyawa, dan campuran</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q6" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. senyawa, unsur, dan campuran</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q6" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. campuran, unsur, dan senyawa</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q6" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. unsur, campuran, dan senyawa</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Menganalisis Susunan Partikel:</strong></p>
+                        <ul class="list-decimal pl-5">
+                            <li><strong>(I) <code>o-o</code> :</strong> Terdapat ikatan (garis hubung), tapi atom yang berikatan jenis dan bentuknya sama persis ('o' dengan 'o'). Ini melambangkan <strong>Unsur</strong> (tepatnya molekul unsur seperti gas O<sub>2</sub>).</li>
+                            <li><strong>(II) <code>o-x</code> :</strong> Terdapat ikatan, dan atom yang saling menempel berjenis beda ('o' dan 'x'). Karena berikatan kuat membentuk molekul tunggal, ini adalah <strong>Senyawa</strong> (seperti air H<sub>2</sub>O).</li>
+                            <li><strong>(III) <code>o x</code> :</strong> Atom 'o' dan 'x' berada di satu ruang yang sama tetapi <em>tidak saling menempel atau tidak ada garis ikatan kimia</em>. Ini adalah ciri-ciri <strong>Campuran</strong>, mereka berkumpul tapi tidak bereaksi.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q7">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">7.</span>Pada uji kromatografi kertas terhadap tinta hitam, diperoleh beberapa noda warna yang merambat dengan ketinggian berbeda pada kertas saring. Fenomena ini terjadi karena ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q7" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. zat warna dalam tinta memiliki ukuran partikel yang sama besar</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q7" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. perbedaan kelarutan komponen warna dalam pelarut dan daya serap kertas saring</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q7" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. tinta hitam merupakan senyawa murni yang mudah menguap</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q7" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. kertas saring bereaksi secara kimia dengan komponen warna tinta</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Prinsip Kerja Kromatografi:</strong></p>
+                        <p>Kromatografi kertas bekerja seperti "lomba lari" zat-zat penyusun warna. Saat ujung kertas dicelupkan ke air (pelarut), air akan meresap naik dan membawa titik tinta hitam.</p>
+                        <p>Mengapa ada warna (misal biru) yang berhenti di bawah, tapi ada warna (kuning) yang ikut lari sampai ke puncak kertas?</p>
+                        <p>Ini disebabkan dua faktor utama:</p>
+                        <ol class="list-decimal pl-5">
+                            <li><strong>Kelarutan:</strong> Seberapa mudah warna itu menyatu/larut dengan pelarut yang sedang naik. Semakin mudah larut, ia akan ikut merambat semakin tinggi.</li>
+                            <li><strong>Daya serap (adsorpsi) medium:</strong> Seberapa kuat kertas "menahan" warna tersebut.</li>
+                        </ol>
+                        <p>Jadi, perbedaan ketinggian membuktikan bahwa tinta hitam disusun oleh berbagai warna yang kelarutannya berbeda-beda.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="A" id="q8">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">8.</span>Perhatikan tabel perbedaan antara senyawa dan campuran berikut!</p>
+                <div class="overflow-x-auto mb-4 border rounded-lg">
+                    <table class="min-w-full bg-white text-sm text-left">
+                        <thead class="bg-indigo-50 text-indigo-900 border-b">
+                            <tr>
+                                <th class="py-2 px-3 font-semibold text-center w-12">No.</th>
+                                <th class="py-2 px-3 font-semibold border-l">Sifat Senyawa</th>
+                                <th class="py-2 px-3 font-semibold border-l">Sifat Campuran</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="py-2 px-3 text-center font-bold">1</td>
+                                <td class="py-2 px-3 border-l">Terbentuk melalui reaksi kimia</td>
+                                <td class="py-2 px-3 border-l">Terbentuk melalui proses fisika</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-3 text-center font-bold">2</td>
+                                <td class="py-2 px-3 border-l">Komponen penyusunnya memiliki perbandingan sembarang</td>
+                                <td class="py-2 px-3 border-l">Komponen penyusunnya memiliki perbandingan tetap</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-3 text-center font-bold">3</td>
+                                <td class="py-2 px-3 border-l">Sifat komponen penyusunnya masih tampak</td>
+                                <td class="py-2 px-3 border-l">Sifat komponen penyusunnya sudah hilang</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-3 text-center font-bold">4</td>
+                                <td class="py-2 px-3 border-l">Dapat dipisahkan secara fisika</td>
+                                <td class="py-2 px-3 border-l">Hanya dapat dipisahkan secara kimia</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="font-semibold text-lg mb-4">Perbedaan sifat senyawa dan campuran yang benar ditunjukkan oleh nomor ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q8" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. 1</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q8" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. 2</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q8" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. 3</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q8" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. 4</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Analisis Tabel:</strong></p>
+                        <p>Hanya pernyataan pada <strong>Nomor 1</strong> yang posisinya benar. Mari kita perbaiki yang salah (kolomnya tertukar):</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>(2) Perbandingan:</strong> Senyawa perbandingannya selalu <em>Tetap</em> (H<sub>2</sub>O selamanya 2 hidrogen dan 1 oksigen). Campuran perbandingannya <em>Sembarang</em> (teh manis bisa banyak gula atau sedikit gula).</li>
+                            <li><strong>(3) Sifat asli:</strong> Senyawa sifat asalnya <em>Hilang</em> (berubah jadi zat baru). Campuran sifat asalnya <em>Masih tampak</em> (rasa manis gula di teh tetap ada).</li>
+                            <li><strong>(4) Pemisahan:</strong> Senyawa dipisah secara <em>Kimia</em> (butuh reaksi/energi listrik). Campuran dipisah secara <em>Fisika</em> (seperti disaring, diuapkan).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q9">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">9.</span>Minyak bumi mentah terdiri atas berbagai komponen hidrokarbon dengan titik didih yang berbeda-beda. Untuk memisahkan komponen-komponen tersebut menjadi bensin, kerosin, solar, dan aspal, metode pemisahan yang paling efektif adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q9" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. kromatografi kolom</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q9" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. distilasi bertingkat (penyulingan)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q9" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. filtrasi vakum</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q9" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. kristalisasi penguapan</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pemisahan Minyak Bumi:</strong></p>
+                        <p>Minyak mentah bentuk aslinya kental hitam seperti lumpur, padahal isinya cairan semua! Karena bentuknya campuran benda cair, kita tidak bisa memakai saringan biasa.</p>
+                        <p>Kunci pemisahannya ada pada clue di soal: <strong>"titik didih yang berbeda-beda"</strong>. Metode yang tepat adalah dengan merebus (memanaskan) minyak tersebut di menara tinggi secara bertahap.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Zat yang paling mudah mendidih dan menguap akan naik paling atas, lalu diembunkan kembali menjadi cairan (misal bensin).</li>
+                            <li>Zat yang butuh lebih panas untuk mendidih akan tertinggal di tengah (seperti kerosin dan solar).</li>
+                            <li>Metode pemisahan campuran zat cair berdasarkan perbedaan titik didih ini disebut <strong>Distilasi Bertingkat (Fraksionasi)</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q10">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">10.</span>Di sebuah laboratorium sekolah, terdapat air keruh bekas cucian tanah liat. Siswa mencoba menyaring air tersebut menggunakan kertas saring biasa, namun air hasil saringan masih tampak sedikit keruh. Evaluasi yang paling tepat terhadap hasil percobaan tersebut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q10" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. kertas saring tidak dapat digunakan untuk memisahkan campuran heterogen</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q10" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. ukuran pori kertas saring lebih besar daripada ukuran beberapa partikel tanah liat yang tersuspensi</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q10" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. partikel tanah liat telah bereaksi secara kimia dengan air membentuk senyawa baru</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q10" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. metode pemisahan seharusnya menggunakan sublimasi karena tanah liat mudah menyublim</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Logika Penyaringan (Filtrasi):</strong></p>
+                        <p>Penyaringan bekerja seperti saringan teh. Benda yang ukuran fisiknya lebih besar dari lubang saringan akan tersangkut (menjadi ampas/residu). Benda cair atau benda sangat kecil akan lolos ke bawah (sebagai filtrat).</p>
+                        <p>Tanah liat memiliki partikel yang sangat halus (ukuran koloid). Jika air saringan masih keruh, itu menandakan ada butiran-butiran tanah liat super mini yang <strong>ukurannya jauh lebih kecil dari lubang/pori kertas saring</strong>, sehingga mereka ikut terjun bebas menembus kertas bersama air.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q11">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">11.</span>Campuran antara pasir dan iodin (yodium) tidak sengaja terbentuk di laboratorium. Metode pemisahan yang paling tepat untuk mendapatkan kembali kristal iodin murni tanpa merusak strukturnya adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q11" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. filtrasi, karena pasir tidak larut dalam air</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q11" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. sublimasi, karena iodin dapat menyublim sedangkan pasir tidak</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q11" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. kristalisasi, karena pasir memiliki titik beku yang sangat tinggi</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q11" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. kromatografi, karena iodin memiliki warna yang khas</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Mengenal Sifat Unik Zat:</strong></p>
+                        <p>Kedua zat tersebut berbentuk padat. Jika kita memanfaatkan pemanasan, kita akan menemukan sifat ajaib dari zat Iodin (serta zat seperti kapur barus kering / kamper).</p>
+                        <p>Iodin memiliki sifat mudah <strong>menyublim</strong>, yaitu berubah dari wujud padat <em>langsung</em> menjadi gas tanpa melalui fase cair saat terkena panas. Sementara itu, butiran pasir akan diam saja karena ia butuh panas lahar gunung api untuk mencair atau menguap.</p>
+                        <p>Dengan memanaskan campuran ini, uap iodin yang berwarna ungu akan naik, lalu kita dinginkan uapnya di atas agar kembali menjadi kristal murni. Proses ini dinamakan sublimasi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q12">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">12.</span>Air (H<sub>2</sub>O) tersusun atas gas hidrogen yang sangat mudah terbakar dan gas oksigen yang sangat membantu pembakaran. Namun, air sendiri justru digunakan untuk memadamkan api. Karakteristik senyawa yang ditunjukkan oleh fenomena ini adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q12" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. senyawa terbentuk dari penggabungan unsur-unsur secara fisika</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q12" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. sifat senyawa sangat berbeda dengan sifat unsur-unsur pembentuknya</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q12" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. senyawa dapat dipisahkan menjadi unsur-unsurnya dengan penyaringan biasa</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q12" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. perbandingan massa unsur-unsur penyusun senyawa selalu berubah-ubah</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Sifat Ajaib Reaksi Kimia:</strong></p>
+                        <p>Ini adalah salah satu keunikan utama alam semesta kita terkait <strong>Senyawa</strong>.</p>
+                        <p>Ketika unsur-unsur bergabung membentuk senyawa melalui ikatan dan reaksi kimia (seperti bom hidrogen dan oksigen), mereka harus merelakan "jati diri" atau sifat lama mereka hilang.</p>
+                        <p>Hidrogen si pemicu api dan oksigen si pengobar api bereaksi menghasilkan zat baru yang sifatnya bertolak belakang 180 derajat: Air cair yang dingin dan memadamkan api. Hal ini membuktikan bahwa <strong>sifat senyawa baru sama sekali tidak sama dengan penyusunnya</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q13">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">13.</span>Seorang praktikan menguji dua buah cairan tanpa label (Cairan A dan Cairan B). Saat dipanaskan, Cairan A mendidih tepat pada suhu 100&deg;C dari awal hingga akhir penguapan. Sementara itu, Cairan B mulai mendidih pada suhu 101&deg;C dan suhunya terus meningkat seiring menguapnya cairan. Kesimpulan yang paling tepat mengenai kedua cairan tersebut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q13" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. Cairan A adalah campuran homogen, sedangkan Cairan B adalah senyawa murni</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q13" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. Cairan A adalah zat murni (senyawa/unsur), sedangkan Cairan B adalah campuran</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q13" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. Cairan A adalah campuran heterogen, sedangkan Cairan B adalah unsur murni</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q13" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. Kedua cairan tersebut merupakan campuran dengan konsentrasi yang sama</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Mendeteksi Kemurnian Zat via Titik Didih:</strong></p>
+                        <p>Suhu saat mendidih bisa menjadi alat "deteksi" apakah cairan itu murni atau oplosan (campuran):</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Zat Murni (Cairan A):</strong> Selalu memiliki titik didih yang tetap/konstan. Jika air murni direbus, suhunya tidak akan mau melewati 100&deg;C walau api kompor dibesarkan. Suhunya berhenti di sana sampai air habis jadi uap.</li>
+                            <li><strong>Campuran (Cairan B):</strong> Jika kamu merebus air garam, suhu mulai mendidih pasti di atas 100&deg;C. Lebih parah lagi, karena air terus menguap tapi garamnya tidak, cairan di panci makin lama makin asin (pekat). Akibatnya, suhu air akan <strong>terus naik perlahan</strong> selama direbus.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q14">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">14.</span>Terjadi tumpahan minyak mentah di permukaan laut akibat kebocoran kapal tanker. Dari sudut pandang ekologi dan efisiensi pemisahan campuran, metode awal yang paling tepat untuk melokalisasi dan memisahkan minyak dari air laut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q14" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. menyaring seluruh air laut menggunakan kertas saring raksasa (filtrasi)</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q14" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. menguapkan air laut sehingga minyak tertinggal di dasar laut (evaporasi)</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q14" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. menggunakan pembatas terapung (<i>booms</i>) lalu menyedot lapisan minyak yang mengapung karena perbedaan massa jenis (dekantasi)</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q14" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. menambahkan zat asam kuat agar minyak bereaksi dan larut dalam air laut</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Penyelamatan Lingkungan & Sifat Campuran:</strong></p>
+                        <p>Minyak dan air memiliki hubungan yang buruk: mereka tidak mau bersatu (campuran heterogen) dan minyak selalu mengalah naik ke atas karena badannya lebih "ringan" (massa jenis minyak lebih kecil dari air).</p>
+                        <p>Oleh karena lapisan minyak terpisah jelas di permukaan laut, langkah tercepat dan teraman tanpa meracuni ikan (seperti opsi D) atau membuang energi mustahil merebus laut (opsi B) adalah dengan <strong>memanfaatkan perbedaan letak/massa jenis tersebut</strong>.</p>
+                        <p>Cegat minyak menyebar dengan pelampung batas, lalu sedot / tuang lapisan atasnya pelan-pelan. Metode memisahkan zat cair berlapis seperti ini merupakan prinsip dasar <strong>Dekantasi</strong> secara mekanis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="A" id="q15">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">15.</span>Sel darah merah harus dipisahkan dari plasma darah untuk keperluan transfusi khusus. Mengingat ukuran sel darah sangat kecil dan massa jenisnya sedikit berbeda dengan plasma, metode pemisahan yang paling efektif adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q15" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. sentrifugasi, dengan memutar sampel darah pada kecepatan tinggi</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q15" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. filtrasi, menggunakan kertas saring laboratorium biasa</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q15" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. evaporasi, dengan memanaskan darah hingga plasma menguap</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q15" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. sublimasi, dengan membekukan darah lalu menyublimkannya</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pemisahan Suspensi Ekstra Halus:</strong></p>
+                        <p>Darah itu mirip susu: terlihat seperti satu cairan merah sempurna, tapi sebenarnya adalah lautan air bening kekuningan (plasma) yang disesaki oleh benda super mini (sel darah).</p>
+                        <p>Jika disaring biasa, sel darah merah yang saking mininya akan ikut merosot turun lolos kertas saring.</p>
+                        <p>Laboratorium menggunakan mesin pusing atau <strong>Sentrifugasi</strong>. Tabung darah diputar luar biasa kencang (ribuan RPM). Putaran ini menciptakan daya lempung ke luar. Benda yang massa jenisnya sedikit lebih berat (sel darah merah) akan dipaksa terlempar dan mengendap bertumpuk di dasar tabung secara cepat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q16">
+                <p class="font-semibold text-lg mb-2"><span class="text-indigo-600 mr-2">16.</span>Perhatikan tiga zat berikut:</p>
+                <div class="mb-4 pl-4 border-l-4 border-indigo-400 text-gray-700">
+                    <ol class="list-decimal pl-4 space-y-1">
+                        <li>Besi (Fe) yang dibiarkan di udara terbuka hingga berkarat (Fe<sub>2</sub>O<sub>3</sub> &middot; xH<sub>2</sub>O).</li>
+                        <li>Serbuk besi yang diaduk dengan serbuk belerang pada suhu kamar.</li>
+                        <li>Serbuk besi yang dipanaskan bersama serbuk belerang hingga terbentuk besi(II) sulfida (FeS).</li>
+                    </ol>
+                </div>
+                <p class="font-semibold text-lg mb-4">Analisis yang benar mengenai status materi ketiga zat tersebut berturut-turut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q16" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. (1) adalah unsur, (2) adalah campuran, (3) adalah senyawa</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q16" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. (1) adalah senyawa, (2) adalah campuran, (3) adalah senyawa</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q16" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. (1) adalah campuran, (2) adalah senyawa, (3) adalah unsur</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q16" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. (1) adalah senyawa, (2) adalah unsur, (3) adalah campuran</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Menelaah Proses Perubahan:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>(1) Karat Besi:</strong> Ini bukan besi lagi yang kotor. Karat terbentuk dari <em>reaksi kimia</em> antara besi murni, gas oksigen di udara, dan air, sehingga menyatu menghasilkan bentuk dan zat baru (Fe<sub>2</sub>O<sub>3</sub>). Hasil reaksi adalah <strong>Senyawa</strong>.</li>
+                            <li><strong>(2) Diaduk saja:</strong> Serbuk besi dan kuning belerang hanya berkumpul berdesakan layaknya gado-gado. Jika didekatkan magnet, besinya masih bisa ditarik. Tidak ada reaksi. Ini <strong>Campuran</strong> fisik.</li>
+                            <li><strong>(3) Dipanaskan:</strong> Panas memicu reaksi! Besi dan belerang meleleh, bergabung mengikat diri, dan berubah jadi bongkahan hitam keras. Didekatkan magnet pun tak mempan lagi. Zat baru tercipta, maka ini adalah <strong>Senyawa</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q17">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">17.</span>Di dalam sebuah wadah terdapat campuran yang terdiri atas garam dapur, pasir, dan serbuk besi. Langkah-langkah pemisahan yang paling efektif dan berurutan untuk memisahkan ketiga zat tersebut agar diperoleh kembali masing-masing zat dalam keadaan murni adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q17" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. dilarutkan dalam air &rarr; difiltrasi &rarr; didekantasi &rarr; ditarik dengan magnet</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q17" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. ditarik dengan magnet &rarr; dilarutkan dalam air &rarr; difiltrasi &rarr; dievaporasi (kristalisasi)</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q17" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. dievaporasi &rarr; ditarik dengan magnet &rarr; dilarutkan dalam air &rarr; difiltrasi</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q17" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. difiltrasi &rarr; dievaporasi &rarr; ditarik dengan magnet &rarr; dilarutkan dalam air</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Langkah Detektif Laboratorium (Berurutan):</strong></p>
+                        <p>Bayangkan kamu punya tumpukan abu-abu di piring yang isinya garam, pasir kasar, dan bubuk besi. Mari kita eksekusi dari yang paling mudah dan tidak mengubah bentuk:</p>
+                        <ol class="list-decimal pl-5">
+                            <li><strong>Gunakan Magnet (Sifat Kemagnetan):</strong> Usapkan magnet di atas tumpukan. Bubuk besi akan meloncat dan menempel di magnet. <em>Tahap 1 selesai: Besi berhasil dipisah. Sisa: Garam dan Pasir.</em></li>
+                            <li><strong>Tambahkan Air (Sifat Kelarutan):</strong> Beri air lalu aduk. Garam larut lenyap jadi air garam, tapi pasir menolak larut.</li>
+                            <li><strong>Filtrasi / Saring (Ukuran partikel):</strong> Tuang ke kertas saring. Pasir akan tertahan di kertas (terpisah), sedangkan air garam menetes bebas. <em>Tahap 2 selesai: Pasir berhasil dipisah. Sisa: Air bergaram.</em></li>
+                            <li><strong>Evaporasi / Panaskan:</strong> Rebus cairan bening tadi di atas api. Air akan jadi uap lenyap, meninggalkan butiran kristal garam yang padat di dasar wadah. <em>Tahap 3 selesai: Garam sukses didapatkan.</em></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q18">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">18.</span>Lambang unsur untuk tembaga, besi, dan natrium secara berturut-turut yang benar menurut aturan IUPAC adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q18" value="A" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> A. Te, Be, Na</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q18" value="B" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> B. Cu, Fe, Na</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q18" value="C" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> C. Tm, Bs, Nt</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q18" value="D" class="mr-3 w-4 h-4 text-indigo-600 shrink-0"> D. Cu, Be, Nt</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Aturan Penamaan Unsur Internasional:</strong></p>
+                        <p>Agar seluruh ilmuwan di dunia tidak bingung, lambang unsur kimia disepakati menggunakan singkatan dari bahasa Latin atau Yunani-nya, BUKAN dari bahasa lokal negara (seperti bahasa Indonesia atau Inggris).</p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Tembaga</strong> bahasa latinnya adalah <em>Cuprum</em>. Maka lambangnya diambil 2 huruf depan = <strong>Cu</strong>.</li>
+                            <li><strong>Besi</strong> bahasa latinnya adalah <em>Ferrum</em>. Lambangnya = <strong>Fe</strong>.</li>
+                            <li><strong>Natrium</strong> memang mirip bahasanya, namun penamaannya tetap merujuk kaidah tersebut, yaitu <strong>Na</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="C" id="q19">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">19.</span>Perhatikan grafik pemanasan zat cair hingga mendidih berikut!</p>
+                <div class="mb-4 overflow-x-auto bg-gray-50 border p-4 rounded-lg">
+<pre class="text-sm font-mono text-gray-700 leading-tight">
+  Suhu (&deg;C)
+   ^
+   |                     / (Zat Y)
+   |                    /
+   |             ------/ (Zat X)
+   |            /
+   |           /
+   |          /
+   +-----------------------> Waktu (menit)
+</pre>
+                </div>
+                <p class="font-semibold text-lg mb-4">Berdasarkan grafik pemanasan di atas, analisis yang benar mengenai Zat X dan Zat Y adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q19" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. Zat X adalah campuran karena memiliki titik didih yang konstan (suhu tetap saat mendidih)</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q19" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. Zat Y adalah zat murni karena suhunya terus naik saat mendidih</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q19" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. Zat X adalah zat murni karena memiliki titik didih yang tajam/konstan, sedangkan Zat Y adalah campuran</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q19" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. Zat X dan Zat Y keduanya merupakan senyawa murni karena mengalami kenaikan suhu dari awal pemanasan</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Membaca Profil Titik Didih:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Garis Zat X (Mendatar / Konstan):</strong> Saat mencapai suhu mendidih, garisnya menjadi lurus lurus ke kanan (suhu diam tidak bertambah). Ini adalah identitas sidik jari dari <strong>Zat Murni (Senyawa)</strong> seperti air suling yang bertahan di angka 100&deg;C.</li>
+                            <li><strong>Garis Zat Y (Terus Naik):</strong> Menunjukkan bahwa ketika mendidih, suhunya tidak mau diam, malah terus naik. Ini adalah indikasi kuat bahwa zat itu bukan air biasa, melainkan cairan beroplosan alias <strong>Campuran</strong> (seperti air garam, semakin direbus semakin pekat karena air menguap, akibatnya butuh suhu lebih tinggi lagi untuk sisa cairannya mendidih).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-gray-100 transition-colors question-item" data-answer="B" id="q20">
+                <p class="font-semibold text-lg mb-4"><span class="text-indigo-600 mr-2">20.</span>Seorang produsen makanan ingin mengemas manisan buah kaleng yang mengandung asam sitrat tinggi. Ia harus memilih bahan wadah bagian dalam kaleng agar tidak terjadi reaksi kimia yang merusak makanan. Evaluasi pilihan bahan berikut yang paling aman adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q20" value="A" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">A. menggunakan logam besi tanpa pelapis, karena besi adalah unsur yang sangat stabil terhadap asam</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q20" value="B" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">B. melapisi bagian dalam kaleng dengan polimer plastik/resin (senyawa stabil) agar asam tidak bereaksi dengan logam kaleng</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q20" value="C" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">C. menggunakan tembaga murni karena tembaga mudah larut dalam asam sitrat dan menambah nutrisi bagi tubuh</span></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="q20" value="D" class="mt-1 mr-3 w-4 h-4 text-indigo-600 shrink-0"> <span class="leading-relaxed">D. menggunakan campuran seng dan timbal karena campuran logam selalu tahan terhadap segala jenis asam kuat maupun lemah</span></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Aplikasi Sifat Zat di Kehidupan Nyata:</strong></p>
+                        <p>Zat yang bersifat Asam (seperti asam cuka atau asam jeruk pada manisan) itu punya hobi buruk: bereaksi menggerogoti logam (seperti besi atau seng). Reaksi korosi ini akan menghasilkan racun logam dan kaleng akan bolong!</p>
+                        <p>Oleh karena itu, kaleng logam tidak boleh tersentuh langsung oleh makanan asam. Pabrik harus memakaikan "jas hujan" pelindung pada bagian dalam kaleng. Jas pelindung ini terbuat dari bahan khusus <strong>Polimer plastik atau senyawa Resin</strong>. Bahan plastik adalah zat yang sangat 'cuek' alias inert/stabil, ia tidak akan bereaksi dimakan oleh asam sehingga manisan awet dan aman dimakan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Area -->
+            <div class="flex justify-center mb-10 mt-8">
+                <button type="button" id="btnSubmit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-transform transform hover:scale-105 text-lg">
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Container (Hidden Default) -->
+        <div id="resultContainer" class="hidden bg-white rounded-xl shadow-lg border-2 border-indigo-500 p-8 text-center mb-12 transform transition-all animate-fade-in">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Evaluasi Selesai!</h2>
+            <p class="text-gray-600 mb-8">Scroll ke atas untuk melihat kunci dan pembahasan rinci di tiap nomor. Ini adalah skormu:</p>
+            
+            <div class="inline-block bg-indigo-50 border-4 border-indigo-200 rounded-full h-40 w-40 flex items-center justify-center mb-8 shadow-inner mx-auto">
+                <span id="scoreDisplay" class="text-5xl font-black text-indigo-600 drop-shadow-sm">0</span>
+            </div>
+            
+            <div class="flex justify-center">
+                <button type="button" id="btnReset" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition border border-gray-300 shadow-sm hover:shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Ulangi Tes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-sm font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const quizForm = document.getElementById('quizForm');
+            const resultContainer = document.getElementById('resultContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-item');
+            
+            const TOTAL_QUESTIONS = questions.length;
+            const POINT_PER_QUESTION = 100 / TOTAL_QUESTIONS; 
+
+            // Mencegah default form submit (refresh halaman)
+            quizForm.addEventListener('submit', (e) => e.preventDefault());
+
+            btnSubmit.addEventListener('click', () => {
+                let currentScore = 0;
+
+                questions.forEach((q) => {
+                    const qId = q.id;
+                    const correctAnswer = q.getAttribute('data-answer');
+                    // Cari input radio yang sedang di-check user
+                    const selectedOption = q.querySelector(`input[name="${qId}"]:checked`);
+                    
+                    const explanationBox = q.querySelector('.explanation');
+                    const statusText = explanationBox.querySelector('.status');
+
+                    // Reset kelas dari eksekusi sebelumnya (jika ada)
+                    explanationBox.classList.remove('hidden', 'bg-green-50', 'border-green-300', 'bg-red-50', 'border-red-300', 'text-green-800', 'text-red-800');
+                    q.classList.remove('border-green-300', 'border-red-300', 'bg-green-50/20', 'bg-red-50/20');
+
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        if (userAnswer === correctAnswer) {
+                            // Logic Jika Benar
+                            currentScore += POINT_PER_QUESTION;
+                            explanationBox.classList.add('bg-green-50', 'border-green-300', 'text-green-800');
+                            q.classList.add('border-green-300', 'bg-green-50/20'); 
+                            statusText.innerHTML = `✅ Pintar Sekali! Jawaban Anda Benar (Opsi ${userAnswer})`;
+                        } else {
+                            // Logic Jika Salah
+                            explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                            q.classList.add('border-red-300', 'bg-red-50/20');
+                            statusText.innerHTML = `❌ Oops, Hampir Tepat. Menjawab: ${userAnswer} | Kunci Jawaban Benar: ${correctAnswer}`;
+                        }
+                    } else {
+                        // Logic Jika Dikosongkan
+                        explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                        q.classList.add('border-red-300', 'bg-red-50/20');
+                        statusText.innerHTML = `⚠️ Wah, Anda belum menjawab soal ini. Kunci Jawaban Benar: ${correctAnswer}`;
+                    }
+                    
+                    // Tampilkan kotak yang tadinya di hidden
+                    explanationBox.style.display = 'block';
+                });
+
+                // Perbarui visualisasi angka Skor
+                scoreDisplay.innerText = Math.round(currentScore);
+                
+                // Menutup tombol submit & memunculkan box Hasil
+                btnSubmit.parentElement.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                
+                // Animasi scroll ke bawah ke arah kotak skor
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 100);
+            });
+
+            btnReset.addEventListener('click', () => {
+                // Hapus semua pilihan user di form radio
+                quizForm.reset();
+
+                // Kembalikan UI tiap soal ke kondisi semula
+                questions.forEach(q => {
+                    const explanationBox = q.querySelector('.explanation');
+                    explanationBox.style.display = 'none';
+                    explanationBox.classList.add('hidden');
+                    explanationBox.classList.remove('bg-green-50', 'border-green-300', 'bg-red-50', 'border-red-300', 'text-green-800', 'text-red-800');
+                    q.classList.remove('border-green-300', 'border-red-300', 'bg-green-50/20', 'bg-red-50/20');
+                });
+
+                // Sembunyikan Skor, munculkan kembali Tombol Submit
+                resultContainer.classList.add('hidden');
+                btnSubmit.parentElement.classList.remove('hidden');
+
+                // Lemparkan layar pandangan ke pucuk halaman
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t12',
+          topicIndex: 12,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

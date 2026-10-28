@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Fisika - Tekanan</title>
+    <style>
+        :root {
+            --primary: #0284c7; /* Biru edukasi */
+            --primary-hover: #0369a1;
+            --bg-color: #f8fafc;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --correct-bg: #dcfce7;
+            --correct-border: #16a34a;
+            --wrong-bg: #fee2e2;
+            --wrong-border: #ef4444;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: absolute;
+            left: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .math-block {
+            background-color: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
+        }
+
+        .option-label:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .option-label input[type="radio"] {
+            margin-top: 5px;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Status Jawaban */
+        .option-label.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: #166534;
+        }
+
+        .option-label.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: #991b1b;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none; 
+            animation: slideDown 0.4s ease;
+            line-height: 1.7;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box.bg-green {
+            background-color: #f0fdf4;
+            border-left: 5px solid var(--correct-border);
+            color: #166534;
+        }
+
+        .explanation-box.bg-red {
+            background-color: #fef2f2;
+            border-left: 5px solid var(--wrong-border);
+            color: #991b1b;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .btn-submit, .btn-retry {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-submit:hover, .btn-retry:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            display: none;
+            animation: fadeIn 0.6s ease;
+            border-top: 6px solid var(--primary);
+        }
+
+        .score-display {
+            font-size: 5.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .score-message {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .header { flex-direction: column; padding: 15px; }
+            .btn-back { position: static; margin-bottom: 12px; width: 100%; justify-content: center;}
+            .container { margin: 15px auto; }
+            .question-card { padding: 20px 15px; }
+            .score-display { font-size: 4.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button type="button" class="btn-back" onclick="history.back()">&#8592; Kembali</button>
+        <h1>Kuis Fisika: Tekanan</h1>
+    </div>
+
+    <div class="container">
+        <form id="quizForm">
+            
+            <!-- Soal 1 -->
+            <div class="question-card" id="q1">
+                <div class="question-text">1. Seorang siswa mencoba menancapkan empat buah paku yang berbeda ke sebuah papan kayu dengan menggunakan gaya pukul yang sama besar. Ujung paku yang paling mudah menembus kayu adalah paku yang memiliki...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q1" value="A"> <span class="option-text">A. permukaan ujung paling lebar</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"> <span class="option-text">B. permukaan ujung paling runcing</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"> <span class="option-text">C. bahan pembuat paku paling lentur</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"> <span class="option-text">D. massa paku paling berat</span></label>
+                </div>
+                <div class="explanation-box" id="exp1" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bayangkan kamu menekan balon dengan jari telunjuk, lalu mencoba menekannya dengan jarum. Tentu jarum lebih mudah memecahkan balon, bukan? Dalam fisika, rumus tekanan zat padat adalah <b>P = F &divide; A</b>.<br><br>
+                        Artinya, Tekanan (P) berbanding <b>terbalik</b> dengan Luas Permukaan (A). Semakin kecil luas permukaannya (ujung paku semakin runcing), maka tekanan yang dihasilkan akan semakin <b>besar</b>. Oleh karena itu, paku berujung runcing paling mudah menembus kayu.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 2 -->
+            <div class="question-card" id="q2">
+                <div class="question-text">2. Perhatikan spesifikasi empat buah balok beton berikut!<br><i>(Asumsi: Keempat balok memiliki massa dan berat yang sama)</i><br><br>
+                Balok 1: alas 2 cm &times; 3 cm<br>
+                Balok 2: alas 3 cm &times; 4 cm<br>
+                Balok 3: alas 1 cm &times; 5 cm<br>
+                Balok 4: alas 2 cm &times; 5 cm<br><br>
+                Balok yang memberikan tekanan <b>paling kecil</b> terhadap lantai tempatnya diletakkan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q2" value="A"> <span class="option-text">A. Balok 1</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"> <span class="option-text">B. Balok 2</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"> <span class="option-text">C. Balok 3</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"> <span class="option-text">D. Balok 4</span></label>
+                </div>
+                <div class="explanation-box" id="exp2" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Seperti pada soal sebelumnya, untuk menghasilkan tekanan yang <b>terkecil</b>, kita harus mencari bidang alas yang permukaannya <b>paling besar (luas)</b>. Mari kita hitung luas (Panjang &times; Lebar) masing-masing balok:<br>
+                        &bull; Balok 1: 2 &times; 3 = 6 cm<sup>2</sup><br>
+                        &bull; <b>Balok 2: 3 &times; 4 = 12 cm<sup>2</sup> (Luas Paling Besar)</b><br>
+                        &bull; Balok 3: 1 &times; 5 = 5 cm<sup>2</sup><br>
+                        &bull; Balok 4: 2 &times; 5 = 10 cm<sup>2</sup><br><br>
+                        Karena Balok 2 memiliki luas alas paling besar, maka tekanan yang mengenai lantai akan menyebar sehingga menjadi yang paling kecil.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 3 -->
+            <div class="question-card" id="q3">
+                <div class="question-text">3. Seorang penyelam tradisional menyelam di laut pada kedalaman 15 meter di bawah permukaan air. Jika massa jenis air laut adalah 1.020 kg/m<sup>3</sup> dan percepatan gravitasi bumi 10 m/s<sup>2</sup>, maka tekanan hidrostatis yang dialami oleh penyelam tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q3" value="A"> <span class="option-text">A. 15.300 N/m<sup>2</sup></span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"> <span class="option-text">B. 102.000 N/m<sup>2</sup></span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"> <span class="option-text">C. 153.000 N/m<sup>2</sup></span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"> <span class="option-text">D. 1.530.000 N/m<sup>2</sup></span></label>
+                </div>
+                <div class="explanation-box" id="exp3" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Ingat rumus segitiga untuk Tekanan Hidrostatis (tekanan di dalam air): <b>P<sub>h</sub> = &rho; &times; g &times; h</b><br>
+                        Dimana:<br>
+                        &bull; Kerapatan air (&rho;) = 1.020 kg/m<sup>3</sup><br>
+                        &bull; Gravitasi (g) = 10 m/s<sup>2</sup><br>
+                        &bull; Kedalaman (h) = 15 m<br><br>
+                        Tinggal kita kalikan semuanya:<br>
+                        P<sub>h</sub> = 1.020 &times; 10 &times; 15<br>
+                        P<sub>h</sub> = <b>153.000 N/m<sup>2</sup></b>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 4 -->
+            <div class="question-card" id="q4">
+                <div class="question-text">4. Perhatikan konstruksi dinding bendungan air! Dinding bendungan air selalu dibangun dengan desain semakin ke bawah maka akan dibuat semakin tebal. Alasan fisik yang paling tepat untuk mengevaluasi desain konstruksi tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q4" value="A"> <span class="option-text">A. air di bagian bawah memiliki suhu yang lebih dingin sehingga dinding mudah retak</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"> <span class="option-text">B. volume air di bagian bawah lebih besar sehingga membutuhkan ruang penyangga yang luas</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"> <span class="option-text">C. tekanan hidrostatis air semakin ke bawah semakin besar sehingga membutuhkan dinding penahan yang lebih kuat</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"> <span class="option-text">D. gaya Archimedes di dasar bendungan sangat besar sehingga mendorong dinding ke arah luar</span></label>
+                </div>
+                <div class="explanation-box" id="exp4" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Bayangkan jika kamu menyelam di kolam yang sangat dalam, telingamu pasti terasa lebih sakit karena air di atasmu semakin berat menekanmu. Begitu pula dengan bendungan!<br><br>
+                        Berdasarkan prinsip <b>Tekanan Hidrostatis</b>, semakin dalam letak suatu titik dari permukaan, maka tekanannya akan semakin besar (kuat). Oleh karena itu, dinding bendungan di bagian dasar (paling bawah) harus di cor beton super tebal agar tidak jebol menahan tekanan air laut/sungai yang dahsyat tersebut.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 5 -->
+            <div class="question-card" id="q5">
+                <div class="question-text">5. Sebuah pipa U diisi dengan air (massa jenis 1 g/cm<sup>3</sup>). Pada salah satu kaki pipa dituangkan minyak hingga setinggi 10 cm. Jika tinggi kolom air pada kaki pipa yang lain naik sebesar 8 cm dari garis batas awal, maka massa jenis minyak tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q5" value="A"> <span class="option-text">A. 0,6 g/cm<sup>3</sup></span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"> <span class="option-text">B. 0,8 g/cm<sup>3</sup></span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"> <span class="option-text">C. 1,0 g/cm<sup>3</sup></span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"> <span class="option-text">D. 1,2 g/cm<sup>3</sup></span></label>
+                </div>
+                <div class="explanation-box" id="exp5" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ini adalah penerapan rumus <b>Bejana Berhubungan</b> (Tekanan pada kaki 1 sama dengan kaki 2).<br>
+                        Rumus: <b>&rho;<sub>1</sub> &times; h<sub>1</sub> = &rho;<sub>2</sub> &times; h<sub>2</sub></b><br><br>
+                        Diketahui:<br>
+                        &bull; Air: &rho;<sub>air</sub> = 1, h<sub>air</sub> = 8 cm<br>
+                        &bull; Minyak: h<sub>minyak</sub> = 10 cm, &rho;<sub>minyak</sub> = ?<br><br>
+                        Mari kita masukkan ke rumus:<br>
+                        1 &times; 8 = &rho;<sub>minyak</sub> &times; 10<br>
+                        8 = &rho;<sub>minyak</sub> &times; 10<br>
+                        &rho;<sub>minyak</sub> = 8 &divide; 10 = <b>0,8 g/cm<sup>3</sup></b>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 6 -->
+            <div class="question-card" id="q6">
+                <div class="question-text">6. Prinsip kerja dari alat pengangkat mobil hidrolik pada tempat pencucian mobil memanfaatkan hukum fisika, yaitu...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q6" value="A"> <span class="option-text">A. Hukum Archimedes</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"> <span class="option-text">B. Hukum Pascal</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"> <span class="option-text">C. Hukum Boyle</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"> <span class="option-text">D. Hukum Newton III</span></label>
+                </div>
+                <div class="explanation-box" id="exp6" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bagaimana mungkin mesin kecil bisa mengangkat mobil sungguhan yang beratnya berton-ton? Rahasianya ada pada <b>Hukum Pascal</b>!<br><br>
+                        Hukum Pascal berbunyi: "Tekanan yang diberikan pada zat cair di dalam ruang tertutup akan diteruskan ke segala arah dengan sama rata." Dengan menggunakan sistem hidrolik (oli di dalam pipa), tekanan kecil dari mesin peniup diteruskan untuk memompa tabung raksasa di bawah mobil sehingga mobil mudah terangkat.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 7 -->
+            <div class="question-card" id="q7">
+                <div class="question-text">7. Sebuah dongkrak hidrolik memiliki dua buah piston dengan luas penampang masing-masing A<sub>1</sub> = 5 cm<sup>2</sup> dan A<sub>2</sub> = 250 cm<sup>2</sup>. Jika pada piston kecil diberikan gaya sebesar 100 N, maka beban maksimum yang dapat diangkat pada piston besar adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q7" value="A"> <span class="option-text">A. 2.500 N</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"> <span class="option-text">B. 5.000 N</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"> <span class="option-text">C. 7.500 N</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"> <span class="option-text">D. 10.000 N</span></label>
+                </div>
+                <div class="explanation-box" id="exp7" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Kita gunakan rumus ajaib Hukum Pascal: <b>F<sub>1</sub> &divide; A<sub>1</sub> = F<sub>2</sub> &divide; A<sub>2</sub></b><br><br>
+                        Piston Kecil (Kiri): F<sub>1</sub> = 100 N, A<sub>1</sub> = 5 cm<sup>2</sup><br>
+                        Piston Besar (Kanan): F<sub>2</sub> = ?, A<sub>2</sub> = 250 cm<sup>2</sup><br><br>
+                        Langkah hitung:<br>
+                        (100 &divide; 5) = F<sub>2</sub> &divide; 250<br>
+                        20 = F<sub>2</sub> &divide; 250<br>
+                        F<sub>2</sub> = 20 &times; 250 = <b>5.000 N</b>.<br>
+                        (Luar biasa, dengan gaya 100 N kita bisa mengangkat beban seberat 5000 N!)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 8 -->
+            <div class="question-card" id="q8">
+                <div class="question-text">8. Seorang mekanik ingin merancang dongkrak hidrolik baru untuk mengangkat truk bermassa 10 ton (100.000 N). Mekanik tersebut hanya mampu memberikan gaya tekan maksimal sebesar 400 N pada piston kecil (input). Evaluasi perbandingan luas penampang piston input (A<sub>1</sub>) dan piston output (A<sub>2</sub>) yang harus dibuat agar dongkrak tersebut berfungsi dengan aman adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q8" value="A"> <span class="option-text">A. A<sub>1</sub> harus minimal 1/250 dari A<sub>2</sub></span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"> <span class="option-text">B. A<sub>1</sub> harus minimal 1/25 dari A<sub>2</sub></span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"> <span class="option-text">C. A<sub>2</sub> harus maksimal 100 kali dari A<sub>1</sub></span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"> <span class="option-text">D. A<sub>2</sub> harus maksimal 150 kali dari A<sub>1</sub></span></label>
+                </div>
+                <div class="explanation-box" id="exp8" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Kembali ke rumus Pascal: <b>F<sub>1</sub> &divide; F<sub>2</sub> = A<sub>1</sub> &divide; A<sub>2</sub></b><br><br>
+                        Masukkan gaya yang diketahui:<br>
+                        400 &divide; 100.000 = A<sub>1</sub> &divide; A<sub>2</sub><br>
+                        Sederhanakan pecahannya (coret dua angka nol):<br>
+                        4 &divide; 1.000 = A<sub>1</sub> &divide; A<sub>2</sub><br>
+                        1 &divide; 250 = A<sub>1</sub> &divide; A<sub>2</sub><br><br>
+                        Artinya, luas piston kecil (A<sub>1</sub>) ukurannya harus dibuat sebesar <b>1/250</b> bagian dari luas piston besar (A<sub>2</sub>).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 9 -->
+            <div class="question-card" id="q9">
+                <div class="question-text">9. Sebuah benda padat ketika ditimbang di udara memiliki berat 50 N. Namun, ketika benda tersebut dicelupkan dan ditimbang di dalam air, beratnya seolah-olah berkurang menjadi 42 N. Besar gaya ke atas (gaya apung) yang dialami oleh benda tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q9" value="A"> <span class="option-text">A. 8 N</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"> <span class="option-text">B. 42 N</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"> <span class="option-text">C. 50 N</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"> <span class="option-text">D. 92 N</span></label>
+                </div>
+                <div class="explanation-box" id="exp9" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Pernahkah kamu mengangkat temanmu di dalam kolam renang? Terasa jauh lebih ringan, kan? Itu karena air membantu mengangkat beban ke atas (disebut Gaya Apung/Hukum Archimedes).<br><br>
+                        Cara menghitung gaya yang dibantu oleh air sangat mudah:<br>
+                        Gaya Apung = Berat Asli (di udara) - Berat Semu (di dalam air)<br>
+                        Gaya Apung = 50 N - 42 N = <b>8 N</b>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 10 -->
+            <div class="question-card" id="q10">
+                <div class="question-text">10. Tiga buah benda padat diletakkan ke dalam sebuah bejana berisi air. Benda A terapung, benda B melayang, dan benda C tenggelam di dasar bejana. Hubungan massa jenis ketiga benda (&rho;) dengan massa jenis air (&rho;<sub>air</sub>) yang benar adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q10" value="A"> <span class="option-text">A. &rho;<sub>A</sub> &gt; &rho;<sub>air</sub>, &rho;<sub>B</sub> = &rho;<sub>air</sub>, &rho;<sub>C</sub> &lt; &rho;<sub>air</sub></span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"> <span class="option-text">B. &rho;<sub>A</sub> &lt; &rho;<sub>air</sub>, &rho;<sub>B</sub> = &rho;<sub>air</sub>, &rho;<sub>C</sub> &gt; &rho;<sub>air</sub></span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"> <span class="option-text">C. &rho;<sub>A</sub> = &rho;<sub>air</sub>, &rho;<sub>B</sub> &lt; &rho;<sub>air</sub>, &rho;<sub>C</sub> &gt; &rho;<sub>air</sub></span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"> <span class="option-text">D. &rho;<sub>A</sub> &lt; &rho;<sub>air</sub>, &rho;<sub>B</sub> &gt; &rho;<sub>air</sub>, &rho;<sub>C</sub> = &rho;<sub>air</sub></span></label>
+                </div>
+                <div class="explanation-box" id="exp10" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ini adalah aturan dasar Hukum Archimedes. Mengapa gabus bisa mengapung tapi batu tenggelam?<br><br>
+                        &bull; <b>Terapung (A):</b> Massa jenis benda lebih ringan/kecil daripada air (&rho;<sub>A</sub> &lt; &rho;<sub>air</sub>).<br>
+                        &bull; <b>Melayang (B):</b> Massa jenis benda seimbang/sama dengan air (&rho;<sub>B</sub> = &rho;<sub>air</sub>).<br>
+                        &bull; <b>Tenggelam (C):</b> Massa jenis benda lebih berat/besar daripada air (&rho;<sub>C</sub> &gt; &rho;<sub>air</sub>).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 11 -->
+            <div class="question-card" id="q11">
+                <div class="question-text">11. Sebuah kapal laut yang terbuat dari bahan besi baja yang sangat tebal dan berat dapat mengapung di atas permukaan air laut, sedangkan sebuah jarum kecil yang terbuat dari besi justru tenggelam. Evaluasi ilmiah yang paling tepat untuk menjelaskan fenomena ini adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q11" value="A"> <span class="option-text">A. jarum memiliki massa jenis bahan yang lebih besar daripada besi baja kapal laut</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"> <span class="option-text">B. kapal laut memiliki rongga udara yang sangat besar sehingga menurunkan massa jenis rata-ratanya</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"> <span class="option-text">C. gaya ke atas yang bekerja pada jarum lebih besar daripada gaya berat jarum itu sendiri</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"> <span class="option-text">D. air laut memiliki kerapatan yang lebih tinggi di bagian permukaan dalam dibanding permukaan dangkal</span></label>
+                </div>
+                <div class="explanation-box" id="exp11" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Jarum itu murni terbuat dari besi yang utuh padat (tanpa ruang kosong), sehingga massa jenisnya utuh besi (sangat berat).<br><br>
+                        Sebaliknya, kapal pesiar raksasa tidak sepenuhnya besi padat. Di dalam perut kapal terdapat ruangan kosong yang sangat luas berisi <b>Udara</b> (kamar penumpang, ruang mesin, aula). Udara ini membuat massa jenis rata-rata seluruh kapal menjadi sangat ringan, bahkan lebih ringan dari massa jenis air laut! Itulah sebabnya ia bisa dengan gagah mengapung.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 12 -->
+            <div class="question-card" id="q12">
+                <div class="question-text">12. Kapal selam dapat mengatur posisinya untuk terapung, melayang, atau tenggelam di dalam air laut dengan cara...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q12" value="A"> <span class="option-text">A. mengubah-ubah luas permukaan lambung kapal secara mekanis</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"> <span class="option-text">B. memutar baling-baling kapal dengan kecepatan yang berbeda-beda</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"> <span class="option-text">C. mengisi dan membuang air pada tangki pemberat (ballast tank) di dalam kapal</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"> <span class="option-text">D. mengubah bentuk geometri kapal agar gaya gesek air berkurang</span></label>
+                </div>
+                <div class="explanation-box" id="exp12" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Rahasia kapal selam ada pada ruangan khusus bernama <b>Tangki Pemberat (Ballast Tank)</b>.<br><br>
+                        &bull; Ingin tenggelam? Kapal membuka katup agar air laut masuk mengisi tangki, sehingga kapal menjadi berat.<br>
+                        &bull; Ingin naik ke permukaan? Kapal akan menembakkan udara bertekanan tinggi untuk menguras air laut keluar dari tangki, sehingga kapal kembali ringan berisi udara dan melayang naik.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 13 -->
+            <div class="question-card" id="q13">
+                <div class="question-text">13. Ketika kita mendaki gunung yang tinggi, kita seringkali merasakan telinga kita berdengung atau terasa sakit, dan kita juga lebih cepat merasa lelah saat bernapas. Hal ini terjadi karena...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q13" value="A"> <span class="option-text">A. tekanan udara di dataran tinggi lebih besar daripada di dataran rendah</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"> <span class="option-text">B. tekanan udara di dataran tinggi lebih kecil daripada di dataran rendah</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"> <span class="option-text">C. kadar oksigen di dataran tinggi terlalu jenuh sehingga menekan gendang telinga</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"> <span class="option-text">D. suhu udara yang sangat panas di puncak gunung meningkatkan tekanan udara luar</span></label>
+                </div>
+                <div class="explanation-box" id="exp13" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bayangkan udara seperti tumpukan buku. Di pinggir pantai, kamu tertindih banyak tumpukan buku (udara), sehingga tekanannya <b>besar</b>. Tapi jika kamu naik ke puncak gunung, tumpukan buku di atas kepalamu tinggal sedikit, sehingga tekanan udaranya <b>mengecil</b>.<br><br>
+                        Perubahan tekanan secara mendadak ini membuat udara di dalam telinga kita mendorong gendang telinga ke luar, menyebabkan telinga berdengung (bindeng). Selain itu, karena udaranya tipis/renggang, oksigennya pun sedikit yang membuat kita cepat ngos-ngosan.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 14 -->
+            <div class="question-card" id="q14">
+                <div class="question-text">14. Suatu ruangan tertutup memiliki volume awal 2 m<sup>3</sup> dengan tekanan gas sebesar 4 atm. Jika piston penutup ditekan secara perlahan pada suhu konstan sehingga volumenya menyusut menjadi 0,5 m<sup>3</sup>, maka tekanan gas di dalam ruangan tersebut menjadi...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q14" value="A"> <span class="option-text">A. 1 atm</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"> <span class="option-text">B. 8 atm</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"> <span class="option-text">C. 12 atm</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"> <span class="option-text">D. 16 atm</span></label>
+                </div>
+                <div class="explanation-box" id="exp14" data-answer="D">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: D)</div>
+                    <div class="explanation-content">
+                        *Catatan: Sistem telah mengoreksi kunci jawaban ini menjadi D sesuai dengan logika perhitungan sains yang benar.*<br><br>
+                        Saat kamu menekan botol plastik kosong (volume diperkecil), udara di dalam botol akan melawan dengan keras (tekanan membesar). Ini adalah <b>Hukum Boyle</b>!<br>
+                        Rumusnya: <b>P<sub>1</sub> &times; V<sub>1</sub> = P<sub>2</sub> &times; V<sub>2</sub></b><br><br>
+                        Mari kita hitung:<br>
+                        4 atm &times; 2 m<sup>3</sup> = P<sub>2</sub> &times; 0,5 m<sup>3</sup><br>
+                        8 = P<sub>2</sub> &times; 0,5<br>
+                        P<sub>2</sub> = 8 &divide; 0,5 = <b>16 atm</b>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 15 -->
+            <div class="question-card" id="q15">
+                <div class="question-text">15. Alat yang digunakan untuk mengukur tekanan udara di ruang terbuka (tekanan atmosfer) adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q15" value="A"> <span class="option-text">A. Manometer</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"> <span class="option-text">B. Barometer</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"> <span class="option-text">C. Tensimeter</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"> <span class="option-text">D. Hidrometer</span></label>
+                </div>
+                <div class="explanation-box" id="exp15" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Jangan sampai tertukar ya!<br>
+                        &bull; <b>Barometer</b> = Untuk mengukur udara bebas (Atmosfer) di gunung atau pantai.<br>
+                        &bull; <b>Manometer</b> = Untuk mengukur tekanan gas yang terjebak di dalam tabung/ban sepeda tertutup.<br>
+                        &bull; <b>Tensimeter</b> = Untuk mengukur tekanan darah manusia.<br>
+                        &bull; <b>Hidrometer</b> = Untuk mengukur massa jenis cairan kimia.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 16 -->
+            <div class="question-card" id="q16">
+                <div class="question-text">16. Perhatikan mekanisme pernapasan dada pada manusia! Saat kita melakukan inspirasi (menghirup napas), otot antartulang rusuk berkontraksi sehingga rongga dada membesar. Hubungan volume rongga dada dengan tekanan udara di dalam paru-paru yang menyebabkan udara luar masuk adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q16" value="A"> <span class="option-text">A. volume rongga dada membesar, tekanan udara di paru-paru mengecil sehingga udara luar masuk</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"> <span class="option-text">B. volume rongga dada membesar, tekanan udara di paru-paru membesar sehingga udara luar terhisap</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"> <span class="option-text">C. volume rongga dada mengecil, tekanan udara di paru-paru mengecil sehingga udara luar masuk</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"> <span class="option-text">D. volume rongga dada mengecil, tekanan udara di paru-paru membesar sehingga udara luar terdorong masuk</span></label>
+                </div>
+                <div class="explanation-box" id="exp16" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Ini adalah aplikasi luar biasa dari Hukum Boyle di tubuh kita sendiri! Coba ambil napas dalam-dalam.<br><br>
+                        Dadamu membusung ke depan (<b>Volume Rongga Dada Membesar</b>). Saat volume membesar, maka sifat udaranya menjadi lebih longgar, yang artinya <b>Tekanan Mengecil</b>.<br>
+                        Karena udara di paru-parumu tekanannya lebih lemah dibanding udara di luar, maka udara dari luar otomatis mendesak masuk membanjiri paru-parumu (Inspirasi).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 17 -->
+            <div class="question-card" id="q17">
+                <div class="question-text">17. Sebuah kota terletak pada ketinggian 600 meter di atas permukaan air laut (mdpl). Jika tekanan udara di permukaan air laut normal adalah 76 cmHg, maka perkiraan tekanan udara di kota tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q17" value="A"> <span class="option-text">A. 82 cmHg</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"> <span class="option-text">B. 73 cmHg</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"> <span class="option-text">C. 70 cmHg</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"> <span class="option-text">D. 64 cmHg</span></label>
+                </div>
+                <div class="explanation-box" id="exp17" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Aturan alamnya mudah diingat: <b>Setiap kita naik ke gunung setinggi 100 meter, tekanan udaranya akan BERKURANG (-1) cmHg.</b><br><br>
+                        &bull; Kota ini ada di ketinggian 600 meter.<br>
+                        &bull; Jadi, dia sudah naik sebanyak 6 kali (600 &divide; 100 = 6).<br>
+                        &bull; Artinya tekanan udaranya berkurang 6 cmHg.<br><br>
+                        Tekanan Kota = Tekanan Pantai (76 cmHg) - Berkurang (6 cmHg) = <b>70 cmHg</b>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 18 -->
+            <div class="question-card" id="q18">
+                <div class="question-text">18. Di dalam sebuah laboratorium, dilakukan pengujian terhadap sebutir telur segar yang dimasukkan ke dalam gelas berisi air murni, dan telur tersebut tenggelam. Ketika ke dalam air tersebut dilarutkan beberapa sendok garam dapur secara bertahap, telur perlahan-lahan melayang dan akhirnya terapung. Evaluasi yang benar mengenai fenomena ini adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q18" value="A"> <span class="option-text">A. garam menurunkan massa jenis air sehingga telur dapat terangkat naik</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"> <span class="option-text">B. garam meningkatkan massa jenis air sehingga gaya ke atas yang dialami telur menjadi lebih besar dari gaya beratnya</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"> <span class="option-text">C. garam bereaksi kimia dengan cangkang telur sehingga membuat telur menjadi lebih ringan</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"> <span class="option-text">D. penambahan garam memperkecil volume telur sehingga telur mudah mengapung</span></label>
+                </div>
+                <div class="explanation-box" id="exp18" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Garam ajaib ini sangat berat! Ketika larut, garam membuat air murni yang tadinya "ringan" menjadi sangat padat dan kental (Massa jenis air meningkat keras).<br><br>
+                        Karena airnya sudah sangat padat dan kuat (Gaya apung membesar), air itu mampu mendorong telur ke atas hingga telurnya melayang dan mengapung dengan sendirinya (Hukum Archimedes). Hal ini mirip dengan orang yang lebih mudah mengapung di Laut Mati yang sangat asin!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 19 -->
+            <div class="question-card" id="q19">
+                <div class="question-text">19. Pada sistem rem hidrolik mobil, jika terjadi kebocoran kecil pada selang penghubung minyak rem, dampak yang paling berbahaya terhadap kinerja pengereman berdasarkan Hukum Pascal adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q19" value="A"> <span class="option-text">A. rem tetap pakem karena minyak rem yang tersisa masih memiliki tekanan yang sama</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"> <span class="option-text">B. gaya tekan yang diberikan pada pedal rem tidak dapat diteruskan sepenuhnya ke kampas rem karena tekanan bocor keluar</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"> <span class="option-text">C. piston pada roda akan mencengkeram piringan cakram lebih kuat akibat masuknya udara luar</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"> <span class="option-text">D. laju aliran minyak rem akan semakin cepat sehingga rem menjadi lebih responsif</span></label>
+                </div>
+                <div class="explanation-box" id="exp19" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Syarat utama bekerjanya Hukum Pascal adalah: "Harus Berada Di Dalam Ruangan <b>Tertutup Rapat</b>".<br><br>
+                        Jika pipa minyak rem bocor (sistem menjadi bocor/terbuka), maka saat sopir menginjak rem sekuat tenaga, tekanan minyaknya tidak akan menekan kampas rem di roda, melainkan muncrat terbuang sia-sia keluar melalui lubang bocor tersebut. Inilah bahaya besar yang menyebabkan "Rem Blong" pada kendaraan!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soal 20 -->
+            <div class="question-card" id="q20">
+                <div class="question-text">20. Pengukuran tekanan darah manusia menggunakan tensimeter (sphygmomanometer) bekerja berdasarkan prinsip bahwa tekanan yang diberikan oleh jantung akan diteruskan oleh darah ke seluruh pembuluh darah secara merata. Prinsip ini sangat erat kaitannya dengan hukum...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q20" value="A"> <span class="option-text">A. Archimedes pada zat cair mengalir</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"> <span class="option-text">B. Pascal pada fluida statis di ruang tertutup</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"> <span class="option-text">C. Boyle pada gas di ruang tertutup</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"> <span class="option-text">D. Tekanan hidrostatis pada kedalaman tetap</span></label>
+                </div>
+                <div class="explanation-box" id="exp20" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Pembuluh darah kita yang mengalirkan darah bagaikan selang tertutup yang mengalirkan cairan (fluida). Ketika jantung (mesin pompa) berdenyut keras, ia memberikan tekanan ke darah. Mengikuti <b>Hukum Pascal</b>, tekanan jantung tersebut langsung diteruskan oleh cairan darah ke seluruh tubuh dengan adil. <br><br>Itulah sebabnya dokter hanya perlu membalut alat tensimeter di lengan atasmu untuk mengetahui kekuatan tekanan jantungmu!
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btn-submit" class="btn-submit" onclick="checkAnswers()">Periksa Jawaban</button>
+            
+            <div id="result" class="result-container">
+                <h2>Nilai Akhir Anda</h2>
+                <div class="score-display" id="score-display">0</div>
+                <p class="score-message" id="score-message">Terus semangat belajar, kamu pasti bisa!</p>
+                <button type="button" class="btn-retry" onclick="resetTest()">Ulangi Tes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer-text">
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </div>
+
+    <script>
+        const totalQuestions = 20;
+        const maxScore = 100;
+        const scorePerQuestion = maxScore / totalQuestions;
+
+        function checkAnswers() {
+            let totalScore = 0;
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Jawaban Telah Diperiksa";
+
+            // Evaluasi per nomor soal
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                const correctAnswer = expBox.getAttribute('data-answer');
+                const radios = document.getElementsByName(`q${i}`);
+                
+                let isAnswered = false;
+                
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    
+                    // Membersihkan gaya state (antisipasi klik ulang dari console)
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderStyle = "";
+                    label.style.borderColor = "";
+
+                    if (radio.checked) {
+                        isAnswered = true;
+                        if (radio.value === correctAnswer) {
+                            totalScore += scorePerQuestion;
+                            label.classList.add('correct');
+                            expBox.classList.add('bg-green');
+                            expBox.classList.remove('bg-red');
+                        } else {
+                            label.classList.add('wrong');
+                            expBox.classList.add('bg-red');
+                            expBox.classList.remove('bg-green');
+                        }
+                    }
+
+                    // Tunjukkan highlight untuk jawaban yang secara teori adalah benar
+                    if (radio.value === correctAnswer) {
+                        if(!radio.checked) {
+                             label.style.borderStyle = "dashed";
+                             label.style.borderColor = "var(--correct-border)";
+                        }
+                    }
+                }
+
+                // Handling jika murid melewatkan (skip) soal tanpa memilih
+                if (!isAnswered) {
+                    expBox.classList.add('bg-red');
+                    expBox.classList.remove('bg-green');
+                }
+
+                // Munculkan boks dengan animasi drop down
+                expBox.classList.add('show');
+            }
+
+            // Tampilkan score akhir
+            const resultDiv = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            
+            scoreDisplay.innerText = totalScore;
+            
+            // Pemberian feedback psikologis bertingkat
+            if (totalScore === 100) {
+                scoreMessage.innerText = "Sempurna! Kamu memahami konsep Fisika dengan sangat brilian bak Einstein!";
+            } else if (totalScore >= 80) {
+                scoreMessage.innerText = "Luar biasa! Pemahamanmu tentang rumus Tekanan sangat mantap. Terus pertahankan ya!";
+            } else if (totalScore >= 60) {
+                scoreMessage.innerText = "Bagus! Kamu sudah mengetahui konsep dasarnya. Yuk baca lagi pembahasannya perlahan agar makin paham.";
+            } else {
+                scoreMessage.innerText = "Jangan menyerah! Fisika itu seru seperti teka-teki. Baca pembahasannya pelan-pelan dan coba ulangi lagi.";
+            }
+
+            // Unhide UI Result
+            resultDiv.style.display = 'block';
+
+            // Auto-scroll lembut ke bagian tombol ulangi
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        }
+
+        // Fungsi Reset Kuis
+        function resetTest() {
+            const form = document.getElementById('quizForm');
+            form.reset();
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                expBox.classList.remove('show', 'bg-green', 'bg-red'); 
+
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderStyle = "";
+                    label.style.borderColor = "";
+                }
+            }
+
+            document.getElementById('result').style.display = 'none';
+            
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Periksa Jawaban";
+
+            // Bawa layar kembali ke header paling atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t8',
+          topicIndex: 8,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

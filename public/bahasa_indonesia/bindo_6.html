@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Logika & Analisis Teks Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Kustomisasi input radio agar bisa disembunyikan tapi bisa distyle labelnya */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Transisi kotak penjelasan */
+        .explanation-box {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2500px;
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Gaya khusus untuk kutipan teks (soal cerita) */
+        .quote-box {
+            border-left: 4px solid #6366f1; /* indigo-500 */
+            background-color: #eef2ff; /* indigo-50 */
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+            font-style: italic;
+            color: #312e81; /* indigo-900 */
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #c7d2fe; /* indigo-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        /* Gaya untuk teks pre-formatted/Teks A & B */
+        .text-box {
+            background-color: #f8fafc;
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            line-height: 1.6;
+        }
+
+        /* Responsif gambar */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-2xl font-bold text-slate-800 text-center flex-1 px-2">Kuis Logika & Analisis Teks</h1>
+            <div class="w-24"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Selamat Mengerjakan! &#x1F4DD;</h2>
+                <p class="text-slate-600 text-[15px] md:text-lg leading-relaxed">
+                    Baca setiap kutipan teks dengan teliti. Analisis kelogisan, hubungan antargagasan, dan tarik kesimpulan yang paling tepat. 
+                    Kamu bisa memeriksa jawaban kapan saja. Soal yang terlewat akan ditandai. Semangat belajar!
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-12">
+                    <!-- Soal-soal akan di-generate oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Area Hasil -->
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban terverifikasi, dan Pembahasan yang telah diekspansi dan disesuaikan untuk siswa SD/SMP
+        const quizData = [
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 1 dan 2</strong><div class='quote-box'>(1) Pemerintah daerah memutuskan untuk memperluas ruang terbuka hijau (RTH) di pusat kota guna menekan tingkat polusi udara yang kian mengkhawatirkan. (2) Namun, proyek ini terhambat karena sebagian besar lahan yang ditargetkan ternyata telah beralih fungsi menjadi kawasan ruko komersial. (3) Akibatnya, pemerintah harus mengalokasikan dana tambahan yang sangat besar untuk ganti rugi pembebasan lahan. (4) Beberapa warga mengusulkan agar taman-taman vertikal di dinding gedung tinggi dijadikan alternatif solusi yang lebih hemat biaya.</div>Hubungan logis antara kalimat (1) dan kalimat (2) pada teks di atas adalah hubungan...",
+                options: [
+                    "Sebab-akibat yang saling mendukung satu sama lain.",
+                    "Pertentangan antara rencana tindakan dengan kenyataan di lapangan.",
+                    "Penjelasan rinci mengenai mekanisme pelaksanaan program pemerintah.",
+                    "Syarat-hasil yang harus dipenuhi sebelum program dijalankan."
+                ],
+                answer: 1, // B
+                explanation: "Halo! Mari kita bedah kalimatnya satu per satu ya.<br><br>👉 <strong>Kalimat 1:</strong> Pemerintah punya *rencana bagus* (memperluas ruang hijau).<br>👉 <strong>Kalimat 2:</strong> Dimulai dengan kata \"<strong>Namun</strong>\". Kata ini adalah konjungsi (kata hubung) yang selalu menunjukkan <strong>pertentangan</strong> atau hal yang berlawanan.<br><br>Jadi, kalimat (2) menunjukkan bahwa rencana bagus di kalimat (1) ternyata bertentangan dengan kenyataan di lapangan (lahannya sudah jadi ruko). Pilihan <strong>B</strong> adalah jawaban yang paling tepat!"
+            },
+            {
+                text: "Berdasarkan teks tersebut, simpulan (inferensi) yang paling logis mengenai kegagalan perluasan RTH secara cepat adalah...",
+                options: [
+                    "Pemerintah daerah kurang serius dalam menangani masalah polusi udara kota.",
+                    "Warga kota lebih memilih pembangunan ruko daripada taman kota yang asri.",
+                    "Alih fungsi lahan menjadi kawasan komersial memicu pembengkakan anggaran daerah.",
+                    "Taman vertikal merupakan satu-satunya solusi yang disetujui oleh seluruh warga."
+                ],
+                answer: 2, // C
+                explanation: "Inferensi (simpulan) ibarat kita menjadi detektif yang menyimpulkan petunjuk dari teks.<br><br>Coba lihat kalimat (2) dan (3):<br>Lahan sudah menjadi ruko &rarr; Pemerintah harus bayar ganti rugi yang sangat besar.<br><br>Artinya, kegagalan memperluas taman secara cepat disebabkan oleh <strong>alih fungsi lahan</strong> yang akhirnya membuat pemerintah harus mengeluarkan uang lebih banyak (memicu pembengkakan anggaran). Kesimpulan yang paling didukung oleh bukti di teks adalah pilihan <strong>C</strong>."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 3</strong><div class='text-box'>Penggunaan gawai pada anak usia dini sering kali dianggap sebagai sarana efektif untuk menenangkan anak yang rewel. Namun, sebuah penelitian terbaru menunjukkan bahwa paparan layar gawai yang berlebihan pada usia balita justru menghambat perkembangan kemampuan regulasi emosi mandiri mereka. Anak-anak yang terbiasa ditenangkan oleh gawai cenderung kesulitan mengelola rasa frustrasi mereka sendiri saat tumbuh besar.</div>Manakah pernyataan berikut yang menunjukkan hubungan sebab-akibat yang paling logis berdasarkan teks di atas?",
+                options: [
+                    "Gawai membuat anak menjadi tenang karena fitur-fiturnya melatih regulasi emosi anak sejak dini.",
+                    "Kesulitan mengelola rasa frustrasi di masa depan disebabkan oleh hilangnya kesempatan anak belajar menenangkan diri secara alami akibat gawai.",
+                    "Penelitian terbaru melarang penggunaan gawai sama sekali agar emosi anak tidak terganggu di masa depan.",
+                    "Anak yang rewel selalu disebabkan oleh paparan layar gawai yang berlebihan sejak mereka bayi."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita cari tahu hubungan 'Sebab' dan 'Akibat' dari teks ini.<br><br>- <strong>Sebab:</strong> Anak terbiasa ditenangkan oleh gawai (bukan menenangkan diri sendiri).<br>- <strong>Akibat:</strong> Saat besar, mereka kesulitan mengelola rasa frustrasinya.<br><br>Pilihan <strong>B</strong> menjelaskan proses ini dengan sempurna: Anak jadi susah mengatur emosi karena gawai \"mencuri\" kesempatan mereka untuk berlatih menenangkan diri secara alami sejak kecil. Pilihan A jelas salah (bertentangan), sedangkan C dan D terlalu berlebihan (melebih-lebihkan teks)."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 4 dan 5</strong><div class='text-box'><strong>Teks A:</strong><br>Sektor pertanian organik di Desa Makmur mengalami peningkatan pesat setelah para petani meninggalkan pupuk kimia. Tanah menjadi lebih gembur, dan hasil panen memiliki nilai jual yang jauh lebih tinggi di pasar perkotaan.</div><div class='text-box'><strong>Teks B:</strong><br>Banyak konsumen di perkotaan mulai beralih ke gaya hidup sehat dengan mengonsumsi makanan bebas pestisida. Mereka tidak keberatan membayar harga lebih mahal demi mendapatkan sayuran yang aman bagi kesehatan tubuh mereka.</div>Hubungan antarinformasi yang paling logis dari kedua teks di atas adalah...",
+                options: [
+                    "Teks A merupakan dampak langsung dari perubahan gaya hidup konsumen pada Teks B.",
+                    "Teks B menjelaskan alasan logis mengapa hasil panen organik pada Teks A memiliki nilai jual yang tinggi.",
+                    "Teks A dan Teks B tidak memiliki hubungan sebab-akibat karena membahas subjek yang berbeda.",
+                    "Teks B merupakan solusi atas masalah penurunan kualitas tanah yang dijelaskan pada Teks A."
+                ],
+                answer: 1, // B
+                explanation: "Coba hubungkan dua kejadian ini:<br>- <strong>Teks A</strong> bilang sayuran organik harganya tinggi banget di kota.<br>- <strong>Teks B</strong> bilang orang kota sedang suka hidup sehat dan <em>rela bayar mahal</em> untuk sayuran sehat.<br><br>Nah, Teks B ini sebenarnya sedang menjawab pertanyaan, <em>\"Kenapa sih sayuran di Teks A bisa mahal?\"</em>. Jawabannya ya karena orang kota (di Teks B) berani bayar mahal. Jadi, Teks B menjelaskan alasan logis dari kejadian di Teks A (Pilihan <strong>B</strong>)."
+            },
+            {
+                text: "Jika tren pada Teks B terus meningkat, prediksi logis yang akan terjadi pada aktivitas petani di Teks A adalah...",
+                options: [
+                    "Petani di Desa Makmur akan kembali menggunakan pupuk kimia untuk mempercepat produksi.",
+                    "Harga sayuran organik di pasar perkotaan akan turun drastis karena stok melimpah.",
+                    "Petani Desa Makmur akan memperluas lahan pertanian organik mereka guna memenuhi permintaan pasar.",
+                    "Konsumen perkotaan akan menghentikan pembelian karena pasokan dari Desa Makmur terlalu sedikit."
+                ],
+                answer: 2, // C
+                explanation: "Membuat prediksi itu seperti memikirkan langkah selanjutnya (sebab-akibat masa depan).<br><br>Bayangkan kamu adalah petani. Kalau orang kota (konsumen) semakin banyak yang mau beli sayur organikmu dengan harga mahal (tren Teks B meningkat), apa yang akan kamu lakukan supaya untung lebih banyak?<br><br>Tentu saja kamu akan menanam lebih banyak lagi! Artinya, prediksi yang paling masuk akal adalah petani akan <strong>memperluas lahan pertanian organik mereka</strong> untuk memenuhi permintaan (Pilihan <strong>C</strong>)."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 6</strong><div class='quote-box'>(1) Tingginya curah hujan di wilayah hulu menyebabkan debit air sungai meningkat tajam. (2) Di saat yang sama, daerah hilir mengalami penyumbatan saluran air akibat tumpukan sampah domestik. (3) Pemerintah daerah segera mengaktifkan status siaga bencana banjir untuk wilayah bantaran sungai. (4) Warga diimbau untuk segera mengungsi ke tempat yang lebih aman sebelum malam tiba.</div>Kalimat yang menunjukkan hubungan kelogisan berupa \"kondisi akumulatif yang memicu tindakan preventif\" ditunjukkan oleh nomor...",
+                options: [
+                    "Kalimat (1) dan (2) memicu tindakan pada kalimat (3) dan (4).",
+                    "Kalimat (2) merupakan akibat langsung dari peristiwa pada kalimat (1).",
+                    "Kalimat (3) merupakan penyebab utama terjadinya peristiwa pada kalimat (4).",
+                    "Kalimat (4) merupakan syarat yang harus dipenuhi agar peristiwa (1) tidak terjadi."
+                ],
+                answer: 0, // A
+                explanation: "Mari kita pahami istilahnya dulu!<br>- <strong>Kondisi Akumulatif:</strong> Masalah yang menumpuk/gabungan masalah.<br>- <strong>Tindakan Preventif:</strong> Tindakan pencegahan agar tidak terjadi bencana/korban.<br><br>Di teks ini, ada dua masalah yang menumpuk (akumulatif): hujan deras (1) + sampah nyumbat sungai (2).<br>Karena ada dua bahaya besar itu, pemerintah melakukan pencegahan (preventif): menetapkan siaga (3) dan menyuruh warga ngungsi (4).<br><br>Jadi, Kalimat (1) dan (2) adalah kondisi yang memicu tindakan di kalimat (3) dan (4). Jawaban <strong>A</strong> sangat tepat!"
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 7 dan 8</strong><div class='text-box'>Sebagian besar sekolah menengah di kota besar kini menerapkan sistem pembelajaran berbasis digital. Para siswa diwajibkan membawa laptop atau tablet sebagai pengganti buku cetak. Di satu sisi, kebijakan ini dinilai sangat praktis dan ramah lingkungan karena menekan penggunaan kertas. Namun, di sisi lain, kebijakan ini memperlebar jurang ketimpangan akses pendidikan bagi siswa dari keluarga prasejahtera yang kesulitan membeli perangkat gawai standar tersebut.</div>Berdasarkan teks di atas, ketidaklogisan akan terjadi jika sekolah mengambil kesimpulan bahwa...",
+                options: [
+                    "Pembelajaran digital otomatis meningkatkan keadilan sosial bagi seluruh siswa tanpa terkecuali.",
+                    "Pengurangan penggunaan buku cetak berkontribusi positif pada kelestarian lingkungan hidup.",
+                    "Siswa dari keluarga prasejahtera memerlukan bantuan khusus berupa penyediaan fasilitas gawai.",
+                    "Kebijakan digitalisasi sekolah memiliki dampak ganda yang saling bertolak belakang."
+                ],
+                answer: 0, // A
+                explanation: "Ketidaklogisan berarti kesimpulan yang *bertentangan* atau *tidak masuk akal* jika dibandingkan dengan isi teks.<br><br>Teks secara jelas menyatakan bahwa kebijakan digital ini <strong>\"memperlebar jurang ketimpangan\"</strong> (membuat jarak antara si kaya dan si miskin makin jauh).<br><br>Maka, akan sangat <strong>tidak logis</strong> dan lucu jika sekolah menyimpulkan bahwa digitalisasi ini \"meningkatkan keadilan sosial bagi seluruh siswa tanpa terkecuali\" (Pilihan <strong>A</strong>). Itu sama saja membohongi fakta dari teks!"
+            },
+            {
+                text: "Gagasan yang paling tepat untuk menjembatani (mengatasi) pertentangan masalah dalam teks di atas agar kebijakan tetap logis dan adil adalah...",
+                options: [
+                    "Menghapus total sistem pembelajaran digital dan kembali sepenuhnya ke buku cetak.",
+                    "Meminta siswa prasejahtera untuk belajar secara mandiri di rumah tanpa perlu ke sekolah.",
+                    "Menyediakan fasilitas peminjaman gawai atau laboratorium komputer sekolah bagi siswa yang membutuhkan.",
+                    "Mewajibkan seluruh orang tua siswa untuk melakukan iuran guna membelikan gawai baru."
+                ],
+                answer: 2, // C
+                explanation: "Solusi yang baik harus bisa mempertahankan sisi positif (praktis & ramah lingkungan) sekaligus menghilangkan sisi negatif (siswa miskin tidak bisa belajar).<br><br>- Pilihan A: Mundur ke belakang (tidak digital lagi).<br>- Pilihan B: Kejam, menelantarkan siswa.<br>- Pilihan D: Memberatkan orang tua siswa miskin.<br>- Pilihan <strong>C</strong>: Solusi *Win-Win* (jalan tengah). Kebijakan digital tetap jalan, tapi siswa yang tidak mampu difasilitasi sekolah (dipinjami laptop/lab). Ini sangat adil dan logis!"
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 9</strong><div class='quote-box'>Pembangunan jalan tol trans-provinsi terbukti memangkas waktu tempuh perjalanan antarkota secara signifikan. Namun, para pedagang kecil di sepanjang jalan nasional non-tol mengeluhkan penurunan omzet penjualan yang sangat drastis sejak jalan tol tersebut resmi dioperasikan.</div>Inferensi yang paling logis mengenai hubungan antarperistiwa pada teks di atas adalah...",
+                options: [
+                    "Pembangunan jalan tol sengaja dirancang untuk mematikan usaha mikro di jalan nasional.",
+                    "Kelancaran transportasi berbanding lurus dengan peningkatan kesejahteraan seluruh lapisan pedagang.",
+                    "Pengalihan arus kendaraan ke jalan tol berdampak negatif pada aktivitas ekonomi di jalur non-tol.",
+                    "Pedagang di jalan nasional harus pindah berdagang di bahu jalan tol agar omzet mereka kembali naik."
+                ],
+                answer: 2, // C
+                explanation: "Ingat, inferensi adalah menarik kesimpulan dari sebab-akibat.<br><br>Kenapa pedagang di jalan biasa (non-tol) tiba-tiba jualannya sepi? Tentu saja karena mobil-mobil dan bus lebih memilih lewat jalan tol yang lebih cepat.<br><br>Artinya, kendaraan yang pindah ke jalan tol (pengalihan arus kendaraan) memberikan dampak buruk (negatif) bagi pedagang yang jualannya berada di jalan biasa. Kesimpulan yang paling masuk akal tanpa melebih-lebihkan adalah pilihan <strong>C</strong>."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 10 dan 11</strong><div class='text-box'>(1) Olahraga secara rutin dapat memicu pelepasan hormon endorfin di dalam otak. (2) Hormon endorfin dikenal luas sebagai senyawa kimia alami tubuh yang dapat meredakan stres dan meningkatkan suasana hati. (3) Oleh karena itu, seseorang yang sedang mengalami tekanan mental disarankan untuk melakukan aktivitas fisik ringan daripada terus melamun di dalam kamar. (4) Namun, olahraga ekstrem yang berlebihan justru dapat memicu cedera fisik yang memperparah kondisi stres seseorang.</div>Hubungan logis yang bersifat \"pengecualian/pembatasan\" terhadap efektivitas solusi pada teks di atas ditunjukkan oleh kalimat nomor...",
+                options: [
+                    "(1)",
+                    "(2)",
+                    "(3)",
+                    "(4)"
+                ],
+                answer: 3, // D
+                explanation: "Mencari kalimat \"pengecualian/pembatasan\" itu sangat mudah! Cari saja kalimat yang membatasi ide utama dengan kata seperti *\"Tapi...\"* atau *\"Namun...\"*.<br><br>Kalimat (1), (2), dan (3) memuji-muji olahraga karena bisa menghilangkan stres.<br>Tapi tunggu dulu! Kalimat (4) memberikan <strong>batasan</strong>: *\"Namun, olahraga ekstrem... justru dapat memicu cedera.\"* Artinya, olahraga itu bagus, *kecuali* kalau berlebihan. Jadi, pembatasannya ada di kalimat <strong>(4)</strong>."
+            },
+            {
+                text: "Mengapa aktivitas fisik ringan pada kalimat (3) dianggap sebagai solusi yang logis untuk meredakan stres?",
+                options: [
+                    "Karena aktivitas fisik ringan tidak membutuhkan biaya dan dapat dilakukan di mana saja.",
+                    "Karena aktivitas fisik tersebut merangsang produksi hormon yang secara biologis memperbaiki suasana hati.",
+                    "Karena melamun di dalam kamar terbukti secara medis dapat merusak kesehatan fisik manusia.",
+                    "Karena olahraga ekstrem adalah satu-satunya penyebab utama terjadinya cedera fisik berat."
+                ],
+                answer: 1, // B
+                explanation: "Untuk menjawab pertanyaan \"Mengapa solusi ini logis?\", kita harus melihat dasar ilmiah atau alasan yang diberikan oleh teks.<br><br>Coba lihat kalimat (1) dan (2): Olahraga $\\rightarrow$ melepas hormon endorfin $\\rightarrow$ hormon ini secara alami meredakan stres (biologis).<br><br>Jadi, alasan yang paling nyambung dan logis kenapa olahraga ringan itu disarankan adalah karena ada reaksi biologis di dalam tubuh (hormon endorfin) yang memperbaiki suasana hati. (Pilihan <strong>B</strong>)."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 12</strong><div class='text-box'>Banyak negara maju mulai menginvestasikan dana besar pada pengembangan energi baru terbarukan (EBT) seperti tenaga surya dan angin. Langkah ini diambil karena cadangan minyak bumi dunia diperkirakan akan habis dalam beberapa dekade ke depan. Selain itu, emisi karbon dari bahan bakar fosil telah memicu perubahan iklim global yang ekstrem.</div>Berdasarkan teks di atas, manakah hubungan antargagasan yang paling <strong>tidak logis</strong> jika diasumsikan terjadi di masa depan?",
+                options: [
+                    "Negara yang tidak beralih ke EBT akan mengalami krisis energi saat minyak bumi habis.",
+                    "Penggunaan EBT secara massal dapat membantu memperlambat laju perubahan iklim global.",
+                    "Investasi pada EBT akan sia-sia karena minyak bumi akan terus terbentuk secara cepat di alam.",
+                    "Ketergantungan pada bahan bakar fosil secara bertahap akan berkurang seiring berkembangnya teknologi EBT."
+                ],
+                answer: 2, // C
+                explanation: "Hati-hati, soal meminta kita mencari yang <strong>Paling Tidak Logis (Salah)</strong>.<br><br>Teks secara jelas bilang: *\"cadangan minyak bumi dunia diperkirakan akan habis\"*.<br>Minyak bumi itu berasal dari fosil jutaan tahun yang lalu. Jadi, ia tidak bisa terbentuk secara cepat.<br><br>Maka, sangat konyol dan tidak logis jika ada yang mengasumsikan bahwa \"minyak bumi akan terus terbentuk secara cepat di alam\" (Pilihan <strong>C</strong> bertentangan dengan sains dan teks asli)."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 13 dan 14</strong><div class='quote-box'>(1) Program literasi sekolah yang mewajibkan membaca 15 menit sebelum KBM dimulai dinilai belum efektif meningkatkan minat baca siswa. (2) Hal ini terjadi karena buku-buku yang tersedia di perpustakaan sekolah didominasi oleh buku pelajaran yang kaku dan kurang menarik bagi remaja. (3) Seharusnya, pihak sekolah menyediakan variasi genre bacaan, seperti novel populer, komik edukatif, dan majalah sains praktis. (4) Dengan demikian, siswa akan melihat kegiatan membaca sebagai aktivitas yang menyenangkan, bukan sebagai beban akademis tambahan.</div>Kalimat yang berfungsi sebagai \"argumen pendukung yang menjelaskan penyebab ketidakefektifan program\" adalah kalimat nomor...",
+                options: [
+                    "(1)",
+                    "(2)",
+                    "(3)",
+                    "(4)"
+                ],
+                answer: 1, // B
+                explanation: "Sebuah argumen penyebab pasti menjawab pertanyaan *\"Mengapa masalah itu terjadi?\"*.<br><br>Kalimat (1) menyatakan masalahnya: Program literasi belum efektif.<br>Lalu, kalimat mana yang menjelaskan *penyebab*nya?<br>Tentu saja kalimat (2)! Kalimat (2) secara jelas diawali dengan *\"Hal ini terjadi karena...\"* dan menjelaskan bahwa bukunya kaku/membosankan.<br>Oleh karena itu, kalimat <strong>(2)</strong> adalah jawabannya."
+            },
+            {
+                text: "Hubungan inferensial yang logis antara penyediaan variasi genre bacaan (kalimat 3) dengan peningkatan minat baca (kalimat 4) adalah...",
+                options: [
+                    "Variasi genre bacaan membuat siswa memiliki banyak pilihan materi untuk dihafal saat ujian sekolah.",
+                    "Minat baca tumbuh secara alami ketika bahan bacaan yang disajikan sesuai dengan preferensi dan dunia psikologis siswa.",
+                    "Buku pelajaran harus dihapus sepenuhnya dari perpustakaan agar siswa fokus membaca novel dan komik.",
+                    "Kegiatan membaca 15 menit akan berjalan efektif hanya jika siswa diawasi dengan ketat oleh guru piket."
+                ],
+                answer: 1, // B
+                explanation: "Inferensi (kesimpulan logika) dari kedua kalimat tersebut berbicara tentang psikologi/perasaan siswa.<br><br>Jika disediakan buku yang asyik seperti komik atau novel, siswa jadi merasa bahwa membaca itu *menyenangkan*, bukan sekadar tugas wajib (beban).<br><br>Artinya, minat baca itu baru akan muncul kalau buku yang diberikan sesuai dengan kesukaan/selera (preferensi) dan dunia anak remaja. Pilihan <strong>B</strong> menangkap logika emosional ini dengan sangat pas."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 15</strong><div class='text-box'>Penanaman pohon mangrove di sepanjang garis pantai terbukti efektif memecah energi gelombang laut yang menuju daratan. Di daerah yang memiliki hutan mangrove yang lebat, dampak kerusakan infrastruktur akibat abrasi air laut tercatat sangat minim dibandingkan daerah pantai yang gundul.</div>Hubungan logis antarkomponen dalam teks di atas dapat dirumuskan secara tepat dalam pola...",
+                options: [
+                    "Ketiadaan mangrove &rarr; Energi gelombang melemah &rarr; Abrasi pantai meningkat.",
+                    "Penanaman mangrove &rarr; Energi gelombang terpecah &rarr; Kerusakan infrastruktur akibat abrasi berkurang.",
+                    "Kerusakan infrastruktur &rarr; Penanaman mangrove &rarr; Energi gelombang laut meningkat.",
+                    "Pantai gundul &rarr; Energi gelombang terpecah &rarr; Kerusakan infrastruktur minim."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita buat *flowchart* (bagan alur) berdasarkan fakta di teks!<br><br>1. Apa yang dilakukan? <strong>Penanaman mangrove</strong>.<br>2. Apa fungsi akarnya? <strong>Memecah energi gelombang laut</strong>.<br>3. Apa hasil akhirnya untuk daratan? <strong>Kerusakan infrastruktur akibat abrasi menjadi sangat minim (berkurang)</strong>.<br><br>Jika kita gabungkan dengan tanda panah (&rarr;), alur yang paling akurat persis seperti pada Pilihan <strong>B</strong>."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 16 dan 17</strong><div class='text-box'><strong>Teks A:</strong><br>Penggunaan plastik sekali pakai di pusat perbelanjaan menurun hingga 70% setelah pemerintah daerah menerapkan kebijakan kantong belanja berbayar yang cukup mahal.</div><div class='text-box'><strong>Teks B:</strong><br>Produsen kantong belanja ramah lingkungan berbahan kain atau serat singkong mengalami lonjakan permintaan produksi hingga tiga kali lipat dalam enam bulan terakhir.</div>Hubungan kelogisan antarinformasi dalam Teks A dan Teks B adalah...",
+                options: [
+                    "Teks A merupakan penyebab langsung dari munculnya fenomena ekonomi pada Teks B.",
+                    "Teks B merupakan penyebab utama yang melatarbelakangi lahirnya kebijakan pada Teks A.",
+                    "Teks A dan Teks B menunjukkan dua peristiwa yang saling bertentangan dan tidak dapat disatukan.",
+                    "Teks B menjelaskan kegagalan kebijakan pengurangan plastik yang dipaparkan pada Teks A."
+                ],
+                answer: 0, // A
+                explanation: "Yuk main detektif sebab-akibat lintas teks!<br><br>Di Teks A, plastik tiba-tiba harus bayar mahal. Akibatnya orang-orang tidak mau pakai plastik lagi (menurun 70%).<br>Terus, ibu-ibu kalau belanja pakai apa dong? Ya pasti cari tas alternatif dari kain!<br>Nah, karena orang-orang pada butuh tas kain, akhirnya pabrik tas kain (Teks B) kebanjiran pesanan (lonjakan permintaan).<br><br>Jadi, kejadian di <strong>Teks A menjadi penyebab langsung</strong> munculnya fenomena larisnya jualan pabrik di <strong>Teks B</strong>."
+            },
+            {
+                text: "Evaluasi yang paling tepat mengenai dampak jangka panjang dari hubungan kedua teks di atas adalah...",
+                options: [
+                    "Lingkungan akan semakin tercemar karena produksi kantong kain membutuhkan bahan kimia berbahaya.",
+                    "Kebijakan kantong berbayar berhasil mengubah perilaku konsumen sekaligus menstimulus industri kreatif ramah lingkungan.",
+                    "Konsumen akan kembali menggunakan plastik sekali pakai karena kantong kain terlalu sulit didapatkan di pasar.",
+                    "Pemerintah daerah akan mencabut kebijakan tersebut karena merugikan produsen plastik sekali pakai."
+                ],
+                answer: 1, // B
+                explanation: "Jika kita evaluasi kesuksesan kebijakan ini, kita bisa melihat dua kemenangan (Win-Win Solution):<br><br>1. <strong>Sisi Lingkungan (Teks A):</strong> Konsumen berubah jadi ramah lingkungan (plastik berkurang).<br>2. <strong>Sisi Ekonomi (Teks B):</strong> Pengusaha tas kain ketiban rezeki dan industri kreatif ramah lingkungan semakin maju (terstimulus).<br><br>Maka dari itu, evaluasi dampak jangka panjang yang paling tepat dan positif terangkum sempurna pada pilihan <strong>B</strong>."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 18</strong><div class='quote-box'>(1) Banyak pengendara motor nekat menerobos jalur khusus Transjakarta untuk menghindari kemacetan parah di jalur umum. (2) Tindakan ini sering kali memicu kecelakaan lalu lintas yang fatal karena bus Transjakarta memiliki jalur dan kecepatan yang stabil. (3) Polisi akhirnya memasang palang pintu otomatis dan kamera tilang elektronik (ETLE) di setiap jalan masuk jalur tersebut. (4) Angka pelanggaran menerobos jalur Transjakarta pun menurun drastis dalam waktu satu bulan sejak sistem baru diterapkan.</div>Hubungan logis yang menunjukkan \"solusi teknologi terhadap masalah perilaku pelanggaran hukum\" ditunjukkan oleh hubungan antara kalimat...",
+                options: [
+                    "(1) dan (2)",
+                    "(2) dan (3)",
+                    "(3) dan (4)",
+                    "(1) dan (4)"
+                ],
+                answer: 2, // C
+                explanation: "Kata kunci di soal adalah <strong>\"Solusi Teknologi\"</strong> dan dampaknya pada pelanggarnya.<br><br>Kalimat (1) & (2) hanyalah penjelasan tentang pelanggaran dan kecelakaannya.<br>Kalimat (3) menyebutkan solusi teknologinya (Palang otomatis & Kamera ETLE).<br>Kalimat (4) menyebutkan hasil keberhasilan dari teknologi tersebut (pelanggaran menurun).<br><br>Jadi, hubungan yang mendeskripsikan teknologi dan keberhasilannya ada pada duet kalimat <strong>(3) dan (4)</strong>."
+            },
+            {
+                text: "<strong>Kutipan Teks untuk Soal Nomor 19 dan 20</strong><div class='text-box'>Kebiasaan mengonsumsi makanan cepat saji (fast food) secara berlebihan sering dikaitkan dengan risiko obesitas pada usia remaja. Makanan cepat saji umumnya tinggi kalori, lemak jenuh, dan gula, tetapi sangat rendah serat dan nutrisi esensial. Ketika kalori yang masuk ke dalam tubuh jauh melebihi kalori yang dibakar melalui aktivitas fisik, sisa energi tersebut akan disimpan oleh tubuh dalam bentuk jaringan lemak.</div>Berdasarkan teks di atas, proses terjadinya obesitas pada remaja secara logis digambarkan oleh alur...",
+                options: [
+                    "Konsumsi fast food &rarr; Kekurangan kalori &rarr; Pembakaran lemak tubuh &rarr; Obesitas.",
+                    "Konsumsi fast food berlebih &rarr; Penumpukan kalori tak terbakar &rarr; Penyimpanan jaringan lemak &rarr; Obesitas.",
+                    "Aktivitas fisik berlebih &rarr; Penumpukan lemak jenuh &rarr; Konsumsi fast food &rarr; Obesitas.",
+                    "Konsumsi serat tinggi &rarr; Kalori masuk berkurang &rarr; Penyimpanan energi &rarr; Obesitas."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita buat *flowchart* (alur) kesehatan berdasarkan kalimat terakhir di teks!<br><br>1. Mulai dari asupan: <strong>Makan *fast food* berlebih</strong> (kalorinya tinggi banget).<br>2. Karena jarang olahraga: <strong>Kalori yang masuk > Kalori yang dibakar (menumpuk)</strong>.<br>3. Tubuh merespons: Sisa kalori tadi tidak dibuang, melainkan <strong>disimpan dalam bentuk jaringan lemak</strong>.<br>4. Hasil akhir: Tumpukan lemak itu disebut <strong>Obesitas</strong>.<br><br>Alur logika biologis ini tergambar paling akurat pada Pilihan <strong>B</strong>."
+            },
+            {
+                text: "Jika seorang remaja gemar mengonsumsi makanan cepat saji namun ia juga <strong>aktif berolahraga berat setiap hari</strong>, kesimpulan logis yang paling mungkin terjadi berdasarkan teks di atas adalah...",
+                options: [
+                    "Remaja tersebut pasti akan tetap mengalami obesitas karena kandungan lemak jenuh fast food tidak bisa hilang.",
+                    "Risiko obesitas dapat ditekan karena kelebihan kalori dari fast food dibakar melalui aktivitas fisik beratnya.",
+                    "Olahraga berat yang dilakukannya akan sia-sia karena fast food merusak seluruh sistem metabolisme tubuh secara instan.",
+                    "Remaja tersebut akan kekurangan gizi karena olahraga mempercepat hilangnya serat dalam tubuh."
+                ],
+                answer: 1, // B
+                explanation: "Untuk menyimpulkan ini, kita harus fokus pada 'syarat' terjadinya obesitas dalam teks. Teks menyebutkan: <em>\"Ketika kalori yang masuk... <strong>jauh melebihi kalori yang dibakar</strong>\"</em>.<br><br>Bagaimana kalau remajanya suka olahraga berat tiap hari? Berarti kalorinya dibakar habis!<br>Karena kalori dari makanan *fast food* itu dibakar jadi tenaga melalui olahraga berat, maka tidak ada sisa kalori yang disimpan menjadi lemak. Kesimpulan logisnya, <strong>risiko obesitasnya bisa ditekan (Pilihan B)</strong>."
+            }
+        ];
+
+        function processContent(text) {
+            // Ubah pattern [GAMBAR: data:image/...] menjadi elemen <img> dengan styling responsif
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Referensi" class="img-responsive">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative group';
+            questionDiv.id = `question-block-${index}`;
+
+            // Menyusun Pilihan Ganda (A, B, C, D)
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            // Merakit struktur HTML per soal
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg md:text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Penjelasan (Awalnya tersembunyi dengan transisi halus) -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-lg md:text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}">
+                            <!-- Ikon & Status Jawaban (Benar/Salah) akan dirender di sini -->
+                        </h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Buka/Tampilkan kotak penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Mengunci semua input radio agar tidak bisa diubah lagi
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    // Highlight Kunci Jawaban yang Benar (Selalu Hijau)
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-blue-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // JAWABAN BENAR
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/70 border-l-[6px] md:border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // JAWABAN SALAH
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/70 border-l-[6px] md:border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Ups, Kurang Tepat! Kunci: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Tandai pilihan pengguna yang salah dengan warna merah
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // TIDAK DIJAWAB / TERLEWAT
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/70 border-l-[6px] md:border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Terlewat! Kunci: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                // Masukkan teks pembahasan (sudah HTML-ready)
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            // Animasi perhitungan angka skor (Counter Animation)
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500; // 1.5 detik
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Atur pesan motivasi dinamis
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Logika dan ketelitianmu dalam menganalisis teks sangat luar biasa!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja bagus! 👏 Kemampuan analisamu sudah sangat baik. Sedikit lagi menuju sempurna!";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya lebih tajam membedah isi teks. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Jangan patah semangat! Memahami teks butuh ketelitian. Ayo pahami pembahasannya dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            // Scroll otomatis yang mulus ke bagian bawah skor
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset form HTML
+            form.reset();
+
+            // Kembalikan UI soal seperti semula
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                // Reset semua styling label pilihan ganda
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors';
+                });
+            });
+
+            // Tampilkan kembali tombol periksa, sembunyikan kotak skor akhir
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Scroll mulus kembali ke ujung atas kuis
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

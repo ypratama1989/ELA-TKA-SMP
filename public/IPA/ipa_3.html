@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Fisika: Gerak & Gaya - EDUFILLAH</title>
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        primaryHover: '#4338CA', // Indigo 700
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom radio button styling */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        /* Use :has() pseudo-class to style the parent label when child input is checked */
+        .option-label:has(.option-input:checked) {
+            border-color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+        .option-label:has(.option-input:checked) .radio-circle {
+            border-color: #4F46E5;
+        }
+        .option-label:has(.option-input:checked) .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #4F46E5;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Status styling for Correct/Wrong after submit */
+        .status-correct {
+            border-color: #10B981 !important;
+            background-color: #ECFDF5 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10B981 !important;
+        }
+        .status-correct .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #10B981 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .status-wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEF2F2 !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #EF4444 !important;
+        }
+        .status-wrong .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #EF4444 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Smooth fade in for elements */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Style for math fractions */
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0 0.2em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {border-top: 1px solid #000;}
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-10">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-gray-600 hover:text-primary transition-colors font-medium">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1 ml-4 truncate">
+                Latihan Soal Fisika (Gerak & Gaya)
+            </h1>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Instruksi -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 border-l-4 border-l-primary">
+            <h2 class="text-xl font-semibold mb-2"><i class="fas fa-info-circle text-primary mr-2"></i>Petunjuk Pengerjaan</h2>
+            <p class="text-gray-600 text-sm md:text-base">
+                Pilihlah salah satu jawaban yang paling tepat! Kamu tidak diwajibkan mengisi semua soal, namun soal yang kosong akan bernilai 0. Klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk melihat skor dan pembahasan lengkap.
+            </p>
+        </div>
+
+        <!-- Form Kuis -->
+        <form id="quiz-form">
+            <div id="questions-container">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="text-center mt-10">
+                <button type="button" onclick="checkAnswers()" id="btn-submit" class="bg-primary hover:bg-primaryHover text-white font-semibold py-4 px-10 rounded-full shadow-lg transform transition hover:-translate-y-1 text-lg w-full md:w-auto">
+                    <i class="fas fa-check-circle mr-2"></i> Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Area Hasil dan Pembahasan (Awalnya Sembunyi) -->
+        <div id="result-section" class="hidden mt-12 bg-white p-8 rounded-3xl shadow-xl text-center border-t-8 border-t-primary fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Skor Akhir Kamu</h2>
+            <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-indigo-50 text-5xl font-extrabold text-primary mb-4 border-4 border-indigo-100">
+                <span id="final-score">0</span>
+            </div>
+            <p id="score-message" class="text-gray-600 text-lg mb-8 font-medium">Luar biasa! Terus tingkatkan rasa ingin tahumu!</p>
+            
+            <button type="button" onclick="resetQuiz()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition-colors flex items-center justify-center mx-auto">
+                <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-gray-500 text-sm font-medium">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal dan Kunci Jawaban (Diperbarui & Diperkaya)
+        const quizData = [
+            {
+                id: 1,
+                question: "Seorang atlet lari menempuh lintasan berbentuk lingkaran dengan keliling 400 meter sebanyak satu kali putaran penuh dalam waktu 50 detik. Pernyataan yang benar mengenai kelajuan rata-rata dan kecepatan rata-rata atlet tersebut adalah...",
+                options: {
+                    A: "Kelajuan rata-ratanya 8 m/s dan kecepatan rata-ratanya 8 m/s",
+                    B: "Kelajuan rata-ratanya 8 m/s dan kecepatan rata-ratanya 0 m/s",
+                    C: "Kelajuan rata-ratanya 0 m/s dan kecepatan rata-ratanya 8 m/s",
+                    D: "Kelajuan rata-ratanya 0 m/s dan kecepatan rata-ratanya 0 m/s"
+                },
+                correct: "B",
+                explanation: "Hati-hati, <b>Kelajuan</b> dan <b>Kecepatan</b> itu berbeda dalam Fisika!<br><br>1. <b>Jarak:</b> adalah total perjalanan yang ditempuh, yaitu keliling lapangan (400 m). Maka, <br><i>Kelajuan = Jarak &divide; Waktu = 400 m &divide; 50 s = 8 m/s.</i><br><br>2. <b>Perpindahan:</b> adalah jarak lurus dari titik awal ke titik akhir. Karena atlet kembali ke titik semula (start = finish), berarti ia tidak berpindah kemana-mana! Perpindahannya adalah 0 meter. Maka, <br><i>Kecepatan = Perpindahan &divide; Waktu = 0 m &divide; 50 s = 0 m/s.</i>"
+            },
+            {
+                id: 2,
+                question: "Perhatikan beberapa peristiwa dalam kehidupan sehari-hari berikut!<br>(1) Bola kasti dilempar vertikal ke atas hingga mencapai titik tertinggi.<br>(2) Sepeda motor bergerak di jalan lurus dengan jarum speedometer menunjuk angka tetap.<br>(3) Mobil mainan dilepaskan dari puncak bidang miring yang licin hingga ke dasar.<br>(4) Air terjun mengalir jatuh bebas dari tebing sungai.<br><br>Peristiwa yang menunjukkan terjadinya Gerak Lurus Berubah Beraturan (GLBB) dipercepat ditunjukkan oleh nomor...",
+                options: {
+                    A: "(1) dan (2)",
+                    B: "(1) dan (3)",
+                    C: "(2) dan (4)",
+                    D: "(3) dan (4)"
+                },
+                correct: "D",
+                explanation: "<b>GLBB dipercepat</b> artinya benda bergerak makin lama makin cepat!<br>- Bola dilempar ke atas (1): makin lama makin pelan karena ditarik gravitasi bumi ke bawah (GLBB diperlambat).<br>- Speedometer menunjuk angka tetap (2): artinya kecepatannya konstan/tetap (GLB).<br>- Meluncur di bidang miring (3) & Air jatuh bebas (4): keduanya meluncur turun ditarik oleh gravitasi bumi tanpa ampun, sehingga kecepatannya terus bertambah (GLBB Dipercepat)."
+            },
+            {
+                id: 3,
+                question: "Dua buah mobil, A dan B, bergerak saling mendekat pada lintasan lurus yang sama. Mobil A bergerak dengan kecepatan konstan 20 m/s, sedangkan mobil B bergerak dengan kecepatan konstan 15 m/s. Jika jarak mula-mula antara kedua mobil adalah 700 meter, kedua mobil tersebut akan berpapasan setelah bergerak selama...",
+                options: {
+                    A: "20 detik",
+                    B: "35 detik",
+                    C: "40 detik",
+                    D: "46 detik"
+                },
+                correct: "A",
+                explanation: "Bayangkan kamu dan temanmu berlari saling menghampiri. Kecepatan kalian saat mendekat akan terasa lebih cepat, kan? Dalam fisika, kecepatannya dijumlahkan!<br><br><b>Kecepatan Relatif (Gabungan)</b> = v<sub>A</sub> + v<sub>B</sub><br>= 20 m/s + 15 m/s = 35 m/s.<br><br>Jarak yang harus dihabiskan berdua adalah 700 meter.<br><b>Waktu Berpapasan (t)</b> = Jarak &divide; Kecepatan Relatif<br>t = 700 m &divide; 35 m/s = <b>20 detik</b>."
+            },
+            {
+                id: 4,
+                question: "Sebuah bus pariwisata sedang melaju dengan kecepatan 25 m/s di jalan tol. Tiba-tiba pengemudi melihat ada rintangan di depan sehingga ia menginjak pedal rem secara konstan. Bus tersebut mengalami perlambatan sebesar 2,5 m/s<sup>2</sup> hingga akhirnya berhenti total. Jarak yang ditempuh bus sejak pengereman hingga berhenti adalah...",
+                options: {
+                    A: "125 meter",
+                    B: "150 meter",
+                    C: "250 meter",
+                    D: "300 meter"
+                },
+                correct: "A",
+                explanation: "Gunakan rumus ajaib GLBB tanpa waktu: <b>v<sub>t</sub><sup>2</sup> = v<sub>0</sub><sup>2</sup> + 2as</b><br><br>Diketahui:<br>v<sub>awal</sub> = 25 m/s<br>v<sub>akhir</sub> = 0 m/s (karena berhenti)<br>a = -2,5 m/s<sup>2</sup> (minus karena mengerem/perlambatan)<br><br>Langkah penyelesaian:<br>0<sup>2</sup> = 25<sup>2</sup> + 2 &times; (-2,5) &times; s<br>0 = 625 - 5s<br>Pindahkan -5s ke ruas kiri:<br>5s = 625<br>s = 625 &divide; 5 = <b>125 meter</b>."
+            },
+            {
+                id: 5,
+                question: "Ketika kita sedang naik bus yang bergerak cepat dan tiba-tiba sopir menginjak rem mendadak, tubuh kita akan terdorong ke depan. Peristiwa ini dapat dijelaskan dengan prinsip fisika, yaitu...",
+                options: {
+                    A: "Tubuh kita berusaha mempertahankan keadaan diamnya karena adanya gaya gesek kursi",
+                    B: "Tubuh kita berusaha mempertahankan keadaan bergeraknya akibat sifat kelembaman (inersia)",
+                    C: "Bus memberikan gaya reaksi yang arahnya berlawanan dengan arah gerak bus kepada tubuh kita",
+                    D: "Gaya pengereman bus diteruskan langsung ke tubuh kita sehingga menghasilkan percepatan ke depan"
+                },
+                correct: "B",
+                explanation: "Pernahkah kamu mendengarnya? Ini disebut <b>Hukum I Newton (Hukum Kelembaman/Inersia)</b>!<br>Hukum ini menyatakan bahwa: <i>'Benda malas berubah.'</i> Benda yang sedang bergerak, cenderung ingin terus bergerak. Saat kamu duduk santai di bus yang melaju cepat, tubuhmu sebenarnya ikut bergerak dengan kecepatan bus. Saat bus direm dan berhenti mendadak, tubuhmu masih 'malas berhenti' dan ingin terus melaju ke depan, itulah sebabnya kamu terdorong!"
+            },
+            {
+                id: 6,
+                question: "Sebuah balok kayu bermassa 5 kg diletakkan di atas lantai yang licin tanpa gesekan. Balok tersebut ditarik oleh dua buah gaya yang bekerja secara bersamaan. Gaya pertama (F<sub>1</sub>) sebesar 25 N mengarah ke kanan, sedangkan gaya kedua (F<sub>2</sub>) sebesar 10 N mengarah ke kiri. Percepatan yang dialami oleh balok tersebut adalah...",
+                options: {
+                    A: "3,0 m/s<sup>2</sup> ke kanan",
+                    B: "3,0 m/s<sup>2</sup> ke kiri",
+                    C: "7,0 m/s<sup>2</sup> ke kanan",
+                    D: "7,0 m/s<sup>2</sup> ke kiri"
+                },
+                correct: "A",
+                explanation: "Kita pakai <b>Hukum II Newton (F = m &times; a)</b>.<br><br>Langkah 1: Tentukan pemenangnya (Resultan Gaya/&Sigma;F).<br>Ada tarik-menarik. 25 N ke kanan vs 10 N ke kiri. Pemenangnya adalah ke arah <b>kanan</b> dengan selisih kekuatan: 25 - 10 = 15 N.<br><br>Langkah 2: Hitung percepatan (a) gaya tersebut pada balok seberat 5 kg.<br>a = &Sigma;F &divide; m<br>a = 15 N &divide; 5 kg = <b>3 m/s<sup>2</sup></b> ke arah kanan."
+            },
+            {
+                id: 7,
+                question: "Seekor burung dapat terbang di udara karena mengepakkan sayapnya ke bawah. Penjelasan yang paling tepat mengenai fenomena ini berdasarkan Hukum Newton adalah...",
+                options: {
+                    A: "Sayap burung mendorong udara ke bawah (aksi), dan udara mendorong sayap burung ke atas (reaksi) dengan gaya yang sama besar",
+                    B: "Sayap burung mendorong udara ke bawah (aksi), sehingga burung mendapatkan gaya angkat yang lebih kecil dari berat tubuhnya",
+                    C: "Burung memiliki massa yang sangat ringan sehingga gaya gravitasi bumi tidak mempengaruhinya saat mengepakkan sayap",
+                    D: "Udara menahan kepakan sayap burung sehingga burung dapat melayang tanpa memerlukan gaya reaksi dari udara"
+                },
+                correct: "A",
+                explanation: "Burung terbang itu adalah salah satu contoh terhebat dari <b>Hukum III Newton (Aksi-Reaksi)</b>!<br>Setiap aksi yang diberikan, selalu ada reaksi yang setimpal dan berlawanan arah. Burung memukul udara dengan kuat ke arah bawah (AKSI). Sebagai balasannya, molekul udara yang berkerumun itu 'marah' dan mendorong balik sayap burung ke arah atas (REAKSI) dengan kekuatan yang sama persis, sehingga burung terangkat mengudara."
+            },
+            {
+                id: 8,
+                question: "Dua buah mobil mainan, X dan Y, memiliki massa yang sama. Mobil X ditarik dengan gaya sebesar F sehingga menghasilkan percepatan a. Jika mobil Y ditarik dengan gaya sebesar 3F, maka perbandingan percepatan mobil X dan mobil Y adalah...",
+                options: {
+                    A: "1 : 3",
+                    B: "3 : 1",
+                    C: "1 : 9",
+                    D: "9 : 1"
+                },
+                correct: "A",
+                explanation: "Hukum II Newton mengatakan bahwa Percepatan (a) <b>berbanding lurus</b> dengan kekuatan dorongan (Gaya/F).<br>Jika mobil Y ditarik dengan tenaga 3 kali lebih kuat (3F) dari mobil X, sementara berat badan (massa) mereka sama, maka tentu saja mobil Y akan melesat 3 kali lipat lebih ngebut dari mobil X!<br>Jadi, kecepatannya adalah a dibandingkan 3a, alias <b>1 : 3</b>."
+            },
+            {
+                id: 9,
+                question: "Sebuah truk bermassa 4.000 kg sedang melaju dengan percepatan 2 m/s<sup>2</sup>. Di tengah jalan, muatan truk diturunkan sehingga massa truk menjadi 2.000 kg. Jika mesin truk menghasilkan gaya dorong yang sama seperti sebelumnya, maka percepatan truk sekarang menjadi...",
+                options: {
+                    A: "1 m/s<sup>2</sup>",
+                    B: "2 m/s<sup>2</sup>",
+                    C: "4 m/s<sup>2</sup>",
+                    D: "8 m/s<sup>2</sup>"
+                },
+                correct: "C",
+                explanation: "Langkah 1: Hitung tenaga (Gaya) mesin truk tersebut.<br>Gaya (F) = m &times; a = 4.000 kg &times; 2 m/s<sup>2</sup> = 8.000 Newton.<br><br>Langkah 2: Truk jadi lebih langsing!<br>Sekarang massanya (m) tinggal 2.000 kg (lebih ringan). Tenaga mesinnya (F) tetap 8.000 Newton. Berapa percepatannya (a)?<br>a = F &divide; m<br>a = 8.000 &divide; 2.000 = <b>4 m/s<sup>2</sup></b>.<br><i>Logika Singkat: Jika beban (massa) dipotong setengahnya dan tenaga mesin tetap, maka tarikan gasnya pasti dua kali lipat lebih kencang!</i>"
+            },
+            {
+                id: 10,
+                question: "Pada percobaan menggunakan alat *ticker timer* (pewaktu ketik), diperoleh pita ketikan dengan pola jarak antar titik yang semakin lama semakin renggang secara teratur jika dibaca searah dengan arah gerak benda. Pola ketikan ini menunjukkan bahwa benda mengalami...",
+                options: {
+                    A: "Gerak Lurus Beraturan (GLB)",
+                    B: "Gerak Lurus Berubah Beraturan (GLBB) dipercepat",
+                    C: "Gerak Lurus Berubah Beraturan (GLBB) diperlambat",
+                    D: "Gerak acak tidak beraturan"
+                },
+                correct: "B",
+                explanation: "Coba bayangkan tetesan oli dari mobil yang sedang melaju. Jika mobil melaju pelan, jarak antar tetesan olinya berdekatan/rapat. Namun, saat pengemudi tiba-tiba tancap gas ngebut (dipercepat), dalam selang waktu tetesan yang sama (misal 1 detik sekali), mobil sudah menempuh jarak yang lebih jauh. Hasilnya, jarak antar titik di pita ticker timer jadi makin renggang! Ini pertanda pasti benda tersebut mengalami <b>GLBB dipercepat</b>."
+            },
+            {
+                id: 11,
+                question: "Sebuah lemari pakaian bermassa 40 kg berada di atas lantai kasar. Diketahui gaya gesek statis maksimum antara lemari dan lantai adalah 120 N, sedangkan gaya gesek kinetisnya adalah 80 N. Jika lemari tersebut didorong dengan gaya mendatar sebesar 100 N, maka keadaan lemari dan gaya gesek yang bekerja adalah...",
+                options: {
+                    A: "Lemari bergerak, gaya gesek yang bekerja sebesar 80 N",
+                    B: "Lemari bergerak, gaya gesek yang bekerja sebesar 100 N",
+                    C: "Lemari diam, gaya gesek yang bekerja sebesar 100 N",
+                    D: "Lemari diam, gaya gesek yang bekerja sebesar 120 N"
+                },
+                correct: "C",
+                explanation: "Lemari yang berat punya 'penjaga pintu' yang disebut Gaya Gesek Statis Maksimum (kekuatan maksimal lantai menahan lemari agar tidak bergeser). Nilai penahan ini adalah 120 N.<br><br>Kamu mencoba mendorong lemari hanya dengan tenaga 100 N. Karena tenagamu (100 N) lebih kecil dari 'si penjaga pintu' (120 N), maka usahamu gagal total; lemari <b>tetap diam</b>!<br><br>Lalu berapa gaya gesek aktual saat itu? Ingat, gaya gesek statis itu pintar menyesuaikan diri. Jika kamu dorong 100 N, lantai melawan balik dengan 100 N juga supaya seimbang (diam). Bukan 120 N, karena lantai tidak mungkin mendorong balik melebihimu!"
+            },
+            
+            {
+                id: 12,
+                question: "Pabrikan mobil selalu melengkapi produknya dengan fitur keselamatan berupa sabuk pengaman (*seatbelt*) dan kantung udara (*airbag*). Berdasarkan analisis fisis, fungsi utama dari kedua fitur tersebut dikaitkan dengan Hukum Newton adalah...",
+                options: {
+                    A: "Mengurangi massa total mobil agar percepatan saat pengereman menjadi lebih besar sesuai Hukum II Newton",
+                    B: "Mempercepat waktu henti penumpang saat tabrakan agar gaya impulsif yang diterima tubuh menjadi minimal",
+                    C: "Membantu tubuh penumpang melawan sifat kelembaman (Hukum I Newton) dengan memperpanjang waktu henti sehingga meminimalkan gaya benturan",
+                    D: "Menghasilkan gaya aksi-reaksi (Hukum III Newton) yang mendorong penumpang kembali ke kursi dengan kekuatan yang sama besar dengan gaya tabrakan"
+                },
+                correct: "C",
+                explanation: "Saat terjadi tabrakan fatal mendadak, mobil mendadak berhenti (0 km/jam). Tapi tubuh penumpang di dalamnya, berdasar Hukum I Newton (Inersia), akan tetap melesat ke depan dengan kecepatan 100 km/jam! Hantaman langsung ke dashboard akan sangat mematikan.<br><br>Di sinilah keajaiban Sabuk dan Airbag. Mereka berfungsi layaknya bantal raksasa yang menangkap laju tubuhmu secara perlahan. Dalam fisika (Impuls), memperlama durasi pengereman pada tubuh akan <b>meminimalkan kekuatan hantaman benturan (Gaya)</b> berkali-kali lipat!"
+            },
+            {
+                id: 13,
+                question: "Sebuah kelereng menggelinding turun pada sebuah bidang miring yang licin sempurna, kemudian kelereng tersebut terus bergerak di atas lantai datar yang kasar hingga akhirnya berhenti. Jenis gerak yang dialami kelereng berturut-turut selama perjalanannya adalah...",
+                options: {
+                    A: "GLBB dipercepat kemudian GLB",
+                    B: "GLBB dipercepat kemudian GLBB diperlambat",
+                    C: "GLB kemudian GLBB diperlambat",
+                    D: "GLBB diperlambat kemudian GLBB dipercepat"
+                },
+                correct: "B",
+                explanation: "Mari ikuti perjalanan si Kelereng!<br><b>Fase 1: Turun lereng licin</b><br>Tanpa gesekan, kelereng meluncur bebas ditarik gaya gravitasi yang kemiringannya konstan. Kecepatannya makin nambah seperti main perosotan! (GLBB Dipercepat).<br><b>Fase 2: Lantai datar kasar</b><br>Sekarang permukaannya merintangi. Tidak ada mesin yang mendorong, dan lantai kasar terus-menerus mengerem laju si kelereng sampai habis napasnya dan berhenti. (GLBB Diperlambat)."
+            },
+            {
+                id: 14,
+                question: "Sebuah buku diletakkan di atas meja belajar yang diam. Buku tersebut ditarik ke bawah oleh gaya gravitasi bumi (gaya berat W) dan ditahan ke atas oleh meja dengan gaya normal (N). Pernyataan yang benar mengenai kedua gaya tersebut adalah...",
+                options: {
+                    A: "Gaya berat W dan gaya normal N merupakan pasangan gaya aksi-reaksi karena besarnya sama dan arahnya berlawanan",
+                    B: "Gaya berat W dan gaya normal N bukan pasangan aksi-reaksi karena bekerja pada satu benda yang sama dan saling meniadakan",
+                    C: "Gaya berat W dan gaya normal N adalah pasangan aksi-reaksi karena timbul secara bersamaan akibat sentuhan buku dan meja",
+                    D: "Gaya berat W dan gaya normal N bukan pasangan aksi-reaksi karena arah kedua gaya tersebut searah"
+                },
+                correct: "B",
+                explanation: "Hati-hati dengan soal jebakan legendaris ini!<br>Syarat mutlak Aksi-Reaksi (Hukum III Newton) adalah gayanya harus bekerja pada <b>dua benda yang BERBEDA</b>. (Contoh: tangan memukul meja, meja memukul balik tangan).<br><br>Nah, gaya berat (W) menarik si BUKU ke bawah. Gaya normal meja (N) menyangga si BUKU ke atas. Keduanya sama-sama bekerja pada tubuh si <b>BUKU</b>. Karena sasarannya cuma 1 benda, ini bukanlah pasangan aksi-reaksi, melainkan cuma 'gaya seimbang' alias Hukum I Newton (karena hasil totalnya Nol membuat buku diam)."
+            },
+            {
+                id: 15,
+                question: "Seorang astronot memiliki massa 60 kg saat berada di Bumi (percepatan gravitasi bumi g = 10 m/s<sup>2</sup>). Ketika astronot tersebut mendarat di Bulan yang memiliki percepatan gravitasi 1,6 m/s<sup>2</sup>, pernyataan yang benar mengenai massa dan berat astronot tersebut adalah...",
+                options: {
+                    A: "Massanya di Bulan tetap 60 kg, sedangkan beratnya menjadi 96 N",
+                    B: "Massanya di Bulan menjadi 9,6 kg, sedangkan beratnya tetap 600 N",
+                    C: "Massanya di Bulan menjadi 60 kg, sedangkan beratnya tetap 600 N",
+                    D: "Massanya di Bulan tetap 60 kg, sedangkan beratnya menjadi 600 N"
+                },
+                correct: "A",
+                explanation: "Ini perbedaan penting <b>Massa vs Berat!</b><br>1. <b>Massa (kg):</b> adalah jumlah materi dalam tubuhmu. Tidak peduli kamu di bumi, bulan, atau di dimensi lain, tulang dan dagingmu ya jumlahnya tetap sama! Massanya = 60 kg.<br>2. <b>Berat (Newton):</b> adalah kekuatan tarikan planet pada tubuhmu. Makin kecil gravitasinya, makin ringan tarikannya.<br>Berat astronot di Bumi = 60 &times; 10 = 600 N.<br>Berat di Bulan = 60 kg &times; 1,6 m/s<sup>2</sup> = <b>96 N</b> (sangat ringan sehingga astronot bisa melompat jauh-jauh!)"
+            },
+            {
+                id: 16,
+                question: "Sebuah lift dirancang untuk mengangkut beban maksimal dengan batas aman tegangan tali baja penarik sebesar 12.000 N. Jika lift tersebut bergerak ke atas dengan percepatan 2 m/s<sup>2</sup> dan percepatan gravitasi bumi adalah 10 m/s<sup>2</sup>, maka massa total maksimal (termasuk lift dan penumpang di dalamnya) agar tali baja tidak putus adalah...",
+                options: {
+                    A: "1.000 kg",
+                    B: "1.200 kg",
+                    C: "1.500 kg",
+                    D: "6.000 kg"
+                },
+                correct: "A",
+                explanation: "Saat lift tersentak ngegas naik ke atas, beban pada tali lift terasa jauh lebih berat karena ada tambahan tarikan gaya akibat percepatan naik (Ini bisa kamu rasakan kalau naik lift, tubuhmu terasa lebih 'berat' menekan lantai).<br><br>Rumus Tegangan Tali (T) saat naik adalah:<br><b>T = m &times; (g + a)</b><br>Kekuatan tali maksimal T = 12.000 N.<br>12.000 = m &times; (10 + 2)<br>12.000 = 12 &times; m<br>m = 12.000 &divide; 12 = <b>1.000 kg</b>."
+            },
+            {
+                id: 17,
+                question: "Sebuah buah kelapa jatuh bebas dari pohonnya yang memiliki ketinggian 20 meter di atas tanah. Jika gesekan udara diabaikan dan percepatan gravitasi bumi adalah 10 m/s<sup>2</sup>, kecepatan buah kelapa sesaat sebelum menyentuh tanah adalah...",
+                options: {
+                    A: "10 m/s",
+                    B: "20 m/s",
+                    C: "30 m/s",
+                    D: "40 m/s"
+                },
+                correct: "B",
+                explanation: "Buah kelapa jatuh dari diam tanpa ada yang melempar (v<sub>awal</sub> = 0). Kita cari kecepatannya tepat sebelum menabrak tanah!<br><br>Gunakan rumus super cepat GLBB jatuh bebas:<br><b>v = &radic;(2 &times; g &times; h)</b><br>v = &radic;(2 &times; 10 &times; 20)<br>v = &radic;400<br>v = <b>20 m/s</b>."
+            },
+            {
+                id: 18,
+                question: "Dalam sebuah perlombaan tarik tambang, Kelompok A menarik tali ke arah kiri dengan gaya total 450 N, sedangkan Kelompok B menarik tali ke arah kanan dengan gaya total 480 N. Resultan gaya yang bekerja pada tali tersebut beserta arah geraknya adalah...",
+                options: {
+                    A: "30 N ke arah Kelompok A",
+                    B: "30 N ke arah Kelompok B",
+                    C: "930 N ke arah Kelompok B",
+                    D: "0 N karena tali dalam keadaan seimbang"
+                },
+                correct: "B",
+                explanation: "Pertandingan fisik yang mudah dihitung! Kedua kelompok saling menarik berlawanan arah.<br><br>Kelompok B lebih kuat (480 N) dibanding kelompok A (450 N).<br>Maka tali pasti akan bergerak ke pihak yang tenaganya lebih besar (Ke Arah B/Kanan).<br>Selisih kekuatannya (Resultan gaya) = 480 - 450 = <b>30 Newton.</b>"
+            },
+            {
+                id: 19,
+                question: "Beberapa koin logam ditumpuk secara vertikal di atas meja. Jika koin yang berada di paling bawah dipukul secara cepat menggunakan penggaris plastik ke arah mendatar, koin paling bawah tersebut akan terlempar keluar dari tumpukan, sedangkan koin-koin di atasnya tetap tegak dan jatuh lurus ke bawah menempati posisi semula. Analisis yang paling tepat untuk menjelaskan fenomena ini adalah...",
+                options: {
+                    A: "Koin-koin di bagian atas memiliki gaya gesek yang sangat besar sehingga menolak gaya pukulan penggaris",
+                    B: "Gaya pukulan hanya bekerja pada koin paling bawah, sementara koin di atasnya mempertahankan keadaan diamnya karena inersia",
+                    C: "Terjadi gaya aksi-reaksi antara penggaris dengan seluruh koin sehingga tumpukan koin tetap stabil",
+                    D: "Koin paling bawah memberikan gaya dorong ke atas kepada koin-koin di atasnya sebelum ia terlempar keluar"
+                },
+                correct: "B",
+                explanation: "Ini adalah trik sulap berbasis Fisika sungguhan! Sifat 'Kemalasan' benda (<b>Hukum I Newton / Inersia</b>).<br><br>Penggarismu cuma berinteraksi dengan satu koin paling bawah, sehingga cuma dia yang terlempar keluar. Koin-koin yang bertumpuk di atasnya tidak mendapatkan gaya sentuhan sama sekali. Karena mereka awalnya diam, mereka berusaha 'mempertahankan keadaan diamnya'. Karena koin penyangga di bawah tiba-tiba musnah, tumpukan diam tadi akhirnya jatuh lurus mengikuti tarikan gravitasi bumi."
+            },
+            {
+                id: 20,
+                question: "Seorang pengemudi mobil melaju dengan kecepatan konstan 20 m/s. Tiba-tiba ia melihat seekor kucing menyeberang jalan pada jarak 45 meter di depannya. Pengemudi membutuhkan waktu reaksi selama 0,5 detik untuk mulai menginjak pedal rem. Setelah rem diinjak, mobil mengalami perlambatan sebesar 5 m/s<sup>2</sup>. Berdasarkan data tersebut, evaluasi yang benar mengenai kondisi mobil dan kucing adalah...",
+                options: {
+                    A: "Mobil berhenti tepat 5 meter sebelum menabrak kucing",
+                    B: "Mobil berhenti setelah menempuh jarak total 50 meter sehingga menabrak kucing",
+                    C: "Mobil berhenti tepat pada jarak 45 meter sehingga menyentuh kucing tanpa melukainya",
+                    D: "Mobil berhenti setelah menempuh jarak total 40 meter sehingga kucing aman dengan jarak sisa 5 meter"
+                },
+                correct: "B",
+                explanation: "Wah, ini soal kritis! Ada dua fase perjalanan di sini:<br><br><b>Fase 1 (Nge-blank sebelum menginjak rem):</b><br>Otak butuh 0,5 detik untuk bereaksi. Dalam waktu itu mobil masih ngebut (GLB).<br>Jarak ditempuh = kecepatan &times; waktu = 20 m/s &times; 0,5 s = <b>10 meter</b>.<br><br><b>Fase 2 (Pengereman/GLBB):</b><br>v<sub>awal</sub>=20, v<sub>akhir</sub>=0, perlambatan= -5. Kita cari jarak berhentinya (s):<br>0<sup>2</sup> = 20<sup>2</sup> + 2 &times; (-5) &times; s<br>0 = 400 - 10s &rarr; 10s = 400 &rarr; <b>s = 40 meter</b>.<br><br><b>Total Jarak Henti</b> = Jarak nge-blank + Jarak rem = 10m + 40m = <b>50 meter</b>!<br><br><i>Kesimpulan</i>: Karena jarak henti total mobil (50 m) LEBIH BESAR daripada jarak kucing di depan mobil (45 m), maka sanggat disayangkan <b>mobil menabrak kucing tersebut.</b> (Catatan: Kunci orisinal diubah secara otomatis dari D ke B demi validasi logika Fisika)."
+            }
+        ];
+
+        // Parser text untuk mengubah tag [GAMBAR: ...] menjadi tag <img> (jika ada)
+        function parseContent(text) {
+            return text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" class="max-w-full h-auto rounded-lg shadow-md my-4 mx-auto block border border-gray-200">');
+        }
+
+        // Fungsi Render Soal
+        function renderQuiz() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = ''; // Bersihkan container
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Card Pembungkus Soal
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6";
+                card.id = `card-q${questionNum}`;
+                
+                // Header & Teks Soal
+                const questionText = document.createElement('h3');
+                questionText.className = "text-lg font-medium text-gray-800 mb-5 leading-relaxed";
+                questionText.innerHTML = `<span class="bg-indigo-100 text-primary font-bold px-3 py-1 rounded-md mr-2">Soal ${questionNum}</span> <br class="block sm:hidden"><div class="mt-3 sm:inline sm:mt-0">${parseContent(q.question)}</div>`;
+                card.appendChild(questionText);
+
+                // Kontainer Pilihan Jawaban
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = "flex flex-col space-y-3";
+
+                // Loop Opsi (A, B, C, D)
+                for (const [key, value] of Object.entries(q.options)) {
+                    const label = document.createElement('label');
+                    label.className = "option-label relative flex items-start p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 option-content";
+                    label.htmlFor = `q${questionNum}_${key}`;
+
+                    const input = document.createElement('input');
+                    input.type = "radio";
+                    input.name = `q${questionNum}`;
+                    input.id = `q${questionNum}_${key}`;
+                    input.value = key;
+                    input.className = "option-input sr-only"; // Hide default radio
+
+                    const circle = document.createElement('div');
+                    circle.className = "radio-circle flex-shrink-0 w-6 h-6 border-2 border-gray-300 rounded-full mr-4 relative mt-0.5 transition-colors";
+
+                    const textSpan = document.createElement('div');
+                    textSpan.className = "text-gray-700 font-medium";
+                    textSpan.innerHTML = `<span class="font-bold mr-1">${key}.</span> ${parseContent(value)}`;
+
+                    label.appendChild(input);
+                    label.appendChild(circle);
+                    label.appendChild(textSpan);
+                    optionsWrapper.appendChild(label);
+                }
+                card.appendChild(optionsWrapper);
+
+                // Kotak Pembahasan (Awalnya Sembunyi)
+                const explanationBox = document.createElement('div');
+                explanationBox.id = `exp-q${questionNum}`;
+                explanationBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed";
+                
+                const expTitle = document.createElement('div');
+                expTitle.id = `exp-title-q${questionNum}`;
+                expTitle.className = "font-bold mb-2 flex items-center";
+                
+                const expContent = document.createElement('div');
+                expContent.innerHTML = parseContent(q.explanation);
+                
+                explanationBox.appendChild(expTitle);
+                explanationBox.appendChild(expContent);
+
+                card.appendChild(explanationBox);
+                container.appendChild(card);
+            });
+        }
+
+        // Panggil fungsi render saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', renderQuiz);
+
+        // Fungsi Periksa Jawaban
+        function checkAnswers() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                const userAnswer = formData.get(`q${questionNum}`);
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                const expTitle = document.getElementById(`exp-title-q${questionNum}`);
+                
+                // Ambil semua label opsi di soal ini untuk di-reset stylingnya
+                const optionContainers = document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                    input.disabled = true; // Disable input setelah disubmit
+                });
+
+                if (userAnswer === q.correct) {
+                    correctCount++;
+                    
+                    // Style UI untuk Jawaban Benar
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-green-50 border-green-500 text-green-900 block fade-in";
+                    expTitle.innerHTML = `<i class="fas fa-check-circle text-green-500 text-xl mr-2"></i> Benar! Jawaban: ${q.correct}`;
+                    
+                    // Highlight opsi yang benar
+                    const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                    selectedLabel.classList.add('status-correct');
+
+                } else {
+                    // Style UI untuk Jawaban Salah atau Kosong
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-red-50 border-red-500 text-red-900 block fade-in";
+                    let titleText = userAnswer 
+                        ? `<i class="fas fa-times-circle text-red-500 text-xl mr-2"></i> Salah.`
+                        : `<i class="fas fa-exclamation-circle text-orange-500 text-xl mr-2"></i> Tidak dijawab.`;
+                    expTitle.innerHTML = `${titleText} Jawaban yang tepat: <b>${q.correct}</b>`;
+                    
+                    // Highlight opsi yang disalahkan user (jika ada isinya)
+                    if (userAnswer) {
+                        const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                        selectedLabel.classList.add('status-wrong');
+                    }
+                    // Highlight (dengan warna hijau) opsi kunci yang sebetulnya benar
+                    const correctLabel = document.getElementById(`q${questionNum}_${q.correct}`).parentElement;
+                    correctLabel.classList.add('status-correct');
+                }
+            });
+
+            // Hitung Skor (Skala 0 - 100)
+            const finalScore = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Tampilkan Skor di UI
+            const resultSection = document.getElementById('result-section');
+            const finalScoreEl = document.getElementById('final-score');
+            const scoreMessageEl = document.getElementById('score-message');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            finalScoreEl.innerText = finalScore;
+            
+            if (finalScore === 100) {
+                scoreMessageEl.innerText = "Sempurna! Pemahaman Fisikamu selevel Isaac Newton!";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerText = "Luar biasa! Konsep Gaya dan Gerakmu sudah sangat tajam.";
+            } else if (finalScore >= 50) {
+                scoreMessageEl.innerText = "Kerja bagus! Perhatikan lagi soal hitungannya ya.";
+            } else {
+                scoreMessageEl.innerText = "Jangan menyerah! Fisika itu asyik kalau kita pahami logika ceritanya. Yuk baca lagi pembahasannya!";
+            }
+
+            resultSection.classList.remove('hidden');
+            btnSubmit.classList.add('hidden'); // Sembunyikan tombol submit
+
+            // Scroll mulus ke bawah (bagian skor)
+            // scrollIntoView disabled to prevent screen jumping
+        }
+
+        // Fungsi Ulangi Tes
+        function resetQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.reset(); // Reset form radio buttons
+
+            // Re-enable inputs dan hapus styling/kelas
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Sembunyikan box pembahasan
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                expBox.classList.add('hidden');
+                expBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed"; // reset classes
+                
+                // Reset radio styling dan enable kembali
+                document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.disabled = false;
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                });
+            });
+
+            // Sembunyikan hasil & tampilkan tombol submit
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('btn-submit').classList.remove('hidden');
+
+            // Scroll otomatis ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t3',
+          topicIndex: 3,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

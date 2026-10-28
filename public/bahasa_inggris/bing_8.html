@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Bahasa Inggris: Simple Past Tense</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #334155; /* slate-700 */
+        }
+        
+        /* Custom Radio Button Styling */
+        .radio-custom:checked + div {
+            background-color: #eff6ff; /* blue-50 */
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .radio-custom:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: auto;
+            margin-top: 3px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animation */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="history.back()" class="flex items-center text-slate-500 hover:text-blue-600 transition-colors group px-3 py-2 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 font-medium text-sm sm:text-base">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="hidden sm:inline">Kembali</span>
+            </button>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-800 flex-1 text-center tracking-tight">Quiz: Simple Past Tense</h1>
+            <div class="w-16 sm:w-24"></div> <!-- Spacer for centering -->
+        </div>
+    </header>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <!-- Instructions Box -->
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-l-4 border-indigo-500 p-5 mb-8 rounded-r-xl shadow-sm flex flex-col sm:flex-row gap-4">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 shadow-inner">
+                        <i class="fas fa-lightbulb text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-900 mb-1.5">Petunjuk Pengerjaan</h3>
+                    <ul class="text-sm text-indigo-800 space-y-1.5 list-disc list-inside">
+                        <li>Pilihlah satu jawaban yang menurutmu paling tepat (A, B, C, atau D).</li>
+                        <li>Sistem skoring menggunakan skala <strong>0 - 100</strong>.</li>
+                        <li>Kamu <strong>bebas menekan tombol "Periksa Jawaban" kapan saja</strong> tanpa harus mengisi semua soal. Soal yang terlewat otomatis dianggap salah.</li>
+                        <li>Perhatikan baik-baik pembahasan di akhir setiap soal untuk belajar konsep <em>grammar</em> dengan mudah!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="return false;">
+                <div id="quiz-content" class="space-y-6">
+                    <!-- Soal-soal akan di-generate oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-10 bg-white p-6 sm:p-10 rounded-2xl shadow-xl border border-slate-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-50 opacity-50 pointer-events-none"></div>
+                    
+                    <!-- Result Area -->
+                    <div id="result-area" class="hidden mb-8 py-6 border-b border-slate-100 relative z-10">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Nilai Akhir Kamu</h2>
+                        <div class="relative inline-flex items-center justify-center w-36 h-36 rounded-full border-[10px] border-blue-500 bg-white mb-6 shadow-inner">
+                            <span id="final-score" class="text-5xl font-black text-blue-600 tracking-tighter">0</span>
+                        </div>
+                        <br>
+                        <p id="score-message" class="text-lg font-bold px-4 py-2 rounded-lg inline-block"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10 pt-2">
+                        <button type="button" id="btn-check" onclick="checkAnswers()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            <i class="fas fa-clipboard-check mr-3 text-xl"></i> Periksa Jawaban
+                        </button>
+                        <button type="button" id="btn-retry" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-sm transition-all duration-300 flex items-center justify-center text-lg focus:outline-none focus:ring-4 focus:ring-slate-300">
+                            <i class="fas fa-rotate-right mr-3 text-xl"></i> Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-bold tracking-widest text-xs sm:text-sm uppercase flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span>By EDUFILLAH</span>
+                <span class="hidden sm:inline w-1.5 h-1.5 rounded-full bg-slate-300 mx-1"></span> 
+                <span>Unlock The Secret Of Curious Minds</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Data Soal & Pembahasan (Diperkaya)
+        const quizData = [
+            {
+                id: 1,
+                question: "Yesterday, my mother ... a delicious chocolate cake for my sister's birthday party.",
+                options: {
+                    A: "make",
+                    B: "makes",
+                    C: "made",
+                    D: "making"
+                },
+                correct: "C",
+                explanation: "Coba perhatikan kata pertama, yaitu <strong>\"Yesterday\"</strong> (kemarin). Ini adalah kata kunci waktu <em>(time signal)</em> yang menunjukkan bahwa kejadian tersebut terjadi di masa lampau.<br>Maka, kita harus menggunakan <strong>Simple Past Tense</strong>. Dalam kalimat positif, kata kerja yang digunakan adalah Verb 2 (V2).<br>Bentuk V2 dari kata dasar <em>make</em> adalah <strong>made</strong> (merupakan <em>irregular verb</em> atau kata kerja tidak beraturan)."
+            },
+            {
+                id: 2,
+                question: "We ... to the beach last Sunday because the weather was extremely bad and rainy.",
+                options: {
+                    A: "did not go",
+                    B: "do not go",
+                    C: "were not go",
+                    D: "did not went"
+                },
+                correct: "A",
+                explanation: "Kata kunci di sini adalah <strong>\"last Sunday\"</strong> (hari Minggu lalu). Berarti kita memakai Simple Past Tense.<br>Untuk membuat kalimat <strong>negatif</strong> (tidak melakukan sesuatu di masa lampau), kita punya <em>Rumus Jitu</em>: <br><strong>Subjek + did not + Verb 1</strong>.<br>Jadi, jawabannya adalah <em>\"did not go\"</em>. <br><br><span class='text-xs text-rose-600 font-semibold'><i class='fas fa-triangle-exclamation'></i> Hati-hati: Pilihan D (did not went) salah besar karena setelah \"did not\", kata kerja HARUS kembali ke bentuk dasar (Verb 1), tidak boleh bentuk lampau (V2) lagi.</span>"
+            },
+            {
+                id: 3,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Siti:</strong> "Where did you buy that beautiful dress, Dayu?"<br>
+                    <strong>Dayu:</strong> "I ... it at the new department store downtown two days ago."
+                </div>`,
+                question: "The correct verb to fill the blank is...",
+                options: {
+                    A: "buy",
+                    B: "bought",
+                    C: "buys",
+                    D: "buying"
+                },
+                correct: "B",
+                explanation: "Lihat keterangan waktu di akhir kalimat Dayu: <strong>\"two days ago\"</strong> (dua hari yang lalu). Ini berarti kejadiannya sudah berlalu (Past Tense).<br>Dayu membuat kalimat pernyataan positif, sehingga kata kerjanya harus menggunakan bentuk lampau (Verb 2). Bentuk V2 dari <em>buy</em> (membeli) adalah <strong>bought</strong>."
+            },
+            {
+                id: 4,
+                question: "... you ... the horror movie on TV last night?",
+                options: {
+                    A: "Do - watch",
+                    B: "Did - watched",
+                    C: "Did - watch",
+                    D: "Were - watch"
+                },
+                correct: "C",
+                explanation: "Soal ini meminta kita melengkapi kalimat tanya (interogatif) untuk kejadian semalam (<strong>last night</strong>).<br>Rumus kalimat tanya Past Tense untuk kata kerja (selain to be) adalah:<br><strong>Did + Subjek + Verb 1 + ?</strong><br>Oleh karena itu, pasangan yang benar adalah <strong>Did - watch</strong> (Did you watch...?)."
+            },
+            {
+                id: 5,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3 shadow-sm">
+                    <strong>Read the sentences below!</strong><br>
+                    (1) We buyed some souvenirs in Bali last week.<br>
+                    (2) She did not wrote the letter for her grandmother.<br>
+                    (3) They were very happy after winning the competition yesterday.<br>
+                    (4) Did he played basketball with his friends this morning?
+                </div>`,
+                question: "Which of the sentences above is grammatically CORRECT?",
+                options: {
+                    A: "(1)",
+                    B: "(2)",
+                    C: "(3)",
+                    D: "(4)"
+                },
+                correct: "C",
+                explanation: "Mari kita bedah dan perbaiki satu-satu ya!<br><ul class='list-disc list-inside mt-2 space-y-1 ml-2'><li><strong>Kalimat (1) Salah:</strong> Kata kerja <em>buy</em> tidak beraturan, V2-nya seharusnya <strong>bought</strong>, bukan <em>buyed</em>.</li><li><strong>Kalimat (2) Salah:</strong> Setelah <em>\"did not\"</em> harus pakai Verb 1. Seharusnya <em>did not <strong>write</strong></em>, bukan <em>wrote</em>.</li><li><strong>Kalimat (4) Salah:</strong> Setelah <em>\"Did\"</em> harus pakai Verb 1. Seharusnya <em>Did he <strong>play</strong></em>, bukan <em>played</em>.</li><li><strong>Kalimat (3) BENAR:</strong> Subjek \"They\" (mereka) berpasangan dengan To Be past \"were\", diikuti kata sifat \"happy\" (bahagia) dan ada keterangan waktu \"yesterday\". Kalimat ini sempurna secara grammar.</li></ul>"
+            },
+            {
+                id: 6,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Riko:</strong> "Why didn't you answer my phone call at 8 PM last night?"<br>
+                    <strong>Deni:</strong> "Oh, I am sorry. I ... my phone in the car."
+                </div>`,
+                question: "The correct verb to fill the blank is...",
+                options: {
+                    A: "leave",
+                    B: "left",
+                    C: "was leave",
+                    D: "did left"
+                },
+                correct: "B",
+                explanation: "Konteks percakapan ini membahas tentang kejadian tadi malam (<strong>last night</strong>). Deni menjelaskan alasan mengapa ia tidak mengangkat telepon semalam, yaitu karena ia <em>meninggalkan</em> HP-nya di mobil.<br>Karena ini kalimat positif masa lampau, kita butuh Verb 2 dari kata <em>leave</em> (meninggalkan/tertinggal). Bentuk V2 dari <em>leave</em> adalah <strong>left</strong>."
+            },
+            {
+                id: 7,
+                question: "My family and I ... in Jakarta five years ago before we moved to Bandung.",
+                options: {
+                    A: "live",
+                    B: "lives",
+                    C: "lived",
+                    D: "living"
+                },
+                correct: "C",
+                explanation: "Keterangan waktu <strong>\"five years ago\"</strong> (lima tahun yang lalu) dengan jelas menunjukkan bahwa peristiwa ini telah terjadi dan selesai di masa lalu.<br>Oleh sebab itu, kita harus menggunakan Verb 2. Kata dasar <em>live</em> (tinggal) merupakan kata kerja beraturan <em>(regular verb)</em>, sehingga cukup ditambahkan akhiran <em>-d/-ed</em> menjadi <strong>lived</strong>."
+            },
+            {
+                id: 8,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rina:</strong> "Did the students finish their English project yesterday?"<br>
+                    <strong>Aris:</strong> "No, they ... . They needed one more day to complete it."
+                </div>`,
+                question: "The correct short answer to fill the blank is...",
+                options: {
+                    A: "didn't",
+                    B: "don't",
+                    C: "weren't",
+                    D: "wasn't"
+                },
+                correct: "A",
+                explanation: "Ini adalah bentuk <em>Short Answer</em> (Jawaban Singkat). Jika pertanyaan diawali dengan <strong>\"Did...\"</strong>, maka respons singkatnya juga harus menggunakan <strong>\"did\"</strong>.<br>Karena jawaban Aris adalah \"No\" (menyangkal), maka bentuknya menjadi negatif: <strong>No, they didn't</strong> (singkatan dari <em>did not</em>)."
+            },
+            {
+                id: 9,
+                context: `<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm md:text-base text-slate-800 font-medium mb-3 shadow-sm">
+                    <strong>Read the following text to answer the question!</strong><br>
+                    Last month, SMP Merdeka held a school camping trip. We arrived at the campsite in the afternoon. After setting up the tents, we gathered around the campfire. We sang songs, told stories, and ate roasted marshmallows. It was a memorable night.
+                </div>`,
+                question: "What did the students do immediately after they set up the tents?",
+                options: {
+                    A: "They arrived at the campsite.",
+                    B: "They sang songs and told stories.",
+                    C: "They gathered around the campfire.",
+                    D: "They roasted marshmallows."
+                },
+                correct: "C",
+                explanation: "Ayo kita perhatikan kalimat spesifik di dalam teks: <em>\"<strong>After setting up the tents</strong>, we <strong>gathered around the campfire</strong>.\"</em> (Setelah mendirikan tenda, kami berkumpul di sekitar api unggun).<br>Jadi, aktivitas yang dilakukan segera (immediately) setelah mendirikan tenda adalah berkumpul di dekat api unggun."
+            },
+            {
+                id: 10,
+                question: "The children ... very excited when they visited the zoo last Wednesday.",
+                options: {
+                    A: "are",
+                    B: "was",
+                    C: "were",
+                    D: "did"
+                },
+                correct: "C",
+                explanation: "Kalimat ini tidak memiliki kata kerja aksi utama, melainkan kata sifat (<em>excited</em> = bersemangat). Maka, kita membutuhkan <em>To Be</em> pendamping di masa lampau (was/were).<br>Subjeknya adalah <strong>\"The children\"</strong>. Kata <em>children</em> adalah bentuk jamak (banyak anak) dari <em>child</em> (satu anak).<br>Rumusnya: Subjek jamak (They, We, You, benda jamak) menggunakan To Be <strong>were</strong>."
+            },
+            {
+                id: 11,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Teacher:</strong> "Who ... the window in the classroom this morning?"<br>
+                    <strong>Budi:</strong> "I don't know, Sir. It was already broken when I arrived."
+                </div>`,
+                question: "The correct verb to fill the blank is...",
+                options: {
+                    A: "break",
+                    B: "broke",
+                    C: "broken",
+                    D: "breaks"
+                },
+                correct: "B",
+                explanation: "Guru bertanya siapa yang memecahkan jendela <strong>\"this morning\"</strong> (tadi pagi). Waktu ini sudah lewat, jadi kita menggunakan Verb 2.<br>Bentuk V2 dari kata dasar memecahkan/merusak (<em>break</em>) adalah <strong>broke</strong>. Perubahannya: Break (V1) -> Broke (V2) -> Broken (V3)."
+            },
+            {
+                id: 12,
+                context: `<div class="bg-amber-50 p-4 rounded-lg border border-amber-200 text-sm md:text-base text-amber-900 font-medium mb-3 shadow-sm">
+                    <strong>Arrange these words into a correct sentence!</strong><br>
+                    1) did not<br>
+                    2) the museum<br>
+                    3) visit<br>
+                    4) we<br>
+                    5) last Monday
+                </div>`,
+                question: "The correct arrangement is...",
+                options: {
+                    A: "4 - 1 - 3 - 2 - 5",
+                    B: "4 - 1 - 2 - 3 - 5",
+                    C: "4 - 3 - 1 - 2 - 5",
+                    D: "5 - 1 - 3 - 4 - 2"
+                },
+                correct: "A",
+                explanation: "Mari kita susun dengan rumus S-P-O-K (Subjek - Predikat - Objek - Keterangan):<br>1. <strong>Subjek:</strong> We (4)<br>2. <strong>Predikat (Negatif):</strong> did not (1) + Verb 1: visit (3)<br>3. <strong>Objek:</strong> the museum (2)<br>4. <strong>Keterangan Waktu:</strong> last Monday (5)<br>Kalimat utuh: <em>We did not visit the museum last Monday.</em> (Urutan: 4 - 1 - 3 - 2 - 5)."
+            },
+            {
+                id: 13,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Evaluate the following short dialogue:</strong><br>
+                    <strong>Sita:</strong> "I went to your house yesterday afternoon, but you weren't there."<br>
+                    <strong>Andi:</strong> "Oh, I'm sorry. I ... my uncle at the hospital at that time."
+                </div>`,
+                question: "The most grammatically and contextually appropriate verb to fill the blank is...",
+                options: {
+                    A: "visit",
+                    B: "visited",
+                    C: "was visiting",
+                    D: "am visiting"
+                },
+                correct: "C",
+                explanation: "Sita menceritakan suatu titik spesifik di masa lalu (\"kemarin sore ketika saya ke rumahmu\"). Andi menjelaskan apa yang <strong>sedang</strong> ia lakukan tepat pada waktu (<em>at that time</em>) Sita datang.<br>Untuk menyatakan suatu kejadian yang <em>sedang berlangsung</em> di masa lalu, kita menggunakan <strong>Past Continuous Tense</strong>.<br>Rumusnya: <strong>Subjek + was/were + Verb-ing</strong> -> <em>I <strong>was visiting</strong></em>."
+            },
+            {
+                id: 14,
+                question: "Choose the sentence that correctly uses an irregular past tense verb!",
+                options: {
+                    A: "The bird flied high in the sky.",
+                    B: "He runned very fast to catch the bus.",
+                    C: "She wrote a beautiful poem yesterday.",
+                    D: "My father builded this house in 2010."
+                },
+                correct: "C",
+                explanation: "Mari kita evaluasi kesalahannya:<br>A. <em>flied</em> salah. V2 dari *fly* adalah <strong>flew</strong>.<br>B. <em>runned</em> salah. V2 dari *run* adalah <strong>ran</strong>.<br>D. <em>builded</em> salah. V2 dari *build* adalah <strong>built</strong>.<br>Hanya opsi C yang benar! V2 dari *write* adalah <strong>wrote</strong> (Ia menulis puisi indah kemarin)."
+            },
+            {
+                id: 15,
+                context: `<div class="bg-pink-50 p-4 rounded-lg border border-pink-200 text-sm md:text-base text-slate-800 font-medium mb-3 shadow-sm">
+                    <strong>Read the diary entry below!</strong><br>
+                    <em>Dear Diary,</em><br>
+                    <em>Today was a busy day. I woke up at 5 AM, had breakfast, and then rode my bicycle to school. At school, I took a math test. I felt nervous, but I did my best. After school, I helped my mother in the shop.</em>
+                </div>`,
+                question: "Based on the diary entry, which statement is TRUE?",
+                options: {
+                    A: "The writer walked to school.",
+                    B: "The writer felt confident about the math test.",
+                    C: "The writer helped his mother before going to school.",
+                    D: "The writer woke up early and rode his bicycle to school."
+                },
+                correct: "D",
+                explanation: "Pilihan D sangat akurat merangkum isi teks: Penulis bangun pagi-pagi sekali (*woke up at 5 AM*) dan pergi ke sekolah naik sepeda (*rode my bicycle*).<br>Opsi lain keliru: Dia tidak jalan kaki (opsi A), dia merasa gugup bukan percaya diri (opsi B), dan dia membantu ibunya *setelah* pulang sekolah, bukan sebelum berangkat (opsi C)."
+            },
+            {
+                id: 16,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Lina:</strong> "I heard you went to Singapore last holiday. How was it?"<br>
+                    <strong>Santi:</strong> "It ... wonderful! I visited many beautiful places there."
+                </div>`,
+                question: "The correct verb to fill the blank is...",
+                options: {
+                    A: "is",
+                    B: "was",
+                    C: "were",
+                    D: "did"
+                },
+                correct: "B",
+                explanation: "Santi mendeskripsikan pengalamannya berlibur ke Singapura di masa lalu (*last holiday*). Kata \"wonderful\" adalah kata sifat (<em>adjective</em>), sehingga membutuhkan To Be masa lampau.<br>Subjeknya adalah <strong>\"It\"</strong> (kata ganti tunggal). Pasangan To Be lampau untuk subjek I, He, She, It adalah <strong>was</strong>."
+            },
+            {
+                id: 17,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Analyze the following sentence:</strong><br>
+                    "The students did not understood the teacher's explanation during the last history class."
+                </div>`,
+                question: "What makes the sentence above grammatically incorrect?",
+                options: {
+                    A: "The use of \"did not\" should be replaced with \"were not\".",
+                    B: "The verb \"understood\" should be in its base form \"understand\".",
+                    C: "The word \"during\" is inappropriate for past events.",
+                    D: "The time signal \"last history class\" should be \"yesterday\"."
+                },
+                correct: "B",
+                explanation: "Aturan emas Simple Past Tense kalimat negatif: <strong>Ketika ada kata \"did not\" (didn't), kata kerja utama HARUS kembali ke bentuk dasar / Verb 1</strong>.<br>Di kalimat ini, kata kerjanya adalah \"understood\" (Verb 2). Ini salah secara grammar dan seharusnya dikembalikan menjadi Verb 1, yaitu <strong>\"understand\"</strong>."
+            },
+            {
+                id: 18,
+                question: "My father ... his old motorcycle last week because he wanted to buy a new one.",
+                options: {
+                    A: "sell",
+                    B: "sells",
+                    C: "sold",
+                    D: "selling"
+                },
+                correct: "C",
+                explanation: "Lihat keterangan waktunya, yaitu <strong>\"last week\"</strong> (minggu lalu). Ini berarti kita butuh Verb 2.<br>Kata dasar menjual adalah *sell*. *Sell* adalah kata kerja tidak beraturan (irregular verb), bentuk masa lampaunya (V2) berubah menjadi <strong>sold</strong>."
+            },
+            {
+                id: 19,
+                question: "Which of the following sentences expresses a completed action in the past with a specific time marker?",
+                options: {
+                    A: "She is studying English right now.",
+                    B: "They have lived in this city for ten years.",
+                    C: "We went to the National Library yesterday morning.",
+                    D: "He usually plays football on Friday afternoons."
+                },
+                correct: "C",
+                explanation: "Pertanyaannya menanyakan kalimat mana yang menyatakan tindakan selesai di masa lalu (Simple Past Tense).<br>Opsi C adalah jawaban yang tepat: menggunakan V2 (<strong>went</strong>) dan memiliki keterangan waktu spesifik di masa lalu (<strong>yesterday morning</strong>).<br>Catatan: A = Present Continuous Tense, B = Present Perfect Tense, D = Simple Present Tense."
+            },
+            {
+                id: 20,
+                context: `<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm md:text-base text-slate-800 font-medium mb-3">
+                    <strong>Rudi:</strong> "Did you see my keys on the table?"<br>
+                    <strong>Sita:</strong> "No, I didn't. But I ... them in the drawer five minutes ago."
+                </div>`,
+                question: "The correct verb to fill the blank is...",
+                options: {
+                    A: "see",
+                    B: "saw",
+                    C: "seen",
+                    D: "seeing"
+                },
+                correct: "B",
+                explanation: "Sita menjelaskan bahwa ia melihat kunci tersebut <strong>\"five minutes ago\"</strong> (lima menit yang lalu). Waktu ini sudah lewat, maka kita gunakan Simple Past Tense.<br>Bentuk V2 (lampau) dari kata kerja <em>see</em> (melihat) adalah <strong>saw</strong>."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            let htmlContent = '';
+
+            quizData.forEach((item, index) => {
+                htmlContent += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:p-7 relative group hover:border-blue-300 transition-colors duration-300">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner mb-2 sm:mb-0">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1 w-full">
+                                ${item.context ? item.context : ''}
+                                <h4 class="text-slate-800 font-semibold text-base md:text-[17px] mb-5 leading-relaxed">${item.question}</h4>
+                                <div class="space-y-3">
+                `;
+                
+                // Render Options
+                for (const [key, value] of Object.entries(item.options)) {
+                    htmlContent += `
+                        <label class="relative flex cursor-pointer group/label">
+                            <input type="radio" name="q${item.id}" value="${key}" class="peer sr-only radio-custom">
+                            <div class="w-full flex items-start sm:items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all duration-200 peer-focus:ring-2 peer-focus:ring-blue-300">
+                                <div class="radio-circle w-5 h-5 border-2 border-slate-300 rounded-full mr-3 mt-0.5 sm:mt-0 flex-shrink-0 transition-colors"></div>
+                                <div class="flex-1 text-slate-700 font-medium text-sm md:text-base">
+                                    <span class="font-bold text-slate-900 mr-2">${key}.</span>
+                                    ${value}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }
+
+                htmlContent += `
+                                </div>
+                                <div id="exp-container-${item.id}" class="hidden mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down">
+                                    <div class="flex items-start">
+                                        <div id="exp-icon-${item.id}" class="mr-3 text-xl mt-0.5 flex-shrink-0"></div>
+                                        <div>
+                                            <h5 id="exp-title-${item.id}" class="font-bold text-base mb-1.5"></h5>
+                                            <p id="exp-text-${item.id}" class="leading-relaxed opacity-90"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach(item => {
+                const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                const expTitle = document.getElementById(`exp-title-${item.id}`);
+                const expText = document.getElementById(`exp-text-${item.id}`);
+                const expIcon = document.getElementById(`exp-icon-${item.id}`);
+                
+                // Clean classes
+                expContainer.className = 'mt-6 p-4 md:p-5 rounded-lg text-sm border-l-4 animate-fade-in-down';
+
+                if (!selected) {
+                    // Unanswered handling
+                    expContainer.classList.add('bg-amber-50', 'border-amber-500', 'text-amber-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-exclamation text-amber-500"></i>';
+                    expTitle.innerText = "Soal terlewat / Belum dijawab!";
+                    expText.innerHTML = `Kunci jawaban yang benar adalah <strong>${item.correct}</strong>. <br><br><span class="font-bold border-b border-amber-300 pb-1 inline-block mb-2 mt-1"><i class="fas fa-lightbulb mr-1 text-amber-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                } else if (selected.value === item.correct) {
+                    // Correct answer
+                    correctCount++;
+                    expContainer.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-check text-emerald-500"></i>';
+                    expTitle.innerText = "Hebat! Jawaban Kamu Benar.";
+                    expText.innerHTML = item.explanation;
+                } else {
+                    // Incorrect answer
+                    expContainer.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    expIcon.innerHTML = '<i class="fas fa-circle-xmark text-rose-500"></i>';
+                    expTitle.innerText = `Jawaban kurang tepat. Kunci yang benar adalah ${item.correct}.`;
+                    expText.innerHTML = `<span class="font-bold border-b border-rose-300 pb-1 inline-block mb-2 mt-1"><i class="fas fa-lightbulb mr-1 text-rose-600"></i> Mari kita bahas:</span><br>${item.explanation}`;
+                }
+                
+                expContainer.classList.remove('hidden');
+
+                // Disable inputs after checking
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => r.disabled = true);
+            });
+
+            // Calculate Score (0-100)
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            const resultArea = document.getElementById('result-area');
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-fade-in-down');
+            
+            // Score Counting Animation
+            animateValue(scoreDisplay, 0, score, 1500);
+
+            // Conditional messages based on performance
+            if (score === 100) {
+                scoreMessage.innerHTML = "<i class='fas fa-trophy mr-2 text-yellow-500'></i> Nilai Sempurna! Pemahaman Simple Past Tense kamu luar biasa!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-emerald-700 bg-emerald-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 80) {
+                scoreMessage.innerHTML = "<i class='fas fa-star mr-2 text-blue-500'></i> Sangat Baik! Konsep grammar-mu sudah mantap.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-blue-700 bg-blue-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else if (score >= 60) {
+                scoreMessage.innerHTML = "<i class='fas fa-thumbs-up mr-2 text-indigo-500'></i> Cukup Baik! Pelajari lagi rumusnya lewat kotak pembahasan ya.";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-indigo-700 bg-indigo-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "<i class='fas fa-book-open mr-2 text-rose-500'></i> Tetap Semangat! Jangan menyerah, baca pembahasannya pelan-pelan dan coba lagi!";
+                scoreMessage.className = "text-lg md:text-xl font-bold text-rose-700 bg-rose-100 px-5 py-2 rounded-lg inline-block mt-2 shadow-sm";
+            }
+
+            // Button visibility toggle
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-retry').classList.remove('hidden');
+
+            // Auto scroll to results
+            setTimeout(() => {
+                document.getElementById('btn-retry').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const easeProgress = progress * (2 - progress); // EaseOut quad function
+                obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function resetQuiz() {
+            // Reset forms natively
+            document.getElementById('quizForm').reset();
+            
+            // Re-enable and uncheck all inputs, hide explanation boxes
+            quizData.forEach(item => {
+                const radios = document.querySelectorAll(`input[name="q${item.id}"]`);
+                radios.forEach(r => {
+                    r.disabled = false;
+                    r.checked = false;
+                });
+                
+                const expContainer = document.getElementById(`exp-container-${item.id}`);
+                expContainer.classList.add('hidden');
+            });
+
+            // Hide Result Board
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('final-score').innerText = '0';
+            
+            // Swap Buttons
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-retry').classList.add('hidden');
+
+            // Scroll to Top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize quiz on load
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

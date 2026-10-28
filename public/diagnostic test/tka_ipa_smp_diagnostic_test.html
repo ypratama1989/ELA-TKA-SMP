@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TKA IPA SMP — DIAGNOSTIC TEST</title>
+    <style>
+        /* ============================================================
+           CSS & DESIGN SYSTEM - MODERN EDUCATIONAL DASHBOARD
+           ============================================================ */
+        :root {
+            /* Dark Mode Palette */
+            --bg-main: #040914; /* Navy sangat gelap */
+            --bg-card: #0d1527; /* Dark navy */
+            --bg-card-hover: #16223b;
+            --bg-elevated: #16223b;
+            
+            --accent-primary: #8b5cf6; /* Electric Violet */
+            --accent-primary-hover: #7c3aed;
+            --accent-secondary: #3b82f6; /* Blue */
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8; /* Blue-gray */
+            --text-muted: #64748b;
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            
+            /* Semantic Result Colors */
+            --status-strong: #10b981; /* Green */
+            --status-proficient: #3b82f6; /* Blue */
+            --status-developing: #f59e0b; /* Orange/Yellow */
+            --status-gap: #ef4444; /* Red */
+            
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .text-accent { color: var(--accent-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .items-end { align-items: flex-end; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mt-10 { margin-top: 2.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-10 { margin-bottom: 2.5rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .pb-2 { padding-bottom: 0.5rem; }
+        .pb-3 { padding-bottom: 0.75rem; }
+        .pb-4 { padding-bottom: 1rem; }
+        .pb-6 { padding-bottom: 1.5rem; }
+        .border-b { border-bottom: 1px solid var(--border-color); }
+        .border-t { border-top: 1px solid var(--border-color); }
+        
+        .uppercase { text-transform: uppercase; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        .text-xs { font-size: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .relative { position: relative; }
+        .overflow-hidden { overflow: hidden; }
+        .z-10 { z-index: 10; }
+
+        /* Typography */
+        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 0.5rem; }
+        h2 { font-size: 1.75rem; margin-bottom: 1rem; }
+        h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+        
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .container-sm { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm);
+            font-weight: 600; font-size: 1rem; cursor: pointer;
+            transition: var(--transition); border: none; outline: none; text-decoration: none;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background-color: var(--accent-primary); color: white; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--accent-primary-hover); }
+        .btn-secondary { background-color: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover:not(:disabled) { background-color: var(--bg-card-hover); border-color: var(--text-secondary); }
+        .btn-outline { background-color: transparent; color: var(--accent-primary); border: 1px solid var(--accent-primary); }
+        .btn-outline:hover:not(:disabled) { background-color: rgba(139, 92, 246, 0.1); }
+        .btn-danger { background-color: transparent; color: var(--status-gap); border: 1px solid var(--status-gap); }
+        .btn-danger:hover { background-color: rgba(239, 68, 68, 0.1); }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-group label { font-weight: 600; color: var(--text-secondary); }
+        .form-control {
+            width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color); background-color: var(--bg-main);
+            color: var(--text-primary); font-family: var(--font-main); font-size: 1rem;
+            transition: var(--transition);
+        }
+        .form-control:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
+        .custom-radio { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; padding: 0.75rem 1rem; background: var(--bg-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-color); transition: var(--transition); }
+        .custom-radio:hover { background: var(--bg-card-hover); }
+        .custom-radio input[type="radio"], .custom-radio input[type="checkbox"] { margin-top: 0.25rem; width: 1.2rem; height: 1.2rem; accent-color: var(--accent-primary); }
+        
+        /* Cards & Badges */
+        .card { background-color: var(--bg-card); border-radius: var(--radius-md); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
+        .pill-badge { display: inline-block; padding: 0.35rem 0.85rem; background-color: rgba(139, 92, 246, 0.15); color: var(--accent-primary); border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .view-section { min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* =========================================
+           TEST INTERFACE LAYOUT (CENTERED)
+           ========================================= */
+        .test-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); height: 80px; position: sticky; top: 0; z-index: 10; }
+        .timer-display { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; padding: 0.5rem 1rem; border-radius: var(--radius-sm); background-color: var(--bg-elevated); transition: color 0.3s ease; }
+        .timer-warning { color: var(--status-developing); }
+        .timer-danger { color: var(--status-gap); animation: pulse 1s infinite; }
+        
+        .centered-layout { display: flex; justify-content: center; padding: 2rem; width: 100%; }
+        
+        .panel { background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-sm); width: 100%; max-width: 900px; }
+        .panel-header { padding: 1.25rem 1.5rem; background-color: var(--bg-elevated); border-bottom: 1px solid var(--border-color); font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .panel-content { padding: 2rem 2.5rem; flex: 1; line-height: 1.8; }
+        
+        .question-text { font-size: 1.2rem; margin-bottom: 2.5rem; font-weight: 500; white-space: pre-wrap;}
+        .options-grid { display: flex; flex-direction: column; gap: 1rem; }
+        .option-label { display: flex; align-items: center; padding: 1rem 1.5rem; background-color: var(--bg-elevated); border: 2px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); }
+        .option-label:hover { background-color: var(--bg-card-hover); border-color: var(--text-secondary); }
+        .option-label.selected { background-color: rgba(139, 92, 246, 0.1); border-color: var(--accent-primary); }
+        .option-input { display: none; }
+        .option-letter { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background-color: var(--bg-main); border-radius: 50%; margin-right: 1.25rem; font-weight: 700; color: var(--text-secondary); border: 1px solid var(--border-color); flex-shrink: 0; transition: var(--transition); }
+        .option-label.selected .option-letter { background-color: var(--accent-primary); color: white; border-color: var(--accent-primary); }
+        .test-controls { display: flex; justify-content: space-between; padding: 1.5rem 2.5rem; border-top: 1px solid var(--border-color); background-color: var(--bg-elevated); gap: 1rem; }
+
+        /* Navigator Sidebar (Right Drawer) */
+        .navigator-wrapper { position: fixed; right: 0; top: 80px; bottom: 0; width: 340px; background-color: var(--bg-card); border-left: 1px solid var(--border-color); transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 50; display: flex; flex-direction: column; box-shadow: -4px 0 15px rgba(0,0,0,0.5); }
+        .navigator-wrapper.show { transform: translateX(0); }
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; padding: 1.5rem; overflow-y: auto; flex: 1; align-content: start;}
+        .nav-btn { aspect-ratio: 1; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-main); color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .nav-btn:hover { background-color: var(--bg-elevated); border-color: var(--text-secondary); }
+        .nav-btn.answered { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); }
+        .nav-btn.current { border: 2px solid var(--accent-primary); color: white; background-color: var(--bg-elevated); box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+        .nav-btn.bookmarked::after { content: '⚑'; position: absolute; top: -6px; right: -4px; color: var(--status-developing); font-size: 0.75rem; text-shadow: 0 0 2px black;}
+        
+        .progress-bar-container { height: 6px; background-color: var(--bg-main); border-radius: 3px; overflow: hidden; margin-top: 0.5rem; }
+        .progress-fill { height: 100%; background-color: var(--accent-primary); width: 0%; transition: width 0.3s ease; }
+
+        /* =========================================
+           RESULT DASHBOARD
+           ========================================= */
+        .score-box { background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.08)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-lg); padding: 3rem; text-align: center; }
+        .score-value { font-size: 4.5rem; font-weight: 800; color: var(--accent-primary); line-height: 1; letter-spacing: -0.02em; }
+        
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+        
+        .progress-stat { margin-bottom: 1.25rem; }
+        .progress-stat-header { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 500;}
+        .stat-bar-bg { height: 8px; background-color: var(--bg-main); border-radius: 4px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; border-radius: 4px; }
+
+        /* Status Colors */
+        .c-strong { color: var(--status-strong); }
+        .c-proficient { color: var(--status-proficient); }
+        .c-developing { color: var(--status-developing); }
+        .c-gap { color: var(--status-gap); }
+
+        .bg-strong { background-color: var(--status-strong); }
+        .bg-proficient { background-color: var(--status-proficient); }
+        .bg-developing { background-color: var(--status-developing); color: #000; }
+        .bg-gap { background-color: var(--status-gap); }
+
+        .comp-card { background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem; border-left-width: 4px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+        .comp-card:hover { transform: translateY(-2px); }
+        .border-strong { border-left-color: var(--status-strong); }
+        .border-proficient { border-left-color: var(--status-proficient); }
+        .border-developing { border-left-color: var(--status-developing); }
+        .border-gap { border-left-color: var(--status-gap); }
+        
+        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: white; letter-spacing: 0.5px;}
+        
+        .tooltip { position: relative; cursor: help; border-bottom: 1px dotted var(--text-muted); display: inline-block;}
+        .tooltip::after { content: attr(data-tooltip); position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: normal; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid var(--border-color);}
+        .tooltip:hover::after { opacity: 1; }
+
+        .priority-item { background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.75rem;}
+
+        /* Review Mode */
+        .review-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 2rem; margin-bottom: 1.5rem; border-left: 4px solid var(--text-muted); box-shadow: var(--shadow-sm); }
+        .review-card.correct { border-left-color: var(--status-strong); }
+        .review-card.incorrect { border-left-color: var(--status-gap); }
+        .review-opt { padding: 1rem; margin-bottom: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-elevated); }
+        .review-opt.is-correct { background: rgba(16, 185, 129, 0.1); border-color: var(--status-strong); color: var(--status-strong); }
+        .review-opt.is-wrong { background: rgba(239, 68, 68, 0.1); border-color: var(--status-gap); color: var(--status-gap); text-decoration: line-through; }
+        .explanation-box { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; }
+        
+        .math-block { background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 1.05rem; margin-top: 0.5rem;}
+
+        /* Modals & Toasts */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal-content { background-color: var(--bg-card); border-radius: var(--radius-md); padding: 2.5rem; max-width: 500px; width: 90%; border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background-color: var(--bg-elevated); color: white; padding: 1rem 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--accent-primary); box-shadow: var(--shadow-md); z-index: 1050; transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(20px); pointer-events: none; font-weight: 500;}
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Responsive Mobile */
+        @media (max-width: 992px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .test-header { padding: 1rem; height: auto; flex-wrap: wrap; justify-content: center; gap: 1rem; text-align: center; }
+            .timer-display { width: 100%; }
+            .centered-layout { padding: 1rem; }
+            .panel-content { padding: 1.5rem; }
+            .test-controls { padding: 1.5rem; flex-direction: column; }
+            .test-controls button { width: 100%; }
+            
+            .navigator-wrapper { width: 100%; bottom: 0; top: auto; height: 60vh; transform: translateY(100%); border-left: none; border-top: 1px solid var(--border-color); box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
+            .navigator-wrapper.show { transform: translateY(0); }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background-color: white; color: black; font-size: 11pt; }
+            .card, .score-box, .comp-card, .priority-item, .panel { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; color: black !important; page-break-inside: avoid; }
+            .text-secondary, .text-muted, .c-developing, .c-gap { color: #333 !important; }
+            .text-accent, .c-strong, .c-proficient { color: black !important; font-weight: bold; }
+            .bg-strong, .bg-proficient, .bg-developing, .bg-gap { color: black !important; border: 1px solid #000; background: transparent !important;}
+            button, .btn, .navigator-wrapper, .test-header, .test-controls, .print-hide { display: none !important; }
+            .view-section { min-height: auto; display: block; }
+            .stat-bar-bg { background-color: #eee !important; border: 1px solid #ccc; }
+            .stat-bar-fill { background-color: #555 !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         VIEW: LANDING PAGE
+         ========================================== -->
+    <div id="view-landing" class="view-section">
+        <div class="container text-center flex flex-col justify-center items-center h-full" style="flex: 1;">
+            <div class="pill-badge mb-6">Assessment Internal SMP</div>
+            <h1 class="text-accent mb-2" style="font-size: 3.5rem; letter-spacing: -0.03em;">TKA IPA SMP</h1>
+            <h2 class="text-secondary font-semibold" style="font-size: 1.5rem; margin-bottom: 2rem;">Diagnostic Test</h2>
+            
+            <p class="text-secondary" style="max-width: 650px; margin: 0 auto; font-size: 1.15rem; line-height: 1.7;">
+                “Temukan konsep IPA yang sudah kuat dan materi yang perlu diprioritaskan sebelum TKA.”
+            </p>
+            
+            <div class="grid-4 w-full mt-10 mb-8" style="max-width: 900px;">
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:2rem">60</div><div class="text-secondary text-sm font-semibold uppercase tracking-wider">Soal</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:2rem">18</div><div class="text-secondary text-sm font-semibold uppercase tracking-wider">Kompetensi</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:2rem">75</div><div class="text-secondary text-sm font-semibold uppercase tracking-wider">Menit</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:2rem">4</div><div class="text-secondary text-sm font-semibold uppercase tracking-wider">Domain</div></div>
+            </div>
+
+            <div class="flex gap-4 justify-center flex-wrap mb-8 text-sm font-semibold text-muted">
+                <span class="bg-elevated px-4 py-2 rounded-full border">MATTER & CHEMISTRY</span>
+                <span class="bg-elevated px-4 py-2 rounded-full border">PHYSICS & ENERGY</span>
+                <span class="bg-elevated px-4 py-2 rounded-full border">LIFE SCIENCE</span>
+                <span class="bg-elevated px-4 py-2 rounded-full border">EARTH & SPACE SCIENCE</span>
+            </div>
+
+            <div class="mb-8">
+                <button class="btn btn-primary" style="font-size: 1.25rem; padding: 1.25rem 3.5rem; border-radius: 99px; box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);" onclick="app.navigate('identity')">MULAI DIAGNOSTIC</button>
+            </div>
+            
+            <p class="text-muted" style="max-width: 700px; font-size: 0.9rem;">
+                * Diagnostic ini tidak sekadar memberikan nilai. Sistem akan memetakan pemahaman konsep, kemampuan perhitungan, dan penalaran ilmiah.
+            </p>
+            
+            <div id="landing-resume-btn" class="mt-6 hidden">
+                <button class="btn btn-outline" style="border-radius: 99px;" onclick="app.checkExistingSession()">Lanjutkan Sesi Sebelumnya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: IDENTITY FORM
+         ========================================== -->
+    <div id="view-identity" class="view-section hidden">
+        <div class="container-sm flex flex-col justify-center h-full" style="flex: 1;">
+            <div class="card p-8">
+                <h2 class="text-center mb-8">Data Siswa</h2>
+                <form id="identity-form" onsubmit="app.submitIdentity(event)">
+                    <div class="form-group">
+                        <label for="student-name">Nama Lengkap</label>
+                        <input type="text" id="student-name" class="form-control" required placeholder="Masukkan nama...">
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="student-class">Kelas</label>
+                            <select id="student-class" class="form-control" required>
+                                <option value="" disabled selected>Pilih kelas...</option>
+                                <option value="VII">VII (Tujuh)</option>
+                                <option value="VIII">VIII (Delapan)</option>
+                                <option value="IX">IX (Sembilan)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="student-target">Target</label>
+                            <select id="student-target" class="form-control" required>
+                                <option value="" disabled selected>Pilih target...</option>
+                                <option value="Persiapan awal">Persiapan awal</option>
+                                <option value="Penguatan materi">Penguatan materi</option>
+                                <option value="Persiapan intensif TKA">Persiapan intensif TKA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-6">
+                        <label>Menurutmu, bagaimana kemampuan IPA-mu saat ini? (Self-Assessment)</label>
+                        <div class="flex flex-col gap-3 mt-3">
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="1" required> 1. Sangat perlu diperbaiki</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="2"> 2. Perlu diperbaiki</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="3"> 3. Sedang</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="4"> 4. Baik</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="5"> 5. Sangat baik</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-10 pt-6 border-t">
+                        <button type="button" class="btn btn-secondary" onclick="app.navigate('landing')">Kembali</button>
+                        <button type="submit" class="btn btn-primary">Lanjutkan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: INSTRUCTIONS
+         ========================================== -->
+    <div id="view-instructions" class="view-section hidden">
+        <div class="container-sm flex flex-col justify-center h-full" style="flex: 1;">
+            <div class="card p-8">
+                <h2 class="text-accent mb-2">Petunjuk Pengerjaan</h2>
+                <div class="flex gap-4 text-secondary font-semibold mb-8 pb-4 border-b flex-wrap">
+                    <span>60 Soal</span> • <span>75 Menit</span> • <span>18 Kompetensi</span>
+                </div>
+                
+                <ul class="text-secondary" style="margin-left: 1.5rem; margin-bottom: 2.5rem; display: flex; flex-direction: column; gap: 1rem; font-size: 1.05rem;">
+                    <li>Bacalah setiap soal dengan teliti.</li>
+                    <li>Pilih satu jawaban paling tepat (A, B, C, atau D).</li>
+                    <li>Perhatikan satuan pada soal hitungan. Gunakan konstanta yang dicantumkan (seperti <i>g</i> = 10 m/s²) atau nilai standar umum.</li>
+                    <li>Jawaban dapat diubah sebelum tes selesai. Gunakan fitur "Tandai Soal" jika ragu-ragu.</li>
+                    <li>Tidak ada feedback benar/salah selama diagnostic berlangsung.</li>
+                    <li>Progress tersimpan otomatis.</li>
+                    <li>Ketika waktu habis (75 menit), tes otomatis diselesaikan.</li>
+                </ul>
+                
+                <label class="custom-radio mb-8" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary); padding: 1rem;">
+                    <input type="checkbox" id="understand-check" onchange="document.getElementById('start-btn').disabled = !this.checked">
+                    <span class="font-semibold text-primary" style="font-size: 1.05rem;">Saya memahami petunjuk dan siap memulai test.</span>
+                </label>
+                
+                <div class="flex justify-between">
+                    <button class="btn btn-secondary" onclick="app.navigate('identity')">Kembali</button>
+                    <button id="start-btn" class="btn btn-primary" disabled onclick="app.startTest()">MULAI TEST</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: TEST INTERFACE (CENTERED)
+         ========================================== -->
+    <div id="view-test" class="view-section hidden">
+        <div class="test-header">
+            <div>
+                <h3 style="margin: 0; font-size: 1.25rem;">TKA IPA Diagnostic</h3>
+                <div class="text-secondary" style="font-size: 0.95rem; font-weight: 500;">Soal <span id="header-q-num">1</span> / 60</div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="app.toggleNavigator()">
+                NAVIGATOR SOAL
+            </button>
+            
+            <div id="timer-display" class="timer-display">75:00</div>
+        </div>
+        
+        <div class="centered-layout">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <span id="q-macro" class="pill-badge" style="margin:0; background:var(--bg-main); border:1px solid var(--border-color); color:var(--text-secondary);">DOMAIN</span>
+                        <span id="q-domain" class="text-sm font-bold text-accent uppercase tracking-wider">K1</span>
+                    </div>
+                    <button id="bookmark-btn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="app.toggleBookmark()">⚑ TANDAI SOAL</button>
+                </div>
+                
+                <div class="panel-content">
+                    <div id="q-text" class="question-text">Question text here...</div>
+                    <div class="options-grid" id="q-options">
+                        <!-- Options Injected Here -->
+                    </div>
+                </div>
+                
+                <div class="test-controls">
+                    <button class="btn btn-secondary" onclick="app.prevQuestion()">← Sebelumnya</button>
+                    <button id="btn-next" class="btn btn-primary" onclick="app.nextQuestion()">Selanjutnya →</button>
+                    <button id="btn-finish" class="btn btn-danger hidden" onclick="app.confirmSubmit()">Selesaikan Test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigator Drawer -->
+        <div id="navigator-drawer" class="navigator-wrapper">
+            <div class="p-6 border-b flex justify-between items-center bg-card">
+                <span class="font-bold text-lg">Navigator</span>
+                <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem;" onclick="app.toggleNavigator()">TUTUP</button>
+            </div>
+            <div class="p-4 bg-elevated border-b">
+                <div class="flex justify-between text-sm mb-1"><span class="text-secondary font-semibold">Progress</span> <span id="progress-text" class="font-bold">0/60</span></div>
+                <div class="progress-bar-container"><div id="progress-fill" class="progress-fill"></div></div>
+            </div>
+            
+            <div id="nav-grid" class="nav-grid"></div>
+            
+            <div class="p-6 border-t bg-card">
+                <div class="text-sm text-secondary mb-2 flex items-center gap-3"><span style="display:inline-block; width:14px; height:14px; background:rgba(59, 130, 246, 0.15); border:1px solid rgba(59, 130, 246, 0.4); border-radius:3px;"></span> Dijawab</div>
+                <div class="text-sm text-secondary mb-2 flex items-center gap-3"><span style="display:inline-block; width:14px; height:14px; background:var(--bg-main); border:1px solid var(--border-color); border-radius:3px;"></span> Belum Dijawab</div>
+                <div class="text-sm text-secondary flex items-center gap-3"><span style="color:var(--status-developing); font-size:1.1rem; line-height:1;">⚑</span> Ditandai</div>
+                <button class="btn btn-danger w-full mt-6" onclick="app.confirmSubmit()">SELESAIKAN TEST</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: RESULT DASHBOARD
+         ========================================== -->
+    <div id="view-result" class="view-section hidden">
+        <div class="container">
+            <div class="flex justify-between items-center mb-8 print-hide">
+                <h1 class="text-accent" style="margin: 0;">DIAGNOSTIC RESULT</h1>
+            </div>
+            
+            <div class="card mb-8 p-8 relative overflow-hidden">
+                <div style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; background:var(--accent-primary); opacity:0.05; border-radius:50%; filter:blur(40px);"></div>
+                
+                <div class="text-center mb-8 relative z-10">
+                    <h2 id="res-name" style="margin-bottom: 0.25rem; font-size: 2rem;">Nama Siswa</h2>
+                    <div class="text-secondary font-medium">Kelas <span id="res-class"></span> • Tanggal: <span id="res-date"></span></div>
+                </div>
+
+                <div class="score-box relative z-10">
+                    <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem;">Diagnostic Score</div>
+                    <div class="flex items-end justify-center">
+                        <span id="res-score" class="score-value">0</span>
+                        <span class="text-muted font-bold" style="font-size: 2rem; margin-bottom: 0.5rem; margin-left: 0.5rem;">/ 100</span>
+                    </div>
+                    <div class="flex gap-8 mt-8 text-secondary font-semibold justify-center flex-wrap">
+                        <span class="c-strong text-lg">✔&nbsp;<span id="res-correct">0</span>&nbsp;benar</span>
+                        <span class="c-gap text-lg">✖&nbsp;<span id="res-wrong">0</span>&nbsp;salah</span>
+                        <span class="text-lg">⚪&nbsp;<span id="res-empty">0</span>&nbsp;kosong</span>
+                        <span class="text-lg">⏱&nbsp;<span id="res-time">0</span>&nbsp;menit</span>
+                    </div>
+                </div>
+                <div class="text-center text-muted mt-6" style="font-size: 0.85rem; font-style: italic;">
+                    * Hasil ini merupakan diagnostic internal berdasarkan soal yang dikerjakan dan bukan nilai maupun prediksi resmi TKA. Kategori kompetensi digunakan untuk membantu menentukan prioritas belajar.
+                </div>
+            </div>
+
+            <div class="grid-2 mb-8">
+                <!-- Macro Domains -->
+                <div class="card">
+                    <h3 class="mb-6 pb-4 border-b">Profil 4 Domain Makro</h3>
+                    <div id="res-macro-domains"></div>
+                </div>
+                
+                <!-- Scientific Skills -->
+                <div class="card">
+                    <h3 class="mb-6 pb-4 border-b">Scientific Skill Profile</h3>
+                    <div id="res-skill-modes"></div>
+                    <div id="res-skill-interp" class="mt-6 p-4 text-secondary bg-elevated rounded border-l" style="font-size: 0.9rem; line-height: 1.5; border-left: 4px solid var(--accent-secondary);"></div>
+                </div>
+            </div>
+
+            <!-- Calculation Analysis -->
+            <div class="card mb-8">
+                <h3 class="mb-4 pb-2 border-b">Analisis Soal Hitungan</h3>
+                <div class="flex items-center gap-6 flex-wrap">
+                    <div class="flex-col text-center p-4 bg-elevated rounded" style="min-width: 150px; border: 1px solid var(--border-color);">
+                        <div class="text-secondary text-sm font-bold uppercase tracking-wider mb-2">Benar</div>
+                        <div class="text-accent font-bold" style="font-size: 1.5rem;"><span id="calc-correct">0</span> / <span id="calc-total">0</span></div>
+                        <div class="font-bold mt-1" id="calc-score" style="font-size: 1.25rem;">0%</div>
+                    </div>
+                    <div class="flex-1" id="calc-interp" style="color: var(--text-secondary); line-height: 1.6;">
+                        <!-- Injected calculation suggestion -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Priorities -->
+            <div class="card mb-8" style="border: 1px solid var(--status-gap); position: relative; overflow: hidden; background: linear-gradient(to right, rgba(239, 68, 68, 0.05), transparent);">
+                <div style="position: absolute; top: 0; left: 0; width: 6px; height: 100%; background-color: var(--status-gap);"></div>
+                <h2 style="color: var(--status-gap); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; padding-left: 1rem;">
+                    ⚠️ TOP 5 PRIORITAS BELAJAR
+                </h2>
+                <p class="text-secondary mb-6" style="padding-left: 1rem;">Diurutkan berdasarkan skor terendah dan beban kesalahan kognitif/penalaran ilmiah.</p>
+                <div id="res-priorities" style="padding-left: 1rem; padding-right: 1rem;"></div>
+            </div>
+            
+            <div class="grid-2 mb-8">
+                <!-- Strengths -->
+                <div class="card border-strong" style="border-left-width: 4px;">
+                    <h3 class="c-strong">Top Strengths</h3>
+                    <p class="text-secondary mb-4 text-sm">Konsep yang sudah dikuasai dengan stabil.</p>
+                    <ul id="res-strengths" style="margin-left: 1.5rem; color: var(--text-primary); display: flex; flex-direction: column; gap: 0.75rem; font-weight: 500;"></ul>
+                </div>
+                
+                <!-- Error Analysis -->
+                <div class="card border-developing" style="border-left-width: 4px;">
+                    <h3 class="c-developing">Area Yang Perlu Ditinjau</h3>
+                    <p class="text-secondary mb-4 text-sm">Pola kesalahan atau miskonsepsi berulang (berdasarkan target diagnosis jawaban salah).</p>
+                    <ul id="res-errors" style="margin-left: 1.5rem; color: var(--text-primary); display: flex; flex-direction: column; gap: 0.75rem;"></ul>
+                </div>
+            </div>
+
+            <!-- Self Assessment -->
+            <div class="card mb-8 text-center bg-elevated">
+                <h3 class="mb-6">Perbandingan Persepsi dan Realita</h3>
+                <div class="flex justify-center gap-16 mb-6">
+                    <div>
+                        <div class="text-muted text-sm uppercase font-bold tracking-wider mb-2">Self-Assessment Awal</div>
+                        <div id="res-self" class="font-bold text-accent" style="font-size: 1.5rem;">-</div>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm uppercase font-bold tracking-wider mb-2">Performa Diagnostic</div>
+                        <div id="res-actual" class="font-bold text-accent" style="font-size: 1.5rem;">-</div>
+                    </div>
+                </div>
+                <div id="res-assess-interp" class="text-secondary" style="font-size: 1rem;"></div>
+            </div>
+
+            <!-- Competency Map -->
+            <div class="card mb-8">
+                <div class="flex justify-between items-end mb-6 flex-wrap gap-4 border-b pb-4">
+                    <h2 style="margin: 0;">Peta 18 Kompetensi</h2>
+                    <div class="flex gap-4 text-muted font-semibold text-xs uppercase">
+                        <span class="flex items-center gap-2"><span class="bg-strong" style="width:12px;height:12px;display:inline-block;border-radius:3px;"></span> Strong</span>
+                        <span class="flex items-center gap-2"><span class="bg-proficient" style="width:12px;height:12px;display:inline-block;border-radius:3px;"></span> Proficient</span>
+                        <span class="flex items-center gap-2"><span class="bg-developing" style="width:12px;height:12px;display:inline-block;border-radius:3px;"></span> Developing</span>
+                        <span class="flex items-center gap-2"><span class="bg-gap" style="width:12px;height:12px;display:inline-block;border-radius:3px;"></span> Gap</span>
+                    </div>
+                </div>
+                
+                <div id="heatmap-container" class="grid-4"></div>
+            </div>
+
+            <div class="flex justify-center gap-6 mt-10 mb-10 print-hide flex-wrap">
+                <button class="btn btn-primary" style="padding: 1rem 2rem; border-radius: 99px;" onclick="app.navigate('review')">REVIEW JAWABAN</button>
+                <button class="btn btn-secondary" style="padding: 1rem 2rem; border-radius: 99px;" onclick="app.resetTest()">ULANGI DIAGNOSTIC</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: REVIEW INTERFACE
+         ========================================== -->
+    <div id="view-review" class="view-section hidden">
+        <div class="container">
+            <div class="flex justify-between items-center mb-8 pb-4 border-b">
+                <div>
+                    <h1 class="text-accent" style="margin: 0; font-size: 2rem;">Review Jawaban</h1>
+                    <div class="text-secondary mt-1">Tinjau jawaban dan pelajari langkah penyelesaiannya.</div>
+                </div>
+                <button class="btn btn-secondary" onclick="app.navigate('result')">Kembali ke Hasil</button>
+            </div>
+
+            <div class="flex gap-3 mb-8 flex-wrap" id="review-filters">
+                <button class="btn btn-secondary active-filter" data-filter="all" style="border-color:var(--accent-primary); background:rgba(139,92,246,0.1); color:white;">Semua (60)</button>
+                <button class="btn btn-secondary" data-filter="incorrect">Salah (<span id="count-wrong">0</span>)</button>
+                <button class="btn btn-secondary" data-filter="correct">Benar (<span id="count-correct">0</span>)</button>
+                <button class="btn btn-secondary" data-filter="unanswered">Kosong (<span id="count-empty">0</span>)</button>
+                <button class="btn btn-secondary" data-filter="bookmarked">Ditandai (<span id="count-marked">0</span>)</button>
+            </div>
+
+            <div id="review-list"></div>
+            
+            <div class="text-center mt-10 mb-10">
+                <button class="btn btn-primary" style="padding: 1rem 2.5rem; border-radius: 99px;" onclick="app.navigate('result')">Kembali ke Dashboard Hasil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODALS & TOASTS
+         ========================================== -->
+    
+    <!-- Confirm Submit Modal -->
+    <div id="modal-submit" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h2 class="mb-2">Selesaikan Test?</h2>
+            <div class="text-secondary mb-6 pb-6 border-b">Pastikan Anda telah memeriksa kembali jawaban.</div>
+            
+            <div class="flex justify-center gap-8 mb-6">
+                <div><div class="font-bold text-accent" style="font-size: 2.5rem; line-height: 1;" id="modal-answered">0</div><div class="text-secondary text-sm font-semibold mt-2 uppercase tracking-wider">Terjawab</div></div>
+                <div><div class="font-bold text-gap" style="font-size: 2.5rem; line-height: 1;" id="modal-unanswered">0</div><div class="text-secondary text-sm font-semibold mt-2 uppercase tracking-wider">Kosong</div></div>
+                <div><div class="font-bold" style="color: var(--status-developing); font-size: 2.5rem; line-height: 1;" id="modal-marked">0</div><div class="text-secondary text-sm font-semibold mt-2 uppercase tracking-wider">Ditandai</div></div>
+            </div>
+            <p id="modal-warning" class="text-gap mb-8 font-semibold p-3 rounded hidden" style="background: rgba(239, 68, 68, 0.1);">Peringatan: Masih ada soal yang belum dijawab!</p>
+            <div class="flex gap-4 justify-center">
+                <button class="btn btn-secondary w-full" onclick="app.closeModal('modal-submit')">KEMBALI</button>
+                <button class="btn btn-primary w-full" onclick="app.executeSubmit()">SUBMIT TEST</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Modal -->
+    <div id="modal-resume" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h2 class="mb-4">Sesi Ditemukan</h2>
+            <p class="text-secondary mb-8">Diagnostic test sebelumnya belum selesai (tersimpan otomatis). Lanjutkan tes tersebut atau ulang dari awal?</p>
+            <div class="flex flex-col gap-4">
+                <button class="btn btn-primary w-full py-3" onclick="app.resumeSession()">LANJUTKAN TEST</button>
+                <button class="btn btn-danger w-full py-3" onclick="app.clearSession()">MULAI ULANG DARI AWAL</button>
+                <button class="btn btn-secondary w-full py-3" onclick="app.closeModal('modal-resume')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Modal -->
+    <div id="modal-reset" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h2 class="mb-4 text-gap">Ulangi Diagnostic?</h2>
+            <p class="text-secondary mb-8">Anda yakin ingin <strong>menghapus secara permanen</strong> semua data riwayat dan mengulang tes dari awal?</p>
+            <div class="flex gap-4 justify-center">
+                <button class="btn btn-secondary w-full" onclick="app.closeModal('modal-reset')">BATAL</button>
+                <button class="btn btn-danger w-full" onclick="app.executeReset()">YA, HAPUS & ULANGI</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Notifikasi</div>
+
+    <!-- ==========================================
+         JAVASCRIPT LOGIC
+         ========================================== -->
+    <script>
+        /**
+         * TKA IPA SMP - DIAGNOSTIC TEST
+         */
+
+        /* --- 1. DATA (SOURCE OF TRUTH) --- */
+
+        const QUESTION_BANK = [
+            // Domain A: Matter & Chemistry (6) - K1, K12
+            { id: 1, macroDomain: "Matter & Chemistry", competencyId: 1, competency: "Zat dan Perubahannya", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Membedakan perubahan kimia dari perubahan fisika berdasarkan terbentuknya zat baru.", question: "Manakah peristiwa yang merupakan PERUBAHAN KIMIA?", options: { A: "Es batu mencair.", B: "Besi mengalami perkaratan.", C: "Air menguap ketika dipanaskan.", D: "Kaca pecah ketika jatuh." }, answer: "B" },
+            { id: 2, macroDomain: "Matter & Chemistry", competencyId: 1, competency: "Zat dan Perubahannya", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Memahami model partikel pada zat gas.", question: "Pernyataan yang paling tepat mengenai partikel zat gas adalah ...", options: { A: "Partikelnya sangat rapat dan hanya bergetar di tempat.", B: "Partikelnya rapat tetapi dapat berpindah satu sama lain.", C: "Partikelnya berjauhan dan bergerak bebas.", D: "Partikelnya tidak memiliki gerakan sama sekali." }, answer: "C" },
+            { id: 3, macroDomain: "Matter & Chemistry", competencyId: 1, competency: "Zat dan Perubahannya", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung massa jenis dari massa dan volume.", question: "Sebuah benda memiliki massa 150 gram dan volume 50 cm³.\n\nMassa jenis benda tersebut adalah ...", options: { A: "0,33 g/cm³", B: "1 g/cm³", C: "3 g/cm³", D: "7,5 g/cm³" }, answer: "C", explanation: "Langkah perhitungan:\nρ = m / V\nρ = 150 g / 50 cm³\nρ = 3 g/cm³" },
+            { id: 38, macroDomain: "Matter & Chemistry", competencyId: 12, competency: "Unsur, Senyawa, Campuran", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Membedakan unsur dari senyawa dan campuran.", question: "Manakah yang merupakan UNSUR?", options: { A: "Tembaga", B: "Air", C: "Garam dapur", D: "Udara" }, answer: "A" },
+            { id: 39, macroDomain: "Matter & Chemistry", competencyId: 12, competency: "Unsur, Senyawa, Campuran", cognitiveLevel: "Application", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Memilih filtrasi untuk campuran padat tak larut dan cairan.", question: "Metode yang paling tepat untuk memisahkan campuran pasir dan air adalah ...", options: { A: "sublimasi", B: "filtrasi", C: "kromatografi", D: "distilasi" }, answer: "B" },
+            { id: 40, macroDomain: "Matter & Chemistry", competencyId: 12, competency: "Unsur, Senyawa, Campuran", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Memilih distilasi berdasarkan perbedaan titik didih komponen campuran.", question: "Campuran etanol dan air dapat dipisahkan berdasarkan perbedaan titik didih melalui proses ...", options: { A: "filtrasi", B: "magnetisasi", C: "sedimentasi", D: "distilasi" }, answer: "D" },
+
+            // Domain B: Physics & Energy (29) - K2, K3, K8, K10, K11, K16, K17, K18
+            { id: 4, macroDomain: "Physics & Energy", competencyId: 2, competency: "Suhu, Kalor dan Pemuaian", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan Q = mcΔT untuk menentukan kalor.", question: "Sebanyak 0,5 kg air dipanaskan dari 20°C menjadi 30°C.\n\nJika kalor jenis air = 4.200 J/kg°C, kalor yang diperlukan adalah ...", options: { A: "2.100 J", B: "4.200 J", C: "21.000 J", D: "42.000 J" }, answer: "C", explanation: "Langkah perhitungan:\nQ = m × c × ΔT\nQ = 0,5 kg × 4.200 J/kg°C × (30 - 20)°C\nQ = 2.100 × 10 = 21.000 J" },
+            { id: 5, macroDomain: "Physics & Energy", competencyId: 2, competency: "Suhu, Kalor dan Pemuaian", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menerapkan keseimbangan kalor / Asas Black pada dua zat sejenis.", question: "Sebanyak 100 gram air bersuhu 80°C dicampurkan dengan 100 gram air bersuhu 20°C.\n\nJika tidak ada kalor yang hilang ke lingkungan dan kalor jenis keduanya sama, suhu akhir campuran adalah ...", options: { A: "30°C", B: "50°C", C: "60°C", D: "100°C" }, answer: "B", explanation: "Asas Black: Q_lepas = Q_terima\nm × c × (T_tinggi - T_camp) = m × c × (T_camp - T_rendah)\nKarena m dan c sama, suhu akhir berada tepat di tengah: (80 + 20) / 2 = 50°C" },
+            { id: 6, macroDomain: "Physics & Energy", competencyId: 2, competency: "Suhu, Kalor dan Pemuaian", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Menghubungkan pemuaian logam dengan desain sambungan rel.", question: "Mengapa sambungan rel kereta api biasanya diberi sedikit celah?", options: { A: "Agar massa rel menjadi lebih kecil.", B: "Agar tersedia ruang ketika logam memuai akibat kenaikan suhu.", C: "Agar kalor lebih cepat berpindah ke tanah.", D: "Agar gaya gesek roda dengan rel hilang." }, answer: "B" },
+            { id: 7, macroDomain: "Physics & Energy", competencyId: 3, competency: "Gerak dan Gaya", cognitiveLevel: "Application", difficulty: "Easy", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung kelajuan dari jarak dan waktu.", question: "Sebuah sepeda bergerak sejauh 150 meter dalam waktu 25 sekon dengan kelajuan tetap.\n\nKelajuannya adalah ...", options: { A: "4 m/s", B: "5 m/s", C: "6 m/s", D: "7,5 m/s" }, answer: "C", explanation: "Langkah perhitungan:\nv = s / t\nv = 150 m / 25 s\nv = 6 m/s" },
+            { id: 8, macroDomain: "Physics & Energy", competencyId: 3, competency: "Gerak dan Gaya", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung percepatan dari perubahan kecepatan per waktu.", question: "Kecepatan sebuah benda berubah dari 4 m/s menjadi 16 m/s dalam waktu 6 sekon.\n\nPercepatan rata-ratanya adalah ...", options: { A: "1 m/s²", B: "2 m/s²", C: "3 m/s²", D: "4 m/s²" }, answer: "B", explanation: "Langkah perhitungan:\na = (v_akhir - v_awal) / t\na = (16 - 4) / 6\na = 12 / 6 = 2 m/s²" },
+            { id: 9, macroDomain: "Physics & Energy", competencyId: 3, competency: "Gerak dan Gaya", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan Hukum II Newton F = ma.", question: "Sebuah benda bermassa 4 kg memperoleh resultan gaya sebesar 12 N.\n\nPercepatan benda adalah ...", options: { A: "0,33 m/s²", B: "2 m/s²", C: "3 m/s²", D: "48 m/s²" }, answer: "C", explanation: "Langkah perhitungan:\nF = m × a\n12 = 4 × a\na = 12 / 4 = 3 m/s²" },
+            { id: 10, macroDomain: "Physics & Energy", competencyId: 3, competency: "Gerak dan Gaya", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Membedakan pasangan aksi–reaksi dari gaya yang bekerja pada satu benda.", question: "Manakah contoh pasangan aksi–reaksi sesuai Hukum III Newton?", options: { A: "Kaki mendorong tanah ke belakang dan tanah mendorong kaki ke depan.", B: "Berat buku dan massa buku merupakan dua gaya yang berlawanan.", C: "Mobil bergerak karena gaya mesin lebih besar daripada massa mobil.", D: "Sebuah benda diam karena tidak memiliki gaya gravitasi." }, answer: "A" },
+            { id: 24, macroDomain: "Physics & Energy", competencyId: 8, competency: "Tekanan Zat", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan P = F/A.", question: "Sebuah benda memberikan gaya sebesar 500 N pada permukaan seluas 0,25 m².\n\nTekanan benda pada permukaan adalah ...", options: { A: "125 Pa", B: "500 Pa", C: "2.000 Pa", D: "20.000 Pa" }, answer: "C", explanation: "Langkah perhitungan:\nP = F / A\nP = 500 / 0,25\nP = 2.000 Pa" },
+            { id: 25, macroDomain: "Physics & Energy", competencyId: 8, competency: "Tekanan Zat", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan P = ρgh untuk tekanan hidrostatis.", question: "Sebuah titik berada 2 meter di bawah permukaan air.\n\nJika:\nρ air = 1.000 kg/m³\ng = 10 m/s²\n\ntekanan hidrostatis pada titik tersebut adalah ...", options: { A: "2.000 Pa", B: "20.000 Pa", C: "200.000 Pa", D: "5.000 Pa" }, answer: "B", explanation: "Langkah perhitungan:\nP = ρ × g × h\nP = 1.000 × 10 × 2\nP = 20.000 Pa" },
+            { id: 26, macroDomain: "Physics & Energy", competencyId: 8, competency: "Tekanan Zat", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan FA = ρgV pada Hukum Archimedes.", question: "Sebuah benda yang tercelup dalam air memindahkan air sebanyak 0,002 m³.\n\nJika:\nρ air = 1.000 kg/m³\ng = 10 m/s²\n\nbesar gaya Archimedes yang bekerja adalah ...", options: { A: "2 N", B: "10 N", C: "15 N", D: "20 N" }, answer: "D", explanation: "Langkah perhitungan:\nF_A = ρ × g × V_celup\nF_A = 1.000 × 10 × 0,002\nF_A = 20 N" },
+            { id: 27, macroDomain: "Physics & Energy", competencyId: 8, competency: "Tekanan Zat", cognitiveLevel: "Reasoning", difficulty: "Hard", skillMode: "Quantitative Application", targetDiagnosis: "Menerapkan Hukum Pascal pada perbandingan luas piston.", question: "Sebuah alat hidrolik mempunyai:\nluas piston kecil = 5 cm²\nluas piston besar = 100 cm²\n\nJika piston kecil diberi gaya 100 N, gaya ideal yang dihasilkan pada piston besar adalah ...", options: { A: "500 N", B: "1.000 N", C: "2.000 N", D: "5.000 N" }, answer: "C", explanation: "Langkah perhitungan Hukum Pascal:\nF1 / A1 = F2 / A2\n100 / 5 = F2 / 100\n20 = F2 / 100\nF2 = 20 × 100 = 2.000 N" },
+            { id: 31, macroDomain: "Physics & Energy", competencyId: 10, competency: "Usaha, Energi dan Pesawat Sederhana", cognitiveLevel: "Application", difficulty: "Easy", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan W = F × s.", question: "Sebuah gaya 50 N mendorong benda sejauh 4 meter searah gaya.\n\nUsaha yang dilakukan adalah ...", options: { A: "12,5 J", B: "54 J", C: "200 J", D: "400 J" }, answer: "C", explanation: "Langkah perhitungan:\nW = F × s\nW = 50 N × 4 m\nW = 200 J" },
+            { id: 32, macroDomain: "Physics & Energy", competencyId: 10, competency: "Usaha, Energi dan Pesawat Sederhana", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung energi kinetik menggunakan Ek = 1/2 mv².", question: "Sebuah benda bermassa 2 kg bergerak dengan kecepatan 6 m/s.\n\nEnergi kinetik benda tersebut adalah ...", options: { A: "12 J", B: "36 J", C: "72 J", D: "144 J" }, answer: "B", explanation: "Langkah perhitungan:\nEk = 1/2 × m × v²\nEk = 1/2 × 2 × (6²)\nEk = 1 × 36 = 36 J" },
+            { id: 33, macroDomain: "Physics & Energy", competencyId: 10, competency: "Usaha, Energi dan Pesawat Sederhana", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan perbandingan panjang dan tinggi untuk keuntungan mekanis bidang miring ideal.", question: "Sebuah bidang miring ideal memiliki panjang 5 meter dan tinggi 1 meter.\n\nKeuntungan mekanis ideal bidang miring adalah ...", options: { A: "1", B: "2,5", C: "5", D: "10" }, answer: "C", explanation: "Langkah perhitungan:\nKM = s / h\nKM = 5 / 1\nKM = 5" },
+            { id: 34, macroDomain: "Physics & Energy", competencyId: 11, competency: "Getaran, Gelombang dan Cahaya", cognitiveLevel: "Application", difficulty: "Easy", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung frekuensi berdasarkan jumlah getaran dan waktu.", question: "Sebuah benda melakukan 20 getaran dalam waktu 4 sekon.\n\nFrekuensi getarannya adalah ...", options: { A: "0,2 Hz", B: "4 Hz", C: "5 Hz", D: "80 Hz" }, answer: "C", explanation: "Langkah perhitungan:\nf = n / t\nf = 20 / 4\nf = 5 Hz" },
+            { id: 35, macroDomain: "Physics & Energy", competencyId: 11, competency: "Getaran, Gelombang dan Cahaya", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan v = fλ pada gelombang.", question: "Sebuah gelombang mempunyai:\nfrekuensi = 2 Hz\npanjang gelombang = 3 m\n\nCepat rambat gelombang adalah ...", options: { A: "1,5 m/s", B: "6 m/s", C: "9 m/s", D: "12 m/s" }, answer: "B", explanation: "Langkah perhitungan:\nv = f × λ\nv = 2 Hz × 3 m\nv = 6 m/s" },
+            { id: 36, macroDomain: "Physics & Energy", competencyId: 11, competency: "Getaran, Gelombang dan Cahaya", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Memahami sifat bayangan pada cermin datar.", question: "Bayangan yang dibentuk oleh cermin datar bersifat ...", options: { A: "maya, tegak, dan sama besar", B: "nyata, terbalik, dan diperbesar", C: "nyata, tegak, dan diperkecil", D: "maya, terbalik, dan diperkecil" }, answer: "A" },
+            { id: 37, macroDomain: "Physics & Energy", competencyId: 11, competency: "Getaran, Gelombang dan Cahaya", cognitiveLevel: "Reasoning", difficulty: "Hard", skillMode: "Scientific Reasoning", targetDiagnosis: "Memprediksi sifat dan posisi bayangan lensa cembung berdasarkan posisi benda terhadap titik fokus.", question: "Sebuah benda diletakkan di depan lensa cembung pada jarak lebih besar daripada 2F.\n\nBayangan yang terbentuk adalah ...", options: { A: "maya, tegak, dan diperbesar", B: "maya, tegak, dan diperkecil", C: "nyata, tegak, dan sama besar", D: "nyata, terbalik, diperkecil, dan berada antara F dan 2F" }, answer: "D" },
+            { id: 50, macroDomain: "Physics & Energy", competencyId: 16, competency: "Listrik Statis", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Menghubungkan penambahan elektron dengan muatan negatif.", question: "Sebuah penggaris plastik digosok dengan kain dan kemudian memperoleh tambahan elektron.\n\nMuatan penggaris menjadi ...", options: { A: "positif", B: "netral", C: "negatif", D: "tidak memiliki partikel bermuatan" }, answer: "C" },
+            { id: 51, macroDomain: "Physics & Energy", competencyId: 16, competency: "Listrik Statis", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Memahami hubungan kuadrat terbalik antara gaya Coulomb dan jarak.", question: "Menurut Hukum Coulomb, jika jarak dua muatan diperbesar menjadi dua kali semula sedangkan besar muatan tetap, gaya listrik menjadi ...", options: { A: "2 kali semula", B: "1/4 kali semula", C: "4 kali semula", D: "tetap" }, answer: "B", explanation: "Langkah pemikiran:\nF berbanding terbalik dengan kuadrat jarak (r²). \nJika jarak menjadi 2 kali, gayanya menjadi 1/(2²) = 1/4 kali." },
+            { id: 52, macroDomain: "Physics & Energy", competencyId: 16, competency: "Listrik Statis", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Menjelaskan prinsip keselamatan penangkal petir melalui jalur menuju tanah.", question: "Fungsi utama penangkal petir pada bangunan adalah ...", options: { A: "menyediakan jalur yang relatif aman bagi muatan listrik menuju tanah", B: "menghentikan pembentukan semua awan", C: "menyimpan seluruh muatan listrik di atap", D: "menarik petir agar berada di dalam bangunan" }, answer: "A" },
+            { id: 53, macroDomain: "Physics & Energy", competencyId: 17, competency: "Listrik Dinamis", cognitiveLevel: "Application", difficulty: "Easy", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan Hukum Ohm I = V/R.", question: "Sebuah resistor 4 Ω dihubungkan dengan sumber tegangan 12 V.\n\nArus listrik yang mengalir adalah ...", options: { A: "0,33 A", B: "2 A", C: "3 A", D: "48 A" }, answer: "C", explanation: "Langkah perhitungan:\nI = V / R\nI = 12 / 4\nI = 3 A" },
+            { id: 54, macroDomain: "Physics & Energy", competencyId: 17, competency: "Listrik Dinamis", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung hambatan total seri dan arus rangkaian.", question: "Dua resistor:\n2 Ω dan 4 Ω\n\ndisusun seri dan dihubungkan dengan sumber 12 V.\n\nArus yang mengalir dalam rangkaian adalah ...", options: { A: "1 A", B: "2 A", C: "3 A", D: "6 A" }, answer: "B", explanation: "Langkah perhitungan:\nR_total = 2 + 4 = 6 Ω\nI = V / R_total\nI = 12 / 6 = 2 A" },
+            { id: 55, macroDomain: "Physics & Energy", competencyId: 17, competency: "Listrik Dinamis", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung hambatan pengganti dua hambatan paralel.", question: "Dua hambatan:\n6 Ω dan 3 Ω\n\ndisusun paralel.\n\nHambatan penggantinya adalah ...", options: { A: "2 Ω", B: "3 Ω", C: "4,5 Ω", D: "9 Ω" }, answer: "A", explanation: "Langkah perhitungan:\n1/R_p = 1/6 + 1/3\n1/R_p = 1/6 + 2/6 = 3/6\nR_p = 6 / 3 = 2 Ω" },
+            { id: 56, macroDomain: "Physics & Energy", competencyId: 17, competency: "Listrik Dinamis", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menghitung energi listrik dari daya dan waktu dalam kWh.", question: "Sebuah lampu berdaya 100 W digunakan selama 5 jam.\n\nEnergi listrik yang digunakan adalah ...", options: { A: "0,02 kWh", B: "0,1 kWh", C: "0,2 kWh", D: "0,5 kWh" }, answer: "D", explanation: "Langkah perhitungan:\nE = P × t\nE = 100 W × 5 h = 500 Wh\nE = 0,5 kWh" },
+            { id: 57, macroDomain: "Physics & Energy", competencyId: 18, competency: "Magnet", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Membedakan interaksi kutub magnet sejenis dan tidak sejenis.", question: "Jika kutub utara sebuah magnet didekatkan dengan kutub utara magnet lain, kedua magnet akan ...", options: { A: "saling tolak", B: "saling tarik", C: "kehilangan semua sifat magnet", D: "menjadi bermuatan listrik negatif" }, answer: "A" },
+            { id: 58, macroDomain: "Physics & Energy", competencyId: 18, competency: "Magnet", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Mengidentifikasi induksi elektromagnetik akibat perubahan medan magnet pada kumparan.", question: "Arus listrik dapat timbul pada kumparan ketika magnet digerakkan keluar masuk kumparan.\n\nPeristiwa tersebut disebut ...", options: { A: "pemuaian", B: "induksi elektromagnetik", C: "tekanan hidrostatis", D: "konduksi kalor" }, answer: "B" },
+            { id: 59, macroDomain: "Physics & Energy", competencyId: 18, competency: "Magnet", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Menentukan faktor yang memperkuat elektromagnet.", question: "Elektromagnet dapat dibuat lebih kuat dengan ...", options: { A: "mengurangi jumlah lilitan dan mengurangi arus", B: "memutus seluruh aliran listrik", C: "menambah jumlah lilitan dan memperbesar arus listrik", D: "mengganti kawat dengan bahan yang tidak dapat menghantarkan listrik" }, answer: "C" },
+            { id: 60, macroDomain: "Physics & Energy", competencyId: 18, competency: "Magnet", cognitiveLevel: "Reasoning", difficulty: "Hard", skillMode: "Scientific Reasoning", targetDiagnosis: "Menghubungkan gaya magnet pada penghantar berarus dan pemanfaatan medan magnet bumi dalam navigasi biologis.", question: "Manakah pasangan konsep dan penerapan yang paling tepat?", options: { A: "Motor listrik — gaya Archimedes;\n   navigasi hewan — tekanan udara.", B: "Generator — pemuaian zat;\n   migrasi burung — gaya gravitasi saja.", C: "Motor listrik — pembiasan cahaya;\n   navigasi penyu — kalor jenis air.", D: "Motor listrik — gaya magnet pada penghantar berarus;\n   beberapa hewan migrasi — pemanfaatan informasi medan magnet bumi." }, answer: "D" },
+
+            // Domain C: Life Science (19) - K4, K5, K7, K9, K14, K15
+            { id: 11, macroDomain: "Life Science", competencyId: 4, competency: "Klasifikasi Makhluk Hidup", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengklasifikasikan hewan berdasarkan ciri khas mamalia.", question: "Seekor hewan memiliki tulang belakang, tubuh berambut, dan induknya menghasilkan susu untuk anaknya.\n\nHewan tersebut termasuk kelompok ...", options: { A: "Pisces", B: "Reptilia", C: "Mammalia", D: "Amphibia" }, answer: "C" },
+            { id: 12, macroDomain: "Life Science", competencyId: 4, competency: "Klasifikasi Makhluk Hidup", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengklasifikasikan organisme berdasarkan ciri sel dan cara memperoleh energi.", question: "Suatu organisme bersifat multiseluler, mempunyai dinding sel, dan dapat melakukan fotosintesis.\n\nOrganisme tersebut paling tepat dimasukkan ke kelompok ...", options: { A: "Animalia", B: "Plantae", C: "Fungi", D: "Bacteria" }, answer: "B" },
+            { id: 13, macroDomain: "Life Science", competencyId: 4, competency: "Klasifikasi Makhluk Hidup", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Memahami hubungan persamaan ciri dengan kedekatan klasifikasi.", question: "Pernyataan yang paling tepat tentang klasifikasi makhluk hidup adalah ...", options: { A: "Dua organisme selalu berkerabat dekat jika ukuran tubuhnya sama.", B: "Organisme yang tinggal di tempat yang sama pasti berada dalam kelompok yang sama.", C: "Semakin banyak persamaan ciri penting, umumnya semakin dekat hubungan kekerabatannya.", D: "Warna tubuh merupakan satu-satunya dasar klasifikasi." }, answer: "C" },
+            { id: 14, macroDomain: "Life Science", competencyId: 5, competency: "Ekologi", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Membedakan komponen biotik dan abiotik.", question: "Manakah yang merupakan komponen ABIOTIK dalam suatu ekosistem?", options: { A: "Rumput", B: "Bakteri", C: "Belalang", D: "Cahaya matahari" }, answer: "D" },
+            { id: 15, macroDomain: "Life Science", competencyId: 5, competency: "Ekologi", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengidentifikasi tingkat trofik pada rantai makanan.", question: "Perhatikan rantai makanan berikut:\n\nRumput → Belalang → Katak → Ular\n\nKonsumen tingkat I adalah ...", options: { A: "Rumput", B: "Belalang", C: "Katak", D: "Ular" }, answer: "B" },
+            { id: 16, macroDomain: "Life Science", competencyId: 5, competency: "Ekologi", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Memprediksi perubahan populasi akibat perubahan predator.", question: "Dalam suatu ekosistem terdapat rantai makanan:\n\nRumput → Belalang → Katak.\n\nJika populasi katak menurun drastis sementara faktor lain relatif tetap, perubahan yang paling mungkin terjadi adalah ...", options: { A: "Belalang meningkat dan rumput cenderung berkurang.", B: "Belalang berkurang dan rumput berkurang.", C: "Belalang dan rumput pasti punah.", D: "Rumput meningkat karena jumlah belalang bertambah." }, answer: "A" },
+            { id: 17, macroDomain: "Life Science", competencyId: 5, competency: "Ekologi", cognitiveLevel: "Reasoning", difficulty: "Hard", skillMode: "Data / Evidence Interpretation", targetDiagnosis: "Menjelaskan hubungan nutrien berlebih, ledakan alga, penurunan oksigen, dan kematian organisme.", question: "Pupuk dari lahan pertanian masuk dalam jumlah besar ke sebuah danau. Beberapa waktu kemudian terjadi pertumbuhan alga yang sangat cepat.\n\nJika kondisi ini terus terjadi, dampak yang paling mungkin adalah ...", options: { A: "Kadar oksigen air selalu meningkat.", B: "Semua ikan mendapatkan lebih banyak makanan sehingga populasinya selalu meningkat.", C: "Pembusukan alga dapat menurunkan oksigen terlarut dan menyebabkan kematian organisme air.", D: "Air danau berubah menjadi air laut." }, answer: "C" },
+            { id: 21, macroDomain: "Life Science", competencyId: 7, competency: "Sel", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengidentifikasi fungsi membran sel.", question: "Bagian sel yang mengatur keluar-masuknya zat secara selektif adalah ...", options: { A: "membran sel", B: "inti sel", C: "ribosom", D: "vakuola" }, answer: "A" },
+            { id: 22, macroDomain: "Life Science", competencyId: 7, competency: "Sel", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengidentifikasi fungsi mitokondria.", question: "Organel yang berperan penting dalam menghasilkan energi melalui respirasi sel adalah ...", options: { A: "kloroplas", B: "mitokondria", C: "badan Golgi", D: "dinding sel" }, answer: "B" },
+            { id: 23, macroDomain: "Life Science", competencyId: 7, competency: "Sel", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengurutkan tingkat organisasi kehidupan.", question: "Urutan tingkat organisasi kehidupan dari yang paling sederhana ke yang lebih kompleks adalah ...", options: { A: "jaringan → sel → organ → organisme → sistem organ", B: "sel → organ → jaringan → sistem organ → organisme", C: "sel → jaringan → organ → sistem organ → organisme", D: "organ → sel → jaringan → organisme → sistem organ" }, answer: "C" },
+            { id: 28, macroDomain: "Life Science", competencyId: 9, competency: "Sistem Pencernaan Manusia", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Membedakan pencernaan mekanis dari proses kimiawi.", question: "Pencernaan mekanis makanan pertama kali terjadi terutama melalui ...", options: { A: "pengunyahan oleh gigi di mulut", B: "penyerapan oleh usus besar", C: "produksi empedu oleh hati", D: "penyerapan zat makanan oleh darah" }, answer: "A" },
+            { id: 29, macroDomain: "Life Science", competencyId: 9, competency: "Sistem Pencernaan Manusia", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Conceptual Understanding", targetDiagnosis: "Menghubungkan enzim amilase dengan zat makanan yang diuraikan.", question: "Enzim amilase membantu proses pencernaan dengan memecah ...", options: { A: "protein", B: "lemak", C: "pati atau amilum", D: "vitamin" }, answer: "C" },
+            { id: 30, macroDomain: "Life Science", competencyId: 9, competency: "Sistem Pencernaan Manusia", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Menghubungkan struktur vili dengan fungsi penyerapan nutrisi.", question: "Seorang pasien mengalami kerusakan berat pada vili usus halus.\n\nDampak yang paling langsung adalah ...", options: { A: "produksi air liur meningkat", B: "penyerapan zat makanan menjadi kurang efektif", C: "proses mengunyah berhenti", D: "lambung tidak dapat menyimpan makanan" }, answer: "B" },
+            { id: 44, macroDomain: "Life Science", competencyId: 14, competency: "Reproduksi Manusia", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengidentifikasi organ penghasil ovum.", question: "Organ reproduksi perempuan yang menghasilkan sel telur adalah ...", options: { A: "uterus", B: "ovarium", C: "vagina", D: "serviks" }, answer: "B" },
+            { id: 45, macroDomain: "Life Science", competencyId: 14, competency: "Reproduksi Manusia", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengidentifikasi lokasi umum fertilisasi pada manusia.", question: "Pada manusia, fertilisasi umumnya terjadi di ...", options: { A: "uterus", B: "ovarium", C: "oviduk atau tuba falopi", D: "serviks" }, answer: "C" },
+            { id: 46, macroDomain: "Life Science", competencyId: 14, competency: "Reproduksi Manusia", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Memahami prinsip dasar pencegahan penularan infeksi melalui hubungan seksual atau paparan darah.", question: "Manakah tindakan yang paling tepat untuk mengurangi risiko penularan penyakit yang dapat menular melalui hubungan seksual atau darah?", options: { A: "Menghindari perilaku seksual berisiko, tidak berbagi jarum, dan memperoleh layanan kesehatan dari tenaga profesional.", B: "Menggunakan antibiotik setiap hari tanpa pemeriksaan dokter.", C: "Berbagi alat yang terkena darah selama terlihat bersih.", D: "Menganggap seseorang pasti bebas infeksi jika tampak sehat." }, answer: "A" },
+            { id: 47, macroDomain: "Life Science", competencyId: 15, competency: "Pewarisan Sifat & Bioteknologi", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menggunakan kotak Punnett sederhana pada persilangan Aa × Aa.", question: "Pada persilangan monohibrid:\n\nAa × Aa\n\ndengan A dominan terhadap a,\npeluang keturunan memiliki genotipe aa adalah ...", options: { A: "0%", B: "25%", C: "50%", D: "75%" }, answer: "B", explanation: "Persilangan Aa x Aa menghasilkan rasio genotipe:\n1 AA : 2 Aa : 1 aa.\nPeluang aa = 1/4 = 25%." },
+            { id: 48, macroDomain: "Life Science", competencyId: 15, competency: "Pewarisan Sifat & Bioteknologi", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Quantitative Application", targetDiagnosis: "Menentukan peluang fenotipe dari persilangan Tt × tt.", question: "Tanaman tinggi memiliki genotipe Tt dan disilangkan dengan tanaman pendek tt.\n\nJika T dominan terhadap t, peluang keturunannya berfenotipe tinggi adalah ...", options: { A: "0%", B: "25%", C: "50%", D: "100%" }, answer: "C", explanation: "Persilangan Tt x tt menghasilkan genotipe:\nTt (tinggi) = 50%\ntt (pendek) = 50%." },
+            { id: 49, macroDomain: "Life Science", competencyId: 15, competency: "Pewarisan Sifat & Bioteknologi", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Conceptual Understanding", targetDiagnosis: "Membedakan bioteknologi konvensional dan modern berdasarkan prosesnya.", question: "Manakah pasangan yang tepat?", options: { A: "Pembuatan tempe = bioteknologi modern;\n   insulin rekombinan = proses fisika.", B: "Pembuatan tempe dengan Rhizopus = bioteknologi konvensional;\n   produksi insulin rekombinan = bioteknologi modern.", C: "Keduanya bukan bioteknologi.", D: "Pembuatan tempe = proses nuklir;\n   insulin rekombinan = fermentasi tradisional." }, answer: "B" },
+
+            // Domain D: Earth & Space Science (6) - K6, K13
+            { id: 18, macroDomain: "Earth & Space Science", competencyId: 6, competency: "Bumi dan Tata Surya", cognitiveLevel: "Understanding", difficulty: "Easy", skillMode: "Conceptual Understanding", targetDiagnosis: "Menghubungkan rotasi bumi dengan siang dan malam.", question: "Pergantian siang dan malam terutama terjadi akibat ...", options: { A: "rotasi bumi", B: "revolusi bumi", C: "revolusi bulan", D: "rotasi matahari mengelilingi bumi" }, answer: "A" },
+            { id: 19, macroDomain: "Earth & Space Science", competencyId: 6, competency: "Bumi dan Tata Surya", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Memahami penyebab musim sebagai kombinasi kemiringan sumbu dan revolusi.", question: "Pergantian musim di wilayah yang mengalaminya terutama berkaitan dengan ...", options: { A: "perubahan jarak bumi–matahari setiap hari", B: "rotasi bulan dan bentuk bumi", C: "kemiringan sumbu bumi dan revolusi bumi mengelilingi matahari", D: "perubahan ukuran matahari" }, answer: "C" },
+            { id: 20, macroDomain: "Earth & Space Science", competencyId: 6, competency: "Bumi dan Tata Surya", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Conceptual Understanding", targetDiagnosis: "Menentukan posisi matahari, bumi, dan bulan pada gerhana bulan.", question: "Gerhana bulan terjadi ketika ...", options: { A: "bulan berada di antara matahari dan bumi", B: "bumi berada di antara matahari dan bulan", C: "matahari berada di antara bumi dan bulan", D: "bumi berhenti berotasi" }, answer: "B" },
+            { id: 41, macroDomain: "Earth & Space Science", competencyId: 13, competency: "Struktur Bumi", cognitiveLevel: "Understanding", difficulty: "Medium", skillMode: "Conceptual Understanding", targetDiagnosis: "Mengidentifikasi keadaan fisik dan posisi inti luar bumi.", question: "Lapisan bumi yang berada dalam keadaan cair dan tersusun terutama dari besi serta nikel adalah ...", options: { A: "kerak bumi", B: "inti luar", C: "inti dalam", D: "litosfer" }, answer: "B" },
+            { id: 42, macroDomain: "Earth & Space Science", competencyId: 13, competency: "Struktur Bumi", cognitiveLevel: "Reasoning", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Menghubungkan gempa tektonik dengan pergerakan batuan dan lempeng.", question: "Sebagian besar gempa tektonik berkaitan dengan ...", options: { A: "pelepasan energi akibat pergerakan batuan di sekitar batas atau patahan lempeng", B: "perubahan fase bulan", C: "pergantian siang dan malam", D: "penguapan air laut" }, answer: "A" },
+            { id: 43, macroDomain: "Earth & Space Science", competencyId: 13, competency: "Struktur Bumi", cognitiveLevel: "Application", difficulty: "Medium", skillMode: "Scientific Reasoning", targetDiagnosis: "Memilih tindakan mitigasi gempa yang aman saat berada di dalam bangunan.", question: "Ketika terjadi gempa kuat saat berada di dalam bangunan dan belum aman untuk keluar, tindakan yang paling tepat adalah ...", options: { A: "berdiri dekat kaca agar dapat melihat keluar", B: "menggunakan lift secepat mungkin", C: "melakukan drop, cover, and hold on serta menjauhi benda yang mudah jatuh", D: "berlari tanpa memperhatikan lingkungan sekitar" }, answer: "C" }
+        ];
+
+        /* --- 2. STATE & CONFIGURATION --- */
+        const STORAGE_KEY = 'tka_ipa_diag_state';
+        const TEST_DURATION = 75 * 60 * 1000;
+        const TOTAL_QUESTIONS = 60;
+
+        let state = {
+            status: 'not_started',
+            student: { name: '', class: '', target: '', selfAssess: '' },
+            answers: {}, 
+            bookmarks: {},
+            responseTimes: {}, 
+            currentIdx: 0,
+            startTime: null,
+            endTime: null,
+            dateCompleted: null
+        };
+
+        let timerInterval;
+        let questionEntryTime = 0;
+
+        /* --- 3. APPLICATION LOGIC --- */
+        const app = {
+            init() {
+                this.validateQuestionBank();
+                // Urutkan question bank berdasarkan id (1-60) untuk berjaga-jaga
+                QUESTION_BANK.sort((a, b) => a.id - b.id);
+                this.checkExistingSession();
+                this.setupKeyboardShortcuts();
+            },
+
+            validateQuestionBank() {
+                if (QUESTION_BANK.length !== 60) console.error("Validation Error: Expected 60 questions, found " + QUESTION_BANK.length);
+                
+                let checkIds = new Set();
+                let distribution = { "Matter & Chemistry": 0, "Physics & Energy": 0, "Life Science": 0, "Earth & Space Science": 0 };
+                let compCount = {};
+
+                QUESTION_BANK.forEach((q, idx) => {
+                    if (checkIds.has(q.id)) console.error(`Duplicate ID: ${q.id}`);
+                    checkIds.add(q.id);
+                    
+                    if (!q.answer || !q.macroDomain || !q.competencyId || !q.cognitiveLevel || !q.difficulty || !q.skillMode || !q.targetDiagnosis) {
+                        console.error(`Missing metadata on Q${q.id}`);
+                    }
+
+                    if(distribution[q.macroDomain] !== undefined) distribution[q.macroDomain]++;
+                    compCount[q.competencyId] = (compCount[q.competencyId] || 0) + 1;
+                });
+                
+                if (distribution["Matter & Chemistry"] !== 6 || distribution["Physics & Energy"] !== 29 || distribution["Life Science"] !== 19 || distribution["Earth & Space Science"] !== 6) {
+                    console.error("Macro Domain distribution incorrect!", distribution);
+                }
+                
+                console.log("Validation passed. Domain Dist:", distribution);
+            },
+
+            navigate(viewId) {
+                document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+                document.getElementById(`view-${viewId}`).classList.remove('hidden');
+                window.scrollTo(0, 0);
+            },
+
+            showToast(msg) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            },
+
+            saveState() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            },
+
+            loadState() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    try { state = JSON.parse(saved); return true; } 
+                    catch (e) { console.error("Failed to parse local storage", e); }
+                }
+                return false;
+            },
+
+            checkExistingSession() {
+                if (this.loadState()) {
+                    if (state.status === 'in_progress') {
+                        document.getElementById('landing-resume-btn').classList.remove('hidden');
+                        document.getElementById('modal-resume').classList.remove('hidden');
+                    } else if (state.status === 'completed') {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn btn-outline w-full mt-2';
+                        btn.style.borderRadius = '99px';
+                        btn.textContent = 'Lihat Hasil Terakhir';
+                        btn.onclick = () => this.renderResultDashboard();
+                        document.getElementById('landing-resume-btn').appendChild(btn);
+                        document.getElementById('landing-resume-btn').classList.remove('hidden');
+                    }
+                }
+            },
+
+            resumeSession() {
+                this.closeModal('modal-resume');
+                if (Date.now() > state.endTime) this.executeSubmit(true);
+                else this.startTest(true);
+            },
+
+            clearSession() {
+                localStorage.removeItem(STORAGE_KEY);
+                state = { status: 'not_started', student: { name: '', class: '', target: '', selfAssess: '' }, answers: {}, bookmarks: {}, responseTimes: {}, currentIdx: 0, startTime: null, endTime: null, dateCompleted: null };
+                this.closeModal('modal-resume');
+                this.navigate('identity');
+            },
+
+            closeModal(id) { document.getElementById(id).classList.add('hidden'); },
+
+            submitIdentity(e) {
+                e.preventDefault();
+                state.student.name = document.getElementById('student-name').value;
+                state.student.class = document.getElementById('student-class').value;
+                state.student.target = document.getElementById('student-target').value;
+                state.student.selfAssess = document.querySelector('input[name="self-assessment"]:checked')?.value || '3';
+                this.saveState();
+                this.navigate('instructions');
+            },
+
+            /* --- Test Engine --- */
+            startTest(isResume = false) {
+                if (!isResume) {
+                    state.status = 'in_progress';
+                    state.startTime = Date.now();
+                    state.endTime = state.startTime + TEST_DURATION;
+                    state.answers = {};
+                    state.bookmarks = {};
+                    state.responseTimes = {};
+                    state.currentIdx = 0;
+                    this.saveState();
+                }
+                this.navigate('test');
+                this.buildNavigator();
+                this.renderQuestion(state.currentIdx);
+                this.startTimer();
+            },
+
+            buildNavigator() {
+                const grid = document.getElementById('nav-grid');
+                grid.innerHTML = '';
+                for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'nav-btn';
+                    btn.textContent = i + 1;
+                    btn.id = `nav-btn-${i}`;
+                    btn.onclick = () => this.jumpToQuestion(i);
+                    grid.appendChild(btn);
+                }
+                this.updateNavigatorStatus();
+            },
+
+            updateNavigatorStatus() {
+                let answered = 0;
+                for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                    const btn = document.getElementById(`nav-btn-${i}`);
+                    if (!btn) continue;
+                    const qId = QUESTION_BANK[i].id;
+                    btn.className = 'nav-btn';
+                    if (state.answers[qId]) { btn.classList.add('answered'); answered++; }
+                    if (state.bookmarks[qId]) btn.classList.add('bookmarked');
+                    if (i === state.currentIdx) btn.classList.add('current');
+                }
+                document.getElementById('progress-text').textContent = `${answered}/${TOTAL_QUESTIONS}`;
+                document.getElementById('progress-fill').style.width = `${(answered/TOTAL_QUESTIONS)*100}%`;
+                
+                const btnNext = document.getElementById('btn-next');
+                const btnFinish = document.getElementById('btn-finish');
+                if (state.currentIdx === TOTAL_QUESTIONS - 1) {
+                    btnNext.classList.add('hidden'); btnFinish.classList.remove('hidden');
+                } else {
+                    btnNext.classList.remove('hidden'); btnFinish.classList.add('hidden');
+                }
+            },
+
+            toggleNavigator() {
+                document.getElementById('navigator-drawer').classList.toggle('show');
+            },
+
+            renderQuestion(idx) {
+                this.recordTimeSpent();
+                questionEntryTime = Date.now();
+
+                const q = QUESTION_BANK[idx];
+                
+                document.getElementById('header-q-num').textContent = idx + 1;
+                document.getElementById('q-macro').textContent = q.macroDomain;
+                document.getElementById('q-domain').textContent = `K${q.competencyId}`;
+                
+                const bmBtn = document.getElementById('bookmark-btn');
+                if (state.bookmarks[q.id]) {
+                    bmBtn.innerHTML = '⚑ DITANDAI'; bmBtn.classList.replace('btn-outline', 'btn-primary');
+                } else {
+                    bmBtn.innerHTML = '⚑ TANDAI SOAL'; bmBtn.classList.replace('btn-primary', 'btn-outline');
+                }
+
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optsContainer = document.getElementById('q-options');
+                optsContainer.innerHTML = '';
+                ['A', 'B', 'C', 'D'].forEach(letter => {
+                    const label = document.createElement('label');
+                    label.className = `option-label ${state.answers[q.id] === letter ? 'selected' : ''}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio'; input.name = `q-${q.id}`; input.value = letter; input.className = 'option-input';
+                    if (state.answers[q.id] === letter) input.checked = true;
+                    input.onchange = () => this.selectOption(q.id, letter, label);
+                    label.innerHTML = `<div class="option-letter">${letter}</div><div>${q.options[letter]}</div>`;
+                    label.prepend(input);
+                    optsContainer.appendChild(label);
+                });
+                
+                document.getElementById('navigator-drawer').classList.remove('show');
+            },
+
+            selectOption(qId, letter, labelEl) {
+                state.answers[qId] = letter;
+                this.saveState();
+                document.querySelectorAll('.option-label').forEach(el => el.classList.remove('selected'));
+                labelEl.classList.add('selected');
+                this.updateNavigatorStatus();
+            },
+
+            toggleBookmark() {
+                const qId = QUESTION_BANK[state.currentIdx].id;
+                if (state.bookmarks[qId]) delete state.bookmarks[qId];
+                else state.bookmarks[qId] = true;
+                this.saveState();
+                this.renderQuestion(state.currentIdx);
+                this.updateNavigatorStatus();
+            },
+
+            recordTimeSpent() {
+                if (questionEntryTime > 0) {
+                    const qId = QUESTION_BANK[state.currentIdx].id;
+                    const timeSpent = Date.now() - questionEntryTime;
+                    if (!state.responseTimes[qId]) state.responseTimes[qId] = 0;
+                    state.responseTimes[qId] += timeSpent;
+                }
+            },
+
+            prevQuestion() { if (state.currentIdx > 0) this.jumpToQuestion(state.currentIdx - 1); },
+            nextQuestion() { if (state.currentIdx < TOTAL_QUESTIONS - 1) this.jumpToQuestion(state.currentIdx + 1); },
+            jumpToQuestion(idx) {
+                state.currentIdx = idx;
+                this.renderQuestion(idx);
+                this.updateNavigatorStatus();
+            },
+
+            /* --- Timer --- */
+            startTimer() {
+                clearInterval(timerInterval);
+                this.updateTimerDisplay();
+                timerInterval = setInterval(() => this.updateTimerDisplay(), 1000);
+            },
+
+            updateTimerDisplay() {
+                if (state.status !== 'in_progress') return;
+                const now = Date.now();
+                const remaining = Math.max(0, state.endTime - now);
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    this.executeSubmit(true);
+                    return;
+                }
+
+                const m = Math.floor(remaining / 60000);
+                const s = Math.floor((remaining % 60000) / 1000);
+                const disp = document.getElementById('timer-display');
+                disp.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                
+                if (remaining < 300000) disp.className = 'timer-display timer-danger';
+                else if (remaining < 600000) disp.className = 'timer-display timer-warning';
+                else disp.className = 'timer-display';
+            },
+
+            /* --- Submit & Analytics --- */
+            confirmSubmit() {
+                this.recordTimeSpent();
+                const answered = Object.keys(state.answers).length;
+                const empty = TOTAL_QUESTIONS - answered;
+                const marked = Object.keys(state.bookmarks).length;
+                
+                document.getElementById('modal-answered').textContent = answered;
+                document.getElementById('modal-unanswered').textContent = empty;
+                document.getElementById('modal-marked').textContent = marked;
+                
+                if (empty > 0) document.getElementById('modal-warning').classList.remove('hidden');
+                else document.getElementById('modal-warning').classList.add('hidden');
+                
+                document.getElementById('modal-submit').classList.remove('hidden');
+            },
+
+            executeSubmit(isForced = false) {
+                clearInterval(timerInterval);
+                this.closeModal('modal-submit');
+                state.status = 'completed';
+                state.dateCompleted = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                this.saveState();
+                
+                if (isForced) this.showToast("Waktu habis! Test telah otomatis disubmit.");
+                this.renderResultDashboard();
+            },
+
+            analyzeResults() {
+                let correct = 0, wrong = 0, empty = 0;
+                let macroDomains = { "Matter & Chemistry": {c:0, t:0}, "Physics & Energy": {c:0, t:0}, "Life Science": {c:0, t:0}, "Earth & Space Science": {c:0, t:0} };
+                let skillModes = { "Conceptual Understanding": {c:0, t:0}, "Quantitative Application": {c:0, t:0}, "Scientific Reasoning": {c:0, t:0}, "Data / Evidence Interpretation": {c:0, t:0} };
+                let comps = {}; // Competencies 1 to 18
+                let errors = {};
+
+                QUESTION_BANK.forEach(q => {
+                    macroDomains[q.macroDomain].t++;
+                    
+                    if(!skillModes[q.skillMode]) skillModes[q.skillMode] = {c:0, t:0};
+                    skillModes[q.skillMode].t++;
+                    
+                    if (!comps[q.competencyId]) {
+                        comps[q.competencyId] = { id: q.competencyId, name: q.competency, domain: q.macroDomain, c: 0, t: 0, errs: [], isReasoningErr: 0 };
+                    }
+                    comps[q.competencyId].t++;
+
+                    const ans = state.answers[q.id];
+                    if (!ans) {
+                        empty++;
+                    } else if (ans === q.answer) {
+                        correct++;
+                        macroDomains[q.macroDomain].c++;
+                        skillModes[q.skillMode].c++;
+                        comps[q.competencyId].c++;
+                    } else {
+                        wrong++;
+                        comps[q.competencyId].errs.push(q.targetDiagnosis);
+                        errors[q.targetDiagnosis] = (errors[q.targetDiagnosis] || 0) + 1;
+                        if (q.cognitiveLevel === "Reasoning" || q.skillMode === "Scientific Reasoning" || q.skillMode === "Data / Evidence Interpretation") {
+                            comps[q.competencyId].isReasoningErr++;
+                        }
+                    }
+                });
+
+                const compArray = Object.values(comps).map(c => {
+                    const score = Math.round((c.c / c.t) * 100);
+                    let status = score >= 80 ? 'Strong' : score >= 65 ? 'Proficient' : score >= 45 ? 'Developing' : 'Gap';
+                    let evidence = c.t >= 4 ? 'Cukup' : 'Terbatas';
+                    return { ...c, score, status, evidence };
+                });
+
+                return {
+                    correct, wrong, empty,
+                    overallScore: Math.round((correct / TOTAL_QUESTIONS) * 100),
+                    timeSpent: Math.min(75, Math.round(((state.endTime || Date.now()) - state.startTime) / 60000)),
+                    macroDomains, skillModes, compArray, errors
+                };
+            },
+
+            renderResultDashboard() {
+                this.navigate('result');
+                const res = this.analyzeResults();
+                
+                document.getElementById('res-name').textContent = state.student.name || 'Nama Siswa';
+                document.getElementById('res-class').textContent = state.student.class || '-';
+                document.getElementById('res-date').textContent = state.dateCompleted || '-';
+                
+                document.getElementById('res-score').textContent = res.overallScore;
+                document.getElementById('res-correct').textContent = res.correct;
+                document.getElementById('res-wrong').textContent = res.wrong;
+                document.getElementById('res-empty').textContent = res.empty;
+                document.getElementById('res-time').textContent = res.timeSpent;
+
+                // Self Assessment
+                const assessMap = { "1": "Sangat perlu diperbaiki", "2": "Perlu diperbaiki", "3": "Sedang", "4": "Baik", "5": "Sangat baik" };
+                document.getElementById('res-self').textContent = assessMap[state.student.selfAssess] || "-";
+                
+                let actualCat = res.overallScore >= 80 ? "Sangat Baik" : res.overallScore >= 65 ? "Baik" : res.overallScore >= 45 ? "Sedang/Developing" : "Perlu Perbaikan (Gap)";
+                document.getElementById('res-actual').textContent = actualCat;
+                
+                let interpStr = "";
+                const numSelf = parseInt(state.student.selfAssess);
+                const actualScoreBase = res.overallScore / 20; 
+                if (numSelf > actualScoreBase + 1) interpStr = "Persepsi awal lebih tinggi dibanding performa diagnostic saat ini. Evaluasi peta kompetensi untuk menyusun prioritas belajar yang efisien.";
+                else if (numSelf < actualScoreBase - 1) interpStr = "Hasil diagnostic menunjukkan pemahaman konsep yang lebih baik dari perkiraan awal pada beberapa area IPA.";
+                else interpStr = "Persepsi awal selaras dengan hasil asesmen diagnostic.";
+                document.getElementById('res-assess-interp').textContent = interpStr;
+
+                // Macro Domains
+                let mHtml = '';
+                const mOrder = ["Matter & Chemistry", "Physics & Energy", "Life Science", "Earth & Space Science"];
+                mOrder.forEach(d => {
+                    const data = res.macroDomains[d];
+                    const pct = Math.round((data.c / data.t) * 100);
+                    let color = pct >= 65 ? 'var(--status-strong)' : pct >= 45 ? 'var(--status-developing)' : 'var(--status-gap)';
+                    mHtml += `<div class="progress-stat mb-4">
+                        <div class="progress-stat-header text-secondary font-bold uppercase tracking-wider text-xs"><span>${d}</span><span>${pct}%</span></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:${color}"></div></div>
+                    </div>`;
+                });
+                document.getElementById('res-macro-domains').innerHTML = mHtml;
+
+                // Scientific Skills
+                let ssHtml = '';
+                const sOrder = ["Conceptual Understanding", "Quantitative Application", "Scientific Reasoning", "Data / Evidence Interpretation"];
+                let skillScores = {};
+                sOrder.forEach(s => {
+                    if(!res.skillModes[s] || res.skillModes[s].t === 0) return;
+                    const data = res.skillModes[s];
+                    const pct = Math.round((data.c / data.t) * 100);
+                    skillScores[s] = pct;
+                    let labelEv = data.t < 4 ? `<span class="text-xs font-normal ml-2" style="color:var(--text-muted)">(evidence terbatas)</span>` : '';
+                    ssHtml += `<div class="progress-stat mb-3">
+                        <div class="progress-stat-header"><span class="text-primary">${s}${labelEv}</span><span class="font-bold">${pct}%</span></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:var(--accent-secondary)"></div></div>
+                    </div>`;
+                });
+                document.getElementById('res-skill-modes').innerHTML = ssHtml;
+
+                // Scientific Skill Interpretation
+                let skillInterp = "Profil kemampuan IPA relatif seimbang antara pemahaman konsep, penerapan kuantitatif, dan penalaran ilmiah.";
+                const cu = skillScores["Conceptual Understanding"] || 0;
+                const qa = skillScores["Quantitative Application"] || 0;
+                const sr = skillScores["Scientific Reasoning"] || 0;
+                
+                if (cu > qa + 20) skillInterp = "Pemahaman konsep teoritis relatif lebih kuat daripada kemampuan menerapkan rumus dan perhitungan (matematis).";
+                else if (qa > sr + 20) skillInterp = "Kemampuan perhitungan/rumus relatif baik, tetapi hubungan sebab-akibat dan penalaran konsep pada situasi baru masih perlu diperkuat.";
+                else if (cu < 50 && qa < 50 && sr < 50) skillInterp = "Secara umum, fondasi dasar IPA, baik konseptual maupun hitungan, perlu menjadi fokus utama penguatan materi.";
+                else if ((res.macroDomains["Physics & Energy"].c / res.macroDomains["Physics & Energy"].t * 100) < 50) {
+                    skillInterp = "Beberapa konsep fisika kuantitatif perlu menjadi prioritas, khususnya topik dengan skor kompetensi terendah.";
+                }
+                document.getElementById('res-skill-interp').textContent = skillInterp;
+
+                // Calculation Analysis
+                if(res.skillModes["Quantitative Application"]) {
+                    const qaData = res.skillModes["Quantitative Application"];
+                    document.getElementById('calc-correct').textContent = qaData.c;
+                    document.getElementById('calc-total').textContent = qaData.t;
+                    const qPct = Math.round((qaData.c / qaData.t) * 100);
+                    const qElem = document.getElementById('calc-score');
+                    qElem.textContent = `${qPct}%`;
+                    qElem.className = `font-bold mt-1 ${qPct >= 65 ? 'c-strong' : qPct >= 45 ? 'c-developing' : 'c-gap'}`;
+                    
+                    let qaMsg = "Kemampuan hitungan sangat baik. Pertahankan ketelitian konversi satuan dan pemilihan rumus.";
+                    if(qPct < 65) qaMsg = "Prioritaskan latihan memilih rumus, substitusi nilai, konversi satuan, dan pemeriksaan kewajaran hasil (logika angka).";
+                    document.getElementById('calc-interp').textContent = qaMsg;
+                }
+
+                // Heatmap (18 Competencies)
+                let hmHtml = '';
+                res.compArray.forEach(c => {
+                    let cls = `border-${c.status.toLowerCase()}`;
+                    let txt = `c-${c.status.toLowerCase()}`;
+                    hmHtml += `<div class="comp-card ${cls} tooltip" data-tooltip="Evidence: ${c.evidence} (${c.t} soal)">
+                        <div class="text-secondary text-xs font-bold mb-1 tracking-wider">K${c.id}</div>
+                        <div class="font-semibold mb-4 text-primary" style="font-size:0.9rem; line-height:1.3;">${c.name}</div>
+                        <div class="flex justify-between items-end mt-auto">
+                            <span class="font-bold ${txt}" style="font-size:1.35rem">${c.score}%</span>
+                            <span class="text-muted text-xs font-semibold uppercase">${c.status}</span>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('heatmap-container').innerHTML = hmHtml;
+
+                // Strengths
+                const sUl = document.getElementById('res-strengths');
+                let strengths = [...res.compArray].filter(c => c.score >= 80).sort((a,b) => b.score - a.score || b.t - a.t).slice(0, 5);
+                if (strengths.length === 0) sUl.innerHTML = '<li class="text-muted" style="list-style:none">Belum ada kompetensi di kategori Strong.</li>';
+                else sUl.innerHTML = strengths.map(s => `<li><span class="font-semibold text-primary">${s.name}</span> <span class="text-secondary">— ${s.score}%</span></li>`).join('');
+
+                // Priorities
+                const pContainer = document.getElementById('res-priorities');
+                let priorities = [...res.compArray].filter(c => c.score < 80).sort((a,b) => {
+                    if (a.score !== b.score) return a.score - b.score;
+                    if (a.errs.length !== b.errs.length) return b.errs.length - a.errs.length;
+                    if (a.isReasoningErr !== b.isReasoningErr) return b.isReasoningErr - a.isReasoningErr;
+                    return a.id - b.id;
+                }).slice(0, 5);
+
+                if (priorities.length === 0) pContainer.innerHTML = '<div class="text-center text-muted py-4 font-semibold">Sangat Baik! Semua kompetensi berada pada tingkat Strong.</div>';
+                else {
+                    pContainer.innerHTML = priorities.map((p, i) => {
+                        let hint = p.errs.length ? [...new Set(p.errs)].map(e=>`• ${e}`).join('<br>') : '• Peninjauan kembali konsep dasar';
+                        
+                        // Suggestion rules simple engine
+                        let sg = `1. Review kembali prinsip dasar dan teori ${p.name}.<br>2. Kerjakan latihan soal konsep.<br>3. Hubungkan konsep dengan fenomena sehari-hari.`;
+                        if(p.domain === "Physics & Energy" && p.id !== 18 && p.id !== 11 && p.id !== 16) {
+                            sg = `1. Review konsep dan rumus terkait ${p.name}.<br>2. Perhatikan satuan internasional (SI) dan konversinya.<br>3. Latihan soal tipe kuantitatif (hitungan).<br>4. Uji pemahaman dengan mini-test ulang.`;
+                        } else if(p.domain === "Life Science") {
+                            sg = `1. Buat peta konsep / mind map untuk materi ${p.name}.<br>2. Pahami fungsi organ/struktur dan mekanismenya.<br>3. Latih membedakan istilah biologi yang mirip.<br>4. Lakukan evaluasi mandiri.`;
+                        }
+
+                        return `<div class="priority-item">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="status-badge bg-gap">PRIORITAS #${i+1}</span>
+                                <span class="font-bold text-gap" style="font-size:1.25rem">${p.score}%</span>
+                            </div>
+                            <h3 style="margin-bottom:0.25rem; font-size:1.15rem;">${p.name}</h3>
+                            <div class="text-secondary text-sm mb-4">Domain: ${p.domain} | ${p.c}/${p.t} benar</div>
+                            
+                            <div class="bg-main p-4 mb-2" style="border-radius:6px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div class="text-secondary text-xs font-bold uppercase tracking-wider mb-2">Pola jawaban mengindikasikan bahwa area berikut perlu ditinjau:</div>
+                                <div style="color:var(--text-primary); font-size: 0.9rem; line-height: 1.5;">${hint}</div>
+                            </div>
+
+                            <div class="p-3" style="border-radius:6px;">
+                                <div class="text-accent text-xs font-bold uppercase tracking-wider mb-2">Saran Roadmap Belajar:</div>
+                                <div style="color:var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">${sg}</div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+
+                // Error Analysis Grouping
+                const errUl = document.getElementById('res-errors');
+                let sortedErrors = Object.entries(res.errors).sort((a,b) => b[1] - a[1]).slice(0, 8);
+                if (sortedErrors.length === 0) errUl.innerHTML = '<li class="text-muted" style="list-style:none">Tidak ada pola kesalahan spesifik.</li>';
+                else errUl.innerHTML = sortedErrors.map(([err, count]) => `<li><span class="text-primary">${err}</span> <span class="text-muted font-semibold text-sm">(${count} indikator)</span></li>`).join('');
+            },
+
+            /* --- Review Engine --- */
+            renderReview() {
+                const list = document.getElementById('review-list');
+                list.innerHTML = '';
+                
+                let counts = { correct: 0, incorrect: 0, unanswered: 0, bookmarked: 0 };
+
+                QUESTION_BANK.forEach((q, idx) => {
+                    const ans = state.answers[q.id];
+                    const isCorrect = ans === q.answer;
+                    const isBookmarked = state.bookmarks[q.id];
+                    
+                    let statClass = !ans ? 'unanswered' : isCorrect ? 'correct' : 'incorrect';
+                    let statText = !ans ? 'KOSONG' : isCorrect ? 'BENAR' : 'SALAH';
+                    
+                    if (ans) { isCorrect ? counts.correct++ : counts.incorrect++; } else counts.unanswered++;
+                    if (isBookmarked) counts.bookmarked++;
+
+                    let optHtml = '';
+                    ['A', 'B', 'C', 'D'].forEach(l => {
+                        let cls = 'review-opt';
+                        if (l === q.answer) cls += ' is-correct';
+                        else if (l === ans && !isCorrect) cls += ' is-wrong';
+                        
+                        let label = l === ans ? `<strong>[Jawabanmu]</strong>&nbsp;${q.options[l]}` : q.options[l];
+                        optHtml += `<div class="${cls}"><span class="font-bold mr-3">${l}.</span>&nbsp;${label}</div>`;
+                    });
+
+                    let explanation = `Jawaban yang benar adalah <strong>${q.answer}</strong>.<br><br>Indikasi peninjauan: ${q.targetDiagnosis}`;
+                    if (isCorrect) explanation = `Jawaban <strong>${q.answer}</strong> sudah tepat.<br><br>Target diagnosis: ${q.targetDiagnosis}`;
+                    
+                    // Render hitungan explanation if available
+                    if (q.explanation) {
+                        explanation += `<div class="math-block">${q.explanation.replace(/\n/g, '<br>')}</div>`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = `review-card ${statClass}`;
+                    card.dataset.status = statClass;
+                    card.dataset.marked = isBookmarked ? 'true' : 'false';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center mb-4 pb-3 border-b">
+                            <span class="pill-badge font-bold" style="margin:0">${q.macroDomain} • ${q.competency}</span>
+                            <div class="flex items-center gap-3">
+                                ${isBookmarked ? '<span style="color:var(--status-developing); font-size:1.2rem;">⚑</span>' : ''}
+                                <span class="font-bold text-${statClass === 'correct' ? 'strong' : statClass === 'incorrect' ? 'gap' : 'muted'}">${statText}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 text-xs font-bold text-secondary uppercase tracking-wider mb-4 flex-wrap">
+                            <span>SOAL ${idx + 1}</span>
+                            <span>•</span>
+                            <span>${q.difficulty}</span>
+                            <span>•</span>
+                            <span>${q.cognitiveLevel}</span>
+                            <span>•</span>
+                            <span style="color: var(--accent-secondary)">${q.skillMode}</span>
+                        </div>
+                        <div class="question-text font-semibold">${q.question}</div>
+                        <div class="flex flex-col gap-2 mb-4">${optHtml}</div>
+                        <div class="explanation-box">${explanation}</div>
+                    `;
+                    list.appendChild(card);
+                });
+
+                document.getElementById('count-correct').textContent = counts.correct;
+                document.getElementById('count-wrong').textContent = counts.incorrect;
+                document.getElementById('count-empty').textContent = counts.unanswered;
+                document.getElementById('count-marked').textContent = counts.bookmarked;
+
+                document.querySelectorAll('.active-filter').forEach(b => b.classList.remove('active-filter'));
+                const btnAll = document.querySelector('[data-filter="all"]');
+                if(btnAll) btnAll.classList.add('active-filter');
+
+                document.querySelectorAll('#review-filters button').forEach(btn => {
+                    btn.onclick = (e) => {
+                        document.querySelectorAll('#review-filters button').forEach(b => {
+                            b.classList.remove('active-filter');
+                            b.style.background = ''; b.style.borderColor = ''; b.style.color = '';
+                        });
+                        e.currentTarget.classList.add('active-filter');
+                        e.currentTarget.style.background = 'rgba(139,92,246,0.1)';
+                        e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                        e.currentTarget.style.color = 'white';
+
+                        const filter = e.currentTarget.dataset.filter;
+                        document.querySelectorAll('.review-card').forEach(card => {
+                            if (filter === 'all') card.style.display = 'block';
+                            else if (filter === 'bookmarked') card.style.display = card.dataset.marked === 'true' ? 'block' : 'none';
+                            else card.style.display = card.dataset.status === filter ? 'block' : 'none';
+                        });
+                    };
+                });
+            },
+
+            copySummary() {
+                const res = this.analyzeResults();
+                let text = `TKA IPA SMP — DIAGNOSTIC\n\n`;
+                text += `Nama: ${state.student.name || '-'}\n`;
+                text += `Score: ${res.overallScore}/100\n\n`;
+                
+                text += `Domain:\n`;
+                text += `- Matter & Chemistry: ${res.macroDomains["Matter & Chemistry"].t > 0 ? Math.round((res.macroDomains["Matter & Chemistry"].c / res.macroDomains["Matter & Chemistry"].t) * 100) : 0}%\n`;
+                text += `- Physics & Energy: ${res.macroDomains["Physics & Energy"].t > 0 ? Math.round((res.macroDomains["Physics & Energy"].c / res.macroDomains["Physics & Energy"].t) * 100) : 0}%\n`;
+                text += `- Life Science: ${res.macroDomains["Life Science"].t > 0 ? Math.round((res.macroDomains["Life Science"].c / res.macroDomains["Life Science"].t) * 100) : 0}%\n`;
+                text += `- Earth & Space: ${res.macroDomains["Earth & Space Science"].t > 0 ? Math.round((res.macroDomains["Earth & Space Science"].c / res.macroDomains["Earth & Space Science"].t) * 100) : 0}%\n\n`;
+
+                text += `Scientific Skills:\n`;
+                text += `- Conceptual: ${res.skillModes["Conceptual Understanding"] && res.skillModes["Conceptual Understanding"].t > 0 ? Math.round((res.skillModes["Conceptual Understanding"].c / res.skillModes["Conceptual Understanding"].t) * 100) : 0}%\n`;
+                text += `- Quantitative: ${res.skillModes["Quantitative Application"] && res.skillModes["Quantitative Application"].t > 0 ? Math.round((res.skillModes["Quantitative Application"].c / res.skillModes["Quantitative Application"].t) * 100) : 0}%\n`;
+                text += `- Scientific Reasoning: ${res.skillModes["Scientific Reasoning"] && res.skillModes["Scientific Reasoning"].t > 0 ? Math.round((res.skillModes["Scientific Reasoning"].c / res.skillModes["Scientific Reasoning"].t) * 100) : 0}%\n\n`;
+
+                text += `Top Priorities:\n`;
+                let priorities = [...res.compArray].filter(c => c.score < 80).sort((a,b) => a.score - b.score || b.errs.length - a.errs.length).slice(0, 5);
+                priorities.forEach((p, i) => { text += `${i+1}. ${p.name} — ${p.score}%\n`; });
+
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    this.showToast('Ringkasan berhasil disalin ke clipboard!');
+                } catch (err) {
+                    console.error('Copy failed', err);
+                    this.showToast('Gagal menyalin ringkasan.');
+                }
+                document.body.removeChild(textarea);
+            },
+
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    if (state.status !== 'in_progress' || document.getElementById('view-test').classList.contains('hidden')) return;
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+                    
+                    switch(e.key) {
+                        case 'ArrowLeft': this.prevQuestion(); break;
+                        case 'ArrowRight': this.nextQuestion(); break;
+                        case '1': case 'a': case 'A': { const opt = document.querySelector('input[value="A"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case '2': case 'b': case 'B': { const opt = document.querySelector('input[value="B"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case '3': case 'c': case 'C': { const opt = document.querySelector('input[value="C"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case '4': case 'd': case 'D': { const opt = document.querySelector('input[value="D"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case 'f': case 'F': this.toggleBookmark(); break;
+                    }
+                });
+            },
+
+            resetTest() {
+                document.getElementById('modal-reset').classList.remove('hidden');
+            },
+
+            executeReset() {
+                this.closeModal('modal-reset');
+                localStorage.removeItem(STORAGE_KEY);
+                state = { status: 'not_started', student: { name: '', class: '', target: '', selfAssess: '' }, answers: {}, bookmarks: {}, responseTimes: {}, currentIdx: 0, startTime: null, endTime: null, dateCompleted: null };
+                clearInterval(timerInterval);
+                document.getElementById('identity-form').reset();
+                const btnRes = document.getElementById('landing-resume-btn');
+                btnRes.classList.add('hidden');
+                btnRes.innerHTML = '<button class="btn btn-outline" style="border-radius: 99px;" onclick="app.checkExistingSession()">Lanjutkan Sesi Sebelumnya</button>';
+                this.navigate('landing');
+                this.showToast('Data riwayat berhasil dihapus secara permanen.');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+            const originalNav = app.navigate.bind(app);
+            app.navigate = function(vid) {
+                if (vid === 'review') this.renderReview();
+                originalNav(vid);
+            };
+        });
+    </script>
+</body>
+</html>

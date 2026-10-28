@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Ukuran Pemusatan Data</title>
+    
+    <!-- Memuat Tailwind CSS untuk styling responsif dan modern -->
+    <script src="/tailwindcss.js"></script>
+    
+    <!-- Memuat Font Google (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Font Awesome untuk ikon UI -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Konfigurasi kustom Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+        
+        /* Menyembunyikan radio button bawaan browser */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling kustom untuk label opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            font-weight: 500;
+        }
+        
+        .option-label:hover {
+            border-color: #cbd5e1;
+            background-color: #f1f5f9;
+        }
+        
+        /* Styling saat opsi dipilih */
+        input[type="radio"]:checked + .option-label {
+            border-color: #0ea5e9;
+            background-color: #f0f9ff;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.1);
+        }
+        
+        /* Bulatan indikator kustom (Radio Button Custom) */
+        .radio-custom {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        
+        /* Titik dalam bulatan saat dipilih */
+        input[type="radio"]:checked + .option-label .radio-custom::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #0ea5e9;
+            border-radius: 50%;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-custom {
+            border-color: #0ea5e9;
+        }
+
+        /* Styling untuk kotak pembahasan (tersembunyi secara default) */
+        .explanation-box {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center">
+            <!-- Tombol Kembali -->
+            <button onclick="goBack()" class="text-slate-500 hover:text-slate-800 transition-colors mr-4 focus:outline-none" aria-label="Kembali">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            <h1 class="text-xl font-bold text-slate-800 truncate">Latihan Soal Ukuran Pemusatan Data</h1>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        
+        <!-- Papan Petunjuk -->
+        <div class="bg-sky-50 border border-sky-200 rounded-xl p-6 mb-8 flex items-start">
+            <i class="fas fa-lightbulb text-sky-500 text-2xl mr-4 mt-1"></i>
+            <div>
+                <h2 class="text-lg font-semibold text-sky-800 mb-1">Petunjuk Pengerjaan</h2>
+                <p class="text-sky-700 text-sm md:text-base leading-relaxed">Pilihlah satu jawaban yang paling tepat. Kamu tidak wajib mengisi semua soal, silakan klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk langsung melihat pembahasan lengkap dan skor akhirmu.</p>
+            </div>
+        </div>
+
+        <!-- Form Kuis -->
+        <form id="quizForm" onsubmit="return false;">
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Soal akan di-render di sini oleh Vanilla JS -->
+            </div>
+
+            <div class="mt-10 mb-12 flex justify-center" id="actionArea">
+                <button type="button" onclick="checkAnswers()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-brand-300 text-lg w-full md:w-auto flex items-center justify-center">
+                    <i class="fas fa-check-double mr-3"></i> Periksa Jawaban
+                </button>
+            </div>
+
+            <!-- Area Hasil dan Skor Akhir (Hidden by default) -->
+            <div id="resultArea" class="hidden bg-white rounded-3xl shadow-xl p-8 mb-12 text-center border-t-8 border-brand-500 relative overflow-hidden">
+                
+                <!-- Dekorasi latar belakang -->
+                <div class="absolute top-0 right-0 -mr-8 -mt-8 text-brand-100 opacity-50 transform rotate-12">
+                    <i class="fas fa-trophy" style="font-size: 15rem;"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Skor Akhir Kamu</h3>
+                    <div class="relative inline-flex items-center justify-center w-40 h-40 rounded-full bg-brand-50 mb-6 shadow-inner border-4 border-brand-100">
+                        <span id="scoreDisplay" class="text-6xl font-extrabold text-brand-600">0</span>
+                    </div>
+                    <p id="scoreMessage" class="text-xl text-slate-600 mb-10 font-medium">Memproses nilaimu...</p>
+                    
+                    <!-- Tombol Ulangi Tes diletakkan di bawah skor -->
+                    <button type="button" onclick="resetQuiz()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-slate-300 w-full md:w-auto shadow-md">
+                        <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes dari Awal
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-medium text-sm md:text-base tracking-wide flex items-center justify-center">
+                By EDUFILLAH, Unlock The Secret Of Curious Minds
+                <i class="fas fa-key ml-2 text-yellow-500"></i>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        // Data soal, kunci jawaban yang telah diverifikasi matematis, dan pembahasan edukatif
+        const quizData = [
+            {
+                id: 1,
+                question: "Diberikan sekumpulan data: 6, 8, 5, 7, 6, 8, 5, 9, 6, 6, 8, 7. Nilai modus dari data tersebut adalah...",
+                options: {
+                    a: "A. 5",
+                    b: "B. 6",
+                    c: "C. 7",
+                    d: "D. 8"
+                },
+                answer: "b",
+                explanation: "<strong>Modus</strong> adalah nilai yang paling sering muncul dalam suatu kelompok data.<br><br>Mari kita kelompokkan dan hitung kemunculan setiap angka:<br>&bull; Angka 5 = muncul 2 kali<br>&bull; Angka 6 = muncul <strong>4 kali</strong><br>&bull; Angka 7 = muncul 2 kali<br>&bull; Angka 8 = muncul 3 kali<br>&bull; Angka 9 = muncul 1 kali<br><br>Karena angka 6 memiliki frekuensi terbanyak (4 kali), maka <strong>modusnya adalah 6</strong>."
+            },
+            {
+                id: 2,
+                question: "Rata-rata (mean) dari data: 12, 15, 18, 14, 16, 17, 10, 18 adalah...",
+                options: {
+                    a: "A. 14,50",
+                    b: "B. 15,00",
+                    c: "C. 15,25",
+                    d: "D. 16,00"
+                },
+                answer: "b",
+                explanation: "Untuk mencari <strong>Rata-rata (Mean)</strong>, kita harus menjumlahkan seluruh data, kemudian membaginya dengan banyaknya data.<br><br>1. <strong>Langkah 1:</strong> Jumlahkan semua angka.<br>Total = 12 + 15 + 18 + 14 + 16 + 17 + 10 + 18 = <strong>120</strong>.<br><br>2. <strong>Langkah 2:</strong> Hitung ada berapa banyak angka (n).<br>Ada 8 angka pada data tersebut.<br><br>3. <strong>Langkah 3:</strong> Bagi total dengan banyaknya data.<br>Rata-rata = 120 &divide; 8 = <strong>15,00</strong>."
+            },
+            {
+                id: 3,
+                question: "Perhatikan data tinggi badan (dalam cm) sekelompok siswa berikut: 150, 155, 152, 158, 153, 156, 151. Median dari data tersebut adalah...",
+                options: {
+                    a: "A. 152 cm",
+                    b: "B. 153 cm",
+                    c: "C. 154 cm",
+                    d: "D. 155 cm"
+                },
+                answer: "b",
+                explanation: "<strong>Median</strong> adalah nilai tengah dari suatu data setelah data tersebut <em>diurutkan</em> dari yang terkecil hingga terbesar.<br><br>1. <strong>Urutkan data:</strong> 150, 151, 152, <strong>153</strong>, 155, 156, 158.<br>2. Karena jumlah datanya ganjil (7 data), kita bisa langsung melihat nilai yang posisinya persis di tengah.<br>3. Nilai yang berada di posisi ke-4 adalah <strong>153 cm</strong>."
+            },
+            {
+                id: 4,
+                question: "Nilai ulangan Matematika sekelompok siswa disajikan sebagai berikut: 6, 7, 8, 5, 6, 9, 8, 6, 7, 8, 7, 10. Median dari data nilai tersebut adalah...",
+                options: {
+                    a: "A. 6,5",
+                    b: "B. 7,0",
+                    c: "C. 7,5",
+                    d: "D. 8,0"
+                },
+                answer: "b",
+                explanation: "Ingat aturan utama <strong>Median</strong>: Data WAJIB diurutkan terlebih dahulu!<br><br>1. <strong>Urutkan:</strong> 5, 6, 6, 6, 7, <strong>7, 7</strong>, 8, 8, 8, 9, 10.<br>2. Jumlah data ada 12 (genap). Jika genap, tidak ada satu angka tunggal di tengah. Kita harus mengambil dua angka paling tengah (data ke-6 dan ke-7).<br>3. Dua angka tengah tersebut adalah 7 dan 7.<br>4. <strong>Hitung rata-ratanya:</strong> (7 + 7) &divide; 2 = 14 &divide; 2 = <strong>7,0</strong>."
+            },
+            {
+                id: 5,
+                question: "Diketahui jangkauan (range) dari data: 12, 18, x, 9, 15, 21 adalah 15. Jika x adalah nilai terbesar dalam data tersebut, maka nilai x adalah...",
+                options: {
+                    a: "A. 24",
+                    b: "B. 25",
+                    c: "C. 26",
+                    d: "D. 27"
+                },
+                answer: "a",
+                explanation: "<strong>Jangkauan (Range)</strong> didapatkan dari pengurangan nilai paling besar dengan nilai paling kecil (Maksimum &minus; Minimum).<br><br>1. Dari angka yang sudah ada (12, 18, 9, 15, 21), nilai terkecilnya adalah <strong>9</strong>.<br>2. Soal memberitahu bahwa 'x' adalah nilai terbesarnya.<br>3. Rumus Jangkauan: <strong>Jangkauan = x &minus; Nilai Terkecil</strong><br>15 = x &minus; 9<br>x = 15 + 9 = <strong>24</strong>."
+            },
+            {
+                id: 6,
+                question: "Rata-rata nilai ulangan matematika dari 24 siswa adalah 7,5. Jika digabungkan dengan nilai 6 siswa lainnya, rata-ratanya menjadi 7,7. Rata-rata nilai dari 6 siswa yang baru bergabung tersebut adalah...",
+                options: {
+                    a: "A. 8,0",
+                    b: "B. 8,2",
+                    c: "C. 8,5",
+                    d: "D. 8,8"
+                },
+                answer: "c",
+                explanation: "Ini adalah soal <strong>Rata-rata Gabungan</strong>. Kuncinya adalah mencari total nilai keseluruhan.<br><br>1. <strong>Total nilai 24 siswa awal:</strong> 24 &times; 7,5 = 180<br>2. <strong>Total nilai setelah 6 siswa masuk (menjadi 30 siswa):</strong> 30 &times; 7,7 = 231<br>3. Berapa nilai yang dibawa oleh ke-6 siswa baru itu? Kurangkan total akhir dengan total awal:<br>231 &minus; 180 = 51.<br>4. Jadi, total nilai 6 siswa tersebut adalah 51. Maka <strong>Rata-ratanya</strong> = 51 &divide; 6 = <strong>8,5</strong>."
+            },
+            {
+                id: 7,
+                question: "Perhatikan tabel frekuensi nilai matematika berikut:<br><br>Nilai 5 = 3 siswa<br>Nilai 6 = 5 siswa<br>Nilai 7 = 10 siswa<br>Nilai 8 = 8 siswa<br>Nilai 9 = 3 siswa<br>Nilai 10 = 1 siswa<br><br>Banyaknya siswa yang memperoleh nilai di bawah rata-rata adalah...",
+                options: {
+                    a: "A. 8 siswa",
+                    b: "B. 18 siswa",
+                    c: "C. 20 siswa",
+                    d: "D. 26 siswa"
+                },
+                answer: "b",
+                explanation: "Langkah pertama, kita wajib mencari nilai rata-ratanya terlebih dahulu.<br><br>1. <strong>Hitung total seluruh nilai (Nilai &times; Frekuensi):</strong><br>(5&times;3) + (6&times;5) + (7&times;10) + (8&times;8) + (9&times;3) + (10&times;1)<br>= 15 + 30 + 70 + 64 + 27 + 10 = <strong>216</strong>.<br><br>2. <strong>Hitung total siswa:</strong> 3+5+10+8+3+1 = <strong>30 siswa</strong>.<br><br>3. <strong>Rata-rata:</strong> 216 &divide; 30 = <strong>7,2</strong>.<br><br>Nilai di bawah 7,2 adalah nilai 5, 6, dan 7. Mari hitung siswanya:<br>3 siswa + 5 siswa + 10 siswa = <strong>18 siswa</strong>."
+            },
+            {
+                id: 8,
+                question: "Nilai rata-rata ujian dari 39 siswa adalah 65. Jika nilai seorang siswa bernama Budi yang menyusul ujian digabungkan, nilai rata-ratanya menjadi 65,5. Nilai ujian yang diperoleh Budi adalah...",
+                options: {
+                    a: "A. 80",
+                    b: "B. 85",
+                    c: "C. 90",
+                    d: "D. 95"
+                },
+                answer: "b",
+                explanation: "Konsep penyelesaiannya mirip dengan soal penggabungan rata-rata.<br><br>1. <strong>Total nilai kelas sebelum Budi:</strong> 39 siswa &times; 65 = 2.535<br>2. <strong>Total nilai kelas setelah Budi masuk (40 siswa):</strong> 40 &times; 65,5 = 2.620<br>3. <strong>Nilai Budi:</strong> Selisih dari kedua total tersebut.<br>Nilai Budi = 2.620 &minus; 2.535 = <strong>85</strong>."
+            },
+            {
+                id: 9,
+                question: "Suatu data memiliki rata-rata 16 dan jangkauan 6. Jika setiap nilai dalam data tersebut dikalikan 2 kemudian dikurangi 3, maka rata-rata dan jangkauan yang baru berturut-turut adalah...",
+                options: {
+                    a: "A. 29 dan 9",
+                    b: "B. 29 dan 12",
+                    c: "C. 32 dan 9",
+                    d: "D. 32 dan 12"
+                },
+                answer: "b",
+                explanation: "Sifat-sifat ajaib operasi data pada statistika:<br><br>&bull; <strong>Rata-rata (Mean)</strong> sangat penurut. Jika data dikali, ditambah, atau dikurangi, ia akan ikut berubah sesuai operasi tersebut.<br>Rata-rata Baru = (16 &times; 2) &minus; 3 = 32 &minus; 3 = <strong>29</strong>.<br><br>&bull; <strong>Jangkauan (Range)</strong> hanya peduli pada perkalian/pembagian karena itu mengubah 'jarak' antar angka. Penjumlahan/pengurangan tidak mengubah ukuran jarak, hanya menggeser posisi.<br>Jangkauan Baru = 6 &times; 2 = <strong>12</strong> (Pengurangan 3 diabaikan)."
+            },
+            {
+                id: 10,
+                question: "Perhatikan data nilai matematika kelas IX-A pada tabel berikut:<br><br>Nilai 60: 4 siswa<br>Nilai 70: 8 siswa<br>Nilai 80: p siswa<br>Nilai 90: 6 siswa<br>Nilai 100: 2 siswa<br><br>Jika rata-rata nilai kelas tersebut adalah 78, maka nilai p adalah...",
+                options: {
+                    a: "A. 8",
+                    b: "B. 10",
+                    c: "C. 12",
+                    d: "D. 14"
+                },
+                answer: "b",
+                explanation: "Mari kita buat persamaan aljabarnya:<br><br>1. <strong>Rumus Rata-rata:</strong> Total Nilai &divide; Total Siswa = Rata-rata<br>2. <strong>Total Nilai:</strong> (60&times;4) + (70&times;8) + (80&times;p) + (90&times;6) + (100&times;2)<br>= 240 + 560 + 80p + 540 + 200 = <strong>1540 + 80p</strong>.<br>3. <strong>Total Siswa:</strong> 4 + 8 + p + 6 + 2 = <strong>20 + p</strong>.<br>4. <strong>Masukkan ke Persamaan:</strong><br>(1540 + 80p) &divide; (20 + p) = 78<br>1540 + 80p = 78 &times; (20 + p)<br>1540 + 80p = 1560 + 78p<br>80p &minus; 78p = 1560 &minus; 1540<br>2p = 20 &rarr; p = <strong>10</strong>."
+            },
+            {
+                id: 11,
+                question: "Median dari data pada tabel frekuensi di bawah ini adalah...<br><br>Nilai 5: 4 kali<br>Nilai 6: 6 kali<br>Nilai 7: 12 kali<br>Nilai 8: 7 kali<br>Nilai 9: 3 kali",
+                options: {
+                    a: "A. 6,0",
+                    b: "B. 6,5",
+                    c: "C. 7,0",
+                    d: "D. 7,5"
+                },
+                answer: "c",
+                explanation: "Median mencari posisi anak yang berdiri pas di tengah barisan.<br><br>1. <strong>Hitung Total Anak (Frekuensi):</strong> 4 + 6 + 12 + 7 + 3 = 32 anak.<br>2. Karena total genap (32), median ada di antara anak ke-16 dan ke-17. ((32&divide;2) = 16).<br>3. <strong>Mari berhitung letaknya (Frekuensi Kumulatif):</strong><br>- Baris nilai 5 diisi anak urutan 1 sampai 4.<br>- Baris nilai 6 diisi anak urutan 5 sampai 10 (karena 4+6=10).<br>- Baris nilai 7 diisi anak urutan 11 sampai 22 (karena 10+12=22).<br><br>Nah, anak urutan ke-16 dan ke-17 ternyata sama-sama berada di barisan <strong>Nilai 7</strong>. Jadi, Median = (7+7)/2 = <strong>7,0</strong>."
+            },
+            {
+                id: 12,
+                question: "Seorang pemilik toko sepatu ingin menganalisis ukuran sepatu pria yang paling banyak terjual selama sebulan untuk menentukan stok bulan depan. Ukuran sepatu yang terjual adalah: 39, 40, 40, 41, 41, 41, 42, 42, 43, 44. Ukuran pemusatan data yang paling tepat digunakan oleh pemilik toko tersebut adalah...",
+                options: {
+                    a: "A. Mean, karena mencerminkan rata-rata ukuran kaki semua pembeli.",
+                    b: "B. Median, karena membagi data penjualan menjadi dua bagian sama besar.",
+                    c: "C. Modus, karena menunjukkan ukuran sepatu yang paling sering dibeli.",
+                    d: "D. Jangkauan, karena menunjukkan selisih ukuran sepatu terbesar dan terkecil."
+                },
+                answer: "c",
+                explanation: "Dalam kasus bisnis dan penjualan barang (seperti baju, sepatu, dll), pedagang tidak peduli dengan \"rata-rata\" ukuran kaki konsumen. Pedagang hanya peduli dengan <strong>barang apa yang paling laris/cepat laku</strong> agar stoknya diperbanyak.<br><br>Ukuran statistik yang mengukur \"frekuensi paling sering muncul\" (paling laris) adalah <strong>Modus</strong>."
+            },
+            {
+                id: 13,
+                question: "Nilai rata-rata matematika dari 15 siswa adalah 80. Setelah diteliti kembali, ternyata ada kesalahan tulis pada data dua orang siswa, yaitu nilai 75 tertulis 57 dan nilai 80 tertulis 88. Rata-rata yang benar setelah perbaikan data adalah...",
+                options: {
+                    a: "A. 79,3",
+                    b: "B. 80,0",
+                    c: "C. 80,7",
+                    d: "D. 81,3"
+                },
+                answer: "c",
+                explanation: "Jangan panik, kita tinggal memperbaiki total nilainya (koreksi error).<br><br>1. <strong>Total nilai yang salah:</strong> 15 &times; 80 = 1200.<br>2. <strong>Perbaiki kesalahan pertama:</strong> Seharusnya 75 tapi tertulis 57. Artinya nilai kurang 18 poin. (Tambahkan 18).<br>3. <strong>Perbaiki kesalahan kedua:</strong> Seharusnya 80 tapi tertulis 88. Artinya nilai kelebihan 8 poin. (Kurangkan 8).<br>4. <strong>Total nilai yang benar:</strong> 1200 + 18 &minus; 8 = 1210.<br>5. <strong>Rata-rata yang benar:</strong> 1210 &divide; 15 = 80,666... Jika dibulatkan menjadi <strong>80,7</strong>."
+            },
+            {
+                id: 14,
+                question: "Rata-rata tinggi badan 10 pemain basket adalah 185 cm. Setelah 2 pemain keluar dari tim, rata-rata tinggi badannya menjadi 184 cm. Rata-rata tinggi badan kedua pemain yang keluar tersebut adalah...",
+                options: {
+                    a: "A. 186 cm",
+                    b: "B. 187 cm",
+                    c: "C. 188 cm",
+                    d: "D. 189 cm"
+                },
+                answer: "d",
+                explanation: "Mirip soal nomor 6, kita gunakan selisih total data.<br><br>1. <strong>Total tinggi 10 pemain:</strong> 10 &times; 185 = 1850 cm.<br>2. <strong>Total tinggi setelah 2 orang keluar (tersisa 8 pemain):</strong> 8 &times; 184 = 1472 cm.<br>3. <strong>Total tinggi 2 pemain yang keluar:</strong> 1850 &minus; 1472 = 378 cm.<br>4. <strong>Rata-rata kedua pemain itu:</strong> 378 &divide; 2 = <strong>189 cm</strong>."
+            },
+            {
+                id: 15,
+                question: "Lima orang anak memiliki rata-rata berat badan 42 kg. Selisih berat badan anak tertua (terberat) dan anak termuda (teringan) adalah 15 kg. Jika berat badan anak tertua dikeluarkan, rata-rata berat badan empat anak lainnya menjadi 39 kg. Berat badan anak termuda adalah...",
+                options: {
+                    a: "A. 27 kg",
+                    b: "B. 29 kg",
+                    c: "C. 39 kg",
+                    d: "D. 54 kg"
+                },
+                answer: "c",
+                explanation: "Kita selesaikan layaknya detektif secara bertahap:<br><br>1. <strong>Total berat 5 anak:</strong> 5 &times; 42 = 210 kg.<br>2. <strong>Total berat 4 anak (tanpa si tertua):</strong> 4 &times; 39 = 156 kg.<br>3. <strong>Berapa berat si tertua?</strong> 210 &minus; 156 = <strong>54 kg</strong>.<br>4. Diketahui selisih berat si tertua dan termuda adalah 15 kg.<br>Berat Tertua &minus; Berat Termuda = 15<br>54 &minus; Berat Termuda = 15<br>Berat Termuda = 54 &minus; 15 = <strong>39 kg</strong>."
+            },
+            {
+                id: 16,
+                question: "Diberikan data yang telah diurutkan sebagai berikut: x &minus; 1, x + 1, 2x &minus; 2, 2x, 2x + 2, 3x. Jika median dari data tersebut adalah 11, maka rata-rata (mean) dari data tersebut adalah...",
+                options: {
+                    a: "A. 10,5",
+                    b: "B. 11,0",
+                    c: "C. 11,5",
+                    d: "D. 12,0"
+                },
+                answer: "b",
+                explanation: "Kita harus mencari nilai <code>x</code> dari petunjuk Median terlebih dahulu.<br><br>1. Total data ada 6 (genap). Median berada di antara data ke-3 (2x &minus; 2) dan data ke-4 (2x).<br>2. <strong>Hitung Median:</strong><br>((2x &minus; 2) + 2x) &divide; 2 = 11<br>(4x &minus; 2) &divide; 2 = 11<br>2x &minus; 1 = 11 &rarr; 2x = 12 &rarr; <strong>x = 6</strong>.<br><br>3. <strong>Masukkan x=6 ke susunan data asli:</strong><br>(6-1), (6+1), (12-2), 12, (12+2), (18)<br>Data aslinya adalah: <strong>5, 7, 10, 12, 14, 18</strong>.<br><br>4. <strong>Hitung Rata-rata (Mean):</strong><br>Total = 5 + 7 + 10 + 12 + 14 + 18 = 66.<br>Mean = 66 &divide; 6 = <strong>11,0</strong>."
+            },
+            {
+                id: 17,
+                question: "Sebuah perusahaan memiliki 10 karyawan dengan gaji bulanan (dalam jutaan rupiah) sebagai berikut: 3, 3, 4, 4, 4, 5, 5, 6, 7, 30. Gaji 30 juta rupiah merupakan gaji milik Direktur Utama. Analisis manakah yang paling tepat mengenai representasi kesejahteraan rata-rata karyawan di perusahaan tersebut?",
+                options: {
+                    a: "A. Mean adalah representasi terbaik karena melibatkan seluruh nilai gaji karyawan.",
+                    b: "B. Median adalah representasi terbaik karena nilai pencilan (gaji Direktur) tidak memengaruhi nilai tengah secara ekstrem.",
+                    c: "C. Modus adalah representasi terbaik karena menggambarkan gaji yang paling banyak diterima karyawan.",
+                    d: "D. Jangkauan adalah representasi terbaik karena menunjukkan kesenjangan gaji yang sangat lebar."
+                },
+                answer: "b",
+                explanation: "Ini adalah salah satu kelemahan terbesar 'Rata-rata (Mean)'. Mean sangat mudah \"tertipu\" oleh angka yang sangat ekstrem/pencilan (seperti gaji 30 juta).<br><br>Jika kita hitung mean-nya: 71 &divide; 10 = 7,1 juta. Seolah-olah sejahtera, padahal 9 dari 10 orang gajinya di bawah 7,1 juta!<br>Oleh karena itu, jika data memiliki <strong>pencilan (outlier) yang ekstrem</strong>, ukuran yang paling akurat mewakili kondisi sebenarnya adalah <strong>Median</strong> (nilai tengah), karena median kebal terhadap tarikan angka ekstrem."
+            },
+            {
+                id: 18,
+                question: "Rata-rata nilai ujian dari sekelompok siswa adalah 72. Jika 1/4 bagian dari jumlah siswa tersebut mendapatkan nilai 80, 1/2 bagian mendapatkan nilai 70, dan sisanya mendapatkan nilai x, maka nilai x adalah...",
+                options: {
+                    a: "A. 68",
+                    b: "B. 72",
+                    c: "C. 74",
+                    d: "D. 76"
+                },
+                answer: "a",
+                explanation: "Kita bermain dengan proporsi pecahan dari total siswa (anggap Total Siswa = 1 kesatuan).<br><br>1. Bagian yang tersisa (mendapat nilai x) = 1 &minus; 1/4 &minus; 1/2 = <strong>1/4 bagian</strong>.<br>2. Gunakan rumus Rata-rata Gabungan berdasar pecahan:<br>(1/4 &times; 80) + (1/2 &times; 70) + (1/4 &times; x) = 72<br>20 + 35 + 0,25x = 72<br>55 + 0,25x = 72<br>0,25x = 72 &minus; 55<br>0,25x = 17<br>x = 17 &divide; 0,25 = 17 &times; 4 = <strong>68</strong>."
+            },
+            {
+                id: 19,
+                question: "Diberikan empat bilangan bulat positif yang telah diurutkan: a, b, c, d. Diketahui rata-rata keempat bilangan tersebut adalah 8, mediannya adalah 7, dan modusnya adalah 6. Jangkauan terbesar yang mungkin dari keempat bilangan tersebut adalah...",
+                options: {
+                    a: "A. 6",
+                    b: "B. 8",
+                    c: "C. 10",
+                    d: "D. 12"
+                },
+                answer: "a",
+                explanation: "Ayo kita bedah satu per satu aturannya (a, b, c, d diurutkan):<br><br>1. <strong>Rata-rata = 8</strong> &rarr; Totalnya = 4 &times; 8 = 32.<br>2. <strong>Median = 7</strong> &rarr; Data ke-2 dan ke-3 di tengah, (b + c)/2 = 7 &rarr; b + c = 14.<br>3. <strong>Modus = 6</strong> &rarr; Angka 6 harus muncul lebih dari 1 kali. Karena b+c=14, jika salah satunya 6 (misal b=6), maka c=8.<br>4. Agar 6 menjadi Modus (frekuensi terbanyak), angka 'a' WAJIB bernilai 6 juga. (Jika 'd' yang 6, urutannya rusak karena d harus &ge; c).<br>5. Jadi angkanya: <strong>6, 6, 8, d</strong>.<br>Total harus 32 &rarr; 6 + 6 + 8 + d = 32 &rarr; 20 + d = 32 &rarr; <strong>d = 12</strong>.<br><br>Karena bilangannya mutlak (6, 6, 8, 12), maka Jangkauannya = 12 &minus; 6 = <strong>6</strong>."
+            },
+            {
+                id: 20,
+                question: "Sekelompok data memiliki rata-rata 50 dan median 48. Jika sebuah data baru yang bernilai 95 ditambahkan ke dalam kelompok tersebut, pernyataan yang paling tepat mengenai ukuran pemusatan data yang baru adalah...",
+                options: {
+                    a: "A. Nilai rata-rata akan meningkat lebih signifikan dibandingkan nilai median.",
+                    b: "B. Nilai median akan meningkat lebih signifikan dibandingkan nilai rata-rata.",
+                    c: "C. Nilai rata-rata dan median akan meningkat dengan besar kenaikan yang sama.",
+                    d: "D. Nilai rata-rata akan menurun, sedangkan nilai median akan meningkat."
+                },
+                answer: "a",
+                explanation: "Logika statistika untuk nilai ekstrem (pencilan):<br><br>Angka 95 berada sangat jauh di atas rata-rata (50) dan median (48). Penambahan angka 'raksasa' ini akan sangat menarik <strong>Nilai Rata-rata (Mean)</strong> ke atas. <br><br>Sebaliknya, <strong>Median</strong> hanya peduli urutan posisi. Masuknya satu angka di deretan paling kanan hanya menggeser posisi nilai tengah setengah langkah, sehingga nilai median hanya naik sedikit (bahkan mungkin tidak berubah jika banyak angka yang sama di tengah). Oleh karena itu, Rata-rata akan terpengaruh lebih besar."
+            }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            quizData.forEach((q, index) => {
+                // Regex untuk menangkap pola [GAMBAR: data:image/...] dan mengubahnya menjadi tag <img> responsif
+                let formattedQuestion = q.question.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" alt="Gambar Soal" class="w-full max-w-lg mx-auto rounded-xl shadow-sm my-5 border border-slate-200">');
+
+                const questionHTML = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 transition-all duration-300 relative overflow-hidden group" id="q-card-${index}">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover:bg-brand-400 transition-colors duration-300" id="card-indicator-${index}"></div>
+                        
+                        <div class="flex items-start mb-6 pl-2">
+                            <span class="flex-shrink-0 bg-brand-100 text-brand-700 font-bold w-10 h-10 rounded-full flex items-center justify-center mr-4 mt-1 text-lg shadow-inner">
+                                ${q.id}
+                            </span>
+                            <p class="text-lg font-medium text-slate-800 leading-relaxed">${formattedQuestion}</p>
+                        </div>
+                        
+                        <div class="space-y-4 pl-2 md:pl-14">
+                            ${Object.entries(q.options).map(([key, value]) => `
+                                <div>
+                                    <input type="radio" name="q${index}" id="q${index}_${key}" value="${key}">
+                                    <label for="q${index}_${key}" class="option-label text-slate-700">
+                                        <div class="radio-custom"></div>
+                                        <span>${value}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kotak Pembahasan (Akan ditampilkan saat tombol Periksa ditekan) -->
+                        <div id="explanation-${index}" class="explanation-box mt-8 p-6 rounded-xl border-l-4 ml-2 md:ml-14">
+                            <div class="flex items-center mb-3">
+                                <i id="icon-${index}" class="fas mr-3 text-2xl"></i>
+                                <h4 id="title-${index}" class="font-bold text-xl"></h4>
+                            </div>
+                            <div class="text-base text-slate-800 leading-relaxed space-y-2" id="text-${index}">
+                                ${q.explanation}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += questionHTML;
+            });
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const icon = document.getElementById(`icon-${index}`);
+                const title = document.getElementById(`title-${index}`);
+                const textContainer = document.getElementById(`text-${index}`);
+                const card = document.getElementById(`q-card-${index}`);
+                const indicator = document.getElementById(`card-indicator-${index}`);
+
+                explanationBox.classList.add('show');
+                
+                // Reset styling sebelumnya
+                explanationBox.className = 'explanation-box show mt-8 p-6 rounded-xl border-l-4 ml-2 md:ml-14';
+                card.classList.remove('border-emerald-300', 'border-rose-300', 'bg-emerald-50/30', 'bg-rose-50/30');
+
+                if (selectedOption && selectedOption.value === q.answer) {
+                    // Logika Jawaban Benar
+                    correctCount++;
+                    explanationBox.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+                    icon.className = 'fas fa-check-circle text-emerald-500';
+                    title.className = 'font-bold text-xl text-emerald-700';
+                    title.textContent = 'Tepat Sekali!';
+                    card.classList.add('border-emerald-300', 'bg-emerald-50/30');
+                    indicator.classList.replace('bg-slate-200', 'bg-emerald-500');
+                    indicator.classList.replace('group-hover:bg-brand-400', 'group-hover:bg-emerald-500');
+                } else {
+                    // Logika Jawaban Salah atau Tidak Dijawab
+                    explanationBox.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                    icon.className = 'fas fa-times-circle text-rose-500';
+                    title.className = 'font-bold text-xl text-rose-700';
+                    
+                    if(!selectedOption) {
+                        title.textContent = 'Belum Dijawab';
+                    } else {
+                        title.textContent = 'Masih Kurang Tepat';
+                    }
+
+                    // Tampilkan kunci jawaban yang benar di awal teks pembahasan
+                    textContainer.innerHTML = `<div class="mb-4 inline-block bg-white px-4 py-2 rounded-lg border border-rose-200 shadow-sm"><span class="font-bold text-rose-800">Kunci Jawaban:</span> <span class="font-black text-rose-900 ml-1 bg-rose-100 px-2 py-1 rounded">${q.answer.toUpperCase()}</span></div>${q.explanation}`;
+                    
+                    card.classList.add('border-rose-300', 'bg-rose-50/30');
+                    indicator.classList.replace('bg-slate-200', 'bg-rose-500');
+                    indicator.classList.replace('group-hover:bg-brand-400', 'group-hover:bg-rose-500');
+                }
+            });
+
+            // Kalkulasi skor dengan skala 0-100
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Transisi UI tombol
+            document.getElementById('actionArea').classList.add('hidden');
+            const resultArea = document.getElementById('resultArea');
+            resultArea.classList.remove('hidden');
+            
+            // Animasi perhitungan (Counter) angka skor
+            let currentScore = 0;
+            const scoreElement = document.getElementById('scoreDisplay');
+            try {
+                scoreElement.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            const messageElement = document.getElementById('scoreMessage');
+            
+            // Pesan dinamis berdasarkan pencapaian skor
+            if(score >= 85) {
+                messageElement.innerHTML = "Luar biasa! Insting matematikamu sangat tajam. <i class='fas fa-star text-yellow-400 ml-1'></i>";
+                messageElement.className = "text-xl text-emerald-600 mb-10 font-semibold";
+            } else if(score >= 60) {
+                messageElement.innerHTML = "Kerja bagus! Sedikit lagi pengulangan materi kamu akan jadi ahli. <i class='fas fa-thumbs-up text-brand-500 ml-1'></i>";
+                messageElement.className = "text-xl text-brand-600 mb-10 font-semibold";
+            } else {
+                messageElement.innerHTML = "Jangan menyerah! Baca pembahasannya pelan-pelan dan coba lagi ya. <i class='fas fa-book-reader text-rose-500 ml-1'></i>";
+                messageElement.className = "text-xl text-rose-600 mb-10 font-semibold";
+            }
+
+            // Interval Animasi Skor
+            const timer = setInterval(() => {
+                if (currentScore >= score) {
+                    clearInterval(timer);
+                    scoreElement.textContent = score; try { scoreElement.setAttribute('data-final-score', score); } catch(e){}
+                } else {
+                    currentScore += (score > 50 ? 2 : 1); // Penyesuaian kecepatan hitung
+                    if(currentScore > score) currentScore = score;
+                    scoreElement.textContent = currentScore;
+                }
+            }, 25);
+
+            // Auto-scroll ke bagian bawah layar (area hasil akhir)
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 400);
+        }
+
+        function resetQuiz() {
+            // 1. Reset form input radio buttons
+            document.getElementById('quizForm').reset();
+            
+            // 2. Sembunyikan semua pembahasan dan kembalikan UI kartu soal ke mode default
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                explanationBox.classList.remove('show');
+                
+                // Kembalikan teks murni pembahasan (hapus blok "Kunci Jawaban" yang disuntikkan saat salah)
+                const textContainer = document.getElementById(`text-${index}`);
+                textContainer.innerHTML = q.explanation;
+
+                const card = document.getElementById(`q-card-${index}`);
+                card.classList.remove('border-emerald-300', 'border-rose-300', 'bg-emerald-50/30', 'bg-rose-50/30');
+                
+                const indicator = document.getElementById(`card-indicator-${index}`);
+                indicator.className = 'absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover:bg-brand-400 transition-colors duration-300';
+            });
+
+            // 3. Sembunyikan area hasil skor dan munculkan kembali tombol periksa
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('actionArea').classList.remove('hidden');
+            
+            // 4. Scroll pelan ke posisi paling atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuestions);
+        } else {
+            renderQuestions();
+        }
+        window.onload = function() {
+            renderQuestions();
+        };
+    </script>
+</body>
+</html>

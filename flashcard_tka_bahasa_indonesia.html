@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard TKA Bahasa Indonesia SMP</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Soft slate background */
+        }
+
+        /* 3D Flip Card Styles */
+        .scene {
+            perspective: 1000px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-face-back {
+            transform: rotateY(180deg);
+            background-color: #fefce8; /* Soft yellow/warm tint for back */
+        }
+
+        /* Custom Elegant Scrollbar for inner card scrolling */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scroll:hover::-webkit-scrollbar-thumb {
+            background-color: #94a3b8;
+        }
+
+        /* Fade transition for content update */
+        .content-fade {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <header class="w-full bg-white shadow-sm py-4 px-6 sticky top-0 z-10">
+        <div class="max-w-3xl mx-auto flex flex-col gap-2">
+            <h1 class="text-xl md:text-2xl font-bold text-center text-indigo-700">TKA Bahasa Indonesia SMP</h1>
+            <p class="text-center text-sm text-slate-500 font-medium" id="progress-text">Memuat soal...</p>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-1 overflow-hidden">
+                <div id="progress-bar" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4 md:p-6 w-full max-w-3xl mx-auto">
+        
+        <div class="scene w-full h-[60vh] min-h-[450px] max-h-[600px] mb-8">
+            <div class="card" id="flashcard" onclick="flipCard()">
+                
+                <!-- FRONT FACE (Question) -->
+                <div class="card-face p-5 md:p-8 flex flex-col">
+                    <div class="flex justify-between items-start mb-4">
+                        <span id="front-topic" class="bg-indigo-100 text-indigo-700 text-xs md:text-sm font-semibold px-3 py-1 rounded-full border border-indigo-200">Topik</span>
+                        <span class="text-slate-400 text-xs flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                            Ketuk untuk balik
+                        </span>
+                    </div>
+                    
+                    <div class="flex-grow overflow-y-auto custom-scroll pr-2 content-fade" id="front-content-container">
+                        <div id="front-passage" class="text-sm md:text-base text-slate-600 mb-6 leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-100">
+                            <!-- Text Passage Goes Here -->
+                        </div>
+                        <h2 id="front-question" class="text-lg md:text-xl font-bold text-slate-800 leading-snug">
+                            <!-- Question Goes Here -->
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- BACK FACE (Answer & Explanation) -->
+                <div class="card-face card-face-back p-5 md:p-8 flex flex-col border border-yellow-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <span id="back-topic" class="bg-yellow-100 text-yellow-800 text-xs md:text-sm font-semibold px-3 py-1 rounded-full border border-yellow-200">Topik</span>
+                        <span class="text-slate-400 text-xs flex items-center gap-1">
+                            Kembali ke Pertanyaan
+                        </span>
+                    </div>
+
+                    <div class="flex-grow overflow-y-auto custom-scroll pr-2 content-fade" id="back-content-container">
+                        <div class="mb-6">
+                            <h3 class="text-sm font-bold text-green-600 mb-2 tracking-wider uppercase">Jawaban Benar:</h3>
+                            <p id="back-answer" class="text-lg md:text-xl font-semibold text-slate-800 bg-green-50 p-3 rounded-lg border border-green-100">
+                                <!-- Answer Goes Here -->
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-500 mb-2 tracking-wider uppercase">Pembahasan:</h3>
+                            <div id="back-explanation" class="text-sm md:text-base text-slate-700 leading-relaxed">
+                                <!-- Explanation Goes Here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="w-full flex justify-between items-center gap-4">
+            <button onclick="prevCard()" id="btn-prev" class="flex-1 bg-white border border-slate-300 text-slate-700 py-3 px-4 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-400 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                Sebelumnya
+            </button>
+            <button onclick="nextCard()" id="btn-next" class="flex-1 bg-indigo-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-indigo-700 active:scale-95 transition-all shadow-md shadow-indigo-200 disabled:opacity-50 flex justify-center items-center gap-2">
+                Selanjutnya
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+        <p class="text-xs text-slate-400 mt-6 text-center">Gunakan panah Kiri/Kanan di keyboard untuk navigasi. Spasi untuk membalik kartu.</p>
+    </main>
+
+    <script>
+        // Data Soal (11 Soal Pertama - Mewakili semua 11 Topik)
+        const flashcardsData = [
+            {
+                id: 1,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Matahari perlahan menyembunyikan wajahnya di balik bukit. Angin sore menari-nari membelai dedaunan kering yang berguguran, membisikkan lagu perpisahan pada hari yang mulai menua.",
+                question: "Citraan yang paling dominan dalam kutipan teks fiksi tersebut adalah...",
+                answer: "Citraan penglihatan dan perabaan.",
+                explanation: "Frasa 'menyembunyikan wajahnya' dan 'dedaunan kering berguguran' merangsang indra penglihatan. Sedangkan 'angin... membelai' merangsang indra perabaan seolah-olah kulit merasakan hembusan angin."
+            },
+            {
+                id: 2,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Sejak pagi, langit di atas Kota Cilegon tampak kelabu pekat. Angin bertiup sangat kencang merelakan dahan-dahan pohon patah. Warga pesisir tampak sibuk menambatkan perahu mereka lebih kuat dari biasanya.",
+                question: "Berdasarkan peristiwa tersebut, simpulan logis yang paling mungkin terjadi selanjutnya adalah...",
+                answer: "Akan terjadi badai atau cuaca buruk di wilayah pesisir.",
+                explanation: "Hubungan sebab-akibat. Tanda-tanda alam (langit kelabu pekat, angin kencang mematahkan dahan) dan tindakan pencegahan (menambatkan perahu) secara logis mengarah pada prediksi datangnya cuaca sangat buruk/badai."
+            },
+            {
+                id: 3,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Penggunaan gawai berlebihan pada anak dapat mengganggu pola tidur dan memicu obesitas karena kurang gerak.\n\nTeks 2: Aplikasi edukatif pada gawai terbukti mampu meningkatkan kemampuan kognitif anak balita jika didampingi orang tua.",
+                question: "Apakah Teks 2 membantah argumen pada Teks 1? Berikan alasanmu!",
+                answer: "Tidak membantah, melainkan melengkapi.",
+                explanation: "Teks 1 membahas dampak negatif secara fisik (tidur, obesitas) akibat 'penggunaan berlebihan'. Teks 2 membahas dampak positif secara kognitif dengan syarat 'didampingi orang tua'. Keduanya fokus pada aspek dan kondisi yang berbeda, sehingga saling melengkapi fenomena penggunaan gawai pada anak, bukan saling membantah."
+            },
+            {
+                id: 4,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Ardi melirik jam dinding, sudah pukul 07.15 WIB. Gerbang sekolah biasanya ditutup tepat pukul 07.00. Ia melihat ban sepedanya yang kempes di halaman rumah. Ia menghela napas panjang sambil merogoh saku seragamnya yang hanya berisi uang Rp5.000.",
+                question: "Berdasarkan situasi di atas, apa yang kemungkinan besar akan dialami Ardi?",
+                answer: "Ardi akan datang terlambat ke sekolah dan tidak bisa menggunakan ojek/kendaraan umum secara leluasa.",
+                explanation: "Fakta dalam teks: waktu sudah lewat jam masuk (07.15 > 07.00), kendaraan utamanya rusak (ban kempes), dan uangnya sangat terbatas (Rp5.000). Ketiga fakta ini memprediksi bahwa ia pasti terlambat dan akan kesulitan mencari alternatif transportasi yang cepat dengan dana minim."
+            },
+            {
+                id: 5,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Hutan mangrove memiliki peran krusial bagi ekosistem pesisir. Selain menjadi habitat bagi berbagai jenis ikan dan kepiting, akar mangrove yang rapat berfungsi memecah gelombang laut, sehingga mencegah abrasi pantai secara alami. Pemerintah menargetkan rehabilitasi lahan mangrove seluas 600 ribu hektare hingga tahun 2024.",
+                question: "Fungsi fisik hutan mangrove berdasarkan teks tersebut adalah...",
+                answer: "Memecah gelombang laut untuk mencegah abrasi pantai.",
+                explanation: "Informasi tersurat adalah informasi yang tertulis jelas di dalam teks. Kalimat kedua dengan jelas menyebutkan bahwa akar mangrove 'berfungsi memecah gelombang laut, sehingga mencegah abrasi pantai'."
+            },
+            {
+                id: 6,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Suara riuh mesin jahit saling bersahutan memenuhi ruangan berukuran 10x20 meter itu. Tumpukan kain perca berserakan di sudut-sudut meja kayu. Aroma debu kain dan minyak pelumas mesin bercampur menjadi satu, menemani para pekerja yang menunduk fokus di bawah lampu neon kekuningan.",
+                question: "Latar tempat dan suasana yang tergambar dalam paragraf tersebut adalah...",
+                answer: "Pabrik/ruang konveksi dengan suasana yang sibuk.",
+                explanation: "Objek 'mesin jahit', 'kain perca', dan 'minyak pelumas mesin' menunjukkan tempat pembuatan pakaian (konveksi). Suara 'riuh' dan pekerja yang 'fokus menunduk' menunjukkan suasana kesibukan kerja yang intens."
+            },
+            {
+                id: 7,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Peneliti menemukan bahwa tanaman tersebut memiliki zat adaptogen yang tinggi. Oleh karena itu, ekstrak tanaman ini sangat baik digunakan untuk membantu tubuh melakukan *homeostasis* saat menghadapi cuaca ekstrem.",
+                question: "Makna istilah 'homeostasis' dalam konteks paragraf tersebut adalah...",
+                answer: "Kemampuan tubuh untuk mempertahankan keseimbangan kondisi internal.",
+                explanation: "Secara terminologi sains dan bahasa, homeostasis merujuk pada proses pengaturan sistem dalam tubuh agar tetap stabil dan seimbang (misal: suhu tubuh, cairan) meskipun terjadi perubahan ekstrem di lingkungan luar (cuaca ekstrem)."
+            },
+            {
+                id: 8,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Ki Hajar Dewantara tidak pernah membedakan asal usul murid-muridnya di Taman Siswa. Anak bangsawan maupun anak rakyat jelata duduk di bangku yang sama dan mendapat pelajaran yang sama. Baginya, pendidikan adalah hak segala bangsa untuk mencapai kemerdekaan jiwa.",
+                question: "Nilai keteladanan tokoh yang paling menonjol dari kutipan biografi di atas adalah...",
+                answer: "Menjunjung tinggi kesetaraan/egaliter dalam pendidikan.",
+                explanation: "Tindakan 'tidak membedakan asal usul' dan menyatukan 'anak bangsawan maupun rakyat jelata' merupakan bentuk nyata dari sikap egaliter atau perlakuan adil dan setara bagi semua golongan manusia."
+            },
+            {
+                id: 9,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Tuangkan air panas ke dalam gelas yang berisi serbuk kopi. \n(2) Siapkan cangkir, serbuk kopi, gula, dan air panas. \n(3) Aduk perlahan hingga kopi dan gula larut sempurna. \n(4) Masukkan dua sendok teh kopi dan gula secukupnya ke dalam cangkir. \n(5) Secangkir kopi hangat siap dinikmati.",
+                question: "Urutan kalimat yang tepat agar menjadi teks prosedur yang padu adalah...",
+                answer: "(2) - (4) - (1) - (3) - (5)",
+                explanation: "Logika prosedur yang tepat dimulai dari persiapan alat/bahan (2), lalu menaruh bahan kering ke cangkir (4), menyeduh dengan air (1), proses pelarutan/mengaduk (3), dan hasil akhir/penyajian (5)."
+            },
+            {
+                id: 10,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Dalam cerita Bawang Merah dan Bawang Putih, kekayaan dan pakaian indah yang didapat Bawang Merah dari labu besar ternyata berubah menjadi binatang berbisa yang mencelakainya karena ia mendapatkannya dari sifat serakah dan bermalas-malasan.",
+                question: "Relevansi pesan moral peristiwa tersebut dengan kehidupan masa kini adalah...",
+                answer: "Hasil yang diraih dengan cara instan, serakah, dan curang tidak akan membawa kebahagiaan abadi, justru dapat menghancurkan diri sendiri.",
+                explanation: "Relevansi kehidupan mengaitkan isi cerita fiksi dengan realitas sosial. Banyak fenomena masa kini (seperti korupsi atau penipuan demi kekayaan instan) yang berujung pada penderitaan hukum/sosial, mirip dengan nasib Bawang Merah."
+            },
+            {
+                id: 11,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Tangan keriput Nenek Minah gemetar saat menerima amplop cokelat itu. Di dalamnya ada selembar foto cucunya yang telah sepuluh tahun tak pulang, tersenyum lebar mengenakan seragam toga. Air mata hangat menetes, mengalir di sela-sela kerutan pipinya tanpa bisa ia tahan.",
+                question: "Respons emosional (suasana hati) yang paling dirasakan pembaca saat membaca kutipan tersebut adalah...",
+                answer: "Haru dan bahagia.",
+                explanation: "Teks ini menggambarkan tangisan, namun bukan karena sedih/duka. Tangisan 'air mata hangat' yang diiringi objek 'foto cucu mengenakan seragam toga' (lulus kuliah) setelah 'sepuluh tahun tak pulang' memunculkan empati rasa haru bahagia atas kerinduan dan kebanggaan yang terbayar."
+            },
+            {
+                id: 12,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Malam itu, ombak laut saling berkejaran menyapa lembut hamparan pasir putih. Nyiur melambai-lambai seakan memanggil nelayan untuk segera kembali ke pelukan daratan.",
+                question: "Majas yang mendominasi paragraf tersebut adalah...",
+                answer: "Personifikasi.",
+                explanation: "Benda mati (ombak, nyiur) diberikan sifat/tindakan layaknya manusia ('menyapa', 'melambai', 'memanggil', 'pelukan')."
+            },
+            {
+                id: 13,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Hujan turun dengan intensitas tinggi selama tiga hari berturut-turut. Saluran air di perumahan itu banyak yang tersumbat oleh tumpukan sampah plastik dan dedaunan mati.",
+                question: "Akibat logis dari rentetan peristiwa tersebut adalah...",
+                answer: "Terjadinya banjir atau genangan air di area perumahan.",
+                explanation: "Hujan terus-menerus (sumber air) ditambah saluran air yang tersumbat (hambatan aliran) secara logis akan menyebabkan air meluap (banjir)."
+            },
+            {
+                id: 14,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Gempa tektonik terjadi karena pergeseran lempeng bumi dan sering berpotensi tsunami.\n\nTeks 2: Gempa vulkanik dipicu oleh aktivitas magma menjelang gunung meletus dan jarang menyebabkan tsunami luas.",
+                question: "Perbedaan fokus utama dari kedua teks tersebut adalah...",
+                answer: "Teks 1 membahas penyebab dan dampak gempa tektonik, sedangkan Teks 2 membahas penyebab dan dampak gempa vulkanik.",
+                explanation: "Kedua teks sama-sama membahas gempa, namun spesifik pada jenis (tektonik vs vulkanik) dan pemicunya masing-masing yang saling berlawanan/berbeda."
+            },
+            {
+                id: 15,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Andi sedang asyik bermain game di kamarnya menggunakan penyuara telinga (headphone) dengan volume maksimal. Ia tidak menyadari bahwa ibunya baru saja menaruh panci air di atas kompor gas yang menyala di dapur, lalu ibunya pergi keluar rumah untuk membeli sayur.",
+                question: "Hal terburuk yang paling mungkin terjadi jika air dalam panci menguap habis adalah...",
+                answer: "Panci akan gosong dan berpotensi memicu kebakaran, sementara Andi tidak menyadarinya karena telinganya tertutup rapat.",
+                explanation: "Prediksi didasarkan pada dua fakta: kompor menyala tanpa pengawasan dan Andi yang tidak bisa mendengar suara bahaya (seperti desisan atau peringatan tetangga) akibat headphone."
+            },
+            {
+                id: 16,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Candi Borobudur dibangun pada abad ke-8 Masehi oleh wangsa Syailendra. Bangunan megah berbentuk punden berundak ini terbuat dari balok-balok batu andesit yang saling mengunci tanpa menggunakan semen sedikit pun.",
+                question: "Material utama penyusun Candi Borobudur menurut teks adalah...",
+                answer: "Balok batu andesit.",
+                explanation: "Informasi ini tertulis secara eksplisit (tersurat) pada kalimat kedua yang menyebutkan bangunan terbuat dari balok-balok batu andesit."
+            },
+            {
+                id: 17,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Aroma anyir khas hasil laut langsung menusuk hidung begitu aku turun dari mobil pikap. Lantai beton basah dan licin. Terdengar suara teriakan tawar-menawar harga dari puluhan orang yang berkerumun di sekitar keranjang-keranjang bambu besar.",
+                question: "Latar tempat dari cerita tersebut adalah...",
+                answer: "Tempat Pelelangan Ikan (TPI) atau Pasar Ikan.",
+                explanation: "Objek 'aroma anyir hasil laut', 'keranjang bambu', dan 'teriakan tawar-menawar' merujuk langsung pada aktivitas di pasar ikan."
+            },
+            {
+                id: 18,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Untuk mengurangi dampak pemanasan global, pemerintah daerah mewajibkan program reboisasi pada lahan-lahan gundul di kawasan hulu sungai.",
+                question: "Makna istilah 'reboisasi' pada kalimat tersebut adalah...",
+                answer: "Penanaman kembali hutan yang telah gundul.",
+                explanation: "Reboisasi adalah istilah baku dalam ekologi dan kehutanan yang bermakna penghijauan atau penanaman kembali lahan/hutan yang tandus."
+            },
+            {
+                id: 19,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Membaca buku bukan sekadar mengeja kata, melainkan membuka jendela dunia. Dengan membaca, kita dapat mengetahui sejarah masa lalu, menjelajahi negara lain tanpa harus bepergian, dan menyelami pemikiran para tokoh hebat. Oleh karena itu, jadikanlah membaca sebagai kebutuhan harianmu.",
+                question: "Ide pokok dari paragraf tersebut terletak pada kalimat dan berisi tentang...",
+                answer: "Berada di kalimat pertama, berisi gagasan bahwa membaca adalah sarana untuk membuka wawasan dunia.",
+                explanation: "Paragraf ini berjenis deduktif (ide pokok di awal). Kalimat-kalimat selanjutnya merupakan kalimat penjelas (mengetahui sejarah, negara lain, pemikiran tokoh)."
+            },
+            {
+                id: 20,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Tuangkan bumbu ke dalam mangkuk.\n(2) Rebus mie dalam 400 cc air mendidih selama 3 menit.\n(3) Tiriskan mie dan masukkan ke dalam mangkuk berisi bumbu.\n(4) Aduk mie dengan bumbu hingga merata, taburkan bawang goreng, dan sajikan.",
+                question: "Urutan yang tepat agar menjadi teks prosedur pembuatan mie instan yang benar adalah...",
+                answer: "(2) - (1) - (3) - (4)",
+                explanation: "Logikanya: masak mie (2), siapkan bumbu sambil menunggu (1), satukan mie dan bumbu (3), lalu aduk dan sajikan (4). (Catatan: (1)-(2) juga bisa, namun (2)-(1) lebih umum dalam memasak sambil menunggu)."
+            },
+            {
+                id: 21,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Dalam legenda Malin Kundang, kesombongan atas kekayaan dan rasa malu mengakui ibunya sendiri yang miskin berujung pada kutukan yang membinasakan dirinya dan seluruh hartanya.",
+                question: "Relevansi nilai cerita tersebut dengan kehidupan generasi muda saat ini adalah...",
+                answer: "Harta dan status sosial tidak boleh membuat seseorang lupa daratan dan durhaka kepada orang tua yang telah membesarkannya.",
+                explanation: "Kisah ini sangat relevan untuk mengingatkan generasi modern agar tidak mengukur harga diri seseorang (terutama orang tua) semata-mata dari penampilan dan kekayaan finansial."
+            },
+            {
+                id: 22,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Langkah Rina terhenti di ambang pintu. Matanya nanar menatap sangkar burung kesayangannya yang terbuka lebar, menyisakan sehelai bulu biru mungil di dasar sangkar. Ia memanggil-manggil nama 'Piko', namun hanya keheningan kamar yang menjawab.",
+                question: "Suasana yang terbangun dari kutipan tersebut adalah...",
+                answer: "Sedih dan kehilangan.",
+                explanation: "Deskripsi 'mata nanar' (kaca-kaca/hampir menangis), sangkar terbuka, bulu yang tertinggal, dan 'hanya keheningan yang menjawab' memicu rasa simpati atas kehilangan hewan peliharaan."
+            },
+            {
+                id: 23,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Keringat menganak sungai di punggung ayah saat ia memikul beras puluhan kilogram di bawah terik matahari siang bolong demi sesuap nasi.",
+                question: "Majas hiperbola ditunjukkan oleh frasa...",
+                answer: "Keringat menganak sungai.",
+                explanation: "Hiperbola adalah majas yang melebih-lebihkan kenyataan. Mengibaratkan banyaknya keringat seperti aliran sungai adalah bentuk melebih-lebihkan."
+            },
+            {
+                id: 24,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Siswa kelas 9 diwajibkan mengembalikan buku perpustakaan maksimal tanggal 15 Mei. Hari ini adalah tanggal 18 Mei, dan Budi dipanggil oleh petugas perpustakaan sekolah.",
+                question: "Simpulan deduktif yang paling logis adalah...",
+                answer: "Budi dipanggil karena ia belum mengembalikan atau terlambat mengembalikan buku perpustakaan.",
+                explanation: "Hubungan logis antara aturan batas waktu yang sudah terlewat (tanggal 18 > tanggal 15) dan pemanggilan spesifik oleh petugas perpustakaan."
+            },
+            {
+                id: 25,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Vitamin C sangat penting untuk menjaga kekebalan tubuh. Sumber alaminya banyak terdapat pada buah jeruk dan jambu biji.\n\nTeks 2: Terlalu banyak mengonsumsi suplemen Vitamin C sintetis dapat membebani kerja ginjal dan memicu batu ginjal.",
+                question: "Hubungan makna antara Teks 1 dan Teks 2 adalah...",
+                answer: "Teks 1 membahas manfaat alami, sedangkan Teks 2 membahas risiko akibat konsumsi dosis tinggi/sintetis yang berlebihan.",
+                explanation: "Kedua teks saling melengkapi dengan memberikan informasi dari dua sisi yang berbeda mengenai satu topik (Vitamin C): manfaat vs efek samping."
+            },
+            {
+                id: 26,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Roda gerobak tua itu sudah berdecit keras sejak kemarin. Rodanya bergetar hebat saat melewati jalan berbatu. Pak tua penjual bakso itu terus memaksanya berjalan sambil membawa beban kuah kaldu yang penuh.",
+                question: "Peristiwa yang kemungkinan besar segera terjadi adalah...",
+                answer: "Roda gerobak patah/lepas dan kuah bakso tumpah.",
+                explanation: "Prediksi berdasarkan tanda-tanda kerusakan fisik (berdecit, bergetar) dipadukan dengan kondisi pemicu (jalan berbatu, beban berat)."
+            },
+            {
+                id: 27,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Badan Meteorologi, Klimatologi, dan Geofisika (BMKG) mengimbau nelayan pesisir selatan Jawa untuk tidak melaut pada tanggal 10-12 Agustus karena diprediksi terjadi gelombang laut mencapai 4 meter.",
+                question: "Mengapa nelayan diimbau tidak melaut pada tanggal tersebut?",
+                answer: "Karena diprediksi akan terjadi gelombang tinggi mencapai 4 meter.",
+                explanation: "Jawaban tercantum secara jelas dan tersurat pada anak kalimat terakhir sebagai alasan imbauan BMKG."
+            },
+            {
+                id: 28,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Lampu kristal memantulkan cahaya gemerlap ke penjuru ruangan. Meja bundar ditata rapi dengan taplak putih sutra, dihiasi buket mawar merah di tengahnya. Denting sendok garpu yang beradu dengan piring porselen terdengar perlahan dari para tamu.",
+                question: "Latar tempat yang dideskripsikan adalah...",
+                answer: "Ruang perjamuan/restoran mewah.",
+                explanation: "Objek 'lampu kristal', 'taplak sutra', 'piring porselen', dan aktivitas makan ('denting sendok') secara spesifik menggambarkan suasana jamuan makan malam yang elegan."
+            },
+            {
+                id: 29,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Dalam sistem ekonomi, jika jumlah uang yang beredar lebih banyak daripada jumlah barang yang tersedia, maka akan memicu terjadinya inflasi.",
+                question: "Istilah 'inflasi' dalam kutipan tersebut berarti...",
+                answer: "Kemerosotan nilai uang yang menyebabkan kenaikan harga barang secara umum.",
+                explanation: "Secara konteks ekonomi pada teks, kondisi uang beredar lebih banyak daripada barang berujung pada naiknya harga-harga secara masif (inflasi)."
+            },
+            {
+                id: 30,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Setiap hari ia memungut sampah plastik di sepanjang pantai tanpa mengharapkan imbalan. Baginya, laut yang bersih adalah pusaka yang harus ia wariskan untuk cucu-cucunya nanti, bukan lautan penuh racun.",
+                question: "Nilai keteladanan yang ditunjukkan oleh tokoh adalah...",
+                answer: "Kepedulian yang tinggi terhadap kelestarian lingkungan demi masa depan tanpa pamrih.",
+                explanation: "Tindakan fisik (memungut sampah), sifat (tanpa imbalan), dan tujuan visinya (warisan pusaka bersih) menyimpulkan nilai moral menjaga lingkungan secara ikhlas."
+            },
+            {
+                id: 31,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Oleh karena itu, sarapan sangat penting agar siswa bisa berkonsentrasi.\n(2) Banyak siswa SMP mengabaikan sarapan pagi karena terburu-buru.\n(3) Akibatnya, saat jam pelajaran pertama, mereka sering merasa mengantuk dan lemas.\n(4) Padahal, perut yang kosong menyebabkan otak kekurangan pasokan glukosa.",
+                question: "Susunan paragraf eksposisi yang runtut dan logis adalah...",
+                answer: "(2) - (4) - (3) - (1)",
+                explanation: "Mulai dari masalah utama (2), penjelasan teknis masalah (4), dampak dari masalah tersebut (3), dan ditutup dengan simpulan persuasif (1)."
+            },
+            {
+                id: 32,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Kisah fabel Semut dan Belalang mengajarkan bahwa Belalang yang hanya bermain musik sepanjang musim panas akhirnya kelaparan saat musim dingin, sementara Semut yang rajin menabung makanan selamat dari cuaca beku.",
+                question: "Nilai cerita ini sangat relevan dengan prinsip kehidupan di dunia nyata, yaitu...",
+                answer: "Pentingnya menabung, bekerja keras, dan mempersiapkan masa depan selagi ada kesempatan (tidak hura-hura/boros).",
+                explanation: "Kisah klasik ini merepresentasikan kehidupan riil mengenai manajemen keuangan dan persiapan menghadapi masa sulit (musim dingin = masa krisis/tua)."
+            },
+            {
+                id: 33,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Lampu panggung tiba-tiba mati total. Dari arah kegelapan auditorium, terdengar bunyi derit engsel pintu yang dibuka secara perlahan, disusul suara langkah kaki yang terseret-seret mendekat ke arah penonton.",
+                question: "Suasana yang paling dominan dirasakan dari kutipan cerita tersebut adalah...",
+                answer: "Menegangkan dan menakutkan.",
+                explanation: "Penggunaan unsur misteri seperti 'mati total', 'kegelapan', 'derit engsel', dan 'langkah diseret' dirancang untuk memacu adrenalin dan rasa takut pembaca (suasana horor/thriller)."
+            },
+            {
+                id: 34,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Pemuda itu dikenal sebagai tulang punggung keluarga setelah ayahnya tiada. Ia bekerja siang dan malam menafkahi ibu serta ketiga adiknya.",
+                question: "Makna majas metafora 'tulang punggung keluarga' adalah...",
+                answer: "Orang yang menjadi penopang utama atau pencari nafkah bagi keluarga.",
+                explanation: "Metafora membandingkan fungsi 'tulang punggung' (penopang tubuh) dengan peran 'pencari nafkah' (penopang ekonomi keluarga) secara langsung tanpa kata penghubung."
+            },
+            {
+                id: 35,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Tiga hari lalu, Andi jajan sembarangan di pinggir jalan yang berdebu. Pagi ini, ia tidak masuk sekolah dan ibunya menelpon wali kelas bahwa Andi sering mondar-mandir ke kamar mandi sejak subuh.",
+                question: "Kesimpulan logis mengenai kondisi Andi adalah...",
+                answer: "Andi mengalami sakit diare akibat mengonsumsi makanan yang kurang higienis.",
+                explanation: "Fakta 'jajan sembarangan berdebu' berakibat logis pada masalah pencernaan 'mondar-mandir ke kamar mandi' (diare)."
+            },
+            {
+                id: 36,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Hutan Amazon, paru-paru dunia, terus mengalami deforestasi hingga kehilangan 10% areanya dalam dua dekade terakhir.\n\nTeks 2: Tiongkok dan India memimpin gerakan global dalam penanaman jutaan pohon baru yang sukses menghijaukan wilayah tandus mereka.",
+                question: "Perbandingan isu lingkungan pada kedua teks tersebut menunjukkan adanya...",
+                answer: "Kontradiksi fenomena: Teks 1 menunjukkan kerusakan lingkungan (deforestasi), sedangkan Teks 2 menunjukkan perbaikan lingkungan (reboisasi).",
+                explanation: "Sama-sama bertema tutupan lahan pepohonan, namun Teks 1 bersusana pesimistis/kerusakan, dan Teks 2 bersuasana optimistis/perbaikan."
+            },
+            {
+                id: 37,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Pemain bernomor punggung 10 itu menendang bola dengan sangat keras ke arah sudut kanan atas gawang lawan. Kiper lawan sudah terlanjur melompat ke arah kiri mengikuti arah tipuan gerakan tubuh sang penendang.",
+                question: "Prediksi kelanjutan peristiwa tersebut adalah...",
+                answer: "Terjadi gol karena bola dan kiper bergerak ke arah yang berlawanan secara mutlak.",
+                explanation: "Analisis fisika dan arah: bola ke kanan atas, kiper sudah melayang ke kiri. Mustahil kiper bisa menepisnya, sehingga gol pasti terjadi."
+            },
+            {
+                id: 38,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Syarat pendaftaran beasiswa prestasi antara lain: melampirkan fotokopi nilai rapor semester 1-5 yang dilegalisir, memiliki piagam kejuaraan minimal tingkat kabupaten, dan menyerahkan esai motivasi sepanjang 500 kata.",
+                question: "Sebutkan berkas akademik yang harus dipenuhi pelamar beasiswa berdasarkan teks tersebut!",
+                answer: "Fotokopi nilai rapor semester 1-5 yang sudah dilegalisir.",
+                explanation: "Pertanyaan meminta berkas akademik spesifik, yang secara eksplisit tertulis 'fotokopi nilai rapor semester 1-5 yang dilegalisir'."
+            },
+            {
+                id: 39,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Suara jangkrik bersahutan memecah kesunyian. Hanya ada sebuah lampu pelita yang berkedip-kedip ditiup angin, menerangi gubuk bambu berdinding anyaman yang mulai rapuh itu.",
+                question: "Latar waktu dan tempat dalam kutipan tersebut adalah...",
+                answer: "Malam hari di sebuah gubuk sederhana (pedesaan).",
+                explanation: "'Suara jangkrik' dan 'pelita' menunjukkan latar waktu malam. 'Gubuk bambu berdinding anyaman' merujuk pada tempat hunian sederhana di pelosok/desa."
+            },
+            {
+                id: 40,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Pameran seni rupa itu menyeleksi ratusan karya pelukis muda. Sang kurator harus bekerja ekstra keras menentukan 20 lukisan terbaik yang layak dipajang di galeri.",
+                question: "Tugas seorang 'kurator' berdasarkan konteks teks tersebut adalah...",
+                answer: "Orang yang ahli dalam menyeleksi, menilai, dan mengurus karya seni untuk pameran.",
+                explanation: "Dalam ranah seni, istilah kurator merujuk pada pengurus galeri atau museum yang menyeleksi dan memberikan narasi pada benda pameran."
+            },
+            {
+                id: 41,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Pak RT dengan tegas mengembalikan amplop tebal berisi uang dari calon kepala desa itu. 'Maaf, suara warga tidak bisa dibeli. Biarkan mereka memilih pemimpin sesuai hati nurani,' ucapnya seraya menutup pintu.",
+                question: "Karakter atau watak Pak RT dalam cuplikan cerita di atas adalah...",
+                answer: "Jujur, berintegritas, dan tidak mudah disuap.",
+                explanation: "Tindakan 'mengembalikan amplop uang' politik uang (money politic) mencerminkan sifat orang yang memegang teguh kejujuran (integritas tinggi)."
+            },
+            {
+                id: 42,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Penemuan lampu pijar oleh Thomas Alva Edison mengubah kehidupan dunia.\n(2) Thomas Alva Edison lahir pada 11 Februari 1847 di Amerika Serikat.\n(3) Ribuan kali percobaannya gagal, tapi ia menolak untuk menyerah.\n(4) Kini, cahayanya menerangi malam peradaban manusia.",
+                question: "Susunan paragraf biografi yang tepat adalah...",
+                answer: "(2) - (3) - (1) - (4)",
+                explanation: "Biografi dimulai dari identitas lahir (2), proses perjuangan hidup (3), pencapaian utamanya (1), dan konklusi/dampak pencapaian tersebut (4)."
+            },
+            {
+                id: 43,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Sangkuriang gagal menikahi Dayang Sumbi dan marah besar. Ia menendang perahu buatannya hingga terbalik, yang kemudian berubah menjadi Gunung Tangkuban Parahu, menelan seluruh mimpinya.",
+                question: "Pesan moral dari peristiwa legenda tersebut adalah...",
+                answer: "Kemarahan yang tidak terkendali (emosi sesaat) hanya akan membawa kehancuran dan penyesalan bagi diri sendiri.",
+                explanation: "Relevansi psikologis: menendang perahu karena marah besar berujung pada bencana. Di dunia nyata, keputusan yang diambil saat amarah memuncak sering berakibat fatal."
+            },
+            {
+                id: 44,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Gadis kecil itu berlari kencang menerjang garis finis. Ia tak peduli sepatunya yang berlubang, ia menoleh ke tribun mencari sosok ibunya, lalu mengangkat medali emasnya tinggi-tinggi dengan senyum paling lebar di dunia.",
+                question: "Perasaan yang ingin ditimbulkan pengarang dari teks ini adalah...",
+                answer: "Rasa bangga, haru, dan inspiratif.",
+                explanation: "Kontras antara 'sepatu berlubang' (keterbatasan) dengan 'medali emas' dan 'senyum lebar' (kesuksesan) memunculkan perasaan bangga atas perjuangan pantang menyerah."
+            },
+            {
+                id: 45,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Janji-janji politikus itu bagaikan air di daun talas. Begitu pemilu usai, semua ucapan manisnya menguap tanpa jejak, tak ada satu pun yang ditepati.",
+                question: "Makna majas perumpamaan (simile) 'bagaikan air di daun talas' adalah...",
+                answer: "Sifat orang yang tidak berpendirian tetap atau janji yang tidak pernah ditepati (selalu lari/hilang).",
+                explanation: "Air di daun talas selalu bergulir dan tidak berbekas, mengiaskan ucapan/janji yang tidak ada wujud nyatanya."
+            },
+            {
+                id: 46,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Setiap kali rapat warga, Pak Jono selalu memotong pembicaraan orang lain dan menganggap ide-idenya yang paling brilian. Akibatnya, pada bulan berikutnya, warga mulai malas mengundangnya.",
+                question: "Berdasarkan prinsip kelogisan sosial, mengapa warga bertindak demikian?",
+                answer: "Karena sikap egois dan tidak menghargai pendapat orang lain membuat seseorang dijauhi oleh lingkungan sosialnya.",
+                explanation: "Hubungan sebab (dominasi pembicaraan/egois) berakibat pada hukuman sosial (dikucilkan/tidak diundang)."
+            },
+            {
+                id: 47,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Kendaraan listrik dianggap sebagai solusi utama menekan polusi udara di kota metropolitan.\n\nTeks 2: Proses produksi baterai kendaraan listrik dan pengolahan limbah baterainya menimbulkan masalah ekologi baru di daerah tambang.",
+                question: "Kedua teks tersebut menunjukkan bahwa transisi ke kendaraan listrik...",
+                answer: "Memiliki solusi (mengurangi polusi kota) sekaligus membawa konsekuensi/dampak negatif (kerusakan ekologi tambang).",
+                explanation: "Pembacaan sintetis dari dua teks membuktikan bahwa sebuah teknologi membawa pro dan kontra pada ruang (kota vs tambang) yang berbeda."
+            },
+            {
+                id: 48,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Bulan mulai tertutup awan hitam pekat. Angin dingin bertiup makin kencang merontokkan daun-daun mangga. Semut-semut terlihat berbaris terburu-buru masuk ke lubang di dinding.",
+                question: "Berdasarkan tanda-tanda alam tersebut, apa yang akan segera terjadi?",
+                answer: "Akan segera turun hujan lebat atau badai.",
+                explanation: "Awan hitam pekat (mendung), angin dingin kencang, dan insting hewan (semut berlindung) adalah indikator universal datangnya hujan lebat."
+            },
+            {
+                id: 49,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Pendaftaran lomba cipta puisi tingkat SMP se-provinsi dibuka mulai tanggal 1 hingga 20 Oktober 2024. Peserta tidak dipungut biaya pendaftaran alias gratis. Karya dikirim melalui email panitia dalam format PDF.",
+                question: "Berapa biaya pendaftaran yang harus dibayar oleh peserta lomba?",
+                answer: "Tidak ada biaya (gratis).",
+                explanation: "Jawaban tercantum secara jelas: 'Peserta tidak dipungut biaya pendaftaran alias gratis'."
+            },
+            {
+                id: 50,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Suara peluit panjang membelah hiruk-pikuk puluhan orang yang berlarian membawa koper. Gemuruh mesin baja besar itu perlahan berhenti. Asap putih mengepul dari cerobongnya.",
+                question: "Objek dan latar tempat yang dibicarakan dalam kutipan teks tersebut adalah...",
+                answer: "Kereta api uap (klasik) dan latar di Stasiun Kereta.",
+                explanation: "'Peluit panjang', 'koper', 'mesin baja', dan 'asap dari cerobong' adalah kepingan puzle yang membentuk gambar sebuah lokomotif uap di stasiun."
+            },
+            {
+                id: 51,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Katak dan salamander digolongkan sebagai hewan amfibi karena mereka memiliki siklus hidup yang unik pada masa perkembangannya.",
+                question: "Apa arti istilah biologi 'amfibi' pada teks tersebut?",
+                answer: "Hewan bertulang belakang yang dapat hidup di dua alam, yaitu di air dan di darat.",
+                explanation: "Istilah amfibi (amphibia) merujuk pada kelas hewan yang fase larvanya di air (bernapas dengan insang) dan fase dewasanya di darat (paru-paru/kulit)."
+            },
+            {
+                id: 52,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Pada akhirnya, kebohongan serapat apa pun pasti akan tercium baunya. Rangga harus menerima kenyataan dijauhi teman sekelasnya karena ketahuan mencuri uang kas, memfitnah Budi, dan tidak mau meminta maaf.",
+                question: "Ide pokok dari paragraf simpulan tersebut adalah...",
+                answer: "Akibat buruk (sanksi sosial) dari sikap tidak jujur dan fitnah yang dilakukan oleh Rangga.",
+                explanation: "Paragraf ini memfokuskan pada konsekuensi dari rangkaian keburukan karakter tokoh."
+            },
+            {
+                id: 53,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Penutup: Harapan kebersihan lingkungan.\n(2) Isi: Pentingnya membuang sampah pada tempatnya.\n(3) Pendahuluan: Salam puji syukur dan sapaan audiens.\n(4) Inti: Contoh dampak buruk banjir karena sampah.",
+                question: "Kerangka pidato persuasi yang berurutan secara standar adalah...",
+                answer: "(3) - (2) - (4) - (1)",
+                explanation: "Pidato selalu dimulai dengan pendahuluan (3), lalu pengantar topik (2), masuk ke inti masalah/argumentasi (4), dan diakhiri harapan/penutup (1)."
+            },
+            {
+                id: 54,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Cerita detektif itu memperlihatkan bahwa sang pelaku kejahatan sangat pandai memanipulasi alibi dan terlihat sebagai orang paling baik di desa, hingga akhirnya detektif membuktikan sebaliknya dengan jejak sidik jari.",
+                question: "Relevansi cerita dengan fenomena dunia nyata adalah...",
+                answer: "Penampilan luar atau sikap ramah seseorang tidak menjamin niat baiknya, kita harus selalu bersikap kritis dan bertumpu pada bukti nyata.",
+                explanation: "Relevansi sosial: jangan mudah tertipu oleh bungkus/penampilan luar (Don't judge a book by its cover), melainkan nilai sesuatu dari bukti rekam jejak."
+            },
+            {
+                id: 55,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Si kancil menari kegirangan, menepuk perutnya yang buncit. Ia menertawakan buaya yang masih menganga bodoh di seberang sungai, menunggu kancil melompat ke mulutnya padahal si kancil sudah menyeberang lewat jembatan kayu di atasnya.",
+                question: "Suasana/reaksi emosional pembaca saat membaca tingkah tokoh kancil tersebut adalah...",
+                answer: "Geli, lucu, dan terhibur (suasana jenaka).",
+                explanation: "Aksi menari kegirangan dan kebodohan tokoh antagonis (buaya) yang tertipu menciptakan adegan komedi/humor dalam fabel."
+            },
+            {
+                id: 56,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Ketika pintu gudang tua itu dibuka, aroma petrikor berpadu dengan bau apek kertas berjamur langsung menyergap ingatan Risa ke masa kecilnya.",
+                question: "Citraan (imaji) dominan pada kalimat tersebut adalah...",
+                answer: "Citraan penciuman (pembauan).",
+                explanation: "Kata-kata 'aroma petrikor', 'bau apek', dan 'menyergap' menstimulasi indra penciuman pembaca secara kuat."
+            },
+            {
+                id: 57,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Kualitas panen gandum tahun ini anjlok parah akibat kemarau ekstrem. Di sisi lain, permintaan gandum untuk produksi roti di dalam negeri terus melonjak menjelang hari raya.",
+                question: "Konsekuensi ekonomi logis dari peristiwa tersebut adalah...",
+                answer: "Harga gandum dan roti di pasaran akan melonjak naik drastis (inflasi produk).",
+                explanation: "Hukum dasar ekonomi (supply and demand): persediaan barang menurun tajam sementara permintaan naik, maka harga akan melambung."
+            },
+            {
+                id: 58,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Kasus Demam Berdarah Dengue (DBD) meningkat tajam saat musim hujan akibat banyaknya genangan air bersih tak tersentuh tanah.\n\nTeks 2: Pemberantasan Sarang Nyamuk (PSN) dengan cara 3M Plus adalah langkah paling efektif memutus rantai hidup nyamuk Aedes aegypti.",
+                question: "Hubungan kedua paragraf tersebut adalah...",
+                answer: "Hubungan masalah dan solusi.",
+                explanation: "Teks 1 memaparkan fenomena/masalah meningkatnya penyakit, Teks 2 menyajikan cara bertindak (solusi) untuk mengatasi masalah tersebut."
+            },
+            {
+                id: 59,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Buku harianku tertinggal di atas meja ruang tamu. Halamannya terbuka tepat di bagian curhatanku tentang betapa cerewetnya Ibu menyuruhku belajar. Aku mendengar langkah kaki Ibu baru saja masuk ruang tamu sepulang dari pasar.",
+                question: "Prediksi nasib penulis (aku) selanjutnya adalah...",
+                answer: "Ibu akan membaca buku harian tersebut lalu memarahi atau menasihati penulis dengan keras.",
+                explanation: "Buku terbuka di meja, rahasia terbongkar, dan target rahasia (Ibu) datang ke lokasi tersebut. Prediksi logis adalah konflik konfrontasi."
+            },
+            {
+                id: 60,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Mamalia laut seperti paus bernapas menggunakan paru-paru. Oleh karena itu, paus harus muncul ke permukaan laut secara berkala untuk mengambil oksigen dari udara bebas.",
+                question: "Organ pernapasan yang digunakan paus menurut teks tersebut adalah...",
+                answer: "Paru-paru.",
+                explanation: "Teks langsung menyebutkan 'paus bernapas menggunakan paru-paru', informasi yang sangat jelas."
+            },
+            {
+                id: 61,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Tumpukan buku berserakan tak beraturan, sisa bungkus makanan ringan memenuhi lantai, dan layar komputer yang menyala menampilkan deretan kode rumit menemani seorang pemuda dengan mata merah di kursi berodanya.",
+                question: "Latar tempat dan suasana yang tergambar adalah...",
+                answer: "Kamar yang berantakan dengan suasana begadang/fokus bekerja di depan komputer.",
+                explanation: "Objek buku, bungkus makanan, layar kode, kursi roda mendeskripsikan kamar seorang programmer/gamer yang mengabaikan kerapian demi fokus (mata merah/begadang)."
+            },
+            {
+                id: 62,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Untuk memastikan pesawat tiba di tempat tujuan dengan aman menembus cuaca buruk awan cumulonimbus, sistem navigasi modern sangat diandalkan oleh para pilot.",
+                question: "Istilah 'navigasi' pada konteks penerbangan berarti...",
+                answer: "Ilmu atau sistem tentang penentuan arah, posisi, dan rute perjalanan dari satu titik ke titik lain.",
+                explanation: "Navigasi adalah teknik pengarahan laju transportasi agar tidak tersesat atau mengalami kecelakaan di rute tempuhnya."
+            },
+            {
+                id: 63,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Si Bungkuk tetap tersenyum ramah melayani pelanggannya, meski tak jarang ada yang menatap fisiknya dengan pandangan merendahkan. Kebaikan hatinya membuat toko rotinya tak pernah sepi pembeli.",
+                question: "Nilai positif yang bisa diteladani dari tokoh Si Bungkuk adalah...",
+                answer: "Kesabaran, ketegaran hati menghadapi diskriminasi, dan selalu bersikap ramah kepada orang lain.",
+                explanation: "Tahan banting terhadap hinaan fisik ('tatapan merendahkan') dan membalasnya dengan senyuman tulus adalah nilai ketegaran dan kesabaran level tinggi."
+            },
+            {
+                id: 64,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Singa terperangkap dalam jaring jala pemburu.\n(2) Tikus kecil datang menggigit tali jala hingga putus.\n(3) Singa membebaskan tikus yang tak sengaja ia tangkap.\n(4) Singa dan tikus bersahabat selamanya.",
+                question: "Urutan cerita fabel (orientasi - komplikasi - resolusi - koda) yang tepat adalah...",
+                answer: "(3) - (1) - (2) - (4)",
+                explanation: "Kebaikan awal singa (3) -> masalah menimpa singa (1) -> penyelesaian oleh tikus (2) -> akhir bahagia/moral (4)."
+            },
+            {
+                id: 65,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Bawang Putih mencuci baju ibu tirinya di sungai yang deras. Ia sangat hati-hati karena selembar saja hilang, ia tahu cambukan rotan menunggunya di rumah.",
+                question: "Tindakan kehati-hatian Bawang Putih relevan dengan realitas sosial bahwa...",
+                answer: "Anak-anak korban kekerasan dalam rumah tangga sering kali hidup dalam trauma dan ketakutan ekstrem saat melakukan kesalahan sekecil apa pun.",
+                explanation: "Kisah dongeng ini mendeskripsikan fenomena nyata kekerasan verbal/fisik (child abuse) yang membuat anak sangat stres dan perfeksionis karena takut dihukum."
+            },
+            {
+                id: 66,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Ia melompat dari kursi rodanya, sesuatu yang diyakini dokter takkan pernah bisa ia lakukan lagi. Kakinya gemetar hebat, namun setapak demi setapak, ia berjalan memeluk ibunya yang menangis tersedu di pojok ruangan.",
+                question: "Suasana hati pembaca yang muncul setelah membaca teks ini adalah...",
+                answer: "Sangat terharu, takjub, dan merasa terinspirasi.",
+                explanation: "Momen mukjizat fiksi: pencapaian mustahil secara medis dibalas dengan tangisan ibu yang bahagia menyentuh titik emosi terdalam (haru luar biasa)."
+            },
+            {
+                id: 67,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Baru saja menginjakkan kaki di pasar malam itu, dentuman musik dangdut yang memekakkan telinga berpadu dengan teriakan operator bianglala sudah menyambut kepalaku.",
+                question: "Jenis citraan yang digunakan pada kutipan di atas adalah...",
+                answer: "Citraan pendengaran (auditori).",
+                explanation: "Frasa 'dentuman musik', 'memekakkan telinga', dan 'teriakan operator' merujuk pada respons telinga terhadap suara bising."
+            },
+            {
+                id: 68,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Katakanlah kamu seorang direktur. Kamu tahu perusahaan sedang merugi milyaran bulan ini akibat korupsi manajer keuangan. Namun, besok kamu malah menyetujui pembelian 10 mobil dinas mewah baru.",
+                question: "Hal yang tidak logis dari rentetan kejadian tersebut adalah...",
+                answer: "Perusahaan yang sedang krisis keuangan seharusnya berhemat/efisiensi, bukan malah menghamburkan uang untuk barang mewah sekunder.",
+                explanation: "Tindakan direktur bertentangan mutlak (kontradiktif) dengan kondisi premis perusahaan yang sedang sekarat."
+            },
+            {
+                id: 69,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Gunung Padang adalah situs prasejarah berusia belasan ribu tahun yang dipenuhi balok batu berserakan akibat gempa masa lalu.\n\nTeks 2: Banyak penganut teori konspirasi meyakini Gunung Padang menyembunyikan piramida alien berlapis emas di perutnya.",
+                question: "Perbedaan sifat informasi antara Teks 1 dan Teks 2 adalah...",
+                answer: "Teks 1 bersifat faktual dan arkeologis, sedangkan Teks 2 bersifat opini spekulatif (mitos/konspirasi).",
+                explanation: "Teks 1 berbicara berbasis sains arkeologi bumi (gempa, prasejarah), Teks 2 berbicara tanpa dasar ilmiah empiris (alien, konspirasi)."
+            },
+            {
+                id: 70,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Ayah lupa mencabut kunci motor yang diparkir di depan pagar indekos yang terkenal sangat rawan pencurian. Pagar dalam keadaan terbuka lebar dan jalanan sedang sepi.",
+                question: "Risiko peristiwa yang kemungkinan besar terjadi adalah...",
+                answer: "Motor tersebut sangat rawan hilang dicuri orang (kasus pencurian motor).",
+                explanation: "Pertemuan tiga elemen fatal: objek ada (motor+kunci nempel), akses mudah (pagar terbuka), dan lingkungan mendukung (lokasi rawan + sepi)."
+            },
+            {
+                id: 71,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Sebuah studi terbaru menyebutkan bahwa meminum air putih sebanyak dua gelas segera setelah bangun tidur pagi dapat membantu mempercepat metabolisme tubuh hingga 24 persen.",
+                question: "Berapa banyak air putih yang disarankan untuk diminum saat bangun tidur menurut teks?",
+                answer: "Dua gelas.",
+                explanation: "Detail kuantitas tersurat tertulis jelas: 'sebanyak dua gelas'."
+            },
+            {
+                id: 72,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Bulu putih saljunya sedikit ternoda lumpur. Mata bulatnya yang biru menatapku memelas sambil mengeluarkan suara 'meong' yang sangat pelan. Ia kedinginan di bawah kolong mobil.",
+                question: "Objek spesifik apa yang digambarkan dalam teks tersebut?",
+                answer: "Seekor kucing putih bermata biru yang kotor dan kedinginan.",
+                explanation: "Deskripsi fisik 'bulu putih salju', 'mata biru', dan suara khas 'meong' menunjuk langsung pada identitas hewan kucing ras."
+            },
+            {
+                id: 73,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Pemerintah sedang gencar memberantas penyebaran hoaks di media sosial dengan mengedukasi literasi digital kepada masyarakat akar rumput.",
+                question: "Istilah 'hoaks' dalam konteks komunikasi digital berarti...",
+                answer: "Berita bohong, informasi palsu, atau kabar yang direkayasa sedemikian rupa seolah-olah benar.",
+                explanation: "Hoaks (hoax) adalah kata serapan yang secara definitif merujuk pada misinformasi atau disinformasi."
+            },
+            {
+                id: 74,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Daripada nongkrong menghabiskan uang, Bima memilih masuk ke perpustakaan desa. Buku bekas usang tentang elektronika dibacanya berulang-ulang hingga ia berhasil merakit radio sendiri dari barang bekas.",
+                question: "Karakter/watak tokoh Bima yang paling menonjol adalah...",
+                answer: "Sangat mandiri, tekun, inovatif, dan haus akan ilmu pengetahuan.",
+                explanation: "Menolak hura-hura demi membaca ('haus ilmu'), mengulang bacaan ('tekun'), dan bisa membuat barang baru dari barang bekas ('inovatif/mandiri')."
+            },
+            {
+                id: 75,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Hasilnya, kelompok tanaman yang disiram dengan air cucian beras tumbuh lebih subur.\n(2) Siswa membagi 10 tanaman tomat menjadi dua kelompok perlakuan.\n(3) Laporan ini meneliti pengaruh air cucian beras terhadap pertumbuhan tanaman tomat.\n(4) Kelompok A disiram air biasa, Kelompok B disiram air cucian beras.",
+                question: "Susunan laporan percobaan saintifik yang tepat adalah...",
+                answer: "(3) - (2) - (4) - (1)",
+                explanation: "Mulai dari judul/tujuan (3), persiapan metode/objek (2), pelaksanaan metode (4), dan diakhiri dengan hasil observasi (1)."
+            },
+            {
+                id: 76,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Jenderal Sudirman tetap memimpin perang gerilya masuk keluar hutan lebat, meski ia harus ditandu oleh pasukannya karena menderita penyakit paru-paru parah.",
+                question: "Nilai perjuangan dalam teks ini relevan untuk menumbuhkan sikap...",
+                answer: "Nasionalisme, rela berkorban, dan pantang menyerah meski dalam kondisi fisik yang paling terbatas.",
+                explanation: "Kisah kepahlawanan ini relevan diajarkan untuk memupuk cinta tanah air dengan mencontohkan totalitas pengabdian tanpa alasan kondisi fisik."
+            },
+            {
+                id: 77,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Lelucon tentang sepatu badut yang terinjak pisang itu diulang tiga kali oleh si pelawak. Pada puncaknya, celana si badut melorot dan memunculkan celana pendek bergambar stroberi pink.",
+                question: "Respons emosional yang diharapkan penulis dari pembaca adalah...",
+                answer: "Tertawa geli/komikal.",
+                explanation: "Unsur slapstick komedi (menginjak pisang, celana melorot, motif lucu stroberi pink) murni dirancang untuk memancing tawa."
+            },
+            {
+                id: 78,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Silakan singgah ke gubuk reot saya ini sekadar untuk menikmati secangkir teh tawar, ucap Pak Darmawan menunjuk rumah mewahnya yang bernuansa Eropa klasik.",
+                question: "Majas yang digunakan oleh tokoh Pak Darmawan adalah...",
+                answer: "Litotes.",
+                explanation: "Litotes adalah majas merendahkan diri dengan menyatakan sesuatu yang bertentangan dengan kenyataan sebenarnya yang sangat baik (menyebut rumah mewah sebagai gubuk reot)."
+            },
+            {
+                id: 79,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Peraturan sekolah melarang siswa membawa ponsel. Hari ini ada razia mendadak. Toni, yang sejak pagi sibuk main game di ponselnya, tampak sangat panik saat guru BK masuk ke kelas.",
+                question: "Mengapa Toni tampak panik?",
+                answer: "Toni panik karena ia melanggar aturan dengan membawa ponsel, dan takut ponselnya disita saat razia mendadak.",
+                explanation: "Logika sebab-akibat sederhana: melanggar hukum + polisi/guru datang razia = pelaku takut dihukum."
+            },
+            {
+                id: 80,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Susu sapi adalah sumber kalsium utama yang disarankan untuk dikonsumsi anak dalam masa pertumbuhan.\n\nTeks 2: Sebagian anak mengidap laktosa intoleran, sehingga kalsium untuk mereka lebih aman didapatkan dari susu kedelai atau bayam.",
+                question: "Kesimpulan gabungan dari kedua teks tersebut adalah...",
+                answer: "Susu sapi penting untuk pertumbuhan anak, namun bagi penderita intoleransi laktosa, kalsium dapat diganti dengan susu kedelai atau bayam.",
+                explanation: "Menyimpulkan dua teks berarti menggabungkan solusi ideal (Teks 1) dengan solusi kompromi (Teks 2) tanpa menyalahkan salah satunya."
+            },
+            {
+                id: 81,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Tikus hitam besar itu mengendus sepotong keju yang tergeletak mencurigakan di atas papan kayu beralaskan pemicu kawat tajam. Tikus itu sangat lapar dan segera menggigit keju tersebut.",
+                question: "Peristiwa malang yang akan menimpa tikus adalah...",
+                answer: "Tikus tersebut akan terjebak, terjepit, atau mati terkena perangkap tikus.",
+                explanation: "Deskripsi 'papan kayu beralaskan pemicu kawat' adalah wujud fisik perangkap tikus jepret klasik."
+            },
+            {
+                id: 82,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Berdasarkan grafik sensus penduduk 2020, mayoritas penduduk di Desa Sukamakmur bekerja di sektor agraris (pertanian) dengan persentase mencapai 65%, diikuti sektor perdagangan 20%, dan jasa 15%.",
+                question: "Berapa persentase penduduk yang berprofesi sebagai pedagang (sektor perdagangan)?",
+                answer: "20%.",
+                explanation: "Informasi angka tersurat jelas dalam teks: 'sektor perdagangan 20%'."
+            },
+            {
+                id: 83,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Hanya terdengar detak jarum jam dinding. Siswa-siswi duduk hening, menatap tegang lembaran kertas yang dibagikan guru pengawas. Sesekali terdengar suara penghapus bergesekan keras dengan kertas buram.",
+                question: "Latar suasana dan tempat dalam kutipan di atas adalah...",
+                answer: "Suasana yang tegang, hening, dan serius di dalam ruang ujian kelas.",
+                explanation: "Objek 'kertas dibagikan guru pengawas', 'penghapus', dipadukan dengan kesunyian ('detak jam') merujuk pada situasi ujian."
+            },
+            {
+                id: 84,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Cerita tentang seorang politikus malang yang kecebur selokan saat kampanye berapi-api itu ternyata hanyalah sebuah anekdot yang ditulis kritikus sastra koran lokal.",
+                question: "Makna istilah sastra 'anekdot' dalam kalimat tersebut adalah...",
+                answer: "Cerita fiksi pendek yang lucu, menarik, namun mengandung unsur sindiran/kritik terhadap orang penting atau fenomena sosial.",
+                explanation: "Anekdot berbeda dari humor biasa karena tujuan utamanya adalah mengkritik fenomena (biasanya politik/hukum) melalui bungkusan kelucuan satir."
+            },
+            {
+                id: 85,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Tiap pagi, Kakek Sudiro menyapu pelataran masjid desa. Ia merapikan sandal-sandal jemaah subuh dan memastikan keran tempat wudu menyala lancar tanpa diupah sepeser pun dari kas masjid.",
+                question: "Nilai keagamaan (religius) dan sosial yang menonjol dari tokoh kakek adalah...",
+                answer: "Keikhlasan beramal dan mengabdi untuk kepentingan umat (ibadah).",
+                explanation: "Tindakan merawat rumah ibadah secara sukarela ('tanpa diupah') adalah bukti konkret dari amal jariyah dan pengabdian spiritual."
+            },
+            {
+                id: 86,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Bawang Putih lari ketakutan melihat Bawang Merah dihukum.\n(2) Bawang Merah serakah memilih labu terbesar berisi ular berbisa.\n(3) Bawang Putih rajin bekerja dan diberi labu kecil berisi emas.\n(4) Bawang Merah iri melihat kekayaan Bawang Putih dan mencari nenek tua.",
+                question: "Urutan kronologis yang benar dari inti cerita rakyat tersebut adalah...",
+                answer: "(3) - (4) - (2) - (1)",
+                explanation: "Ganjaran orang baik (3), memicu sifat iri tokoh jahat (4), proses peniruan serakah dengan hasil kutukan (2), dan reaksi moral akhir (1)."
+            },
+            {
+                id: 87,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Dalam novel itu diceritakan persahabatan lima pemuda pendaki hancur berantakan karena ego masing-masing yang ingin lebih dulu menancapkan bendera di puncak gunung berapi yang berbahaya.",
+                question: "Pesan relevan dari cerita tersebut dalam kerja kelompok di sekolah adalah...",
+                answer: "Egoisme dan ambisi pribadi bisa menghancurkan kerja sama tim (solidaritas) dalam mencapai tujuan bersama.",
+                explanation: "Relevansi: Gunung = tugas sekolah. Ambisi puncak = nilai/popularitas individu. Mendaki = proses kelompok yang rusak jika mementingkan ego."
+            },
+            {
+                id: 88,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Terdengar lolongan panjang anjing peliharaan itu dari atas bukit pasir, menjaga jasad tuannya yang membeku di tengah badai salju. Anjing itu menolak pergi sampai napasnya sendiri ikut membeku menjadi es.",
+                question: "Respons emosional (perasaan) yang timbul saat membaca teks ini adalah...",
+                answer: "Haru yang sangat mendalam, pilu, dan kasihan.",
+                explanation: "Bentuk kesetiaan buta dan tak bersyarat dari seekor hewan peliharaan (loyalty until death) secara alami akan merobek perasaan empati dan memicu tangis kesedihan."
+            },
+            {
+                id: 89,
+                topic: "Bahasa Kias & Citraan Teks Fiksi",
+                passage: "Rambutnya sudah memutih tertutup salju waktu, raganya ringkih bak ranting kering, namun suaranya menggelegar membelah karang saat berorasi di podium.",
+                question: "Sebutkan dua majas yang digunakan dalam kutipan tersebut!",
+                answer: "Metafora (salju waktu) dan Hiperbola (membelah karang).",
+                explanation: "Metafora menyamakan uban dengan 'salju waktu'. Hiperbola melebih-lebihkan kekuatan suara manusia yang diibaratkan mampu menghancurkan karang."
+            },
+            {
+                id: 90,
+                topic: "Kelogisan Hubungan Antarperistiwa",
+                passage: "Iwan melihat dompet seorang ibu terjatuh. Namun karena ia sedang terburu-buru mengejar kereta, ia pura-pura tidak melihat dan menginjak dompet itu sambil berjalan ke peron.",
+                question: "Tindakan Iwan dianggap tidak logis secara etika moral karena...",
+                answer: "Ketergesaan pribadi tidak dapat dijadikan pembenaran (alasan) untuk mengabaikan integritas dan sikap menolong orang lain yang tertimpa musibah.",
+                explanation: "Secara moral, kelogisan empati seharusnya berada di atas kelogisan waktu pribadi. Tindakan menginjak adalah niat jahat tersembunyi."
+            },
+            {
+                id: 91,
+                topic: "Kesesuaian & Keakuratan Antarteks",
+                passage: "Teks 1: Pro-Kontra terjadi: banyak warga desa yang menolak alih fungsi lahan sawah menjadi pabrik plastik.\n\nTeks 2: Wawancara Kepala Desa menyatakan, warga mendukung penuh pabrik karena membuka lapangan pekerjaan baru.",
+                question: "Berdasarkan kedua teks tersebut, terjadi distorsi (penyimpangan) informasi berupa...",
+                answer: "Ketidaksesuaian klaim: Teks 1 menyatakan ada penolakan warga, sedangkan Teks 2 (Kades) mengklaim dukungan penuh warga secara sepihak.",
+                explanation: "Ini merupakan analisis bias informasi, di mana suara akar rumput (warga) bertentangan dengan pernyataan perwakilan pemerintahan (kades)."
+            },
+            {
+                id: 92,
+                topic: "Memprediksi Peristiwa dalam Teks",
+                passage: "Tembok bendungan raksasa itu mulai menunjukkan retakan memanjang. Air menyembur keluar dari celah tipis. Padahal di lembah di bawah bendungan tersebut berdiri ribuan rumah warga sipil yang sedang terlelap tidur siang.",
+                question: "Bencana terburuk apa yang diprediksi akan terjadi dalam hitungan menit?",
+                answer: "Bendungan akan jebol dan air bah akan menyapu bersih pemukiman warga sipil di lembah tanpa ada peringatan dini.",
+                explanation: "Tanda bahaya retakan (jebol) di posisi lebih tinggi akan memusnahkan area lembah (hukum gravitasi/air bah banjir)."
+            },
+            {
+                id: 93,
+                topic: "Mengidentifikasi Informasi Tersurat",
+                passage: "Pemakaian antibiotik yang tidak sesuai anjuran resep dokter atau menghentikannya sebelum habis dapat memicu resistensi antimikroba (AMR), di mana bakteri kebal terhadap obat.",
+                question: "Apa bahaya menghentikan konsumsi antibiotik sebelum waktunya sesuai teks?",
+                answer: "Dapat memicu resistensi antimikroba atau kekebalan bakteri terhadap obat.",
+                explanation: "Informasi eksplisit tercantum langsung sebagai akibat dari penggunaan obat yang salah."
+            },
+            {
+                id: 94,
+                topic: "Mengidentifikasi Objek & Latar Teks",
+                passage: "Besi-besi karatan raksasa setinggi pohon kelapa bergerak naik turun secara ritmis. Suara decitan logam beradu dengan suara bor membisingkan telinga. Helm kuning cerah dan rompi oranye tampak berlalu lalang.",
+                question: "Latar tempat teks observasi tersebut paling tepat adalah di...",
+                answer: "Area proyek konstruksi (pembangunan) gedung tinggi atau infrastruktur industri.",
+                explanation: "'Besi raksasa/alat berat', 'suara bor', 'helm kuning dan rompi pelindung' adalah standar perlengkapan Keselamatan dan Kesehatan Kerja (K3) di proyek konstruksi."
+            },
+            {
+                id: 95,
+                topic: "Mengidentifikasi Penggunaan Istilah",
+                passage: "Sang penulis puisi itu terjerat kasus plagiarisme berulang kali setelah kepergok menjiplak lirik lagu musisi indie dan menerbitkannya atas namanya sendiri.",
+                question: "Arti dari istilah 'plagiarisme' adalah...",
+                answer: "Tindakan mencuri, meniru, atau mengakui karya, tulisan, dan ide orang lain sebagai hasil karya diri sendiri tanpa izin.",
+                explanation: "Plagiat/plagiarisme adalah kejahatan intelektual, yang secara konteks jelas dilakukan oleh penulis dengan menjiplak karya musisi indie."
+            },
+            {
+                id: 96,
+                topic: "Menyimpulkan Ide Pokok, Tokoh & Nilai",
+                passage: "Sultan Hasanuddin memilih taktik perang secara gerilya dan perlawanan tanpa henti melawan kolonialis demi mempertahankan rempah-rempah Maluku. Ia dijuluki Ayam Jantan dari Timur karena keberanian matinya.",
+                question: "Ide pokok kutipan biografi pahlawan nasional ini menceritakan tentang...",
+                answer: "Keberanian dan strategi perlawanan Sultan Hasanuddin dalam melawan penjajah kolonialis.",
+                explanation: "Paragraf ini menyoroti bagaimana taktik perlawanan yang gigih melahirkan julukan kehormatan yang sangat besar."
+            },
+            {
+                id: 97,
+                topic: "Menyusun Kerangka Bagan Teks",
+                passage: "(1) Pada 17 Agustus 1945, proklamasi kemerdekaan akhirnya dibacakan.\n(2) Akibatnya, pemuda menculik Soekarno-Hatta ke Rengasdengklok pada 16 Agustus dini hari.\n(3) Terjadi perbedaan pendapat antara golongan muda yang ingin cepat merdeka dan golongan tua yang menunggu komite Jepang.\n(4) Jepang menyerah tanpa syarat kepada sekutu setelah bom atom dijatuhkan.",
+                question: "Susunan teks sejarah yang kronologis berdasarkan hukum sebab-akibat sejarah adalah...",
+                answer: "(4) - (3) - (2) - (1)",
+                explanation: "Kekosongan kekuasaan (4) memicu konflik internal (3), konflik melahirkan aksi penculikan (2), dan diakhiri dengan titik proklamasi (1)."
+            },
+            {
+                id: 98,
+                topic: "Relevansi Peristiwa dengan Kehidupan",
+                passage: "Si Buta dari Gua Hantu tidak bisa melihat wujud fisik manusia secara mata kepala, namun mata batinnya (pendengaran dan hati) selalu bisa membedakan mana manusia serakah dan mana manusia yang tertindas.",
+                question: "Pesan relevan terkait kebijaksanaan dalam cerita ini adalah...",
+                answer: "Keterbatasan fisik bukanlah halangan. Keadilan sejati tidak dinilai dari penampilan luar (mata lahir), melainkan dari hati dan perbuatan (mata batin).",
+                explanation: "Kisah fiksi silat ini relevan dengan filosofi hidup modern: Jangan menilai orang dari sampulnya, gunakan akal budi."
+            },
+            {
+                id: 99,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Hakim mengetuk palu tiga kali dengan keras. Suasana sidang riuh. Sang pembunuh berantai bertangan dingin itu akhirnya dijatuhi hukuman mati seumur hidup, sementara ibu dari anak-anak korban berpelukan sambil menangis lega.",
+                question: "Respons puncak emosional yang dirasakan pembaca di akhir resolusi teks adalah...",
+                answer: "Rasa puas, lega, dan keadilan yang ditegakkan (katarsis/penyucian jiwa).",
+                explanation: "Kemenangan mutlak sisi kebaikan dan dihukum beratnya kejahatan selalu melahirkan rasa puas (satisfying) dan lega (relief) di hati audiens."
+            },
+            {
+                id: 100,
+                topic: "Respons Emosional Teks Fiksi",
+                passage: "Pintu brankas logam itu akhirnya terbuka setelah 10 menit dikotak-katik pencuri jenius itu. Namun, bukannya berisi tumpukan emas berlian incaran, brankas itu justru hanya berisi secarik kertas bertuliskan 'Kena kau!' disusul sirene polisi di luar jendela yang melolong nyaring.",
+                question: "Suasana alur plot-twist ini menciptakan emosi...",
+                answer: "Terkejut, tegang berbalik menjadi takjub/geli atas kelicikan jebakan (ironi plot-twist).",
+                explanation: "Teks membangun ekspektasi keberhasilan (tegang/serius) lalu mematahkannya seketika dengan sebuah lelucon jebakan (prank) yang membuat pembaca terkejut (plot twist)."
+            }
+        ];
+
+        // Global Variables
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let isAnimating = false; // Prevent spam clicking during animation
+
+        // DOM Elements
+        const flashcard = document.getElementById('flashcard');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Front Face Elements
+        const frontTopic = document.getElementById('front-topic');
+        const frontPassage = document.getElementById('front-passage');
+        const frontQuestion = document.getElementById('front-question');
+        const frontContainer = document.getElementById('front-content-container');
+        
+        // Back Face Elements
+        const backTopic = document.getElementById('back-topic');
+        const backAnswer = document.getElementById('back-answer');
+        const backExplanation = document.getElementById('back-explanation');
+        const backContainer = document.getElementById('back-content-container');
+
+        // Buttons
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        
+        // Fisher-Yates Shuffle
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+
+        function initApp() {
+            // Clone and shuffle the data
+            currentQuestions = shuffleArray([...flashcardsData]);
+            currentIndex = 0;
+            updateUI();
+        }
+
+        function triggerFadeAnimation(element) {
+            element.classList.remove('content-fade');
+            void element.offsetWidth; // Trigger reflow
+            element.classList.add('content-fade');
+        }
+
+        function updateUI() {
+            const data = currentQuestions[currentIndex];
+            
+            // Update Progress
+            progressText.innerText = `Soal ${currentIndex + 1} dari ${currentQuestions.length}`;
+            const progressPercent = ((currentIndex + 1) / currentQuestions.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Update Content (Front)
+            frontTopic.innerText = data.topic;
+            // Handle if passage contains newlines (convert to <br>)
+            frontPassage.innerHTML = data.passage ? data.passage.replace(/\n/g, '<br>') : '';
+            frontPassage.style.display = data.passage ? 'block' : 'none';
+            frontQuestion.innerText = data.question;
+
+            // Update Content (Back)
+            backTopic.innerText = data.topic;
+            backAnswer.innerText = data.answer;
+            backExplanation.innerHTML = data.explanation.replace(/\n/g, '<br>');
+
+            // Trigger animations
+            triggerFadeAnimation(frontContainer);
+            triggerFadeAnimation(backContainer);
+
+            // Update Button States
+            btnPrev.disabled = currentIndex === 0;
+            btnNext.disabled = currentIndex === currentQuestions.length - 1;
+
+            // Reset scroll positions
+            frontContainer.scrollTop = 0;
+            backContainer.scrollTop = 0;
+        }
+
+        function flipCard() {
+            if (isAnimating) return;
+            isFlipped = !isFlipped;
+            flashcard.classList.toggle('is-flipped');
+        }
+
+        function changeCard(direction) {
+            if (isAnimating) return;
+            
+            let newIndex = currentIndex + direction;
+            if (newIndex < 0 || newIndex >= currentQuestions.length) return;
+
+            // If flipped to back, flip it back to front first, then change content
+            if (isFlipped) {
+                isAnimating = true;
+                flashcard.classList.remove('is-flipped');
+                isFlipped = false;
+                
+                // Wait for the flip animation to finish before changing text (0.4s)
+                setTimeout(() => {
+                    currentIndex = newIndex;
+                    updateUI();
+                    isAnimating = false;
+                }, 400); 
+            } else {
+                currentIndex = newIndex;
+                updateUI();
+            }
+        }
+
+        function nextCard() {
+            changeCard(1);
+        }
+
+        function prevCard() {
+            changeCard(-1);
+        }
+
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextCard();
+            } else if (e.key === 'ArrowLeft') {
+                prevCard();
+            } else if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault(); // Prevent page scroll
+                flipCard();
+            }
+        });
+
+        // Initialize App on Load
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>

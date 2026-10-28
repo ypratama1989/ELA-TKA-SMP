@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Bahasa Inggris - EDUFILLAH</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc; /* Lighter modern gray */
+        }
+        .reading-text {
+            background-color: #e0f2fe; /* Light blue background for texts */
+            border-left: 5px solid #0284c7; /* Prominent left border */
+            line-height: 1.7;
+        }
+        .explanation {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom Radio Button Styling */
+        .custom-radio {
+            accent-color: #0284c7;
+        }
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #0369a1; /* Darker blue when checked */
+        }
+        .option-label:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-slate-600 hover:text-sky-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-lg sm:text-xl font-bold text-sky-700 hidden sm:block">Latihan Soal Reading Comprehension</h1>
+            <div class="w-20 sm:hidden"></div> <!-- Balancer for mobile -->
+        </div>
+    </header>
+
+    <main class="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Uji Pemahaman Bahasa Inggris</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Kerjakan soal-soal di bawah ini berdasarkan teks yang disediakan. Setelah selesai, klik tombol di paling bawah untuk memeriksa jawabanmu!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <!-- TEXT 1 -->
+                <div class="reading-text p-6 rounded-r-xl mb-8 text-sm sm:text-base text-slate-700 shadow-sm">
+                    <span class="font-bold text-sky-800 block mb-4 text-lg border-b border-sky-200 pb-2"><i class="fa-solid fa-book-open mr-2"></i>Read the text below to answer questions 1 to 5.</span>
+                    <strong>The Platypus</strong><br><br>
+                    The platypus is a semi-aquatic mammal endemic to eastern Australia, including Tasmania. It is one of the five extant species of monotremes, the only mammals that lay eggs instead of giving birth to live young.<br><br>
+                    The platypus has a duck-like bill, a beaver-like tail, and otter-like webbed feet. These features make it highly adapted for an aquatic lifestyle. It uses its bill to detect electrical signals emitted by its prey, which consists of insect larvae, freshwater shrimp, and crayfish.<br><br>
+                    Male platypuses have a venomous spur on the inner ankle of each hind foot. While the venom is not lethal to humans, it can cause severe pain. Because of its unique combination of features, the platypus is of great significance in evolutionary biology.
+                </div>
+
+                <!-- Soal 1 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">1. What is the primary social function of the text above?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. To describe a specific platypus kept in an Australian zoo.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. To present general information about the platypus as a species.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. To entertain readers with a fictional story about a unique mammal.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. To persuade people to protect the platypus from extinction.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Teks di atas adalah contoh dari <em>Report Text</em>. Coba ingat-ingat, tujuan utama dari <em>Report Text</em> adalah menyajikan informasi atau fakta ilmiah tentang suatu hal secara umum (general). Teks ini tidak menceritakan platypus tertentu di kebun binatang (opsi A), bukan dongeng (opsi C), dan bukan teks persuasif yang mengajak melestarikan hewan (opsi D). Jadi, tujuannya adalah memberikan informasi umum tentang spesies platypus (Opsi B).
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">2. Which paragraph represents the "General Classification" of the platypus?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. Paragraph 1</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. Paragraph 2</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. Paragraph 3</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. Paragraph 1 and 2</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br>
+                        <strong>Pembahasan:</strong> Dalam struktur <em>Report Text</em>, bagian pertama selalu disebut <strong>General Classification</strong> (Klasifikasi Umum). Di bagian ini, penulis memperkenalkan apa benda/hewan yang sedang dibahas secara garis besar sebelum masuk ke detail fisiknya. Di Paragraf 1, platypus diperkenalkan secara umum sebagai mamalia semi-akuatik dari Australia yang bertelur. Paragraf 2 dan 3 sudah masuk ke bagian <em>Description</em> (detail fisik).
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">3. How does the platypus locate its food underwater?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. By using its keen eyesight to spot movement.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. By using its webbed feet to dig into the riverbed.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. By detecting electrical signals through its bill.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. By tracking the scent of insect larvae and crayfish.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Mari kita baca dengan teliti Paragraf 2 kalimat terakhir: <em>"It uses its bill to detect electrical signals emitted by its prey..."</em> (Ia menggunakan paruhnya untuk mendeteksi sinyal listrik yang dipancarkan oleh mangsanya). Jadi, platypus tidak mengandalkan mata atau penciuman di dalam air, melainkan sensor listrik pada paruhnya yang unik!
+                    </div>
+                </div>
+
+                <!-- Soal 4 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">4. "While the venom is not <u>lethal</u> to humans..." (Paragraph 3).<br>The underlined word is closest in meaning to ....</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. harmless</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. painful</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. deadly</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. curative</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Mari kita tebak artinya dari konteks kalimat. <em>"While the venom is not lethal to humans, it can cause severe pain."</em> (Meskipun racunnya tidak 'lethal' bagi manusia, itu bisa menyebabkan rasa sakit yang parah). Sesuatu yang berada di atas rasa sakit yang parah akibat racun adalah kematian. Kata <em>lethal</em> berarti mematikan. Sinonim bahasa Inggris yang paling pas adalah <strong>deadly</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 5 -->
+                <div class="question-block mb-14" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">5. Based on the text, why is the platypus considered highly significant in evolutionary biology?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. It is the only animal in Australia that can survive both on land and in water.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. It possesses a unique combination of physical traits and lays eggs despite being a mammal.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. It is the only mammal that produces venom to defend itself from human threats.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. It has survived for millions of years without undergoing any physical changes.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Jika kita membaca Paragraf 3 kalimat terakhir: <em>"Because of its unique combination of features, the platypus is of great significance in evolutionary biology."</em> Apa saja fitur uniknya? Paruh bebek, ekor berang-berang, kaki berselaput, beracun, dan yang paling menakjubkan: <strong>ia adalah mamalia tapi bertelur!</strong> Kombinasi ciri-ciri aneh inilah yang membuat ilmuwan sangat tertarik menelitinya.
+                    </div>
+                </div>
+
+                <!-- TEXT 2 -->
+                <div class="reading-text p-6 rounded-r-xl mb-8 text-sm sm:text-base text-slate-700 shadow-sm">
+                    <span class="font-bold text-sky-800 block mb-4 text-lg border-b border-sky-200 pb-2"><i class="fa-solid fa-bolt mr-2"></i>Read the text below to answer questions 6 to 10.</span>
+                    <strong>Lightning</strong><br><br>
+                    Lightning is a naturally occurring electrostatic discharge during which two electrically charged regions, both in the atmosphere or one of which is on the ground, temporarily neutralize themselves. This process releases an average of one gigajoule of energy.<br><br>
+                    Lightning can occur within clouds, between clouds, or between a cloud and the ground. The most common type is intra-cloud lightning. When lightning strikes the ground, it can heat the surrounding air to temperatures five times hotter than the surface of the sun. This rapid heating causes the air to expand explosively, creating the shock wave we hear as thunder.<br><br>
+                    Globally, about 1.4 billion lightning flashes occur every year. Lightning is not only a spectacular natural display but also plays a vital role in the nitrogen cycle by converting atmospheric nitrogen into compounds that plants can use.
+                </div>
+
+                <!-- Soal 6 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">6. What is the main topic of the text?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. The danger of electrostatic discharge to human life.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. A general explanation of the natural phenomenon of lightning.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. The process of how thunder is heard during a rainstorm.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. The benefits of nitrogen compounds for agricultural plants.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Teks ini menjelaskan secara runtut mengenai apa itu petir (definisi), bagaimana petir dan guntur terjadi (proses), hingga fungsi petir bagi alam. Oleh karena itu, gagasan utamanya (main topic) adalah penjelasan umum mengenai fenomena alam petir (Opsi B). Topik lainnya seperti guntur atau nitrogen hanyalah rincian pendukung (supporting details) di paragraf tertentu.
+                    </div>
+                </div>
+
+                <!-- Soal 7 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">7. What causes the sound of thunder?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. The collision of two clouds in the atmosphere.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. The rapid expansion of air due to extreme heating by lightning.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. The release of one gigajoule of energy into the ground.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. The chemical reaction between nitrogen and oxygen.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Pertanyaan ini menguji pemahaman proses (*cause and effect*). Di paragraf 2 dijelaskan bahwa petir memanaskan udara di sekitarnya secara luar biasa ekstrim (5 kali lebih panas dari matahari!). Pemanasan mendadak ini membuat udara memuai/berekspansi dengan sangat cepat (meledak), dan gelombang kejut dari pemuaian itulah yang kita dengar sebagai suara guntur (thunder).
+                    </div>
+                </div>
+
+                <!-- Soal 8 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">8. Analyze the relationship between lightning and the environment based on the third paragraph.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. Lightning is harmful to the environment because it burns agricultural plants.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. Lightning helps the nitrogen cycle by turning atmospheric nitrogen into plant nutrients.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. Lightning reduces the amount of oxygen in the atmosphere through electrostatic discharge.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. Lightning causes global warming by heating the air five times hotter than the sun.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Mari fokus ke kalimat terakhir paragraf 3: <em>"...plays a vital role in the nitrogen cycle by converting atmospheric nitrogen into compounds that plants can use."</em> (memainkan peran penting dalam siklus nitrogen dengan mengubah nitrogen di atmosfer menjadi senyawa yang dapat digunakan tumbuhan). Artinya, petir justru sangat bermanfaat bagi lingkungan dan tumbuhan!
+                    </div>
+                </div>
+
+                <!-- Soal 9 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">9. Which of the following sentences from the text contains a passive construction?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. "Lightning is a naturally occurring electrostatic discharge..."</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. "...during which two electrically charged regions..."</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. "This rapid heating causes the air to expand..."</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. "...by converting atmospheric nitrogen into compounds..."</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Kalimat pasif atau konstruksi pasif berfokus pada subjek yang <em>dikenai</em> tindakan. Pada opsi B, frasa <em>"electrically charged regions"</em> berarti "daerah yang <strong>diberi muatan</strong> listrik". Kata <em>charged</em> (Verb 3) berfungsi sebagai *past participle* yang membentuk makna pasif. Sedangkan opsi A, C, dan D adalah bentuk kalimat aktif (menyebabkan, mengubah).
+                    </div>
+                </div>
+
+                <!-- Soal 10 -->
+                <div class="question-block mb-14" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">10. "This rapid heating causes the air to <u>expand</u>..." (Paragraph 2).<br>What is the antonym of the underlined word?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. shrink</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. stretch</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. blow</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. freeze</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br>
+                        <strong>Pembahasan:</strong> Kata <em>"expand"</em> artinya menyebar, memuai, atau membesar. Pertanyaan ini menanyakan <em>antonym</em> (lawan kata). Lawan dari membesar/memuai adalah menyusut atau mengecil. Dalam bahasa Inggris, menyusut adalah <strong>shrink</strong>. Pilihan B (*stretch*) malah bersinonim karena berarti meregang.
+                    </div>
+                </div>
+
+                <!-- TEXT 3 -->
+                <div class="reading-text p-6 rounded-r-xl mb-8 text-sm sm:text-base text-slate-700 shadow-sm">
+                    <span class="font-bold text-sky-800 block mb-4 text-lg border-b border-sky-200 pb-2"><i class="fa-solid fa-solar-panel mr-2"></i>Read the text below to answer questions 11 to 15.</span>
+                    <strong>Solar Panels</strong><br><br>
+                    A solar panel, or photovoltaic module, is an assembly of photovoltaic cells mounted in a framework for installation. Solar panels use sunlight as a source of energy to generate direct current electricity.<br><br>
+                    A collection of PV modules is called a PV panel, and a system of panels is an array. Arrays of a photovoltaic system supply solar electricity to electrical equipment. The cells are made of semiconductor materials, usually silicon, which absorb light and release electrons to create an electric current.<br><br>
+                    Solar panels are highly beneficial as they provide clean, renewable energy, reducing reliance on fossil fuels. However, their efficiency can be affected by weather conditions, geographic location, and the angle of installation.
+                </div>
+
+                <!-- Soal 11 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">11. What is the main purpose of a solar panel?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. To store heat from the sun during the winter season.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. To convert sunlight into direct current electricity.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. To protect buildings from direct exposure to sunlight.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. To reduce the cost of manufacturing silicon materials.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Coba lihat paragraf pertama kalimat kedua. Tertulis: <em>"Solar panels use sunlight as a source of energy to generate direct current electricity."</em> (Panel surya menggunakan cahaya matahari sebagai sumber energi untuk menghasilkan listrik arus searah). Jadi, tujuan utamanya adalah mengubah cahaya matahari menjadi energi listrik (Opsi B).
+                    </div>
+                </div>
+
+                <!-- Soal 12 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">12. How do photovoltaic cells generate an electric current?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. By heating the silicon material until it melts and releases energy.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. By absorbing sunlight and releasing electrons through semiconductor materials.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. By reflecting sunlight back into the atmosphere to create a circuit.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. By combining wind energy with solar radiation in a framework.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Rahasia cara kerja sel surya (photovoltaic cells) ada di paragraf kedua kalimat terakhir. Teks menjelaskan bahwa sel-sel ini terbuat dari bahan semikonduktor (biasanya silikon) yang <em>"absorb light and release electrons to create an electric current"</em> (menyerap cahaya dan melepaskan elektron untuk menciptakan arus listrik). Sangat jelas, ya!
+                    </div>
+                </div>
+
+                <!-- Soal 13 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">13. Evaluate the limitations of solar panels based on the text.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. They are made of expensive silicon materials that are hard to find.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. They cannot generate electricity unless they are installed on a roof.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. Their performance depends heavily on weather, location, and installation angle.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. They produce harmful emissions when converting renewable energy.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Limitation berarti batasan atau kekurangan. Paragraf terakhir menjelaskan bahwa meskipun panel surya menyediakan energi bersih (clean energy), efisiensinya (kemampuannya menghasilkan listrik) sangat bergantung pada kondisi cuaca, lokasi geografis, dan sudut pemasangan (<em>weather conditions, geographic location, and the angle of installation</em>).
+                    </div>
+                </div>
+
+                <!-- Soal 14 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">14. "The cells <u>are made</u> of semiconductor materials..." (Paragraph 2).<br>The underlined verb phrase is an example of...</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. Present Continuous Tense</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. Simple Past Tense</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. Passive Voice in Simple Present</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. Active Voice in Simple Present</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Rumus kalimat di atas adalah <strong>To Be (are) + Verb 3 (made)</strong>. Ini adalah rumus mutlak untuk <em>Passive Voice</em> (kalimat pasif). Karena "To Be" yang digunakan adalah <em>'are'</em> (bentuk sekarang/present), maka kalimat ini disebut <em>Passive Voice in Simple Present Tense</em>. Artinya: Sel-sel tersebut <strong>dibuat</strong> dari bahan semikonduktor.
+                    </div>
+                </div>
+
+                <!-- Soal 15 -->
+                <div class="question-block mb-14" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">15. Which paragraph contains the description of the physical parts and the working mechanism of solar panels?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. Paragraph 1</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. Paragraph 2</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. Paragraph 3</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. Paragraph 1 and 3</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Mari kita bedah struktur teksnya! Paragraf 1 adalah pengenalan umum (klasifikasi). Paragraf 3 berisi tentang manfaat dan batasan. Nah, Paragraf 2 membahas bagian fisik secara detail (kumpulan panel disebut 'array', terbuat dari 'silikon') serta mekanisme kerjanya (menyerap cahaya, melepas elektron). Jadi, penjelasan fisik dan mekanisme ada di Paragraf 2 (Opsi B).
+                    </div>
+                </div>
+
+                <!-- TEXT 4 -->
+                <div class="reading-text p-6 rounded-r-xl mb-8 text-sm sm:text-base text-slate-700 shadow-sm">
+                    <span class="font-bold text-sky-800 block mb-4 text-lg border-b border-sky-200 pb-2"><i class="fa-solid fa-house-crack mr-2"></i>Read the text below to answer questions 16 to 20.</span>
+                    <strong>Earthquakes</strong><br><br>
+                    An earthquake is the shaking of the surface of the Earth resulting from a sudden release of energy in the Earth's lithosphere that creates seismic waves. Earthquakes can range in intensity, from those that are so weak that they cannot be felt, to those violent enough to propel objects and people into the air, causing severe destruction.<br><br>
+                    At the Earth's surface, earthquakes manifest themselves by shaking and displacing or disrupting the ground. When a large earthquake epicenter is located offshore, the seabed may be displaced sufficiently to cause a tsunami. Earthquakes can also trigger landslides and volcanic activity.<br><br>
+                    Most naturally occurring earthquakes are related to the tectonic nature of the Earth. These are called tectonic earthquakes. They occur when the tectonic plates get stuck at their edges due to friction. When the stress on the edge overcomes the friction, there is an earthquake that releases energy in waves that travel through the earth's crust.
+                </div>
+
+                <!-- Soal 16 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">16. What is the general classification of an earthquake as stated in the text?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. A sudden volcanic eruption that causes massive tsunamis.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. The shaking of the Earth's surface caused by a sudden release of energy in the lithosphere.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. A natural disaster that only occurs in the middle of the ocean.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. The movement of tectonic plates that always results in landslides.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> <em>General classification</em> (klasifikasi umum) biasanya berada di kalimat pertama pada paragraf pertama untuk memberikan definisi. Di sana tertulis jelas bahwa gempa bumi adalah: <em>"An earthquake is the shaking of the surface of the Earth resulting from a sudden release of energy in the Earth's lithosphere..."</em> (Getaran di permukaan bumi akibat pelepasan energi yang tiba-tiba di litosfer bumi).
+                    </div>
+                </div>
+
+                <!-- Soal 17 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">17. According to the text, what causes a tsunami during an earthquake?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. The violent shaking of high mountains near coastal areas.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. The displacement of the seabed when a large epicenter is located offshore.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. The sudden eruption of underwater volcanoes.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. The friction between tectonic plates on dry land.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Jawaban ini ada di paragraf kedua. Tertulis bahwa: <em>"When a large earthquake epicenter is located offshore, the seabed may be displaced sufficiently to cause a tsunami."</em> (Ketika pusat gempa besar terletak di lepas pantai, dasar laut dapat bergeser dan menyebabkan tsunami). Kata kuncinya adalah <em>seabed displaced</em> (dasar laut bergeser) dan <em>offshore</em> (lepas pantai/laut).
+                    </div>
+                </div>
+
+                <!-- Soal 18 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">18. Evaluate which of the following statements is FALSE according to the text.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. All earthquakes are violent enough to cause severe destruction and propel objects.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. Earthquakes can trigger other natural disasters like landslides and volcanic activity.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. Tectonic earthquakes occur when tectonic plates overcome friction at their edges.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. Seismic waves are created by the sudden release of energy in the Earth's lithosphere.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br>
+                        <strong>Pembahasan:</strong> Kita diminta mencari pernyataan yang SALAH (FALSE). Opsi A salah karena menyatakan <strong>semua (all)</strong> gempa bumi sangat dahsyat dan merusak. Padahal, paragraf pertama menyebutkan bahwa gempa bumi memiliki intensitas yang berbeda-beda, mulai dari yang <em>sangat lemah hingga tidak terasa (so weak that they cannot be felt)</em> sampai yang sangat merusak.
+                    </div>
+                </div>
+
+                <!-- Soal 19 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">19. "...when a large earthquake epicenter is located <u>offshore</u>..." (Paragraph 2).<br>The word "offshore" is closest in meaning to ....</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. deep underground</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. on the mountain top</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. away from the shore / at sea</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. near the active volcano</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Kata <em>"shore"</em> berarti pantai atau daratan di tepi laut. Imbuhan awalan <em>"off-"</em> dalam konteks kelautan berarti "lepas dari" atau "menjauhi". Jadi, <em>"offshore"</em> berarti lepas pantai atau berlokasi di tengah laut (*at sea*). Hal ini selaras dengan penjelasan kalimatnya bahwa gempa <em>offshore</em> dapat memicu tsunami.
+                    </div>
+                </div>
+
+                <!-- Soal 20 -->
+                <div class="question-block mb-14" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">20. What is the writer’s main objective in writing this text?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">A. To warn readers about an upcoming earthquake in their area.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">B. To explain the scientific nature, causes, and effects of earthquakes.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">C. To report a specific earthquake event that happened recently.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio w-5 h-5 flex-shrink-0">
+                            <span class="ml-3">D. To instruct readers on how to save themselves during an earthquake.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Teks tentang gempa bumi ini adalah jenis <em>Report Text</em>. Tujuan (objective) utama dari teks report yang membahas fenomena alam adalah untuk menyajikan informasi dan penjelasan ilmiah mengenai hakikat, penyebab, dan dampaknya secara umum dan objektif. Teks ini tidak berisi peringatan bahaya (opsi A), berita gempa spesifik (opsi C), maupun instruksi keselamatan (opsi D).
+                    </div>
+                </div>
+
+                <!-- Hasil Skor -->
+                <div id="score-container" class="hidden mb-10 p-8 bg-sky-50 rounded-2xl border-2 border-sky-200 text-center shadow-inner">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-2">Skor Akhir Kamu:</h3>
+                    <div id="score-display" class="text-7xl font-extrabold text-sky-600 mb-4 drop-shadow-sm">0</div>
+                    <p id="score-message" class="text-lg text-slate-600 font-medium"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pb-6">
+                    <button type="button" id="check-btn" class="bg-sky-600 hover:bg-sky-700 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-slate-700 hover:bg-slate-800 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-slate-500 font-medium mt-auto w-full bg-slate-50 border-t border-slate-200">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // Total 20 soal, nilai maksimal 100
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach((q, index) => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    // Masukkan struktur HTML pembahasan ke dalam div penampil
+                    explanationDiv.innerHTML = rationaleHTML; 
+
+                    radios.forEach(radio => {
+                        // Kunci radio button
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Tampilan benar (Hijau)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-emerald-50 text-emerald-900 border-emerald-500 block shadow-sm';
+                            } else {
+                                // Tampilan salah (Merah)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                            }
+                        }
+                    });
+
+                    // Logika jika tidak dijawab (Dianggap salah/kosong)
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                        explanationDiv.innerHTML = '<strong class="text-rose-700 flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Kamu belum menjawab pertanyaan ini!</strong><hr class="border-rose-200 my-3">' + rationaleHTML;
+                    }
+                });
+
+                // Kalkulasi Skor
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                
+                // Animasi Counter Skor Singkat
+                let currentScore = 0;
+                const scoreInterval = setInterval(() => {
+                    if (currentScore >= finalScore) {
+                        clearInterval(scoreInterval);
+                        scoreDisplay.textContent = finalScore;
+                    } else {
+                        currentScore++;
+                        scoreDisplay.textContent = currentScore;
+                    }
+                }, 15); // Kecepatan counter
+
+                // Set pesan evaluasi
+                if (finalScore === 100) {
+                    scoreMessage.innerHTML = "🎉 Sempurna! Pemahaman literasimu sangat luar biasa.";
+                } else if (finalScore >= 80) {
+                    scoreMessage.innerHTML = "🌟 Kerja yang sangat bagus! Sedikit lagi menuju nilai sempurna.";
+                } else if (finalScore >= 60) {
+                    scoreMessage.innerHTML = "👍 Cukup baik, tapi pastikan kamu membaca teksnya lebih teliti lagi ya!";
+                } else {
+                    scoreMessage.innerHTML = "💪 Jangan menyerah! Yuk baca pembahasannya perlahan dan coba lagi.";
+                }
+
+                // Tampilkan hasil & atur tombol
+                scoreContainer.classList.remove('hidden');
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Scroll mulus ke kotak skor
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset semua input form
+                form.reset();
+
+                // Kembalikan ke state awal
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; // Buka kunci input
+                    });
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.classList.remove('block');
+                    explanationDiv.classList.add('hidden');
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Sembunyikan skor & ubah tombol
+                scoreContainer.classList.add('hidden');
+                scoreDisplay.textContent = '0';
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Scroll mulus kembali ke atas halaman
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

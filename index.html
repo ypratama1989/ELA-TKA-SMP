@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#7C3AED" />
+    <meta name="description" content="Edufillah Learning App - Persiapan TKA SMP Platform Latihan Soal Interaktif TKA SMP" />
+    <meta property="og:title" content="Edufillah Learning App" />
+    <meta property="og:description" content="Edufillah Learning App - Persiapan TKA SMP Platform Latihan Soal Interaktif TKA SMP" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Edufillah" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo_edufillah.svg" />
+    
+    <!-- Google Fonts: Nunito, Poppins, Quicksand (Rounded, Modern, Friendly Sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Edufillah Learning App</title>
+    <script>
+      // Automatically unregister any lingering service workers in AI Studio dev/iframe preview
+      if ('serviceWorker' in navigator && (window.self !== window.top || window.location.hostname.includes('run.app'))) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var i = 0; i < regs.length; i++) {
+            regs[i].unregister();
+          }
+        }).catch(function() {});
+      }
+
+      // Suppress benign Vite HMR websocket disconnection notices in container environment
+      window.addEventListener('unhandledrejection', function(event) {
+        var msg = (event && event.reason && (event.reason.message || event.reason)) || '';
+        if (typeof msg === 'string' && (msg.includes('WebSocket') || msg.includes('websocket') || msg.includes('closed without opened'))) {
+          event.preventDefault();
+          if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+        }
+      });
+      window.addEventListener('error', function(event) {
+        var msg = (event && (event.message || (event.error && event.error.message))) || '';
+        if (typeof msg === 'string' && (msg.includes('WebSocket') || msg.includes('websocket') || msg.includes('closed without opened'))) {
+          event.preventDefault();
+          if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+        }
+      });
+    </script>
+  </head>
+  <body class="bg-[#F8F9FD] text-slate-800 antialiased selection:bg-violet-200 selection:text-violet-900">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

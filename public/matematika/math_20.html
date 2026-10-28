@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Bangun Ruang</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="radio"] {
+            display: none; 
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e5e7eb; /* gray-200 */
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-label:hover {
+            background-color: #f8fafc; /* slate-50 */
+            border-color: #cbd5e1; /* slate-300 */
+            transform: translateY(-2px);
+        }
+
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+        }
+
+        .radio-circle {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col selection:bg-blue-200 selection:text-blue-900">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-2 rounded-lg transition font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[90px]"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-12">
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block tracking-wide">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">Geometri Bangun Ruang</h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Mari uji pemahamanmu tentang Volume Prisma, Limas, Bola, dan gabungannya. Tekan tombol 'Periksa Jawaban' kapan saja untuk melihat langkah penyelesaiannya.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer soal (JavaScript akan menyuntikkan HTML ke sini) -->
+            </div>
+
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-md border border-gray-200 text-center sticky bottom-4 z-40 transform transition-all">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-2 fade-in">
+                    <p class="text-xl font-semibold text-gray-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8 drop-shadow-sm">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-gray-200 hover:border-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 py-8 mt-12 border-t-4 border-blue-600">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-2 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Sebuah prisma tegak memiliki alas berbentuk segitiga siku-siku dengan panjang sisi siku-siku 6 cm dan 8 cm. Jika tinggi prisma tersebut adalah 15 cm, berapakah volume prisma tersebut?",
+                options: [
+                    "A. 180 cm<sup>3</sup>",
+                    "B. 360 cm<sup>3</sup>",
+                    "C. 720 cm<sup>3</sup>",
+                    "D. 1.080 cm<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Konsep Dasar:</strong> Volume dari setiap bangun ruang prisma selalu dihitung dengan rumus <strong>Luas Alas &times; Tinggi</strong>.<br><br><strong>Langkah 1: Hitung Luas Alas (Segitiga Siku-siku)</strong><br>Luas = &frac12; &times; alas &times; tinggi_segitiga<br>Luas = &frac12; &times; 6 &times; 8 = <strong>24 cm<sup>2</sup></strong>.<br><br><strong>Langkah 2: Hitung Volume Prisma</strong><br>Volume = Luas Alas &times; Tinggi Prisma<br>Volume = 24 &times; 15 = <strong>360 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah wadah penampungan air berbentuk prisma dengan alas berbentuk trapesium sama kaki. Panjang sisi-sisi sejajar alas adalah 10 cm dan 16 cm, dengan jarak kedua sisi sejajar (tinggi trapesium) adalah 8 cm. Jika tinggi wadah tersebut adalah 20 cm, maka volume air maksimal yang dapat ditampung wadah tersebut adalah...",
+                options: [
+                    "A. 1.040 cm<sup>3</sup>",
+                    "B. 2.080 cm<sup>3</sup>",
+                    "C. 4.160 cm<sup>3</sup>",
+                    "D. 8.320 cm<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah 1: Hitung Luas Alas (Trapesium)</strong><br>Rumus Luas Trapesium = &frac12; &times; (Jumlah Sisi Sejajar) &times; tinggi_trapesium<br>Luas = &frac12; &times; (10 + 16) &times; 8<br>Luas = &frac12; &times; 26 &times; 8 = 13 &times; 8 = <strong>104 cm<sup>2</sup></strong>.<br><br><strong>Langkah 2: Hitung Volume Prisma</strong><br>Volume = Luas Alas &times; Tinggi Wadah<br>Volume = 104 &times; 20 = <strong>2.080 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah prisma tegak memiliki alas berbentuk belah ketupat dengan panjang diagonal-diagonalnya adalah 12 cm dan 16 cm. Jika luas seluruh permukaan prisma tersebut adalah 512 cm<sup>2</sup>, maka volume prisma tersebut adalah...",
+                options: [
+                    "A. 384 cm<sup>3</sup>",
+                    "B. 576 cm<sup>3</sup>",
+                    "C. 768 cm<sup>3</sup>",
+                    "D. 960 cm<sup>3</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Soal ini menantang karena kita harus mencari tinggi prisma terlebih dahulu dari data Luas Permukaan!<br><br><strong>1. Cari Luas Alas (Belah Ketupat)</strong><br>L = &frac12; &times; d<sub>1</sub> &times; d<sub>2</sub> = &frac12; &times; 12 &times; 16 = <strong>96 cm<sup>2</sup></strong>.<br><br><strong>2. Cari Sisi Belah Ketupat (s) dengan Pythagoras</strong><br>Gunakan setengah dari masing-masing diagonal (6 dan 8).<br>s = &radic;(6<sup>2</sup> + 8<sup>2</sup>) = &radic;100 = <strong>10 cm</strong>. Maka Keliling alas = 4 &times; 10 = <strong>40 cm</strong>.<br><br><strong>3. Cari Tinggi Prisma dari Luas Permukaan</strong><br>Luas Permukaan = (2 &times; Luas Alas) + (Keliling Alas &times; Tinggi Prisma)<br>512 = (2 &times; 96) + (40 &times; t)<br>512 = 192 + 40t<br>320 = 40t &rarr; <strong>t = 8 cm</strong>.<br><br><strong>4. Hitung Volume</strong><br>Volume = Luas Alas &times; t = 96 &times; 8 = <strong>768 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah wadah berbentuk prisma segi empat dengan ukuran alas 20 cm &times; 15 cm berisi air setinggi 10 cm. Tiga buah logam berbentuk kubus dengan panjang rusuk 5 cm dimasukkan ke dalam wadah tersebut hingga tenggelam seluruhnya. Evaluasilah kenaikan tinggi air di dalam wadah tersebut!",
+                options: [
+                    "A. 0,75 cm",
+                    "B. 1,25 cm",
+                    "C. 1,50 cm",
+                    "D. 2,50 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Hukum Fisika dalam Matematika:</strong> Volume air yang naik selalu sama dengan volume benda yang dimasukkan (ditenggelamkan).<br><br><strong>1. Hitung Volume Benda yang Dimasukkan</strong><br>Volume 1 Kubus = s &times; s &times; s = 5 &times; 5 &times; 5 = 125 cm<sup>3</sup>.<br>Karena ada 3 kubus, Volume Total = 3 &times; 125 = <strong>375 cm<sup>3</sup></strong>.<br><br><strong>2. Hitung Kenaikan Tinggi Air</strong><br>Kenaikan air akan membentuk prisma baru dengan alas wadah tersebut.<br>Volume Kenaikan = Luas Alas Wadah &times; Tinggi Kenaikan<br>375 = (20 &times; 15) &times; Tinggi Kenaikan<br>375 = 300 &times; Tinggi Kenaikan<br>Tinggi Kenaikan = 375 &divide; 300 = <strong>1,25 cm</strong>."
+            },
+            {
+                question: "Sebuah prisma dengan alas segitiga sama sisi memiliki panjang rusuk alas 6 cm dan tinggi prisma 10 cm. Jika tinggi segitiga alas adalah 5,2 cm, volume prisma tersebut adalah...",
+                options: [
+                    "A. 78 cm<sup>3</sup>",
+                    "B. 156 cm<sup>3</sup>",
+                    "C. 312 cm<sup>3</sup>",
+                    "D. 468 cm<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>1. Hitung Luas Alas (Segitiga Sama Sisi)</strong><br>Luas = &frac12; &times; alas_segitiga &times; tinggi_segitiga<br>Luas = &frac12; &times; 6 &times; 5,2 = 3 &times; 5,2 = <strong>15,6 cm<sup>2</sup></strong>.<br><br><strong>2. Hitung Volume Prisma</strong><br>Volume = Luas Alas &times; Tinggi Prisma<br>Volume = 15,6 &times; 10 = <strong>156 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Dua buah prisma, yaitu Prisma A dan Prisma B, memiliki tinggi yang sama. Alas Prisma A berbentuk persegi dengan panjang sisi 8 cm, sedangkan alas Prisma B berbentuk segitiga siku-siku dengan panjang alas 12 cm dan tinggi 10 cm. Berdasarkan informasi tersebut, evaluasilah perbandingan volume Prisma A terhadap Prisma B!",
+                options: [
+                    "A. 16 : 15",
+                    "B. 15 : 16",
+                    "C. 8 : 5",
+                    "D. 4 : 3"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Karena kedua prisma memiliki tinggi yang sama (kita sebut <em>t</em>), maka perbandingan volume mereka murni bergantung pada perbandingan luas alasnya.<br><br><strong>1. Luas Alas Prisma A (Persegi):</strong><br>L<sub>A</sub> = sisi &times; sisi = 8 &times; 8 = <strong>64 cm<sup>2</sup></strong>.<br><br><strong>2. Luas Alas Prisma B (Segitiga Siku-siku):</strong><br>L<sub>B</sub> = &frac12; &times; alas &times; tinggi = &frac12; &times; 12 &times; 10 = <strong>60 cm<sup>2</sup></strong>.<br><br><strong>3. Perbandingan Volume (V<sub>A</sub> : V<sub>B</sub>):</strong><br>V<sub>A</sub> : V<sub>B</sub> = L<sub>A</sub> : L<sub>B</sub> = 64 : 60.<br>Sederhanakan dengan membagi keduanya dengan angka 4, hasilnya <strong>16 : 15</strong>."
+            },
+            {
+                question: "Atap sebuah bangunan berbentuk limas dengan alas berbentuk persegi yang memiliki panjang sisi 12 meter. Jika tinggi limas tersebut adalah 15 meter, maka volume udara di dalam ruang atap tersebut adalah...",
+                options: [
+                    "A. 240 m<sup>3</sup>",
+                    "B. 360 m<sup>3</sup>",
+                    "C. 720 m<sup>3</sup>",
+                    "D. 2.160 m<sup>3</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep Dasar Limas:</strong> Bangun ruang yang mengerucut ke satu titik (seperti piramida/limas dan kerucut) selalu memiliki <strong>sepertiga (<sup>1</sup>&frasl;<sub>3</sub>)</strong> dari volume bangun prisma yang alas dan tingginya sama.<br><br><strong>1. Luas Alas (Persegi):</strong><br>Luas = 12 &times; 12 = <strong>144 m<sup>2</sup></strong>.<br><br><strong>2. Volume Limas:</strong><br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; Luas Alas &times; Tinggi<br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; 144 &times; 15<br>Sederhanakan (15 &divide; 3 = 5), maka Volume = 144 &times; 5 = <strong>720 m<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah hiasan meja berbentuk limas dengan alas segitiga siku-siku yang panjang sisi siku-sikunya adalah 9 cm dan 12 cm. Jika tinggi hiasan tersebut adalah 18 cm, maka volume hiasan meja tersebut adalah...",
+                options: [
+                    "A. 162 cm<sup>3</sup>",
+                    "B. 324 cm<sup>3</sup>",
+                    "C. 648 cm<sup>3</sup>",
+                    "D. 972 cm<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>1. Hitung Luas Alas (Segitiga Siku-siku):</strong><br>Luas Alas = &frac12; &times; alas &times; tinggi_segitiga<br>Luas Alas = &frac12; &times; 9 &times; 12 = 9 &times; 6 = <strong>54 cm<sup>2</sup></strong>.<br><br><strong>2. Hitung Volume Limas:</strong><br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; Luas Alas &times; Tinggi Limas<br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; 54 &times; 18<br>Sederhanakan (18 &divide; 3 = 6), maka Volume = 54 &times; 6 = <strong>324 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah limas tegak dengan alas berbentuk persegi memiliki panjang rusuk alas 10 cm. Jika tinggi bidang tegak (selimut segitiga) limas tersebut adalah 13 cm, maka volume limas tersebut adalah...",
+                options: [
+                    "A. 300 cm<sup>3</sup>",
+                    "B. 400 cm<sup>3</sup>",
+                    "C. 1.200 cm<sup>3</sup>",
+                    "D. 1.300 cm<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Hati-hati! Angka 13 cm adalah tinggi <em>bidang miring</em> (segitiga selimut), bukan tinggi limas (tinggi tegak lurus dari puncak ke tengah alas). Kita harus mencari tinggi limas terlebih dahulu menggunakan Pythagoras.<br><br><strong>1. Cari Tinggi Limas (t):</strong><br>Buat segitiga siku-siku imajiner di dalam limas. Sisi miringnya adalah 13 cm. Alasnya adalah jarak dari tengah ke pinggir persegi (setengah dari 10 cm = 5 cm).<br>t = &radic;(13<sup>2</sup> - 5<sup>2</sup>) = &radic;(169 - 25) = &radic;144 = <strong>12 cm</strong>.<br><br><strong>2. Hitung Volume:</strong><br>Luas Alas = 10 &times; 10 = 100 cm<sup>2</sup>.<br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; 100 &times; 12 = 100 &times; 4 = <strong>400 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah wadah berbentuk limas segi empat beraturan terbalik (puncak di bawah) dengan panjang rusuk alas 18 cm dan tinggi wadah 20 cm. Wadah tersebut diisi air hingga mencapai setengah dari tinggi wadah. Evaluasilah volume air di dalam wadah tersebut!",
+                options: [
+                    "A. 135 cm<sup>3</sup>",
+                    "B. 270 cm<sup>3</sup>",
+                    "C. 540 cm<sup>3</sup>",
+                    "D. 1.080 cm<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Ini adalah soal penalaran Kesebangunan!</strong><br>Bentuk air yang mengisi wadah limas terbalik akan membentuk limas kecil yang <em>sebangun</em> dengan wadah aslinya.<br><br><strong>1. Analisis Ukuran Limas Air:</strong><br>Karena diisi \"setengah dari tinggi wadah\", maka tinggi air (t_air) = &frac12; &times; 20 = <strong>10 cm</strong>.<br>Karena sebangun, maka lebar permukaannya (rusuk air) juga setengah dari rusuk asli! Rusuk air (s_air) = &frac12; &times; 18 = <strong>9 cm</strong>.<br><br><strong>2. Hitung Volume Air:</strong><br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; (s_air &times; s_air) &times; t_air<br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; (9 &times; 9) &times; 10<br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; 81 &times; 10 = 27 &times; 10 = <strong>270 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah limas memiliki alas berbentuk persegi panjang dengan ukuran 15 cm &times; 10 cm. Jika volume limas tersebut adalah 600 cm<sup>3</sup>, berapakah tinggi limas tersebut?",
+                options: [
+                    "A. 8 cm",
+                    "B. 10 cm",
+                    "C. 12 cm",
+                    "D. 15 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Kita akan membalik rumus volume untuk mencari tinggi.<br><br><strong>1. Hitung Luas Alas:</strong><br>Luas Alas = 15 &times; 10 = <strong>150 cm<sup>2</sup></strong>.<br><br><strong>2. Masukkan ke Rumus Volume:</strong><br>Volume = <sup>1</sup>&frasl;<sub>3</sub> &times; Luas Alas &times; Tinggi<br>600 = <sup>1</sup>&frasl;<sub>3</sub> &times; 150 &times; Tinggi<br>600 = 50 &times; Tinggi<br>Tinggi = 600 &divide; 50 = <strong>12 cm</strong>."
+            },
+            {
+                question: "Seorang arsitek ingin mengubah desain atap sebuah gedung yang berbentuk limas persegi. Pada desain awal, panjang rusuk alas adalah s dan tingginya adalah t. Pada desain baru, ia memutuskan untuk memperbesar panjang rusuk alas menjadi 2 kali lipat (2s) dan memperkecil tingginya menjadi setengah kali lipat (0,5t). Evaluasilah bagaimana volume desain baru dibandingkan dengan desain awal!",
+                options: [
+                    "A. Volume baru setengah dari volume awal",
+                    "B. Volume baru sama dengan volume awal",
+                    "C. Volume baru dua kali lipat dari volume awal",
+                    "D. Volume baru empat kali lipat dari volume awal"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Mari kita analisis secara aljabar!<br><br><strong>1. Volume Awal:</strong><br>V<sub>1</sub> = <sup>1</sup>&frasl;<sub>3</sub> &times; s<sup>2</sup> &times; t<br><br><strong>2. Volume Baru:</strong><br>Rusuk jadi (2s) dan tinggi jadi (0,5t).<br>V<sub>2</sub> = <sup>1</sup>&frasl;<sub>3</sub> &times; (2s)<sup>2</sup> &times; (0,5t)<br>V<sub>2</sub> = <sup>1</sup>&frasl;<sub>3</sub> &times; (4s<sup>2</sup>) &times; (0,5t)<br>Kalikan angkanya (4 &times; 0,5 = 2):<br>V<sub>2</sub> = <strong>2</strong> &times; [<sup>1</sup>&frasl;<sub>3</sub> &times; s<sup>2</sup> &times; t]<br>V<sub>2</sub> = 2 &times; V<sub>1</sub>.<br><br>Jadi, volume baru adalah <strong>dua kali lipat</strong> dari volume awal."
+            },
+            {
+                question: "Sebuah kubah masjid berbentuk setengah bola dengan diameter 14 meter. Volume udara di dalam kubah tersebut adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 359,33 m<sup>3</sup>",
+                    "B. 718,67 m<sup>3</sup>",
+                    "C. 1.437,33 m<sup>3</sup>",
+                    "D. 2.874,67 m<sup>3</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Volume Bola Penuh rumusnya adalah <sup>4</sup>&frasl;<sub>3</sub> &pi;r<sup>3</sup>. Karena ini adalah <strong>Setengah Bola</strong>, maka rumusnya menjadi <strong><sup>2</sup>&frasl;<sub>3</sub> &pi;r<sup>3</sup></strong>.<br><br><strong>1. Tentukan Jari-jari (r):</strong><br>Diameter = 14 m, maka r = 7 m.<br><br><strong>2. Hitung Volume Setengah Bola:</strong><br>V = <sup>2</sup>&frasl;<sub>3</sub> &times; <sup>22</sup>&frasl;<sub>7</sub> &times; 7 &times; 7 &times; 7<br>Coret satu angka 7:<br>V = <sup>2</sup>&frasl;<sub>3</sub> &times; 22 &times; 49<br>V = <sup>2156</sup>&frasl;<sub>3</sub> &asymp; <strong>718,67 m<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah bola mainan memiliki jari-jari 21 cm. Dengan menggunakan nilai &pi; = <sup>22</sup>&frasl;<sub>7</sub>, berapakah volume bola tersebut?",
+                options: [
+                    "A. 9.702 cm<sup>3</sup>",
+                    "B. 19.404 cm<sup>3</sup>",
+                    "C. 38.808 cm<sup>3</sup>",
+                    "D. 116.424 cm<sup>3</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Rumus Volume Bola Penuh:</strong> V = <sup>4</sup>&frasl;<sub>3</sub> &times; &pi; &times; r<sup>3</sup><br><br>V = <sup>4</sup>&frasl;<sub>3</sub> &times; <sup>22</sup>&frasl;<sub>7</sub> &times; 21 &times; 21 &times; 21<br>Bisa kita sederhanakan: (3 &times; 7 pada penyebut = 21, coret dengan salah satu 21 di atas).<br>V = 4 &times; 22 &times; 21 &times; 21<br>V = 88 &times; 441 = <strong>38.808 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah bola besi dimasukkan ke dalam tabung yang berisi air penuh. Bola tersebut memiliki diameter yang sama dengan diameter tabung serta tinggi tabung (bola menyinggung alas, atas, dan selimut tabung). Jika volume tabung adalah 300 cm<sup>3</sup>, berapakah volume air yang tumpah akibat masuknya bola tersebut?",
+                options: [
+                    "A. 100 cm<sup>3</sup>",
+                    "B. 150 cm<sup>3</sup>",
+                    "C. 200 cm<sup>3</sup>",
+                    "D. 250 cm<sup>3</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Fakta Menarik Archimedes!</strong><br>Jika sebuah bola pas menyinggung seluruh sisi di dalam sebuah tabung, maka perbandingan volume bola terhadap volume tabung adalah persis <strong>2 : 3</strong>.<br><br>Artinya: Volume Bola = <sup>2</sup>&frasl;<sub>3</sub> &times; Volume Tabung<br>Volume Bola = <sup>2</sup>&frasl;<sub>3</sub> &times; 300 = <strong>200 cm<sup>3</sup></strong>.<br><br>Berdasarkan Hukum Archimedes, volume air yang tumpah sama persis dengan volume benda yang tenggelam. Jadi, air yang tumpah adalah <strong>200 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Diketahui luas permukaan sebuah bola adalah 616 cm<sup>2</sup>. Jika &pi; = <sup>22</sup>&frasl;<sub>7</sub>, berapakah volume bola tersebut?",
+                options: [
+                    "A. 1.437,33 cm<sup>3</sup>",
+                    "B. 2.874,67 cm<sup>3</sup>",
+                    "C. 4.312,00 cm<sup>3</sup>",
+                    "D. 5.749,33 cm<sup>3</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Kita harus mencari jari-jari (r) terlebih dahulu dari Luas Permukaan.<br><br><strong>1. Cari Jari-jari (r):</strong><br>Luas Permukaan Bola = 4 &times; &pi; &times; r<sup>2</sup><br>616 = 4 &times; <sup>22</sup>&frasl;<sub>7</sub> &times; r<sup>2</sup><br>616 = <sup>88</sup>&frasl;<sub>7</sub> &times; r<sup>2</sup><br>r<sup>2</sup> = 616 &times; <sup>7</sup>&frasl;<sub>88</sub><br>r<sup>2</sup> = 7 &times; 7 = 49 &rarr; <strong>r = 7 cm</strong>.<br><br><strong>2. Hitung Volume:</strong><br>Volume = <sup>4</sup>&frasl;<sub>3</sub> &times; <sup>22</sup>&frasl;<sub>7</sub> &times; 7 &times; 7 &times; 7<br>Volume = <sup>4</sup>&frasl;<sub>3</sub> &times; 22 &times; 49 = <sup>4312</sup>&frasl;<sub>3</sub> &asymp; <strong>1.437,33 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah pabrik mainan memproduksi dua jenis bola karet. Bola A memiliki jari-jari r, sedangkan Bola B memiliki jari-jari 3r. Evaluasilah perbandingan volume Bola A terhadap Bola B!",
+                options: [
+                    "A. 1 : 3",
+                    "B. 1 : 9",
+                    "C. 1 : 27",
+                    "D. 1 : 81"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep Skala Tiga Dimensi:</strong><br>Volume bangun ruang selalu berbanding lurus dengan <strong>pangkat tiga</strong> dari perbandingan ukuran liniernya (jari-jari, sisi, dll).<br><br>Jika jari-jari bola diperbesar 3 kali lipat, maka volumenya akan membesar sebanyak 3<sup>3</sup> kali lipat.<br>Perbandingan V<sub>A</sub> : V<sub>B</sub> = (r)<sup>3</sup> : (3r)<sup>3</sup><br>V<sub>A</sub> : V<sub>B</sub> = r<sup>3</sup> : 27r<sup>3</sup> = <strong>1 : 27</strong>."
+            },
+            {
+                question: "Sebuah tenda pramuka berbentuk gabungan prisma segitiga dan balok (prisma segi empat). Alas tenda berukuran 4 m &times; 6 m. Tinggi bagian balok adalah 2 m, dan tinggi atap yang berbentuk prisma segitiga adalah 1,5 m. Evaluasilah volume total ruang di dalam tenda tersebut!",
+                options: [
+                    "A. 54 m<sup>3</sup>",
+                    "B. 60 m<sup>3</sup>",
+                    "C. 66 m<sup>3</sup>",
+                    "D. 84 m<sup>3</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Kita pecah tenda menjadi dua bagian: Bawah (Balok) dan Atas (Prisma Segitiga).<br><br><strong>1. Volume Bawah (Balok):</strong><br>Volume = panjang &times; lebar &times; tinggi_balok<br>V<sub>1</sub> = 6 &times; 4 &times; 2 = <strong>48 m<sup>3</sup></strong>.<br><br><strong>2. Volume Atap (Prisma Segitiga):</strong><br>Atap adalah prisma yang direbahkan. Alas prisma-nya adalah segitiga di bagian depan tenda (alas segitiga=4, tinggi segitiga=1,5). Panjang prisma = 6m.<br>Luas Segitiga = &frac12; &times; 4 &times; 1,5 = 3 m<sup>2</sup>.<br>V<sub>2</sub> = Luas Segitiga &times; panjang_tenda = 3 &times; 6 = <strong>18 m<sup>3</sup></strong>.<br><br><strong>3. Total Volume:</strong><br>V<sub>Total</sub> = 48 + 18 = <strong>66 m<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah industri rumahan pembuat cokelat ingin membuat kemasan baru berbentuk limas segitiga beraturan dengan luas alas 24 cm<sup>2</sup> dan tinggi 10 cm. Namun, bagian Quality Control menyarankan kemasan berbentuk prisma segitiga dengan luas alas yang sama (24 cm<sup>2</sup>) dan tinggi yang sama (10 cm) agar dapat memuat cokelat lebih banyak. Evaluasilah selisih volume cokelat yang dapat ditampung oleh kedua bentuk kemasan tersebut!",
+                options: [
+                    "A. 80 cm<sup>3</sup>",
+                    "B. 120 cm<sup>3</sup>",
+                    "C. 160 cm<sup>3</sup>",
+                    "D. 240 cm<sup>3</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>1. Volume Kemasan Prisma:</strong><br>Rumus: Luas Alas &times; Tinggi<br>V<sub>Prisma</sub> = 24 &times; 10 = <strong>240 cm<sup>3</sup></strong>.<br><br><strong>2. Volume Kemasan Limas:</strong><br>Rumus: <sup>1</sup>&frasl;<sub>3</sub> &times; Luas Alas &times; Tinggi<br>V<sub>Limas</sub> = <sup>1</sup>&frasl;<sub>3</sub> &times; 24 &times; 10 = <strong>80 cm<sup>3</sup></strong>.<br><br><strong>3. Selisih Volume:</strong><br>Selisih = V<sub>Prisma</sub> - V<sub>Limas</sub> = 240 - 80 = <strong>160 cm<sup>3</sup></strong>."
+            },
+            {
+                question: "Sebuah tangki penyimpanan air berbentuk setengah bola dengan diameter 6 meter terisi penuh oleh air. Karena ada kebocoran di bagian bawah, air keluar dengan laju konstan 1,57 meter kubik per menit. Evaluasilah waktu yang dibutuhkan hingga air di dalam tangki tersebut habis tak tersisa! (Gunakan &pi; = 3,14)",
+                options: [
+                    "A. 18 menit",
+                    "B. 24 menit",
+                    "C. 36 menit",
+                    "D. 48 menit"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>1. Cari Volume Air (Setengah Bola):</strong><br>Diameter = 6 m, berarti jari-jari (r) = 3 m.<br>V = <sup>2</sup>&frasl;<sub>3</sub> &times; &pi; &times; r<sup>3</sup><br>V = <sup>2</sup>&frasl;<sub>3</sub> &times; 3,14 &times; 3 &times; 3 &times; 3<br>Coret satu angka 3: V = 2 &times; 3,14 &times; 9<br>V = 18 &times; 3,14 = <strong>56,52 m<sup>3</sup></strong>.<br><br><strong>2. Cari Waktu Kebocoran:</strong><br>Waktu = Total Volume &divide; Laju Kebocoran<br>Waktu = 56,52 &divide; 1,57<br>Waktu = <strong>36 menit</strong>."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-8 relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <!-- Aksen dekoratif di pinggir kiri -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 opacity-80 rounded-l-2xl"></div>
+                        
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.5rem] h-10 rounded-xl bg-blue-100 text-blue-700 font-bold mr-4 text-base shadow-sm">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-xl font-medium text-gray-800 leading-relaxed pt-1 w-full">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3 ml-0 md:ml-14">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-gray-700 text-base md:text-lg select-none">
+                                        <div class="radio-circle"></div>
+                                        <span class="flex-1">${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Area Penjelasan (Sembunyi Awalnya) -->
+                        <div id="explanation_${index}" class="hidden mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border fade-in text-sm md:text-base relative overflow-hidden">
+                            <div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none w-24 h-24">
+                                <svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="50" cy="50" r="50"/>
+                                </svg>
+                            </div>
+                            <div class="explanation-content relative z-10"></div>
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Mematikan input setelah diperiksa
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                const explanationContent = explanationDiv.querySelector('.explanation-content');
+                
+                let isCorrect = false;
+                let statusBadge = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusBadge = `<span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Jawaban Tepat</span>`;
+                        bgClass = "bg-green-50";
+                        borderClass = "border-green-300";
+                        textClass = "text-green-900";
+                    } else {
+                        statusBadge = `<span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Jawaban Keliru</span>`;
+                        bgClass = "bg-red-50";
+                        borderClass = "border-red-300";
+                        textClass = "text-red-900";
+                        
+                        // Tandai UI kunci asli
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5"; 
+                        correctLabel.style.borderColor = "#10b981"; 
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                    }
+                } else {
+                    // Kasus kosong
+                    statusBadge = `<span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Dikosongkan</span>`;
+                    bgClass = "bg-orange-50";
+                    borderClass = "border-orange-300";
+                    textClass = "text-orange-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                }
+
+                explanationContent.innerHTML = `
+                    <div class="font-bold mb-4 pb-3 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-6 h-6 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : (selectedOption ? `<svg class="w-6 h-6 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`
+                                              : `<svg class="w-6 h-6 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`)
+                        }
+                        ${statusBadge}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass}">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                explanationDiv.className = `mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border ${bgClass} ${borderClass} fade-in text-sm md:text-base relative overflow-hidden block`;
+            });
+
+            const finalScore = Math.round(score);
+            scoreDisplay.innerText = finalScore;
+            
+            // Set pewarnaan dinamis
+            scoreDisplay.className = "text-7xl font-black mb-8 drop-shadow-sm transition-colors duration-500 ";
+            if(finalScore >= 80) scoreDisplay.className += "text-green-500";
+            else if(finalScore >= 60) scoreDisplay.className += "text-blue-500";
+            else if(finalScore >= 40) scoreDisplay.className += "text-orange-400";
+            else scoreDisplay.className += "text-red-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            quizForm.reset();
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

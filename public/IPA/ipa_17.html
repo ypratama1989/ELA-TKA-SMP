@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Listrik Dinamis & Rangkaian</title>
+    <style>
+        /* ==========================================
+           PURE CSS (NO EXTERNAL LIBRARIES)
+           ========================================== */
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-light: #e0f2fe;
+            --success: #059669;
+            --success-bg: #d1fae5;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* MAIN CONTAINER */
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            width: 100%;
+        }
+
+        .info-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* QUESTION CARDS */
+        .question-card {
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: border-color 0.3s;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .q-num {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        /* PRE / ASCII ART */
+        pre {
+            background-color: var(--bg-body);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #334155;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* RADIO BUTTONS */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--primary-light);
+            border-color: #bae6fd;
+        }
+
+        .option-label input {
+            margin-top: 4px;
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        /* EXPLANATION BOX */
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .exp-correct {
+            background-color: var(--success-bg);
+            border: 1px solid var(--success);
+            color: #064e3b;
+        }
+
+        .exp-wrong {
+            background-color: var(--danger-bg);
+            border: 1px solid var(--danger);
+            color: #7f1d1d;
+        }
+
+        .exp-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .explanation ul, .explanation ol {
+            padding-left: 20px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .card-correct { border-color: var(--success); }
+        .card-wrong { border-color: var(--danger); }
+
+        /* BUTTONS & RESULT */
+        .submit-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(2, 132, 199, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .result-box {
+            display: none;
+            background-color: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            animation: slideDown 0.5s;
+        }
+
+        .result-box h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .score-circle {
+            background-color: var(--primary-light);
+            border: 6px solid #7dd3fc;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 24px auto;
+        }
+
+        .score-text {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .btn-reset {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-reset:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 24px 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .question-card { padding: 16px; }
+            .btn-submit { width: 100%; }
+            .score-circle { width: 120px; height: 120px; }
+            .score-text { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <button onclick="history.back()" class="back-btn" title="Kembali">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="header-title">
+                <h1>Latihan Soal Fisika</h1>
+                <p>Listrik Dinamis, Rangkaian & Energi</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="info-box">
+            Pilihlah opsi yang paling tepat. Anda dapat langsung menekan tombol <strong>Periksa Jawaban</strong> di bagian paling bawah untuk melihat evaluasi skor dan kotak pembahasan tanpa harus menjawab semua soal terlebih dahulu.
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="question-card" id="q1" data-answer="B">
+                <div class="question-text"><span class="q-num">1.</span>Di dalam sebuah penghantar logam, arus listrik didefinisikan mengalir dari potensial tinggi ke potensial rendah. Fenomena fisis yang *sebenarnya* terjadi pada tingkat mikroskopis di dalam penghantar tersebut adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q1" value="A"><span>A. Proton bergerak dari kutub positif ke kutub negatif</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"><span>B. Elektron mengalir dari potensial rendah ke potensial tinggi</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"><span>C. Neutron bergerak bebas membawa muatan listrik positif</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"><span>D. Muatan positif dan muatan negatif bergerak bersamaan dengan arah berlawanan</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Pembahasan Edukatif:</strong></p>
+                    <p>Secara <em>kesepakatan (konvensi)</em> zaman dulu, ilmuwan menetapkan arus listrik mengalir dari kutub positif ke kutub negatif. Namun, setelah struktur atom ditemukan, faktanya berbeda!</p>
+                    <p>Di dalam benda padat seperti logam (kabel tembaga), proton (+) terkunci rapat di dalam inti atom dan tidak bisa bergerak. Satu-satunya partikel yang bisa mengalir bebas adalah <strong>elektron (-)</strong>.</p>
+                    <p>Karena elektron bermuatan negatif, mereka akan saling tolak-menolak dengan kutub negatif (potensial rendah) dan berlomba-lomba tertarik menuju kutub positif (potensial tinggi).</p>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="question-card" id="q2" data-answer="B">
+                <div class="question-text"><span class="q-num">2.</span>Kawat penghantar pertama memiliki panjang L dan diameter penampang d. Kawat kedua terbuat dari bahan yang sama tetapi memiliki panjang 2L dan diameter penampang dua kali lipat (2d). Perbandingan hambatan kawat pertama (R<sub>1</sub>) dan kawat kedua (R<sub>2</sub>) adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q2" value="A"><span>A. 1 : 2</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"><span>B. 2 : 1</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"><span>C. 1 : 4</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"><span>D. 4 : 1</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Langkah Penyelesaian:</strong></p>
+                    <p>Hambatan kawat (R) bergantung pada panjang (L) dan Luas Area (A). Rumusnya: <strong>R = &rho; &times; (L / A)</strong>.</p>
+                    <p>Ingat, luas area kawat berbentuk lingkaran bergantung pada <em>kuadrat diameternya</em> (A &prop; d<sup>2</sup>). Jadi, R berbanding lurus dengan L, dan berbanding terbalik dengan d<sup>2</sup>.</p>
+                    <ul>
+                        <li><strong>Kawat 1:</strong> R<sub>1</sub> sebanding dengan <strong>L / d<sup>2</sup></strong> (Anggap nilainya 1).</li>
+                        <li><strong>Kawat 2:</strong> Panjangnya 2L. Diameternya 2d, sehingga Luasnya menjadi (2d)<sup>2</sup> = 4d<sup>2</sup>.<br>R<sub>2</sub> sebanding dengan 2L / 4d<sup>2</sup> = <strong>0,5 (L / d<sup>2</sup>)</strong>.</li>
+                    </ul>
+                    <p>Perbandingan R<sub>1</sub> : R<sub>2</sub> adalah 1 : 0,5. Agar bilangannya bulat, kalikan 2, hasilnya <strong>2 : 1</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="question-card" id="q3" data-answer="B">
+                <div class="question-text"><span class="q-num">3.</span>Sebuah kawat penghantar memiliki hambatan sebesar 15 &Omega; dihubungkan dengan sumber tegangan sehingga mengalir arus sebesar 0,8 A. Jika sumber tegangan diturunkan menjadi <strong>setengah</strong> dari semula sedangkan jenis kawat tetap, maka kuat arus yang mengalir sekarang menjadi...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q3" value="A"><span>A. 0,2 A</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"><span>B. 0,4 A</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"><span>C. 1,6 A</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"><span>D. 3,2 A</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Logika Hukum Ohm:</strong></p>
+                    <p>Hukum Ohm menyatakan bahwa Arus (I) sebanding dengan Tegangan (V), asalkan Hambatan (R) tidak berubah. (<strong>I = V / R</strong>).</p>
+                    <p>Analogi sederhananya: Tegangan adalah "tekanan air pendorong", sedangkan arus adalah "derasnya aliran air". Jika pompa air (tegangan) kekuatannya dikurangi menjadi setengah, maka aliran air (arus) otomatis juga akan melemah menjadi <strong>setengahnya</strong>.</p>
+                    <p>Arus awal = 0,8 A. Setengahnya adalah 0,8 &divide; 2 = <strong>0,4 A</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="question-card" id="q4" data-answer="A">
+                <div class="question-text"><span class="q-num">4.</span>Perhatikan ilustrasi percabangan arus listrik berikut!
+<pre>
+I<sub>1</sub> = 3A (masuk)
+----------->\
+             \-----> I<sub>3</sub> = 4A (keluar)
+I<sub>2</sub> = ?        /
+----------->/
+             \-----> I<sub>4</sub> = 2A (keluar)
+</pre>
+Besar dan arah kuat arus I<sub>2</sub> agar memenuhi Hukum I Kirchhoff adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q4" value="A"><span>A. 3 A masuk menuju titik percabangan</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"><span>B. 3 A keluar dari titik percabangan</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"><span>C. 1 A masuk menuju titik percabangan</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"><span>D. 1 A keluar dari titik percabangan</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Pembahasan Hukum Kirchhoff I:</strong></p>
+                    <p>Hukum Kirchhoff I sangat logis: <em>"Total arus yang MASUK ke simpang harus sama persis dengan total arus yang KELUAR dari simpang"</em>. (Tidak ada listrik yang hilang atau tercipta gaib di tengah jalan).</p>
+                    <ul>
+                        <li>Total arus yang KELUAR = I<sub>3</sub> + I<sub>4</sub> = 4A + 2A = <strong>6A</strong>.</li>
+                        <li>Total arus yang MASUK = I<sub>1</sub> + I<sub>2</sub> = 3A + I<sub>2</sub>.</li>
+                        <li>Agar seimbang (Masuk = Keluar), maka 3A + I<sub>2</sub> = 6A.</li>
+                        <li>Nilai I<sub>2</sub> wajib sebesar <strong>3A</strong>, dan arahnya harus <strong>Masuk</strong> untuk membantu I<sub>1</sub>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="question-card" id="q5" data-answer="D">
+                <div class="question-text"><span class="q-num">5.</span>Tiga buah hambatan masing-masing bernilai 4 &Omega;, 6 &Omega;, dan 12 &Omega;. Jika ketiga hambatan tersebut disusun secara paralel dan dihubungkan dengan sumber tegangan 12 V, maka kuat arus total yang keluar dari sumber tegangan adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q5" value="A"><span>A. 1 A</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"><span>B. 2 A</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"><span>C. 4 A</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"><span>D. 6 A</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Langkah Penyelesaian Rangkaian Paralel:</strong></p>
+                    <ol>
+                        <li><strong>Cari Hambatan Pengganti Total (R<sub>p</sub>):</strong><br>
+                            1 / R<sub>p</sub> = 1/4 + 1/6 + 1/12<br>
+                            Samakan penyebut (menjadi 12):<br>
+                            1 / R<sub>p</sub> = 3/12 + 2/12 + 1/12 = 6/12.<br>
+                            Maka R<sub>p</sub> = 12 / 6 = <strong>2 &Omega;</strong>. (Hambatan totalnya menjadi sangat kecil karena jalan elektronnya banyak).
+                        </li>
+                        <li><strong>Cari Arus Total (I):</strong><br>
+                            I = V / R<sub>tot</sub><br>
+                            I = 12 Volt / 2 &Omega; = <strong>6 Ampere</strong>.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="question-card" id="q6" data-answer="C">
+                <div class="question-text"><span class="q-num">6.</span>Dua buah lampu masing-masing bertuliskan 6 V/12 W (Lampu A) dan 6 V/6 W (Lampu B) dirangkai secara seri, kemudian dihubungkan dengan aki mobil bertegangan 12 V. Pernyataan yang paling tepat mengenai kondisi kedua lampu tersebut adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q6" value="A"><span>A. Kedua lampu menyala dengan tingkat terang yang sama persis</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"><span>B. Lampu 6V/12W menyala lebih terang daripada lampu 6V/6W</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"><span>C. Lampu 6V/6W menyala lebih terang dan berisiko putus karena tegangannya melebihi batas</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"><span>D. Kedua lampu langsung putus seketika karena tegangan 12V terlalu besar</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Analisis Jebakan Rangkaian Seri:</strong></p>
+                    <p>Mari kita cek "karakter asli" hambatan masing-masing lampu dari tulisan pabriknya (R = V<sup>2</sup> / P):</p>
+                    <ul>
+                        <li>Lampu A (12W): R<sub>A</sub> = 6<sup>2</sup> / 12 = 36 / 12 = <strong>3 &Omega;</strong>.</li>
+                        <li>Lampu B (6W): R<sub>B</sub> = 6<sup>2</sup> / 6 = 36 / 6 = <strong>6 &Omega;</strong>. (Lampu watt kecil ternyata hambatannya lebih besar!).</li>
+                    </ul>
+                    <p>Saat dipasang <strong>Seri</strong>, arus (I) yang lewat mereka <em>sama rata</em>. Karena daya riil yang menyala adalah P = I<sup>2</sup> &times; R, maka lampu dengan hambatan besar (Lampu B) akan menyala lebih terang.</p>
+                    <p>Lebih bahaya lagi, tegangan 12V akan terbagi tidak rata. Lampu B yang hambatannya 2x lebih besar akan "merampas" tegangan 2x lebih banyak (mendapat 8 Volt, dan Lampu A mendapat 4 Volt). Karena 8V melebihi batas spesifikasi pabrik (6V), <strong>Lampu B bisa putus!</strong></p>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="question-card" id="q7" data-answer="B">
+                <div class="question-text"><span class="q-num">7.</span>Perhatikan skema rangkaian campuran di bawah ini!
+<pre>
+   +---[ R1 = 4 &Omega; ]---+
+   |                  |
+---+                  +---+---
+   |                  |
+   +---[ R2 = 12 &Omega; ]--+
+
++--------[ R3 = 3 &Omega; ]------+
+</pre>
+Jika hambatan pengganti paralel dari ketiga resistor di atas dihubungkan seri dengan hambatan R<sub>4</sub> = 1,5 &Omega; dan diberi tegangan baterai 9 V, kuat arus yang mengalir pada hambatan R<sub>4</sub> adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q7" value="A"><span>A. 1,5 A</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"><span>B. 3,0 A</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"><span>C. 4,5 A</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"><span>D. 6,0 A</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Langkah Penyelesaian Rangkaian Campuran:</strong></p>
+                    <ol>
+                        <li><strong>Selesaikan yang Paralel dulu:</strong><br>
+                            1 / R<sub>p</sub> = 1/4 + 1/12 + 1/3 (Samakan penyebut 12).<br>
+                            1 / R<sub>p</sub> = 3/12 + 1/12 + 4/12 = 8/12.<br>
+                            R<sub>p</sub> = 12 / 8 = <strong>1,5 &Omega;</strong>.
+                        </li>
+                        <li><strong>Gabungkan Seri dengan R<sub>4</sub>:</strong><br>
+                            R<sub>total</sub> = R<sub>p</sub> + R<sub>4</sub> = 1,5 &Omega; + 1,5 &Omega; = <strong>3 &Omega;</strong>.
+                        </li>
+                        <li><strong>Hitung Arus Total (Arus yang lewat R<sub>4</sub>):</strong><br>
+                            Karena R<sub>4</sub> ada di jalur utama, arus yang lewat sana adalah arus total rangkaian.<br>
+                            I = V / R<sub>total</sub> = 9 V / 3 &Omega; = <strong>3,0 Ampere</strong>.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="question-card" id="q8" data-answer="A">
+                <div class="question-text"><span class="q-num">8.</span>Perhatikan skema instalasi saklar berikut!
+<pre>
+   +-----( L1 )-----+
+   |                |
+---(S)---+        +---( L3 )---
+         |        |
+   +-----( L2 )-----+
+</pre>
+*Keterangan: S adalah saklar utama, L1, L2, dan L3 adalah lampu identik.*<br>
+Jika saklar S dibuka (diputuskan), maka peristiwa yang akan terjadi adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q8" value="A"><span>A. Semua lampu (L1, L2, L3) padam bersamaan</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"><span>B. L1 dan L2 padam, sedangkan L3 tetap menyala</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"><span>C. L1 dan L2 tetap menyala, sedangkan L3 padam</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"><span>D. Semua lampu tetap menyala namun lebih redup</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Logika Saklar:</strong></p>
+                    <p>Saklar S berfungsi sebagai "pintu tol utama". Posisinya berada di garis kabel utama (seri) <em>sebelum</em> listrik memecah menjadi cabang paralel (L1 & L2) dan sebelum menuju L3.</p>
+                    <p>Jika saklar utama ini dibuka/diputuskan, tidak ada satupun elektron yang bisa menyeberang menuju rangkaian di sebelah kanannya. Aliran listrik terhenti total, sehingga <strong>semua lampu akan padam</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="question-card" id="q9" data-answer="B">
+                <div class="question-text"><span class="q-num">9.</span>Ibu menyetrika pakaian menggunakan setrika listrik berdaya 400 Watt. Setrika tersebut digunakan secara rutin selama 2 jam setiap hari. Energi listrik yang diserap oleh setrika tersebut selama sebulan (30 hari) adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q9" value="A"><span>A. 12 kWh</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"><span>B. 24 kWh</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"><span>C. 48 kWh</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"><span>D. 240 kWh</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Cara Menghitung Energi Listrik (Meteran PLN):</strong></p>
+                    <p>PLN menagih listrik dengan satuan <strong>kWh</strong> (Kilo-Watt-Hour atau Ribu-Watt-Jam).</p>
+                    <ol>
+                        <li>Hitung pemakaian sehari: Daya &times; Waktu = 400 Watt &times; 2 Jam = <strong>800 Watt-Jam (Wh)</strong>.</li>
+                        <li>Jadikan Kilo (dibagi 1000): 800 &divide; 1000 = <strong>0,8 kWh</strong> per hari.</li>
+                        <li>Kalikan sebulan: 0,8 kWh &times; 30 hari = <strong>24 kWh</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="question-card" id="q10" data-answer="C">
+                <div class="question-text"><span class="q-num">10.</span>Sebuah elemen pemanas air listrik (water heater) memiliki hambatan kawat sebesar 20 &Omega; dan dialiri arus listrik sebesar 5 Ampere. Jika alat tersebut dihidupkan selama 10 menit, besar energi listrik yang diubah menjadi kalor (panas) adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q10" value="A"><span>A. 5.000 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"><span>B. 50.000 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"><span>C. 300.000 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"><span>D. 500.000 Joule</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Langkah Perhitungan Joule Heating:</strong></p>
+                    <p>Energi listrik murni (Joule) menggunakan rumus <strong>W = I<sup>2</sup> &times; R &times; t</strong>.</p>
+                    <p><em>AWAS JEBAKAN:</em> Satuan waktu (t) dalam fisika Standar Internasional WAJIB dalam detik (sekon).</p>
+                    <ul>
+                        <li>Arus (I) = 5 A. &rarr; I<sup>2</sup> = 25.</li>
+                        <li>Hambatan (R) = 20 &Omega;.</li>
+                        <li>Waktu (t) = 10 menit = 10 &times; 60 = <strong>600 sekon</strong>.</li>
+                    </ul>
+                    <p>Hitung: W = 25 &times; 20 &times; 600 = 500 &times; 600 = <strong>300.000 Joule</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="question-card" id="q11" data-answer="B">
+                <div class="question-text"><span class="q-num">11.</span>Di sebuah rumah terdapat 4 buah lampu masing-masing 20 W (menyala 10 jam/hari), sebuah TV 100 W (menyala 8 jam/hari), dan sebuah kulkas 150 W (menyala 24 jam/hari). Jika tarif energi listrik adalah Rp1.500,00 per kWh, maka biaya total pemakaian listrik tersebut selama 30 hari adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q11" value="A"><span>A. Rp 117.000,00</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"><span>B. Rp 234.000,00</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"><span>C. Rp 243.000,00</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"><span>D. Rp 315.000,00</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Langkah Pembukuan Biaya Listrik:</strong></p>
+                    <p>Kita hitung "belanja Watt" per harinya dulu:</p>
+                    <ul>
+                        <li>Lampu (ada 4 biji): 4 &times; 20W &times; 10 jam = <strong>800 Wh</strong></li>
+                        <li>Televisi: 1 &times; 100W &times; 8 jam = <strong>800 Wh</strong></li>
+                        <li>Kulkas: 1 &times; 150W &times; 24 jam = <strong>3.600 Wh</strong></li>
+                    </ul>
+                    <p>Total sehari = 800 + 800 + 3600 = 5.200 Wh. Dibagi 1000 = <strong>5,2 kWh per hari</strong>.</p>
+                    <p>Total sebulan = 5,2 kWh &times; 30 hari = <strong>156 kWh</strong>.</p>
+                    <p>Biaya Tagihan = 156 kWh &times; Rp1.500 = <strong>Rp 234.000,00</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="question-card" id="q12" data-answer="A">
+                <div class="question-text"><span class="q-num">12.</span>Pemasangan sekring pada instalasi listrik (meteran MCB) rumah tangga sangat vital untuk mencegah kebakaran akibat hubungan arus pendek (korsleting). Prinsip dasar cara kerja sekring yang paling tepat adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q12" value="A"><span>A. Memutus aliran listrik secara otomatis dengan meleburkan kawat halusnya ketika arus melebihi batas aman</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"><span>B. Menyimpan kelebihan muatan listrik mendadak agar tidak mengalir merusak peralatan elektronik</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"><span>C. Menurunkan tegangan voltase listrik dari gardu induk secara drastis saat terjadi beban berlebih</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"><span>D. Mengubah arus bolak-balik (AC) menjadi arus searah (DC) saat terjadi lonjakan petir</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Pengingat Konsep Pengaman Listrik:</strong></p>
+                    <p>Sekring (fuse) sengaja diciptakan sebagai "pahlawan bunuh diri" demi keselamatan rumah Anda. Di dalamnya terdapat kawat yang sangat tipis dengan titik leleh yang rendah.</p>
+                    <p>Saat terjadi korsleting, arus listrik yang mengalir tiba-tiba membludak sangat besar dan panas. Sebelum kabel dinding rumah ikut memanas dan terbakar, kawat di dalam sekring akan langsung <strong>meleleh dan putus lebih dulu</strong>. Putusnya kawat memutus rantai sirkuit, sehingga aliran listrik mati total dan rumah terselamatkan.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="question-card" id="q13" data-answer="A">
+                <div class="question-text"><span class="q-num">13.</span>Sebuah lampu pijar dengan tulisan pabrik 220 V / 100 W dipasang pada jaringan listrik di desa yang tegangannya sedang anjlok menjadi 110 V. Daya listrik aktual yang disedot oleh lampu tersebut saat ini turun menjadi...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q13" value="A"><span>A. 25 W</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"><span>B. 50 W</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"><span>C. 75 W</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"><span>D. 100 W</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Fakta Teknis Lampu Meredup:</strong></p>
+                    <p>Satu hal yang tidak pernah berubah dari lampu itu adalah kawat pijarnya (Hambatan/R tetap). Rumus Daya adalah P = V<sup>2</sup> / R. Perhatikan bahwa Daya bergantung pada <strong>Kuadrat Tegangannya</strong>.</p>
+                    <p>Tegangan turun dari 220V menjadi 110V (turun menjadi &frac12; kali lipat). Karena dipangkatkan dua, dayanya akan merosot jauh lebih parah, yakni menjadi (&frac12;)<sup>2</sup> = <strong>&frac14; (seperempat) kali lipatnya</strong>.</p>
+                    <p>Daya aktual = &frac14; &times; 100 W = <strong>25 Watt</strong>. (Lampu menjadi sangat redup).</p>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="question-card" id="q14" data-answer="A">
+                <div class="question-text"><span class="q-num">14.</span>Sebuah kawat kabel tembaga memiliki panjang 10 m dan luas penampang 2 mm<sup>2</sup>. Jika hambatan jenis (resistivitas) tembaga tersebut adalah 1,7 &times; 10<sup>-8</sup> &Omega;&middot;m. Besar hambatan kawat kabel tersebut adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q14" value="A"><span>A. 0,085 &Omega;</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"><span>B. 0,85 &Omega;</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"><span>C. 8,5 &Omega;</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"><span>D. 85 &Omega;</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Perhitungan Hambatan Kawat:</strong></p>
+                    <p>Rumus: R = &rho; &times; (L / A). <em>Jebakannya ada pada satuan Luas Penampang (A)!</em></p>
+                    <ul>
+                        <li>Ubah A = 2 mm<sup>2</sup> menjadi meter persegi = <strong>2 &times; 10<sup>-6</sup> m<sup>2</sup></strong>.</li>
+                        <li>Masukkan angka: R = 1,7 &times; 10<sup>-8</sup> &times; [ 10 / (2 &times; 10<sup>-6</sup>) ]</li>
+                        <li>Bagi angkanya: 10 / 2 = 5. Pangkatnya: naik ke atas jadi 10<sup>6</sup>. <br>Lalu 1,7 &times; 5 = 8,5.</li>
+                        <li>Sisa pangkat: 10<sup>-8</sup> &times; 10<sup>6</sup> = 10<sup>-2</sup>.</li>
+                        <li>Hasil akhir: 8,5 &times; 10<sup>-2</sup> = <strong>0,085 &Omega;</strong>. (Kawat kabel yang bagus memang harus sangat kecil hambatannya).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="question-card" id="q15" data-answer="A">
+                <div class="question-text"><span class="q-num">15.</span>Perhatikan grafik hasil percobaan tiga jenis resistor di laboratorium!
+<pre>
+ V (Volt)
+ ^
+ |  / Resistor A (Paling Curam)
+ | / / Resistor B (Tengah)
+ |/ / / Resistor C (Paling Landai)
+ | / /
+ |/ /
+ +----------------> I (Ampere)
+</pre>
+Berdasarkan kemiringan garis grafik V-I di atas, kesimpulan logis mengenai nilai hambatan ketiga resistor tersebut adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q15" value="A"><span>A. Hambatan Resistor A > Resistor B > Resistor C</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"><span>B. Hambatan Resistor C > Resistor B > Resistor A</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"><span>C. Hambatan Resistor B > Resistor A > Resistor C</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"><span>D. Ketiga resistor memiliki nilai hambatan yang identik sama</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Cara Membaca Grafik Fisika (Hukum Ohm):</strong></p>
+                    <p>Sesuai rumus V = I &times; R, nilai hambatan (R) direpresentasikan oleh kemiringan (gradien) garis grafik V (Sumbu Y) terhadap I (Sumbu X).</p>
+                    <p>Pikirkan secara logika: Ambil satu titik kuat arus (I) yang sama. Untuk mengalirkan arus tersebut, <strong>Resistor A membutuhkan Voltase tegangan (dorongan) yang paling tinggi (grafik paling curam)</strong>. Ini berarti Resistor A adalah komponen yang paling alot/kuat "menghambat" listrik.</p>
+                    <p>Maka secara berurutan, hambatannya adalah <strong>A > B > C</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="question-card" id="q16" data-answer="B">
+                <div class="question-text"><span class="q-num">16.</span>Pada sebuah colokan terminal (rangkaian paralel), sudah terpasang TV, Kipas, dan Kulkas. Tiba-tiba Anda menambahkan satu colokan Charger Laptop ke terminal tersebut. Dampak fisis yang terjadi pada *hambatan total* terminal dan *arus total* yang ditarik dari meteran rumah adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q16" value="A"><span>A. Hambatan total meningkat, arus total menurun</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"><span>B. Hambatan total menurun, arus total meningkat</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"><span>C. Hambatan total tetap, arus total meningkat</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"><span>D. Hambatan total menurun, arus total konstan tetap</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Rahasia Rangkaian Paralel:</strong></p>
+                    <p>Ini adalah alasan mengapa terlalu banyak mencolok kabel bisa bikin jeglek/mati listrik!</p>
+                    <p>Setiap alat yang dicolokkan ke terminal dipasang secara paralel. Menambah cabang paralel ibarat <strong>membuka gerbang jalan tol baru</strong>. Meskipun jalan tol baru itu ada hambatannya, secara keseluruhan, mobil (elektron) kini memiliki lebih banyak jalan untuk lewat, sehingga kemacetan keseluruhan berkurang.</p>
+                    <p>Akibatnya, <strong>Hambatan Total rangkaian Menurun</strong>. Karena hambatannya jebol menurun, arus yang disedot dari meteran PLN akan melesat <strong>Meningkat</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="question-card" id="q17" data-answer="B">
+                <div class="question-text"><span class="q-num">17.</span>Siswa di lab sedang praktik merangkai alat ukur listrik. Ia harus mengukur Kuat Arus yang lewat, dan Beda Potensial lampu tersebut. Aturan pemasangan alat ukur Amperemeter (A) dan Voltmeter (V) yang aman dan benar adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q17" value="A"><span>A. Amperemeter dipasang paralel, voltmeter dipasang seri dengan lampu</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"><span>B. Amperemeter dipasang seri, voltmeter dipasang paralel di ujung lampu</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"><span>C. Kedua alat ukur (A & V) dipasang secara seri menempel pada lampu</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"><span>D. Kedua alat ukur dipasang secara bercabang (paralel) dari lampu</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Aturan Pakai Multitester:</strong></p>
+                    <ul>
+                        <li><strong>Amperemeter</strong> tugasnya menghitung "jumlah tetesan aliran air" yang lewat. Jadi ia harus dipotong langsung di tengah jalur pipa utama agar semua air melewatinya. Ini disebut pemasangan <strong>Seri</strong>.</li>
+                        <li><strong>Voltmeter</strong> tugasnya mengukur "perbedaan tekanan" antara hulu dan hilir komponen. Ia tidak boleh menyumbat pipa, melainkan menempel menjepit dua kaki ujung-ujung komponen. Ini disebut pemasangan bercabang atau <strong>Paralel</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="question-card" id="q18" data-answer="B">
+                <div class="question-text"><span class="q-num">18.</span>Sebuah teko pemanas air dicolokkan ke listrik. Tegangan dan arusnya menghasilkan Energi Listrik yang diserap teko sebesar 500.000 Joule. Namun efisiensi kerja mesin teko tersebut hanyalah 80%. Berapa besar energi panas murni yang benar-benar dirasakan oleh air untuk mendidih?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q18" value="A"><span>A. 100.000 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"><span>B. 400.000 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"><span>C. 500.000 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"><span>D. 625.000 Joule</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Konsep Efisiensi Mesin (Hukum Kekekalan Energi):</strong></p>
+                    <p>Tidak ada mesin buatan manusia yang 100% sempurna tanpa cacat. Selalu ada energi yang bocor terbuang sia-sia (misal: mesin berbunyi mendengung, kabelnya ikut panas, ada radiasi terbuang ke udara ruang).</p>
+                    <p>Efisiensi 80% artinya dari total 500.000 Joule jatah listrik PLN, hanya 80% yang sukses tersalurkan untuk memasak air. Sisanya (20%) terbuang ke lingkungan.</p>
+                    <p>Kalikan saja: 80/100 &times; 500.000 = <strong>400.000 Joule</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="question-card" id="q19" data-answer="A">
+                <div class="question-text"><span class="q-num">19.</span>Perhatikan skema pembagi arus pada rangkaian paralel berikut!
+<pre>
+     +---[ R1 = 6 &Omega; ]---+
+     |                  |
+--( 6 Ampere )--+    +--( Keluar )--
+     |                  |
+     +---[ R2 = 3 &Omega; ]---+
+</pre>
+Jika arus bergerombol total 6 Ampere masuk ke persimpangan, maka ia akan memecah diri. Kuat arus yang masuk melewati lorong hambatan R1 dan R2 secara berturut-turut adalah...</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q19" value="A"><span>A. 2 Ampere dan 4 Ampere</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"><span>B. 3 Ampere dan 3 Ampere</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"><span>C. 4 Ampere dan 2 Ampere</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"><span>D. 1 Ampere dan 5 Ampere</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Prinsip Cerdas Pembagi Arus:</strong></p>
+                    <p>Arus listrik itu seperti orang malas. Ia akan lebih banyak berbondong-bondong memilih jalur yang "hambatannya/rintangannya paling kecil".</p>
+                    <p>Jalur bawah (3 &Omega;) rintangannya setengah kali lebih ringan dari jalur atas (6 &Omega;). Tentu saja, porsi arus yang menyerbu masuk ke jalur bawah akan <strong>Dua Kali Lipat Lebih Banyak</strong>.</p>
+                    <p>Agar total gabungannya pas 6 Ampere dan arus bawah dua kali lipat arus atas, maka pecahannya adalah: <strong>Atas (R1) = 2A, Bawah (R2) = 4A.</strong> (Karena 2+4=6, dan 4 adalah dua kali lipat dari 2).</p>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="question-card" id="q20" data-answer="A">
+                <div class="question-text"><span class="q-num">20.</span>Keluarga Pak Budi ingin berhemat tagihan listrik bulanan (menurunkan total kWh) tanpa mengurangi kenyamanan. Berdasarkan analisis perhitungan daya & waktu, tindakan sepele mana di bawah ini yang berdampak pemotongan energi listrik paling signifikan secara matematis?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q20" value="A"><span>A. Memensiunkan 5 buah bohlam pijar kuning (40W, nyala 5 jam/malam) diganti ke Lampu LED Putih (8W)</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"><span>B. Mematikan saklar pemanas dispenser air (350W) selama 2 jam siang hari saat sepi</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"><span>C. Rajin mencabut charger ponsel tipe lama (10W) yang tertinggal dicolok selama 10 jam</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"><span>D. Menseting remote AC kamar (400W) menjadi lebih dingin dari 24&deg;C ke 18&deg;C sepanjang malam</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Adu Mekanik Penghematan Energi (E = P &times; t):</strong></p>
+                    <p>Jangan tertipu dengan angka Watt alat besar. Waktu pemakaian juga sangat menentukan!</p>
+                    <ul>
+                        <li><strong>Opsi A (Lampu):</strong> Selisih daya per lampu adalah 40W - 8W = 32W yang dihemat. Ada 5 lampu, nyala 5 jam. Penghematan: 32 &times; 5 &times; 5 = <strong>800 Wh/hari</strong>.</li>
+                        <li><strong>Opsi B (Dispenser):</strong> Mematikan 350W selama 2 jam = 350 &times; 2 = <strong>700 Wh/hari</strong>.</li>
+                        <li><strong>Opsi C (Charger):</strong> Cabut 10W selama 10 jam = 10 &times; 10 = <strong>100 Wh/hari</strong>.</li>
+                        <li><strong>Opsi D (AC):</strong> Menurunkan suhu akan memaksa mesin kompresor AC menyala nonstop, justru tagihan akan membengkak, bukan berhemat.</li>
+                    </ul>
+                    <p>Mengganti lampu bohlam kuno ke LED adalah inovasi sederhana namun menyumbang penghematan terbesar (800 Wh tiap hari).</p>
+                </div>
+            </div>
+
+            <!-- Submit Area -->
+            <div class="submit-container">
+                <button type="button" id="btnSubmit" class="btn-submit">
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Container -->
+        <div id="resultContainer" class="result-box">
+            <h2>Evaluasi Latihan Selesai!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Silakan gulir perlahan ke atas untuk membedah langkah-langkah pembahasan di tiap nomor soal yang telah Anda kerjakan.</p>
+            
+            <div class="score-circle">
+                <span id="scoreDisplay" class="score-text">0</span>
+            </div>
+            
+            <button type="button" id="btnReset" class="btn-reset">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                </svg>
+                Ulangi Ujian
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('quizForm');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const resultBox = document.getElementById('resultContainer');
+            const scoreText = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-card');
+            
+            const TOTAL_SOAL = questions.length; // 20
+            const POIN_PER_SOAL = 100 / TOTAL_SOAL;
+
+            // Cegah form enter reload
+            form.addEventListener('submit', e => e.preventDefault());
+
+            btnSubmit.addEventListener('click', function() {
+                let poin = 0;
+
+                questions.forEach(function(q) {
+                    const qID = q.id;
+                    const kunciJawaban = q.getAttribute('data-answer');
+                    // Mencari radio yang tercentang di div ini
+                    const terjawab = q.querySelector(`input[name="${qID}"]:checked`);
+                    
+                    const boxBahas = q.querySelector('.explanation');
+                    const titleBahas = q.querySelector('.exp-title');
+
+                    // Reset kelas pewarnaan jika diklik berulang
+                    boxBahas.classList.remove('exp-correct', 'exp-wrong');
+                    q.classList.remove('card-correct', 'card-wrong');
+
+                    if (terjawab) {
+                        if (terjawab.value === kunciJawaban) {
+                            poin += POIN_PER_SOAL;
+                            boxBahas.classList.add('exp-correct');
+                            q.classList.add('card-correct');
+                            titleBahas.innerHTML = `&#10004; Mantap! Analisamu Akurat (Opsi ${terjawab.value})`;
+                        } else {
+                            boxBahas.classList.add('exp-wrong');
+                            q.classList.add('card-wrong');
+                            titleBahas.innerHTML = `&#10006; Kurang Tepat (Kamu menjawab ${terjawab.value}). Jawaban aslinya adalah ${kunciJawaban}`;
+                        }
+                    } else {
+                        boxBahas.classList.add('exp-wrong');
+                        q.classList.add('card-wrong');
+                        titleBahas.innerHTML = `&#9888; Soal dilewati. Kunci Jawaban yang tepat adalah ${kunciJawaban}`;
+                    }
+
+                    // Tampilkan kotak pembedahan soal
+                    boxBahas.style.display = 'block';
+                });
+
+                // Lempar nilai ke UI
+                scoreText.innerText = Math.round(poin);
+
+                // Tukar tombol dengan papan hasil
+                btnSubmit.parentElement.style.display = 'none';
+                resultBox.style.display = 'block';
+
+                // Scroll mulus turun ke lingkaran nilai
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 150);
+            });
+
+            btnReset.addEventListener('click', function() {
+                form.reset();
+
+                // Kembalikan ke mode awal polos
+                questions.forEach(function(q) {
+                    const boxBahas = q.querySelector('.explanation');
+                    boxBahas.style.display = 'none';
+                    boxBahas.classList.remove('exp-correct', 'exp-wrong');
+                    q.classList.remove('card-correct', 'card-wrong');
+                });
+
+                resultBox.style.display = 'none';
+                btnSubmit.parentElement.style.display = 'flex';
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t17',
+          topicIndex: 17,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sastra & Majas Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Customizing radio inputs */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Smooth transition for explanation boxes */
+        .explanation-box {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2500px;
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Styling for story/context quotes */
+        .quote-box {
+            border-left: 4px solid #8b5cf6; /* violet-500 */
+            background-color: #f5f3ff; /* violet-50 */
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 0.75rem 0.75rem 0;
+            font-style: italic;
+            color: #4c1d95; /* violet-900 */
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        /* Quote mark decorative element */
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #ddd6fe; /* violet-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        /* Responsive images */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-28">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-violet-600 hover:text-violet-800 transition-colors bg-violet-50 hover:bg-violet-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-2xl font-bold text-slate-800 text-center flex-1 px-2">Kuis Sastra & Majas</h1>
+            <div class="w-24"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Mari Bermain Bahasa! &#x2728;</h2>
+                <p class="text-slate-600 text-[15px] md:text-lg leading-relaxed">
+                    Uji pemahamanmu tentang majas, gaya bahasa, dan citraan dalam karya sastra. Kamu tidak harus mengisi semua soal untuk memeriksa jawaban. Selamat mengerjakan!
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-12">
+                    <!-- Soal dirender lewat JS -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-violet-50 rounded-2xl border border-violet-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-violet-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message"></p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-violet-600 border-2 border-violet-600 hover:bg-violet-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 1 dan 2.</strong><div class='quote-box'>Malam merayap perlahan, membawa dingin yang menusuk hingga ke tulang. Di sudut kamar, sebuah lampu minyak tua batuk-batuk kecil, memuntahkan asap hitam yang menari-nari di langit-langit. Sunyi begitu pekat, seolah-olah suara jangkrik di luar sana pun enggan mengganggu jalannya malam.</div>Citraan yang paling dominan pada kutipan teks fiksi di atas adalah ....",
+                options: [
+                    "citraan penglihatan dan citraan penciuman",
+                    "citraan perabaan dan citraan pendengaran",
+                    "citraan gerak dan citraan penciuman",
+                    "citraan perabaan dan citraan penglihatan"
+                ],
+                answer: 1, // B
+                explanation: "Halo, Sobat Detektif Sastra! Mari kita identifikasi indra apa saja yang 'dirangsang' oleh teks ini:<br><br>1. <em>\"dingin yang menusuk hingga ke tulang\"</em> &#8594; Rasa dingin ini dirasakan oleh kulit kita. Berarti ini adalah <strong>citraan perabaan (taktil)</strong>.<br>2. <em>\"sunyi begitu pekat... suara jangkrik\"</em> &#8594; Suara atau kesunyian ditangkap oleh telinga kita. Berarti ini adalah <strong>citraan pendengaran (auditif)</strong>.<br><br>Oleh karena itu, dua citraan yang bersinergi membangun suasana malam yang syahdu di sini adalah Perabaan dan Pendengaran. Pilihan <strong>B</strong> adalah jawaban yang paling tepat!"
+            },
+            {
+                text: "Frasa <em>\"sebuah lampu minyak tua batuk-batuk kecil\"</em> menggunakan majas ....",
+                options: [
+                    "personifikasi",
+                    "metafora",
+                    "hiperbola",
+                    "asosiasi"
+                ],
+                answer: 0, // A
+                explanation: "Mari kita analisis objeknya!<br>Objek: <strong>Lampu minyak tua</strong> (benda mati).<br>Tindakan: <strong>Batuk-batuk kecil</strong> (sifat makhluk hidup/manusia).<br><br>Nah, gaya bahasa yang 'memanusiakan' benda mati agar seolah-olah bernyawa dan bisa bertingkah laku layaknya manusia disebut majas <strong>Personifikasi</strong> (berasal dari kata *person* yang berarti orang). Sangat jelas jawabannya adalah <strong>A</strong>."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 3 dan 4.</strong><div class='quote-box'>Wajah Ibu adalah telaga tenang di musim kemarau. Di sana, aku selalu bisa membasuh luka-luka hatiku yang lebam oleh kerasnya dunia luar. Namun, sore itu, kulihat ada riak kecil di sudut matanya—sebutir kristal bening yang berusaha keras ditahannya agar tidak jatuh.</div>Evaluasi yang paling tepat mengenai keefektifan penggunaan majas metafora <em>\"Wajah Ibu adalah telaga tenang\"</em> dalam menggambarkan karakter Ibu adalah ....",
+                options: [
+                    "Kurang efektif karena telaga di musim kemarau biasanya kering dan tidak menenangkan.",
+                    "Sangat efektif karena menggambarkan sosok Ibu yang mampu memberikan kedamaian dan keteduhan bagi anaknya.",
+                    "Cukup efektif namun membingungkan karena membandingkan manusia dengan benda mati secara langsung.",
+                    "Tidak efektif karena tidak menggambarkan fisik Ibu secara konkret dan detail."
+                ],
+                answer: 1, // B
+                explanation: "Metafora adalah majas perbandingan langsung. Di sini penulis membandingkan <em>Ibu</em> dengan <em>Telaga Tenang</em>.<br><br>Mengapa ini sangat <strong>efektif</strong>? Bayangkan kamu sedang kepanasan di musim kemarau, lalu menemukan telaga yang tenang dan sejuk. Pasti sangat damai, kan? Begitulah penulis menggambarkan karakter sang Ibu: sosok penyejuk hati yang selalu memberikan kedamaian dan keteduhan bagi anaknya. Evaluasi yang paling pas adalah pilihan <strong>B</strong>."
+            },
+            {
+                text: "Makna inferensial dari kalimat <em>\"kulihat ada riak kecil di sudut matanya—sebutir kristal bening yang berusaha keras ditahannya agar tidak jatuh\"</em> adalah ....",
+                options: [
+                    "Ibu sedang mengalami sakit mata akibat debu sore hari.",
+                    "Ibu merasa sangat bahagia hingga matanya berkaca-kaca.",
+                    "Ibu sedang menyembunyikan kesedihan atau keprihatinan yang mendalam.",
+                    "Ibu sedang marah namun mencoba menahan emosinya di depan anaknya."
+                ],
+                answer: 2, // C
+                explanation: "Kata kuncinya ada pada <em>\"sebutir kristal bening yang berusaha keras ditahannya\"</em>.<br><br>Dalam bahasa sastra, \"kristal bening di sudut mata\" adalah kiasan puitis untuk <strong>air mata</strong>. Fakta bahwa Ibu \"berusaha keras menahannya\" menunjukkan bahwa ia tidak ingin anaknya tahu bahwa ia sedang menangis atau bersedih. Secara inferensial (makna tersirat), Ibu sedang berusaha <strong>menyembunyikan kesedihan mendalamnya</strong>. Jawaban <strong>C</strong> tepat sekali!"
+            },
+            {
+                text: "<strong>Kutipan puisi untuk soal nomor 5 dan 6.</strong><div class='quote-box'>Sajak Senja<br>Karya: S.S.<br><br>Senja di pelabuhan kecil itu kini membisu<br>Tiang-tiang kapal berdiri seperti barisan nisan sunyi<br>Angin laut mengecup keningku dengan bibir esnya<br>Membawa aroma garam dan perpisahan yang anyir</div>Citraan yang terdapat pada baris ketiga puisi di atas adalah ....",
+                options: [
+                    "citraan pendengaran",
+                    "citraan penciuman",
+                    "citraan perabaan",
+                    "citraan penglihatan"
+                ],
+                answer: 2, // C
+                explanation: "Mari baca baik-baik baris ketiga: <em>\"Angin laut mengecup keningku dengan bibir esnya\"</em>.<br><br>Ketika sesuatu 'mengecup keningmu' dan terasa seperti 'es' (sangat dingin), indra apa yang bekerja? Tentu saja kulit yang merasakan sentuhan dan suhu dingin tersebut. Sensasi sentuhan dan suhu ini adalah bagian dari <strong>citraan perabaan (taktil)</strong>. Jawaban <strong>C</strong>."
+            },
+            {
+                text: "Mengapa penyair menggunakan perbandingan <em>\"seperti barisan nisan sunyi\"</em> untuk menggambarkan tiang-tiang kapal?",
+                options: [
+                    "Untuk menunjukkan bahwa pelabuhan tersebut sudah tidak beroperasi lagi.",
+                    "Untuk memperkuat suasana duka, kematian, atau keputusasaan yang dirasakan tokoh.",
+                    "Untuk menginformasikan bahwa pelabuhan tersebut dekat dengan area pemakaman.",
+                    "Untuk menggambarkan keindahan arsitektur kapal-kapal tua di pelabuhan."
+                ],
+                answer: 1, // B
+                explanation: "Kata \"nisan\" sangat identik dengan batu kuburan (kematian, duka, perpisahan, dan kesunyian yang mencekam).<br><br>Dalam puisi, penulis tidak sedang memberi tahu lokasi kuburan secara harfiah (nyata), melainkan menggunakan <strong>kata-kata konotatif</strong> untuk membangun *mood* (suasana). Perbandingan tiang kapal dengan batu nisan bertujuan untuk <strong>memperkuat suasana duka, perpisahan, dan keputusasaan</strong> di hati sang penyair. Pilihan <strong>B</strong> sangat logis."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 7 dan 8.</strong><div class='quote-box'>Kabar angin tentang kepergiannya segera menyebar secepat api melahap ilalang kering di musim pancaroba. Setiap mulut di kampung itu mendadak menjadi corong yang menyuarakan spekulasi-spekulasi liar.</div>Majas yang dominan pada kalimat pertama kutipan di atas adalah ....",
+                options: [
+                    "metafora",
+                    "personifikasi",
+                    "simile",
+                    "ironi"
+                ],
+                answer: 2, // C
+                explanation: "Perhatikan kata kunci yang dipakai: <strong>\"...secepat...\"</strong><br><br>Penulis membandingkan kecepatan menyebarnya berita dengan kecepatan api membakar rumput kering. Majas perbandingan yang menggunakan kata tugas pembanding seperti <em>bagai, bak, laksana, seperti, secepat</em> disebut <strong>Majas Simile (Asosiasi)</strong>. Jadi, jawabannya adalah <strong>C</strong>."
+            },
+            {
+                text: "Berdasarkan kutipan tersebut, fungsi bahasa kias <em>\"mulut di kampung itu mendadak menjadi corong\"</em> adalah untuk mengevaluasi perilaku masyarakat, yaitu ....",
+                options: [
+                    "masyarakat yang sangat peduli dan suka menolong sesama yang kesusahan",
+                    "masyarakat yang gemar menyebarkan berita atau bergosip tanpa tahu kebenarannya",
+                    "masyarakat yang pandai berpidato dan menyampaikan aspirasi di depan umum",
+                    "masyarakat yang memiliki suara lantang dan gemar berteriak di jalanan"
+                ],
+                answer: 1, // B
+                explanation: "Apa fungsi alat bernama 'corong' (atau toa)? Fungsinya adalah untuk mengeraskan suara agar terdengar luas ke mana-mana.<br><br>Jika 'mulut' diibaratkan 'corong' yang menyuarakan spekulasi liar (dugaan/gosip), ini adalah bentuk sindiran atau evaluasi penulis terhadap kebiasaan buruk masyarakat yang suka <strong>bergosip atau menyebarkan berita yang belum tentu benar</strong> secara luas. Pilihan <strong>B</strong> adalah evaluasi sosial yang tepat."
+            },
+            {
+                text: "<strong>Kutipan novel untuk soal nomor 9 dan 10.</strong><div class='quote-box'>Lelaki tua itu terus mendayung perahunya melawan arus sungai yang mengamuk. Baginya, sungai ini bukan sekadar air yang mengalir, melainkan urat nadi kehidupan keluarganya. Meskipun tubuhnya sudah digerogoti usia, semangatnya tetap menyala bagai bara api yang tak padam ditiup badai.</div>Citraan gerak yang paling jelas ditunjukkan oleh frasa ....",
+                options: [
+                    "\"sungai ini bukan sekadar air yang mengalir\"",
+                    "\"terus mendayung perahunya melawan arus sungai\"",
+                    "\"tubuhnya sudah digerogoti usia\"",
+                    "\"semangatnya tetap menyala bagai bara api\""
+                ],
+                answer: 1, // B
+                explanation: "Citraan gerak (kinestetik) adalah gaya bahasa yang membuat kita (pembaca) seolah-olah melihat atau merasakan sebuah pergerakan otot/aktivitas fisik.<br><br>Kata <strong>\"mendayung perahu melawan arus\"</strong> sangat nyata menunjukkan sebuah aksi gerakan fisik yang membutuhkan tenaga. Pilihan <strong>B</strong> adalah contoh citraan gerak yang paling sempurna."
+            },
+            {
+                text: "Evaluasi yang paling logis terhadap penggunaan bahasa kias <em>\"semangatnya tetap menyala bagai bara api yang tak padam ditiup badai\"</em> adalah ....",
+                options: [
+                    "Bahasa kias tersebut berlebihan karena tidak mungkin bara api tidak padam saat ditiup badai besar.",
+                    "Bahasa kias tersebut sangat tepat untuk menggambarkan keteguhan hati dan kegigihan tokoh yang luar biasa di tengah kesulitan.",
+                    "Bahasa kias tersebut kurang serasi karena membandingkan semangat manusia dengan unsur alam seperti api dan badai.",
+                    "Bahasa kias tersebut membingungkan karena badai seharusnya memadamkan api, bukan membuatnya menyala."
+                ],
+                answer: 1, // B
+                explanation: "Dalam sastra, kita tidak bisa mengartikan kata-kata secara murni harfiah sains (seperti 'api pasti mati kena badai').<br><br>Kiasan ini sengaja dipakai untuk menunjukkan kekuatan yang ekstrem. \"Bara api yang menolak padam walau diterjang badai\" melambangkan <strong>semangat pantang menyerah yang luar biasa teguh</strong> dari kakek tersebut dalam menghadapi kesulitan hidup. Evaluasi <strong>B</strong> sangat memahami nilai estetika karya sastra."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 11 dan 12.</strong><div class='quote-box'>Rumah tua di ujung jalan itu tampak murung. Dinding-dindingnya yang terkelupas seperti kulit yang melepuh menceritakan kisah-kisah kejayaan masa lalu yang kini telah usang. Jendela-jendelanya yang berderit ditiup angin malam terdengar seperti rintihan minta tolong.</div>Berdasarkan teks di atas, citraan pendengaran (auditif) ditunjukkan oleh kalimat ....",
+                options: [
+                    "Rumah tua di ujung jalan itu tampak murung.",
+                    "Dinding-dindingnya yang terkelupas seperti kulit yang melepuh.",
+                    "Jendela-jendelanya yang berderit ditiup angin malam terdengar seperti rintihan.",
+                    "Menceritakan kisah-kisah kejayaan masa lalu yang kini telah usang."
+                ],
+                answer: 2, // C
+                explanation: "Ayo kita cari kata-kata yang berhubungan dengan 'suara'!<br><br>Pada pilihan C, terdapat kata <strong>\"berderit\"</strong> dan <strong>\"terdengar seperti rintihan\"</strong>. Suara derit dan rintihan ini ditangkap oleh indra telinga kita, sehingga ini termasuk citraan pendengaran. Jawaban <strong>C</strong> tepat sekali."
+            },
+            {
+                text: "Makna tersirat (inferensi) dari penggambaran rumah yang <em>\"tampak murung\"</em> dan jendela yang <em>\"terdengar seperti rintihan\"</em> adalah ....",
+                options: [
+                    "Rumah tersebut berhantu dan sangat berbahaya untuk dikunjungi.",
+                    "Rumah tersebut sudah lama ditinggalkan, tidak terawat, dan dalam kondisi memprihatinkan.",
+                    "Pemilik rumah tersebut sedang mengalami kesedihan yang mendalam.",
+                    "Rumah tersebut sedang direnovasi oleh pemilik barunya agar tampak modern."
+                ],
+                answer: 1, // B
+                explanation: "Penulis tidak mengatakan rumah itu 'rusak parah', melainkan membungkusnya dengan personifikasi \"murung\" dan \"merintih\".<br><br>Logikanya, bangunan yang dindingnya terkelupas melepuh dan jendelanya berderit tertiup angin adalah ciri-ciri fisik bangunan tua yang <strong>sudah telantar, lapuk, dan tidak terawat</strong>. Makna tersirat pada pilihan <strong>B</strong> adalah konklusi yang paling logis."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 13 dan 14.</strong><div class='quote-box'>Kata-katanya malam itu sangat manis, bagai madu yang menetes perlahan dari sarangnya. Namun, entah mengapa, lidahku justru mengecap rasa pahit yang getir setelah ia berlalu. Aku tahu, ada duri yang sengaja ia sembunyikan di balik senyum menawannya.</div>Pertentangan citraan yang digunakan penulis untuk menggambarkan situasi batin tokoh adalah antara ....",
+                options: [
+                    "citraan penglihatan dan citraan pendengaran",
+                    "citraan penciuman dan citraan perabaan",
+                    "citraan pencecapan (gustatoris) manis dan pahit",
+                    "citraan gerak lambat dan gerak cepat"
+                ],
+                answer: 2, // C
+                explanation: "Di dalam teks, penulis menggunakan diksi (pilihan kata) yang berkaitan dengan rasa: <strong>\"manis bagai madu\"</strong> dan <strong>\"mengecap rasa pahit yang getir\"</strong>.<br><br>Segala sesuatu yang dirasakan oleh lidah disebut citraan <strong>pencecapan (gustatoris)</strong>. Penulis sengaja mempertentangkan rasa manis di awal dengan rasa pahit di akhir. Jawaban <strong>C</strong>."
+            },
+            {
+                text: "Makna kias dari kata <em>\"duri\"</em> pada kalimat terakhir kutipan di atas adalah ....",
+                options: [
+                    "kebohongan atau niat buruk yang disembunyikan",
+                    "ucapan kasar yang disampaikan secara langsung",
+                    "penderitaan fisik yang dialami oleh tokoh utama",
+                    "rintangan hidup yang harus dihadapi bersama"
+                ],
+                answer: 0, // A
+                explanation: "Bunga mawar berduri: kelopaknya cantik, tapi tangkainya bisa melukai.<br><br>Sama halnya dengan orang yang kata-katanya manis bagai madu, tapi di baliknya ada \"duri\" yang ia sembunyikan. Duri ini melambangkan <strong>niat buruk, niat jahat, kelicikan, atau kebohongan</strong> yang siap menyakiti orang lain. Pilihan <strong>A</strong> adalah makna kias yang paling tepat."
+            },
+            {
+                text: "<strong>Kutipan puisi untuk soal nomor 15 dan 16.</strong><div class='quote-box'>Nyanyian Sunyi<br><br>Sunyi menyusup di sela jemari malam<br>Membawa bau tanah basah sisa hujan tadi sore<br>Aku masih di sini, melipat rindu yang makin tebal<br>Menyimpannya rapi di dalam laci ingatan</div>Citraan penciuman pada puisi di atas terdapat pada baris ....",
+                options: [
+                    "pertama",
+                    "kedua",
+                    "ketiga",
+                    "keempat"
+                ],
+                answer: 1, // B
+                explanation: "Citraan penciuman (olfaktori) melibatkan indra penciuman atau hidung.<br><br>Pada baris kedua tertulis: <em>\"Membawa <strong>bau tanah basah</strong> sisa hujan...\"</em> (sering juga disebut petrikor). Saat membaca baris ini, memori penciuman kita langsung terbangun. Oleh karena itu, baris <strong>kedua</strong> adalah jawabannya."
+            },
+            {
+                text: "Evaluasi terhadap penggunaan bahasa kias <em>\"melipat rindu yang makin tebal / menyimpannya rapi di dalam laci ingatan\"</em> menunjukkan bahwa penulis ingin menggambarkan ....",
+                options: [
+                    "Tindakan fisik tokoh yang sedang merapikan surat-surat cinta lama di lacinya.",
+                    "Usaha keras tokoh untuk melupakan masa lalunya dengan cara membuang semua kenangan.",
+                    "Upaya sadar tokoh untuk mengendalikan dan menyimpan perasaannya agar tidak mengganggu aktivitasnya.",
+                    "Kesulitan tokoh dalam mengingat kembali peristiwa-peristiwa penting di masa lalunya."
+                ],
+                answer: 2, // C
+                explanation: "Ini adalah majas metafora yang sangat indah. \"Rindu\" (perasaan abstrak) diibaratkan seperti pakaian atau benda yang \"dilipat\" dan \"disimpan di dalam laci\".<br><br>Tentu saja ini bukan melipat surat secara fisik. Maknanya adalah sang tokoh sedang melakukan <strong>upaya sadar untuk mengendalikan, merapikan, dan menyimpan perasaannya</strong> (rindunya) dalam-dalam di ingatannya agar tidak terus mengusik hatinya. Jawaban <strong>C</strong> paling akurat."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 17 dan 18.</strong><div class='quote-box'>Pak Salim adalah tiang tengah di desa kami. Ketika badai perselisihan antarwarga datang melanda, dialah yang selalu berdiri tegak menahan atap kerukunan agar tidak runtuh.</div>Makna kias dari kata <em>\"tiang tengah\"</em> pada kutipan di atas adalah ....",
+                options: [
+                    "orang yang paling kaya dan berkuasa di desa",
+                    "orang yang menjadi pelindung atau penengah yang dihormati",
+                    "orang yang bertugas membangun rumah-rumah warga",
+                    "orang yang keras kepala dan sulit menerima pendapat orang lain"
+                ],
+                answer: 1, // B
+                explanation: "Bayangkan sebuah rumah tradisional. Apa fungsi 'tiang tengah' (soko guru)? Ya, untuk menahan agar atap rumah tidak ambruk.<br><br>Jika tokoh disamakan dengan tiang tengah, berarti ia adalah sosok yang kuat, bisa diandalkan, dan menjadi <strong>pelindung/penengah/tokoh sentral</strong> yang menjaga persatuan warganya agar tidak tercerai-berai. Pilihan <strong>B</strong> tepat sekali."
+            },
+            {
+                text: "Penggunaan citraan penglihatan yang dikombinasikan dengan majas metafora pada teks di atas bertujuan untuk ....",
+                options: [
+                    "menggambarkan kekuatan fisik Pak Salim yang luar biasa di usia tua",
+                    "melukiskan peran penting Pak Salim dalam menjaga kedamaian desa secara visual dan konseptual",
+                    "menceritakan bencana alam badai yang sering melanda desa tersebut",
+                    "menjelaskan arsitektur rumah adat yang ada di desa Pak Salim"
+                ],
+                answer: 1, // B
+                explanation: "Penulis menggabungkan citra visual (berdiri tegak menahan atap) dengan metafora (tiang tengah, badai perselisihan).<br><br>Tujuannya bukan menceritakan arsitektur rumah, melainkan <strong>melukiskan konsep abstrak (menjaga kedamaian/kerukunan) menjadi suatu gambaran visual yang konkret dan mudah dibayangkan</strong> oleh pembaca. Jawaban <strong>B</strong> adalah evaluasi sastra yang paling tepat."
+            },
+            {
+                text: "<strong>Kutipan teks untuk soal nomor 19 dan 20.</strong><div class='quote-box'>Senyum gadis itu runtuh seketika saat membaca surat tersebut. Harapan yang selama ini dipeliharanya dengan pupuk doa kini layu sebelum sempat berbunga.</div>Majas yang terkandung dalam kalimat <em>\"Harapan yang selama ini dipeliharanya dengan pupuk doa kini layu sebelum sempat berbunga\"</em> adalah ....",
+                options: [
+                    "personifikasi",
+                    "metafora",
+                    "hiperbola",
+                    "litotes"
+                ],
+                answer: 1, // B
+                explanation: "Di sini, <strong>harapan</strong> diibaratkan secara langsung dengan <strong>tanaman</strong> yang dipupuk (dengan doa) lalu akhirnya layu (mati) sebelum berbunga (terwujud).<br><br>Karena ia membandingkan suatu konsep (harapan/doa) dengan hal lain (tanaman/pupuk) secara langsung tanpa kata pembanding (seperti, laksana), majas ini dinamakan <strong>Metafora</strong> (Jawaban <strong>B</strong>)."
+            },
+            {
+                text: "Evaluasi nilai estetik dan makna dari metafora <em>\"layu sebelum sempat berbunga\"</em> pada kutipan di atas adalah ....",
+                options: [
+                    "Kurang estetik karena terlalu sering digunakan dalam karya sastra lama (klise).",
+                    "Sangat bernilai karena secara puitis menggambarkan kekecewaan mendalam akibat impian yang kandas sebelum terwujud.",
+                    "Tidak logis karena doa disamakan dengan pupuk, padahal keduanya adalah hal yang berbeda jauh.",
+                    "Membingungkan karena tidak menjelaskan jenis bunga atau tanaman apa yang dimaksud oleh penulis."
+                ],
+                answer: 1, // B
+                explanation: "Kiasan \"layu sebelum berbunga\" memiliki keindahan puitis yang sangat dalam. <br><br>Layu = mati/gagal. Berbunga = terwujud/sukses. Metafora ini <strong>sangat bernilai estetik tinggi</strong> untuk mengabstraksikan rasa kecewa, patah hati, atau impian yang kandas dan hancur bahkan sebelum sempat berkembang. Evaluasi <strong>B</strong> sangat mewakili jiwa dari sastra."
+            }
+        ];
+
+        function processContent(text) {
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Referensi" class="img-responsive">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative group';
+            questionDiv.id = `question-block-${index}`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-violet-300 peer-focus:ring-2 peer-focus:ring-violet-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-violet-600 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg md:text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Explanation Box -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-lg md:text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}"></h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+            let answeredQuestions = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Munculkan penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Kunci form input radio
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    // Highlight the correct answer no matter what
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-violet-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    answeredQuestions++;
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // Jawaban Benar
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/70 border-l-[6px] md:border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali, Analisamu Hebat!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // Jawaban Salah
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/70 border-l-[6px] md:border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Kurang Tepat! Kunci yang benar: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Mark wrong selection
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // Dilewati / Belum dijawab
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/70 border-l-[6px] md:border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Dilewati! Kunci yang benar: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            // Perhitungan Skor (Berdasarkan total semua soal = 20 soal)
+            // Sistem skor 0-100
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500;
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            // Counter Animation
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Pesan Motivasi
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Kamu memiliki kepekaan sastra sekelas penyair handal!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja luar biasa! 👏 Pemahaman majasmu sudah sangat tajam.";
+                scoreMessage.className = "text-violet-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-violet-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya semakin peka dengan bahasa kiasan. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Ayo pelajari logika majas dan citraan di bagian pembahasan dan coba lagi. 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset Form (Mengosongkan semua radio button yang tercentang)
+            form.reset();
+
+            // Reset UI Style
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false; // Enable again
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-violet-300 peer-focus:ring-2 peer-focus:ring-violet-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors';
+                });
+            });
+
+            // Sembunyikan area hasil, munculkan tombol periksa
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Scroll mulus ke bagian atas halaman (Header)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

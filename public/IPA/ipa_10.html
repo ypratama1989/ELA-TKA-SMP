@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Fisika: Usaha, Energi & Pesawat Sederhana</title>
+    <style>
+        :root {
+            /* Palet Warna Modern Tema Sains */
+            --primary: #4F46E5; /* Indigo */
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6; /* Gray sangat terang */
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --correct-bg: #D1FAE5; /* Emerald terang */
+            --correct-border: #10B981;
+            --wrong-bg: #FEE2E2; /* Red terang */
+            --wrong-border: #EF4444;
+            --card-bg: #FFFFFF;
+            --border-light: #E5E7EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #312E81 0%, var(--primary) 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+            position: absolute;
+            left: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+            border-color: white;
+        }
+
+        /* CONTAINER SOAL */
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111827;
+            line-height: 1.7;
+        }
+
+        .math-text {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #F3F4F6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #B91C1C;
+        }
+
+        .image-placeholder {
+            background-color: #F9FAFB;
+            border: 1px dashed #CBD5E1;
+            padding: 15px;
+            text-align: center;
+            font-style: italic;
+            color: #64748B;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        /* OPSI JAWABAN */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #F9FAFB;
+        }
+
+        .option-label:hover {
+            background-color: #F3F4F6;
+            border-color: #D1D5DB;
+        }
+
+        .option-label input[type="radio"] {
+            margin-top: 5px;
+            margin-right: 15px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* STATE CLASS: Benar & Salah */
+        .option-label.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: #064E3B;
+        }
+
+        .option-label.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: #7F1D1D;
+        }
+
+        /* PEMBAHASAN */
+        .explanation-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none; 
+            animation: slideDown 0.4s ease;
+            line-height: 1.7;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box.bg-green {
+            background-color: #ECFDF5;
+            border-left: 5px solid var(--correct-border);
+            color: #064E3B;
+        }
+
+        .explanation-box.bg-red {
+            background-color: #FEF2F2;
+            border-left: 5px solid var(--wrong-border);
+            color: #7F1D1D;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        
+        .step-list {
+            margin-left: 20px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* TOMBOL & HASIL */
+        .btn-submit, .btn-retry {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-submit:hover, .btn-retry:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            display: none;
+            animation: fadeIn 0.6s ease;
+            border-top: 6px solid var(--primary);
+        }
+
+        .score-display {
+            font-size: 5.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .score-message {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .header { flex-direction: column; padding: 15px; }
+            .btn-back { position: static; margin-bottom: 12px; width: 100%; justify-content: center;}
+            .container { margin: 15px auto; }
+            .question-card { padding: 20px 15px; }
+            .score-display { font-size: 4.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button type="button" class="btn-back" onclick="history.back()">&#8592; Kembali</button>
+        <h1>Kuis Fisika: Usaha, Energi & Pesawat Sederhana</h1>
+    </div>
+
+    <div class="container">
+        <form id="quizForm">
+            
+            <div class="question-card" id="q1">
+                <div class="question-text">1. Seorang atlet angkat besi mengangkat beban bermassa 80 kg dari lantai hingga mencapai ketinggian 2 meter dalam waktu 4 detik. Di sisi lain, seorang pekerja bangunan memindahkan semen bermassa 40 kg sejauh 4 meter secara horizontal di atas permukaan lantai yang licin. Pernyataan yang benar mengenai usaha yang dilakukan oleh keduanya adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q1" value="A"> <span class="option-text">A. Atlet angkat besi melakukan usaha lebih kecil daripada pekerja bangunan karena waktunya singkat.</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"> <span class="option-text">B. Pekerja bangunan melakukan usaha lebih besar karena jarak perpindahannya lebih jauh.</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"> <span class="option-text">C. Atlet angkat besi melakukan usaha yang nyata, sedangkan pekerja bangunan melakukan usaha bernilai nol terhadap arah gaya angkatnya.</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"> <span class="option-text">D. Keduanya melakukan usaha yang sama besar karena hasil kali massa dan jaraknya sama.</span></label>
+                </div>
+                <div class="explanation-box" id="exp1" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Ingat konsep dasar Usaha (<span class="math-text">W = F &times; s</span>). Usaha hanya terjadi jika benda <b>berpindah searah</b> dengan tarikan/dorongan (gaya) kita.<br><br>
+                        - <b>Atlet:</b> Memberikan gaya dorong <i>ke atas</i>, dan beban juga berpindah <i>ke atas</i>. Ini namanya <b>Usaha Nyata (Positif)</b>.<br>
+                        - <b>Pekerja:</b> Ia menahan semen agar tidak jatuh (gaya ke <i>atas</i>), tetapi ia berjalan mendatar ke <i>depan</i>. Karena gaya dan arah jalan membentuk sudut tegak lurus (90&deg;), dalam fisika usahanya bernilai <b>Nol (0)</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q2">
+                <div class="question-text">2. Perhatikan gambar beberapa gaya yang bekerja pada sebuah balok berikut!
+                <div class="image-placeholder">
+                    [Ilustrasi: Balok ditarik ke KANAN oleh gaya F<sub>1</sub> = 30 N dan F<sub>2</sub> = 15 N, serta ditarik ke KIRI oleh gaya F<sub>3</sub> = 20 N]
+                </div>
+                Jika akibat gaya-gaya tersebut balok berpindah sejauh 5 meter ke kanan, maka besar usaha total yang dilakukan pada balok adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q2" value="A"> <span class="option-text">A. 25 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"> <span class="option-text">B. 125 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"> <span class="option-text">C. 225 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"> <span class="option-text">D. 325 Joule</span></label>
+                </div>
+                <div class="explanation-box" id="exp2" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Langkah pertama, cari kekuatan total tarikannya (Resultan Gaya / &Sigma;F).<br>
+                        <ul class="step-list">
+                            <li>Gaya ke Kanan: 30 N + 15 N = 45 N</li>
+                            <li>Gaya ke Kiri (melawan): 20 N</li>
+                            <li>Resultan Gaya (&Sigma;F) = 45 - 20 = <b>25 N (Ke Kanan)</b></li>
+                        </ul>
+                        Langkah kedua, hitung usahanya:<br>
+                        Usaha (W) = Tarikan total (&Sigma;F) &times; Jarak (s)<br>
+                        W = 25 N &times; 5 m = <b>125 Joule</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q3">
+                <div class="question-text">3. Seekor burung elang bermassa 2 kg sedang terbang pada ketinggian 20 meter di atas tanah dengan kecepatan konstan 10 m/s. Jika percepatan gravitasi bumi g = 10 m/s<sup>2</sup>, energi mekanik total yang dimiliki oleh burung elang tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q3" value="A"> <span class="option-text">A. 100 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"> <span class="option-text">B. 400 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"> <span class="option-text">C. 500 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"> <span class="option-text">D. 600 Joule</span></label>
+                </div>
+                <div class="explanation-box" id="exp3" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Energi Mekanik adalah gabungan dari Energi karena <i>ketinggian</i> (Potensial) ditambah Energi karena <i>kecepatan gerak</i> (Kinetik).<br>
+                        <ul class="step-list">
+                            <li><b>E. Potensial (Ep):</b> m &times; g &times; h = 2 &times; 10 &times; 20 = <b>400 Joule</b></li>
+                            <li><b>E. Kinetik (Ek):</b> &frac12; &times; m &times; v<sup>2</sup> = &frac12; &times; 2 &times; 10<sup>2</sup> = 1 &times; 100 = <b>100 Joule</b></li>
+                        </ul>
+                        Total Energi Mekanik = 400 J + 100 J = <b>500 Joule</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q4">
+                <div class="question-text">4. Sebuah kelapa bermassa 1,5 kg jatuh bebas dari pohonnya yang memiliki ketinggian 10 meter. Pada saat kelapa berada pada ketinggian 4 meter dari atas tanah, perbandingan energi kinetik dan energi potensial yang dimiliki kelapa tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q4" value="A"> <span class="option-text">A. 2 : 3</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"> <span class="option-text">B. 3 : 2</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"> <span class="option-text">C. 3 : 5</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"> <span class="option-text">D. 5 : 3</span></label>
+                </div>
+                <div class="explanation-box" id="exp4" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Kita gunakan <b>Aturan Uang Saku (Hukum Kekekalan Energi)</b>. Anggap total jatah energinya selalu sama dari atas sampai bawah.<br>
+                        <ul class="step-list">
+                            <li>Total Jatah (Energi Awal di tinggi 10m): <br>Em = m &times; g &times; h<sub>1</sub> = 1,5 &times; 10 &times; 10 = <b>150 Joule</b>.</li>
+                            <li>Saat kelapa meluncur turun ke tinggi 4m, energinya tersisa: <br>Ep = 1,5 &times; 10 &times; 4 = <b>60 Joule</b>.</li>
+                            <li>Lalu ke mana sisa jatahnya? Sisanya berubah menjadi energi gerak jatuh (Kinetik)! <br>Ek = Jatah Total - Sisa Ep = 150 - 60 = <b>90 Joule</b>.</li>
+                        </ul>
+                        Perbandingan Ek : Ep &rarr; 90 : 60 (dibagi 30) &rarr; <b>3 : 2</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q5">
+                <div class="question-text">5. Perhatikan beberapa aktivitas manusia berikut!
+                <br>1) Mendorong kereta belanja di supermarket.
+                <br>2) Menahan beban tas ransel yang berat sambil berdiri diam menunggu bus.
+                <br>3) Menjatuhkan bola basket dari lantai dua sekolah ke lapangan.
+                <br>4) Berjalan mendatar sambil menjinjing ember berisi air.
+                <br>Aktivitas yang menghasilkan nilai usaha positif dalam konsep fisika ditunjukkan oleh nomor...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q5" value="A"> <span class="option-text">A. 1) dan 2)</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"> <span class="option-text">B. 1) dan 3)</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"> <span class="option-text">C. 2) dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"> <span class="option-text">D. 3) dan 4)</span></label>
+                </div>
+                <div class="explanation-box" id="exp5" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Syarat "Usaha Fisika" itu ketat: <b>Benda harus pindah, dan arah pindahnya searah dengan gayamu.</b><br>
+                        - Nomor (1): Dorong ke depan, kereta maju ke depan. (Usaha Positif) &#9989;<br>
+                        - Nomor (2): Cuma diam berdiri, tidak ada perpindahan jarak. (Usaha Nol) &#10060;<br>
+                        - Nomor (3): Gravitasi menarik bola ke bawah, bola jatuh lurus ke bawah. (Usaha Positif) &#9989;<br>
+                        - Nomor (4): Tanganmu menarik ember ke atas, tapi embernya maju mendatar (Tegak lurus). (Usaha Nol) &#10060;
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q6">
+                <div class="question-text">6. Sebuah mobil mainan bermassa 2 kg mula-mula diam di atas lantai. Mobil tersebut kemudian diberi gaya mendatar sehingga kecepatannya berubah menjadi 6 m/s. Usaha yang dilakukan oleh gaya tersebut pada mobil mainan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q6" value="A"> <span class="option-text">A. 6 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"> <span class="option-text">B. 12 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"> <span class="option-text">C. 36 Joule</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"> <span class="option-text">D. 72 Joule</span></label>
+                </div>
+                <div class="explanation-box" id="exp6" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Terdapat rumus sakti di fisika: <b>Usaha = Perubahan Energi Kinetik</b> (<span class="math-text">W = &Delta;Ek</span>). Karena awalnya diam, kecepatannya nol.<br>
+                        <ul class="step-list">
+                            <li>Ek Awal = 0</li>
+                            <li>Ek Akhir = &frac12; &times; m &times; v<sup>2</sup> = &frac12; &times; 2 &times; 6<sup>2</sup> = 1 &times; 36 = 36 Joule.</li>
+                        </ul>
+                        Maka besar usahanya adalah 36 - 0 = <b>36 Joule</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q7">
+                <div class="question-text">7. Pemerintah saat ini gencar mengampanyekan transisi energi dari bahan bakar fosil ke energi terbarukan seperti panel surya. Ditinjau dari konsep perubahan energi, proses yang terjadi pada panel surya hingga dapat menyalakan lampu rumah adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q7" value="A"> <span class="option-text">A. Energi cahaya &rarr; Energi kimia &rarr; Energi listrik &rarr; Energi cahaya</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"> <span class="option-text">B. Energi panas &rarr; Energi kinetik &rarr; Energi listrik &rarr; Energi cahaya</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"> <span class="option-text">C. Energi cahaya &rarr; Energi listrik &rarr; Energi cahaya + Energi panas</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"> <span class="option-text">D. Energi kimia &rarr; Energi listrik &rarr; Energi cahaya + Energi kinetik</span></label>
+                </div>
+                <div class="explanation-box" id="exp7" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Panel surya (Solar Cell) bekerja menyerap <b>Cahaya</b> matahari, lalu mengubahnya langsung menjadi <b>Listrik</b>. <br>Lalu, listrik ini dialirkan ke dalam bola lampu rumahmu. Bola lampu akan menyala terang menghasilkan <b>Cahaya</b> kembali, dan jika kamu pegang lampunya akan terasa hangat (sisa <b>Panas</b> yang terbuang).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q8">
+                <div class="question-text">8. Perhatikan gambar tuas berikut!
+                <div class="image-placeholder">
+                    [Ilustrasi: Tuas Jungkat-Jungkit. Beban gantung (W) = 600 N berjarak 20 cm dari tumpuan. Tangan penarik (F) berjarak 80 cm dari tumpuan]
+                </div>
+                Agar tuas tersebut berada dalam keadaan seimbang, besar gaya kuasa F minimum yang harus diberikan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q8" value="A"> <span class="option-text">A. 150 N</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"> <span class="option-text">B. 300 N</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"> <span class="option-text">C. 1.200 N</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"> <span class="option-text">D. 2.400 N</span></label>
+                </div>
+                <div class="explanation-box" id="exp8" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Gunakan <b>Aturan Jungkat-Jungkit</b>: Kiri harus seimbang dengan Kanan!<br>
+                        Berat Kiri &times; Jarak Kiri = Berat Kanan &times; Jarak Kanan<br>
+                        <ul class="step-list">
+                            <li>W &times; L<sub>b</sub> = F &times; L<sub>k</sub></li>
+                            <li>600 &times; 20 = F &times; 80</li>
+                            <li>12.000 = F &times; 80</li>
+                            <li>F = 12.000 &divide; 80 = <b>150 N</b>.</li>
+                        </ul>
+                        Hebat kan! Beban 600 N yang berat bisa diangkat hanya dengan tenaga 150 N saja. Inilah fungsi pengungkit.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q9">
+                <div class="question-text">9. Seorang pekerja ingin memindahkan sebuah peti seberat 1.200 N ke dalam bak truk setinggi 1,5 meter menggunakan bidang miring sepanjang 4,5 meter. Keuntungan mekanis penggunaan bidang miring tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q9" value="A"> <span class="option-text">A. 1,5</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"> <span class="option-text">B. 3,0</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"> <span class="option-text">C. 4,5</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"> <span class="option-text">D. 6,0</span></label>
+                </div>
+                <div class="explanation-box" id="exp9" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Keuntungan Mekanis (KM) pada bidang miring ibarat seberapa "beruntung/mudah" pekerjaanmu. Rumusnya sangat sederhana:<br>
+                        KM = Panjang Papan (s) &divide; Tinggi Papan (h)<br>
+                        KM = 4,5 meter &divide; 1,5 meter = <b>3,0</b>.<br><br>
+                        Artinya, karena memakai papan, pekerja ini hanya perlu mendorong sekuat sepertiganya saja dibanding mengangkat langsung!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q10">
+                <div class="question-text">10. Perhatikan gambar sistem katrol berikut!
+                <div class="image-placeholder">
+                    [Ilustrasi: Katrol Bergerak Bebas (1 tali menopang beban menggantung ke atas, lalu melilit turun untuk ditarik). Beban = 400 N]
+                </div>
+                Besar gaya tarik minimum yang diperlukan untuk mengangkat beban tersebut dan keuntungan mekanis katrol berturut-turut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q10" value="A"> <span class="option-text">A. 400 N dan KM = 1</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"> <span class="option-text">B. 200 N dan KM = 1</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"> <span class="option-text">C. 200 N dan KM = 2</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"> <span class="option-text">D. 100 N dan KM = 4</span></label>
+                </div>
+                <div class="explanation-box" id="exp10" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Ini adalah gambar <b>Katrol Bergerak</b>. Pada katrol bergerak, beban ditopang/dibagi oleh 2 utas tali sekaligus yang mengarah ke atas. <br><br>
+                        Karena dibantu 2 tali, maka Keuntungan Mekanisnya (KM) = <b>2</b>.<br>
+                        Gaya Tarik (F) yang dibutuhkan = Beban &divide; 2 = 400 N &divide; 2 = <b>200 N</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q11">
+                <div class="question-text">11. Peralatan dapur berikut yang memanfaatkan prinsip kerja bidang miring untuk memudahkan pekerjaan manusia adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q11" value="A"> <span class="option-text">A. Gunting, pisau, dan tang</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"> <span class="option-text">B. Pisau, kapak, dan sekrup</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"> <span class="option-text">C. Pinset, tangga, dan pembuka botol</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"> <span class="option-text">D. Katrol, sekrup, dan linggis</span></label>
+                </div>
+                <div class="explanation-box" id="exp11" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Bidang miring tidak melulu soal "papan di truk". <br>
+                        - <b>Pisau dan Kapak</b> adalah bidang miring kembar yang disatukan ujung tajamnya (disebut baji) untuk membelah kayu/daging.<br>
+                        - <b>Sekrup</b> sebenarnya hanyalah paku yang dililiti bidang miring spiral untuk memudahkannya menembus kayu. <br>
+                        Sedangkan gunting, tang, dan linggis termasuk kelompok Pengungkit (Tuas).
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q12">
+                <div class="question-text">12. Seseorang kesulitan mencabut paku yang tertancap kuat di dinding kayu menggunakan sebuah palu pencakar. Langkah paling efektif yang dapat dievaluasi untuk mempermudah pencabutan paku tersebut tanpa merusak palu adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q12" value="A"> <span class="option-text">A. Memegang gagang palu lebih dekat ke kepala palu agar gaya lebih fokus.</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"> <span class="option-text">B. Memegang gagang palu di ujung paling luar untuk memperpanjang lengan kuasa.</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"> <span class="option-text">C. Membasahi paku dengan air agar kayu melunak sehingga lengan beban memendek.</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"> <span class="option-text">D. Menarik palu dengan arah sejajar dinding agar gaya gesek mengecil.</span></label>
+                </div>
+                <div class="explanation-box" id="exp12" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ingat rahasia pengungkit: "Semakin jauh jarak pegangan tanganmu dari titik porosnya, semakin ringan pekerjaanmu!"<br><br>
+                        Jarak dari tanganmu ke poros palu disebut <b>Lengan Kuasa</b>. Jika kamu menggenggam palu di ujung gagang paling luar (paling jauh), gaya tarikan yang perlu kamu keluarkan menjadi sangat kecil, sehingga paku keras pun mudah dicabut.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q13">
+                <div class="question-text">13. Perhatikan data empat buah bidang miring berikut!
+                <br>1) Tinggi = 1 m, Panjang = 3 m
+                <br>2) Tinggi = 2 m, Panjang = 5 m
+                <br>3) Tinggi = 1,5 m, Panjang = 4,5 m
+                <br>4) Tinggi = 3 m, Panjang = 6 m
+                <br>Pasangan bidang miring yang memiliki keuntungan mekanis yang sama besar adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q13" value="A"> <span class="option-text">A. 1) dan 2)</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"> <span class="option-text">B. 1) dan 3)</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"> <span class="option-text">C. 2) dan 4)</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"> <span class="option-text">D. 3) dan 4)</span></label>
+                </div>
+                <div class="explanation-box" id="exp13" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Mari kita hitung nilai "Keberuntungan/Kemudahan" (KM) masing-masing, rumusnya KM = Panjang &divide; Tinggi.<br>
+                        1) KM = 3 &divide; 1 = <b>3</b><br>
+                        2) KM = 5 &divide; 2 = 2,5<br>
+                        3) KM = 4,5 &divide; 1,5 = <b>3</b><br>
+                        4) KM = 6 &divide; 3 = 2<br><br>
+                        Papan nomor 1 dan 3 memiliki nilai kemudahan (KM) yang sama besar yaitu 3.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q14">
+                <div class="question-text">14. Pada saat kita menekuk lengan bawah ke atas sambil membawa beban di telapak tangan, sendi siku bertindak sebagai titik tumpu, otot bisep memberikan gaya kuasa, dan beban berada di telapak tangan. Berdasarkan prinsip kerja pesawat sederhana, sistem kerja otot dan tulang pada lengan ini termasuk ke dalam...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q14" value="A"> <span class="option-text">A. Tuas jenis pertama</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"> <span class="option-text">B. Tuas jenis kedua</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"> <span class="option-text">C. Tuas jenis ketiga</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"> <span class="option-text">D. Bidang miring</span></label>
+                </div>
+                <div class="explanation-box" id="exp14" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Mari kita susun urutannya dari siku hingga telapak tangan:<br>
+                        Siku (Tumpuan) &mdash; Otot Bisep (Gaya Tarik/Kuasa) &mdash; Telapak Tangan (Beban).<br><br>
+                        Karena posisi <b>Kuasa berada tepat di tengah-tengah</b> antara Tumpuan dan Beban (T-K-B), maka ini adalah prinsip pengungkit/tuas <b>Jenis Ketiga</b>, sama seperti saat kamu memakai pinset atau penjepit es batu!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q15">
+                <div class="question-text">15. Sebuah sekrup memiliki panjang 5 cm dengan jumlah uliran sebanyak 20 putaran. Jika sekrup lain memiliki panjang yang sama tetapi memiliki 40 putaran uliran, pernyataan evaluatif yang paling tepat mengenai kedua sekrup tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q15" value="A"> <span class="option-text">A. Sekrup kedua lebih mudah diputar masuk karena memiliki keuntungan mekanis lebih besar.</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"> <span class="option-text">B. Sekrup pertama lebih mudah diputar masuk karena jarak antar ulirannya lebih lebar.</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"> <span class="option-text">C. Kedua sekrup membutuhkan gaya putar yang sama karena panjangnya sama.</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"> <span class="option-text">D. Sekrup kedua membutuhkan gaya putar yang lebih besar karena lintasannya lebih panjang.</span></label>
+                </div>
+                <div class="explanation-box" id="exp15" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Sekrup adalah contoh bidang miring yang digulung.<br>
+                        Semakin banyak uliran/putarannya (40 putaran), maka jalan memutar (s) yang dibentuknya semakin <b>panjang dan landai</b>.<br>
+                        Jalan yang panjang dan landai memberikan Keuntungan Mekanis yang lebih besar, sehingga tanganmu terasa jauh <b>lebih enteng dan mudah</b> saat memutar sekrup tersebut menembus kayu.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q16">
+                <div class="question-text">16. Seorang petugas kebersihan ingin memindahkan sampah basah yang sangat berat menggunakan gerobak roda satu. Agar ia mengeluarkan gaya angkat yang paling kecil, posisi penempatan sampah di dalam bak gerobak yang paling tepat adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q16" value="A"> <span class="option-text">A. Diletakkan sedekat mungkin dengan roda gerobak (titik tumpu).</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"> <span class="option-text">B. Diletakkan tepat di tengah-tengah bak gerobak.</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"> <span class="option-text">C. Diletakkan sedekat mungkin dengan gagang pegangan tangan (kuasa).</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"> <span class="option-text">D. Disebarkan merata di seluruh bagian bak gerobak tanpa terkonsentrasi.</span></label>
+                </div>
+                <div class="explanation-box" id="exp16" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Ingat aturan tuas agar tangan kita enteng: Jauhkan tangan dari poros, <b>dekatkan beban ke poros (roda)!</b><br><br>
+                        Roda di depan bertindak sebagai titik tumpu. Jika kamu meletakkan sampah super berat menempel sangat dekat dengan ban (memperpendek lengan beban), maka tanganmu di belakang hampir tidak akan merasakan beratnya karena beban tersebut sepenuhnya ditopang oleh roda.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q17">
+                <div class="question-text">17. Perhatikan gambar katrol majemuk (sistem katrol) berikut!
+                <div class="image-placeholder">
+                    [Ilustrasi: Katrol majemuk yang rumit. Terdapat 4 utas tali tegak ke atas yang bersama-sama menopang sebuah beban gantung di bawah]
+                </div>
+                Jika beban yang digantungkan memiliki massa 120 kg (g = 10 m/s<sup>2</sup>), gaya minimal yang diperlukan untuk menarik tali tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q17" value="A"> <span class="option-text">A. 1.200 N</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"> <span class="option-text">B. 600 N</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"> <span class="option-text">C. 400 N</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"> <span class="option-text">D. 300 N</span></label>
+                </div>
+                <div class="explanation-box" id="exp17" data-answer="D">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: D)</div>
+                    <div class="explanation-content">
+                        Langkah 1: Ubah massa jadi Berat Beban aslinya. <br>
+                        W = m &times; g = 120 &times; 10 = 1.200 Newton.<br><br>
+                        Langkah 2: Hitung tali penopang. <br>
+                        Pada ilustrasi, ada 4 tali penopang, berarti alat ini meringankan bebanmu sebanyak 4 kali lipat (KM = 4).<br><br>
+                        Maka, Gaya Tarik (F) = 1.200 &divide; 4 = <b>300 Newton</b> saja!
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q18">
+                <div class="question-text">18. Sebuah tangga sepanjang 5 meter disandarkan pada dinding tembok. Ujung bawah tangga berjarak 3 meter dari dinding. Jika seorang pria bermassa 60 kg memanjat tangga tersebut, keuntungan mekanis dari tangga sebagai bidang miring tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q18" value="A"> <span class="option-text">A. 1,25</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"> <span class="option-text">B. 1,33</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"> <span class="option-text">C. 1,67</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"> <span class="option-text">D. 2,50</span></label>
+                </div>
+                <div class="explanation-box" id="exp18" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">
+                        Tangga adalah bentuk bidang miring (segitiga siku-siku).<br>
+                        - Panjang tangga miring (s) = 5 m.<br>
+                        - Jarak alas ke dinding (x) = 3 m.<br>
+                        Cari tingginya (h) dulu pakai rumus Phytagoras ajaib (segitiga 3-4-5). Maka pasti tingginya adalah <b>4 meter</b>.<br><br>
+                        Keuntungan Mekanis (KM) = Panjang &divide; Tinggi<br>
+                        KM = 5 &divide; 4 = <b>1,25</b>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q19">
+                <div class="question-text">19. Dua orang pekerja, Andi dan Budi, memindahkan kotak kayu bermassa sama ke atas truk. Andi menggunakan bidang miring yang landai, sedangkan Budi mengangkatnya langsung secara vertikal ke atas truk. Evaluasi yang benar mengenai usaha dan gaya yang dilakukan oleh Andi dan Budi adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q19" value="A"> <span class="option-text">A. Usaha Andi lebih kecil daripada usaha Budi, namun gaya Andi lebih besar.</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"> <span class="option-text">B. Usaha Andi sama dengan usaha Budi, namun gaya Andi lebih kecil daripada gaya Budi.</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"> <span class="option-text">C. Usaha Andi lebih besar daripada usaha Budi, namun gaya Andi lebih kecil.</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"> <span class="option-text">D. Usaha dan gaya yang dikeluarkan Andi dan Budi sama besar karena memindahkan beban yang sama.</span></label>
+                </div>
+                <div class="explanation-box" id="exp19" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">
+                        Ini adalah prinsip terpenting dari Pesawat Sederhana!<br>
+                        Pesawat sederhana (seperti papan miring) <b>TIDAK BISA mengurangi total energi (Usaha)</b> yang dibutuhkan untuk naik ke truk. Energi totalnya mutlak tetap <b>SAMA</b>.<br><br>
+                        Namun, papan miring tersebut membuat lintasannya jadi lebih panjang, sehingga beban terasa jauh lebih enteng, yang artinya <b>Gaya Tarik Andi jauh lebih KECIL</b> dibanding Budi yang main angkat keras otot langsung.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="q20">
+                <div class="question-text">20. Perhatikan skema jungkat-jungkit berikut!
+                <div class="image-placeholder">
+                    [Ilustrasi: Anak A bermassa 40 kg duduk di KIRI berjarak 1,5 m dari titik poros. Anak B bermassa 30 kg duduk di KANAN berjarak 1,5 m dari titik poros]
+                </div>
+                Agar jungkat-jungkit tersebut berada dalam posisi seimbang horizontal, tindakan evaluatif yang paling tepat untuk dilakukan adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q20" value="A"> <span class="option-text">A. Anak B bergeser sejauh 0,5 m mendekati titik tumpu.</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"> <span class="option-text">B. Anak A bergeser sejauh 0,5 m menjauhi titik tumpu.</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"> <span class="option-text">C. Anak B bergeser sejauh 0,5 m menjauhi titik tumpu.</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"> <span class="option-text">D. Anak A bergeser sejauh 0,25 m mendekati titik tumpu.</span></label>
+                </div>
+                <div class="explanation-box" id="exp20" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">
+                        Saat ini jungkat-jungkit tidak seimbang, jungkir balik ke Kiri karena Si A (40kg) lebih berat daripada Si B (30kg).<br>
+                        Agar seimbang, kita butuh rumus: Berat A &times; Jarak A = Berat B &times; Jarak B Baru.<br>
+                        <ul class="step-list">
+                            <li>40 kg &times; 1,5 meter = 30 kg &times; Jarak B Baru</li>
+                            <li>60 = 30 &times; Jarak B Baru</li>
+                            <li>Jarak B Baru = 60 &divide; 30 = <b>2 meter</b></li>
+                        </ul>
+                        Awalnya Si B duduk di 1,5 m, sekarang ia harus duduk di 2 m. Artinya ia harus <b>mundur menjauh 0,5 m</b>.
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btn-submit" class="btn-submit" onclick="checkAnswers()">Periksa Jawaban</button>
+            
+            <div id="result" class="result-container">
+                <h2>Nilai Akhir Anda</h2>
+                <div class="score-display" id="score-display">0</div>
+                <p class="score-message" id="score-message">Terus semangat belajar, kamu pasti bisa!</p>
+                <button type="button" class="btn-retry" onclick="resetTest()">Ulangi Tes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer-text">
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </div>
+
+    <script>
+        const totalQuestions = 20;
+        const maxScore = 100;
+        const scorePerQuestion = maxScore / totalQuestions; 
+
+        function checkAnswers() {
+            let totalScore = 0;
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Jawaban Telah Diperiksa";
+
+            // Proses Evaluasi Tiap Soal
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                const correctAnswer = expBox.getAttribute('data-answer');
+                const radios = document.getElementsByName(`q${i}`);
+                
+                let isAnswered = false;
+                
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    // Reset kelas state
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderStyle = "";
+                    label.style.borderColor = "";
+
+                    if (radio.checked) {
+                        isAnswered = true;
+                        // Bandingkan pilihan user dengan kunci yang benar
+                        if (radio.value === correctAnswer) {
+                            totalScore += scorePerQuestion;
+                            label.classList.add('correct');
+                            expBox.classList.add('bg-green');
+                            expBox.classList.remove('bg-red');
+                        } else {
+                            label.classList.add('wrong');
+                            expBox.classList.add('bg-red');
+                            expBox.classList.remove('bg-green');
+                        }
+                    }
+
+                    // Selalu visualisasikan kunci jawaban benar meskipun user salah
+                    if (radio.value === correctAnswer) {
+                        if(!radio.checked) {
+                             label.style.borderStyle = "dashed";
+                             label.style.borderColor = "var(--correct-border)";
+                             label.style.borderWidth = "2px";
+                        }
+                    }
+                }
+
+                // JIka siswa sama sekali tidak memilih jawaban (skip)
+                if (!isAnswered) {
+                    expBox.classList.add('bg-red');
+                    expBox.classList.remove('bg-green');
+                }
+
+                // Munculkan penjelasan dengan animasi dropdown
+                expBox.classList.add('show');
+            }
+
+            // Tampilkan Bagian Nilai Akhir
+            const resultDiv = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            
+            scoreDisplay.innerText = totalScore;
+            
+            // Pemberian pesan motivasi otomatis
+            if (totalScore === 100) {
+                scoreMessage.innerText = "Sempurna! Insting Fisikamu selevel dengan Isaac Newton!";
+            } else if (totalScore >= 80) {
+                scoreMessage.innerText = "Luar biasa! Pemahamanmu soal rumus Usaha & Tuas sangat mantap.";
+            } else if (totalScore >= 60) {
+                scoreMessage.innerText = "Bagus! Kamu sudah memahami idenya, baca lagi pelan-pelan pembahasannya ya.";
+            } else {
+                scoreMessage.innerText = "Jangan menyerah! Fisika itu teka-teki seru, perhatikan langkah pembahasannya, coba lagi!";
+            }
+
+            resultDiv.style.display = 'block';
+
+            // Auto-scroll lembut ke bagian skor di bawah
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        }
+
+        // Fungsi Reset Kuis
+        function resetTest() {
+            const form = document.getElementById('quizForm');
+            form.reset();
+
+            // Sembunyikan dan bersihkan segala feedback
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                expBox.classList.remove('show', 'bg-green', 'bg-red');
+
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderStyle = "";
+                    label.style.borderColor = "";
+                }
+            }
+
+            // Sembunyikan Nilai Akhir
+            document.getElementById('result').style.display = 'none';
+            
+            // Re-aktifkan tombol Submit
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Periksa Jawaban";
+
+            // Bawa layar mulus menuju nomor 1 lagi
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t10',
+          topicIndex: 10,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

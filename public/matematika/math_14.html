@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Garis dan Sudut</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        
+        /* Animasi fade in untuk elemen dinamis */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Menyembunyikan radio button asli */
+        input[type="radio"] {
+            display: none;
+        }
+        
+        /* Styling kontainer opsi jawaban */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e2e8f0; /* slate-200 */
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: #334155; /* slate-700 */
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9; /* slate-100 */
+            border-color: #cbd5e1; /* slate-300 */
+        }
+
+        /* Styling saat opsi dipilih */
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+            color: #1e3a8a; /* blue-900 */
+            font-weight: 500;
+        }
+
+        /* Desain lingkaran radio kustom */
+        .radio-circle {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #94a3b8; /* slate-400 */
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        /* Efek titik tengah saat radio dipilih */
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 transition font-medium bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[90px]"></div> <!-- Spacer agar judul tepat di tengah -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-10">
+        <!-- Judul Kuis -->
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-indigo-100 text-indigo-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Garis dan Sudut</h2>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto">Kerjakan soal-soal di bawah ini dengan cermat. Anda dapat langsung menekan tombol periksa kapan saja untuk melihat evaluasi dari jawaban Anda.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer soal akan diinjeksi via JavaScript -->
+            </div>
+
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center sticky bottom-4 z-40">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-4 fade-in">
+                    <p class="text-lg font-semibold text-slate-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-12 border-t-4 border-blue-500">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-1 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Dua buah garis saling berpotongan di satu titik. Jika salah satu sudut yang terbentuk memiliki besar 75&deg;, maka besar sudut yang bertolak belakang dengan sudut tersebut adalah...",
+                options: [
+                    "A. 15&deg;",
+                    "B. 75&deg;",
+                    "C. 105&deg;",
+                    "D. 180&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Ingat Sifat Dasar Sudut!</strong><br>Dua sudut yang saling <em>bertolak belakang</em> (saling membelakangi akibat perpotongan dua garis lurus) selalu memiliki besar yang <strong>sama besar</strong>.<br><br>Jadi, jika sudut yang satu besarnya 75&deg;, maka sudut yang bertolak belakang di seberangnya juga pasti bernilai <strong>75&deg;</strong>."
+            },
+            {
+                question: "Sudut A dan sudut B adalah dua sudut yang saling berpelurus (suplemen). Jika besar sudut A = 3x&deg; dan besar sudut B = (2x + 30)&deg;, maka besar sudut B adalah...",
+                options: [
+                    "A. 30&deg;",
+                    "B. 60&deg;",
+                    "C. 90&deg;",
+                    "D. 120&deg;"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep Berpelurus:</strong> Dua sudut dikatakan saling berpelurus (membentuk garis lurus) jika dijumlahkan hasilnya pasti <strong>180&deg;</strong>.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Jumlahkan kedua sudut: Sudut A + Sudut B = 180&deg;<br>   3x + (2x + 30) = 180<br>2. Gabungkan nilai x yang sama:<br>   5x + 30 = 180<br>3. Pindah ruaskan angka 30:<br>   5x = 180 - 30<br>   5x = 150 &rarr; <strong>x = 30</strong>.<br>4. Masukkan nilai x = 30 ke dalam rumus sudut B:<br>   Sudut B = 2x + 30 = 2(30) + 30 = 60 + 30 = <strong>90&deg;</strong>."
+            },
+            {
+                question: "Dua garis sejajar g dan h dipotong oleh sebuah garis transversal l. Jika sepasang sudut luar berseberangan yang terbentuk memiliki besar (3x - 10)&deg; dan (2x + 15)&deg;, maka nilai x adalah...",
+                options: [
+                    "A. 5",
+                    "B. 15",
+                    "C. 25",
+                    "D. 35"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Aturan Garis Sejajar:</strong> Pasangan <em>sudut luar berseberangan</em> selalu memiliki ukuran yang <strong>SAMA BESAR</strong>.<br><br><strong>Mari kita hitung:</strong><br>(3x - 10)&deg; = (2x + 15)&deg;<br><br>Pindahkan semua variabel 'x' ke sisi kiri dan angka biasa ke sisi kanan:<br>3x - 2x = 15 + 10<br><strong>x = 25</strong>."
+            },
+            {
+                question: "Dua garis sejajar dipotong oleh sebuah garis transversal. Jika sepasang sudut dalam sepihak memiliki perbandingan 4 : 5, maka besar sudut yang lebih besar di antara keduanya adalah...",
+                options: [
+                    "A. 80&deg;",
+                    "B. 100&deg;",
+                    "C. 120&deg;",
+                    "D. 140&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Aturan Khusus Sepihak:</strong> Pasangan sudut <em>dalam sepihak</em> maupun <em>luar sepihak</em> selalu berjumlah <strong>180&deg;</strong> jika dijumlahkan.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Karena perbandingannya 4 : 5, kita bisa memisalkan sudut-sudut tersebut sebagai 4y dan 5y.<br>2. Jumlahkan keduanya = 180&deg;<br>   4y + 5y = 180<br>   9y = 180 &rarr; y = 180 &divide; 9 = 20.<br>3. Pertanyaannya adalah \"sudut yang lebih besar\". Antara 4y dan 5y, yang lebih besar tentu 5y.<br>   Sudut terbesar = 5 &times; 20 = <strong>100&deg;</strong>."
+            },
+            {
+                question: "Pada sebuah segitiga ABC, diketahui besar sudut A = 2x&deg;, sudut B = 3x&deg;, dan sudut C = (x + 30)&deg;. Jenis segitiga ABC berdasarkan besar sudut-sudutnya adalah...",
+                options: [
+                    "A. Segitiga lancip",
+                    "B. Segitiga siku-siku",
+                    "C. Segitiga tumpul",
+                    "D. Segitiga sama sisi"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Segitiga:</strong> Jumlah ketiga sudut dalam segitiga apa pun selalu persis <strong>180&deg;</strong>.<br><br><strong>Mari hitung nilai x:</strong><br>Sudut A + Sudut B + Sudut C = 180&deg;<br>2x + 3x + (x + 30) = 180<br>6x + 30 = 180<br>6x = 150 &rarr; <strong>x = 25</strong>.<br><br><strong>Mari kita cek besar masing-masing sudut:</strong><br>&bull; Sudut A = 2(25) = <strong>50&deg;</strong>.<br>&bull; Sudut B = 3(25) = <strong>75&deg;</strong>.<br>&bull; Sudut C = 25 + 30 = <strong>55&deg;</strong>.<br><br>Karena ketiga sudut tersebut (50&deg;, 75&deg;, dan 55&deg;) semuanya lebih kecil dari 90&deg;, maka segitiga ini disebut sebagai <strong>Segitiga Lancip</strong>."
+            },
+            {
+                question: "Perhatikan beberapa pernyataan mengenai hubungan sudut berikut:<br>(1) Sudut-sudut sehadap memiliki besar yang sama.<br>(2) Sudut-sudut dalam berseberangan jika dijumlahkan hasilnya 180&deg;.<br>(3) Sudut-sudut luar sepihak jika dijumlahkan hasilnya 180&deg;.<br>(4) Sudut-sudut bertolak belakang saling berpelurus.<br><br>Pernyataan yang benar mengenai hubungan sudut pada dua garis sejajar yang dipotong garis transversal adalah...",
+                options: [
+                    "A. (1) dan (2)",
+                    "B. (1) dan (3)",
+                    "C. (2) dan (3)",
+                    "D. (2) dan (4)"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mari kita evaluasi satu per satu layaknya detektif matematika!<br><br>&bull; <strong>Pernyataan (1):</strong> Sudut sehadap = sama besar. <strong>(BENAR)</strong><br>&bull; <strong>Pernyataan (2):</strong> Sudut dalam berseberangan itu besarnya SAMA, bukan berjumlah 180&deg;. <strong>(SALAH)</strong><br>&bull; <strong>Pernyataan (3):</strong> Semua sudut yang namanya ada kata \"sepihak\" (dalam/luar) jika dijumlahkan selalu 180&deg;. <strong>(BENAR)</strong><br>&bull; <strong>Pernyataan (4):</strong> Sudut bertolak belakang itu SAMA BESAR, bukan berpelurus. <strong>(SALAH)</strong><br><br>Jadi, pernyataan yang akurat adalah <strong>(1) dan (3)</strong>."
+            },
+            {
+                question: "Sudut luar segitiga PQR di titik sudut R adalah 130&deg;. Jika sudut P dan sudut Q merupakan sudut dalam yang tidak berdekatan dengan sudut luar tersebut dan memiliki perbandingan 2 : 3, maka besar sudut P adalah...",
+                options: [
+                    "A. 26&deg;",
+                    "B. 52&deg;",
+                    "C. 78&deg;",
+                    "D. 104&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Teorema Sudut Luar Segitiga:</strong> Besar suatu sudut luar segitiga selalu sama dengan jumlah dua sudut dalam di seberangnya (yang tidak berdempetan dengannya).<br><br>Ini berarti: Sudut P + Sudut Q = Sudut Luar R<br>Sudut P + Sudut Q = 130&deg;.<br><br>Karena perbandingan P : Q adalah 2 : 3, kita misalkan P = 2y dan Q = 3y.<br>2y + 3y = 130<br>5y = 130 &rarr; y = 130 &divide; 5 = 26.<br><br>Karena ditanya besar sudut P (yaitu 2y):<br>Sudut P = 2 &times; 26 = <strong>52&deg;</strong>."
+            },
+            {
+                question: "Garis AB sejajar dengan garis CD. Sebuah garis transversal EF memotong garis AB di titik P dan garis CD di titik Q. Jika sudut APQ = (5x - 20)&deg; dan sudut PQD = (3x + 40)&deg; merupakan pasangan sudut dalam berseberangan, maka nilai x adalah...",
+                options: [
+                    "A. 10",
+                    "B. 20",
+                    "C. 30",
+                    "D. 40"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Kata Kunci:</strong> Pasangan <em>sudut dalam berseberangan</em>.<br>Aturannya sangat jelas: Jika ada kata \"berseberangan\" atau \"sehadap\", maka kedua sudut tersebut pasti <strong>SAMA BESAR</strong>.<br><br>Mari kita susun persamaannya:<br>Sudut APQ = Sudut PQD<br>5x - 20 = 3x + 40<br><br>Pindahkan variabel x ke ruas kiri dan angka ke ruas kanan:<br>5x - 3x = 40 + 20<br>2x = 60 &rarr; <strong>x = 30</strong>."
+            },
+            {
+                question: "Pada segitiga KLM, diketahui besar sudut K = 45&deg; dan besar sudut L = 75&deg;. Besar sudut luar segitiga KLM di titik sudut M adalah...",
+                options: [
+                    "A. 60&deg;",
+                    "B. 120&deg;",
+                    "C. 135&deg;",
+                    "D. 150&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Cara Cepat (Menggunakan Sifat Sudut Luar):</strong><br>Besar sudut luar di titik M sama dengan penjumlahan dua sudut di dalam segitiga yang jauh dari M (yaitu sudut K dan L).<br>Sudut luar M = Sudut K + Sudut L = 45&deg; + 75&deg; = <strong>120&deg;</strong>.<br><br><em>(Cara Panjang untuk Bukti: Kita cari sudut dalam M dulu. Sudut M = 180&deg; - (45&deg; + 75&deg;) = 180&deg; - 120&deg; = 60&deg;. Karena sudut luar M berpelurus dengan sudut dalam M, maka Sudut luar M = 180&deg; - 60&deg; = 120&deg;. Hasilnya sama!)</em>"
+            },
+            {
+                question: "Dua garis sejajar horizontal, yaitu garis g (di atas) dan garis h (di bawah). Sebuah titik R berada di antara kedua garis tersebut. Garis dari titik P pada garis g ditarik ke R sehingga membentuk sudut dalam sebesar 40&deg; dengan garis g. Garis dari titik Q pada garis h ditarik ke R sehingga membentuk sudut dalam sebesar 50&deg; dengan garis h. Jika sudut PRQ adalah sudut yang menghadap ke arah kiri (di antara kedua garis), maka besar sudut PRQ adalah...",
+                options: [
+                    "A. 10&deg;",
+                    "B. 80&deg;",
+                    "C. 90&deg;",
+                    "D. 100&deg;"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Trik Garis Zig-zag:</strong> Untuk menyelesaikan soal garis patah (zig-zag) di antara dua garis sejajar, buatlah satu <strong>garis bantu horizontal</strong> yang sejajar melalui titik siku patahan (titik R).<br><br>Setelah garis bantu dibuat, sudut PRQ akan terbelah menjadi dua bagian (atas dan bawah):<br>&bull; Bagian atas akan <em>dalam berseberangan</em> dengan sudut g (sehingga besarnya sama, yaitu 40&deg;).<br>&bull; Bagian bawah akan <em>dalam berseberangan</em> dengan sudut h (sehingga besarnya sama, yaitu 50&deg;).<br><br>Total besar sudut PRQ adalah gabungan keduanya: 40&deg; + 50&deg; = <strong>90&deg;</strong>."
+            },
+            {
+                question: "Pada segitiga ABC, terdapat garis DE yang sejajar dengan sisi BC, di mana titik D terletak pada AB dan titik E terletak pada AC. Jika besar sudut ADE = 70&deg; dan besar sudut C = 50&deg;, maka besar sudut A adalah...",
+                options: [
+                    "A. 50&deg;",
+                    "B. 60&deg;",
+                    "C. 70&deg;",
+                    "D. 80&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Bayangkan garis AB dan AC sebagai garis transversal yang memotong garis sejajar DE dan BC.<br><br>1. Karena garis DE sejajar (//) dengan garis BC, maka posisi sudut ADE itu <strong>sehadap</strong> dengan sudut B di bawahnya.<br>   Artinya, Sudut B = Sudut ADE = <strong>70&deg;</strong>.<br><br>2. Sekarang perhatikan segitiga besar ABC. Kita sudah tahu dua sudutnya:<br>   Sudut B = 70&deg;<br>   Sudut C = 50&deg;<br><br>3. Karena jumlah sudut segitiga harus 180&deg;:<br>   Sudut A + 70&deg; + 50&deg; = 180&deg;<br>   Sudut A + 120&deg; = 180&deg;<br>   Sudut A = 180&deg; - 120&deg; = <strong>60&deg;</strong>."
+            },
+            {
+                question: "Dua buah sudut lancip pada sebuah segitiga siku-siku memiliki selisih sebesar 20&deg;. Besar sudut lancip yang terkecil pada segitiga tersebut adalah...",
+                options: [
+                    "A. 35&deg;",
+                    "B. 45&deg;",
+                    "C. 55&deg;",
+                    "D. 70&deg;"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Analisis Soal:</strong> Pada sebuah segitiga siku-siku, salah satu sudutnya pasti 90&deg;. Karena total sudut segitiga adalah 180&deg;, maka jumlah dari dua sudut lancip sisanya pasti = 90&deg; (sehingga mereka saling berpenyiku).<br><br>Misalkan sudut lancip tersebut adalah p dan q (di mana p lebih besar dari q).<br>1. Persamaan Jumlah: p + q = 90<br>2. Persamaan Selisih: p - q = 20<br><br>Gunakan metode eliminasi (kurangkan persamaan atas dengan bawah):<br>(p + q) - (p - q) = 90 - 20<br>2q = 70 &rarr; <strong>q = 35&deg;</strong>.<br><br>Maka sudut lancip yang terkecil adalah <strong>35&deg;</strong>."
+            },
+            {
+                question: "Seorang siswa menyatakan bahwa jika dua garis sejajar dipotong oleh garis transversal, maka semua pasangan sudut yang terbentuk hanya memiliki dua kemungkinan hubungan matematis: nilainya sama besar atau jumlahnya 180&deg;. Evaluasilah kebenaran dari pernyataan siswa tersebut!",
+                options: [
+                    "A. Salah, karena ada pasangan sudut yang tidak memiliki hubungan matematis sama sekali.",
+                    "B. Benar, karena setiap pasangan sudut yang terbentuk pasti sehadap/berseberangan (sama besar) atau sepihak/berpelurus (berjumlah 180&deg;).",
+                    "C. Salah, karena ada pasangan sudut yang berjumlah 90&deg; (saling berpenyiku).",
+                    "D. Benar, tetapi hubungan tersebut hanya berlaku jika garis transversalnya memotong secara tegak lurus."
+                ],
+                correctAnswer: 1, // B
+                explanation: "Pernyataan siswa tersebut <strong>sangat cerdas dan TEPAT!</strong><br><br>Dalam dunia dua garis sejajar yang dipotong transversal (membentuk 8 sudut), memang <em>hanya</em> ada dua aturan dasar yang berlaku bagi setiap pasangannya:<br>1. <strong>Mereka SAMA BESAR:</strong> Ini berlaku untuk pasangan sudut Sehadap, Dalam Berseberangan, Luar Berseberangan, dan Bertolak Belakang.<br>2. <strong>Mereka Berjumlah 180&deg;:</strong> Ini berlaku untuk pasangan sudut Dalam Sepihak, Luar Sepihak, dan yang Saling Berpelurus.<br><br>Tidak ada pasangan yang tiba-tiba berjumlah 90&deg; (kecuali jika transversalnya tegak lurus, namun aturan di atas tetap berlaku karena 90 + 90 = 180). Jadi opsi <strong>B</strong> adalah penjelasan yang paling akurat."
+            },
+            {
+                question: "Diberikan tiga buah sudut dalam sebuah segitiga dengan ukuran (2x - 10)&deg;, (x + 15)&deg;, dan (3x + 25)&deg;. Seorang pengamat mengklaim bahwa segitiga tersebut merupakan segitiga tumpul. Evaluasilah kebenaran klaim tersebut!",
+                options: [
+                    "A. Klaim salah, karena nilai x = 20 sehingga segitiga tersebut adalah segitiga lancip.",
+                    "B. Klaim salah, karena segitiga tersebut adalah segitiga sama kaki yang lancip.",
+                    "C. Klaim benar, karena salah satu sudutnya berukuran 100&deg; yang merupakan sudut tumpul.",
+                    "D. Klaim benar, karena semua sudutnya berukuran lebih dari 90&deg;."
+                ],
+                correctAnswer: 2, // C
+                explanation: "Mari kita buktikan klaim tersebut dengan mencari nilai x. Ingat, total sudut segitiga = 180&deg;.<br><br>(2x - 10) + (x + 15) + (3x + 25) = 180<br>6x + 30 = 180<br>6x = 150 &rarr; x = 25.<br><br>Sekarang mari kita cek besar setiap sudutnya:<br>&bull; Sudut ke-1: 2(25) - 10 = 50 - 10 = <strong>40&deg;</strong>.<br>&bull; Sudut ke-2: 25 + 15 = <strong>40&deg;</strong>.<br>&bull; Sudut ke-3: 3(25) + 25 = 75 + 25 = <strong>100&deg;</strong>.<br><br>Karena ada satu sudut yang ukurannya melebihi 90&deg; (yaitu 100&deg;), maka segitiga ini sah disebut sebagai <strong>Segitiga Tumpul</strong> (yang juga kebetulan sama kaki karena ada dua sudut 40&deg;). Klaim pengamat BENAR."
+            },
+            {
+                question: "Diketahui sudut A dan sudut B saling berpenyiku (komplementer). Jika besar sudut A adalah empat kali dari besar sudut B, maka besar sudut A adalah...",
+                options: [
+                    "A. 18&deg;",
+                    "B. 36&deg;",
+                    "C. 72&deg;",
+                    "D. 80&deg;"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Arti Berpenyiku (Komplementer):</strong> Jika dua sudut berpenyiku disatukan, mereka akan membentuk sudut siku-siku (<strong>90&deg;</strong>).<br><br>Dari soal kita tahu:<br>1. Sudut A + Sudut B = 90&deg;<br>2. Sudut A = 4 &times; Sudut B (atau A = 4B)<br><br>Substitusi nilai A:<br>4B + B = 90<br>5B = 90 &rarr; B = 18&deg;.<br><br>Karena ditanya Sudut A, maka:<br>Sudut A = 4 &times; 18&deg; = <strong>72&deg;</strong>."
+            },
+            {
+                question: "Pada segitiga sama kaki XYZ dengan panjang sisi XY = XZ, besar sudut Y dinyatakan dengan (3x - 5)&deg; dan besar sudut Z dinyatakan dengan (2x + 15)&deg;. Besar sudut X adalah...",
+                options: [
+                    "A. 55&deg;",
+                    "B. 70&deg;",
+                    "C. 110&deg;",
+                    "D. 125&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Sifat Segitiga Sama Kaki:</strong> Jika sisi XY = XZ (kaki-kakinya), maka sudut di alasnya juga pasti sama besar. Titik pertemuan kakinya adalah X, maka alasnya adalah Y dan Z. Sehingga <strong>Sudut Y = Sudut Z</strong>.<br><br>Mari buat persamaannya:<br>3x - 5 = 2x + 15<br>3x - 2x = 15 + 5<br>x = 20.<br><br>Mari cari besar sudut alasnya:<br>Sudut Y = Sudut Z = 2(20) + 15 = 40 + 15 = <strong>55&deg;</strong>.<br><br>Terakhir, cari sudut puncaknya (Sudut X):<br>Total sudut = 180&deg;<br>Sudut X + 55&deg; + 55&deg; = 180&deg;<br>Sudut X + 110&deg; = 180&deg; &rarr; <strong>Sudut X = 70&deg;</strong>."
+            },
+            {
+                question: "Dua garis sejajar dipotong oleh garis transversal. Jika besar salah satu sudut dalam sepihak adalah 3/5 dari besar sudut dalam sepihak pasangannya, maka besar sudut yang terkecil di antara keduanya adalah...",
+                options: [
+                    "A. 36&deg;",
+                    "B. 54&deg;",
+                    "C. 67.5&deg;",
+                    "D. 108&deg;"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep:</strong> Sudut dalam sepihak berjumlah <strong>180&deg;</strong>.<br><br>Misalkan sudut yang lebih besar adalah <em>a</em>, dan sudut yang lebih kecil adalah <em>b</em>.<br>Diketahui: b = <sup>3</sup>&frasl;<sub>5</sub> a.<br><br>Masukkan ke persamaan:<br>a + b = 180<br>a + <sup>3</sup>&frasl;<sub>5</sub> a = 180<br>Samakan penyebut (a itu sama dengan <sup>5</sup>&frasl;<sub>5</sub> a):<br><sup>8</sup>&frasl;<sub>5</sub> a = 180<br>a = 180 &times; <sup>5</sup>&frasl;<sub>8</sub> = 112.5&deg;.<br><br>Kita diminta mencari sudut terkecil (b):<br>b = 180&deg; - 112.5&deg; = <strong>67.5&deg;</strong>."
+            },
+            {
+                question: "Pada sebuah trapesium ABCD dengan sisi AB sejajar dengan CD, diketahui besar sudut A = 75&deg; dan besar sudut C = 120&deg;. Besar sudut B dan sudut D berturut-turut adalah...",
+                options: [
+                    "A. 60&deg; dan 105&deg;",
+                    "B. 105&deg; dan 60&deg;",
+                    "C. 120&deg; dan 75&deg;",
+                    "D. 105&deg; dan 120&deg;"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Rahasia Trapesium:</strong> Karena sisi atas (DC) dan bawah (AB) sejajar, maka sudut di sisi kiri (A dan D) serta sudut di sisi kanan (B dan C) bertindak layaknya pasangan <strong>Sudut Dalam Sepihak</strong>. Artinya, jika mereka dijumlahkan atas dan bawah hasilnya pasti <strong>180&deg;</strong>.<br><br>&bull; Sisi Kiri: Sudut A + Sudut D = 180&deg;<br>  75&deg; + Sudut D = 180&deg; &rarr; <strong>Sudut D = 105&deg;</strong>.<br><br>&bull; Sisi Kanan: Sudut B + Sudut C = 180&deg;<br>  Sudut B + 120&deg; = 180&deg; &rarr; <strong>Sudut B = 60&deg;</strong>.<br><br>Pertanyaannya meminta urutan Sudut B lalu Sudut D, jadi jawabannya adalah <strong>60&deg; dan 105&deg;</strong>."
+            },
+            {
+                question: "Diberikan tiga buah lidi yang akan disusun membentuk sebuah segitiga. Setelah diukur, sudut pertama yang terbentuk adalah 45&deg; dan sudut kedua adalah 135&deg;. Evaluasilah apakah segitiga tersebut dapat terbentuk!",
+                options: [
+                    "A. Mungkin terbentuk, karena jumlah kedua sudut tersebut tepat 180&deg;.",
+                    "B. Tidak mungkin terbentuk, karena jumlah dua sudut saja sudah mencapai 180&deg;, sehingga tidak menyisakan ruang untuk sudut ketiga (sudut ketiga bernilai 0&deg;).",
+                    "C. Mungkin terbentuk, asalkan panjang lidi ketiga jauh lebih panjang dari lidi lainnya.",
+                    "D. Tidak mungkin terbentuk, karena sudut-sudut dalam segitiga harus selalu sama besar yaitu masing-masing 60&deg;."
+                ],
+                correctAnswer: 1, // B
+                explanation: "Hukum alam geometri Euclid menyatakan bahwa <strong>total seluruh (tiga) sudut dalam segitiga datar HANYA BISA bernilai tepat 180&deg;</strong>. Tidak boleh kurang, tidak boleh lebih.<br><br>Jika dua sudut yang diukur saja sudah berjumlah 45&deg; + 135&deg; = 180&deg;, maka berapa sisa untuk sudut ketiganya?<br>180&deg; - 180&deg; = <strong>0&deg;</strong>.<br><br>Bangun datar dengan sudut 0&deg; tidak akan pernah bisa membentuk rongga segitiga (hanya akan menjadi sebuah garis lurus dempet). Maka jawabannya adalah <strong>Tidak mungkin terbentuk</strong>."
+            },
+            {
+                question: "Dua garis sejajar k dan l dipotong oleh garis transversal m. Jika sepasang sudut luar sepihak berukuran (2x + 30)&deg; dan (5x - 25)&deg;, berapakah besar sudut yang terkecil di antara kedua sudut tersebut?",
+                options: [
+                    "A. 25&deg;",
+                    "B. 80&deg;",
+                    "C. 100&deg;",
+                    "D. 155&deg;"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Konsep:</strong> Karena sepasang sudut <em>luar sepihak</em>, maka jumlah keduanya wajib <strong>180&deg;</strong>.<br><br>1. Susun Persamaan:<br>   (2x + 30) + (5x - 25) = 180<br>   7x + 5 = 180<br>   7x = 175 &rarr; <strong>x = 25</strong>.<br><br>2. Cari besar masing-masing sudut:<br>   &bull; Sudut pertama = 2(25) + 30 = 50 + 30 = <strong>80&deg;</strong>.<br>   &bull; Sudut kedua = 5(25) - 25 = 125 - 25 = <strong>100&deg;</strong>.<br><br>3. Pertanyaannya adalah \"sudut yang terkecil\", maka jawabannya adalah <strong>80&deg;</strong>."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-6 relative overflow-hidden group hover:border-blue-300 transition-colors">
+                        <!-- Pita warna kiri aksen -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl opacity-80"></div>
+                        
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.25rem] h-9 rounded-xl bg-blue-50 text-blue-700 font-bold mr-3.5 text-sm md:text-base border border-blue-100">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-[1.1rem] font-semibold text-slate-800 leading-relaxed pt-0.5">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3 ml-0 md:ml-12">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-base select-none">
+                                        <div class="radio-circle"></div>
+                                        <span>${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kotak Pembahasan (Awalnya Sembunyi) -->
+                        <div id="explanation_${index}" class="hidden mt-6 ml-0 md:ml-12 p-5 rounded-xl border fade-in text-[0.95rem] md:text-base">
+                            <!-- Injeksi JS -->
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Jalankan saat load
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        // Deklarasi Elemen
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Membekukan interaksi radio
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            // Cek setiap jawaban
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                
+                let isCorrect = false;
+                let statusHeader = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        // Jika Benar
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusHeader = "JAWABAN TEPAT";
+                        bgClass = "bg-emerald-50";
+                        borderClass = "border-emerald-300";
+                        textClass = "text-emerald-900";
+                    } else {
+                        // Jika Salah
+                        statusHeader = "JAWABAN KELIRU";
+                        bgClass = "bg-rose-50";
+                        borderClass = "border-rose-300";
+                        textClass = "text-rose-900";
+                        
+                        // Tandai kunci di UI
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5"; // emerald-50
+                        correctLabel.style.borderColor = "#10b981"; // emerald-500
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm bg-emerald-100 px-2 py-0.5 rounded">&check; Kunci Jawaban</span>`;
+                    }
+                } else {
+                    // Jika Kosong
+                    statusHeader = "TIDAK DIJAWAB";
+                    bgClass = "bg-amber-50";
+                    borderClass = "border-amber-300";
+                    textClass = "text-amber-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm bg-emerald-100 px-2 py-0.5 rounded">&check; Kunci Jawaban</span>`;
+                }
+
+                // Injeksi Konten Pembahasan
+                explanationDiv.innerHTML = `
+                    <div class="font-bold mb-3 pb-2 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-5 h-5 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : `<svg class="w-5 h-5 mr-2 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`}
+                        ${statusHeader}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass}">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                // Show Explanation
+                explanationDiv.className = `mt-6 ml-0 md:ml-12 p-5 rounded-xl border ${bgClass} ${borderClass} fade-in text-[0.95rem] md:text-base block`;
+            });
+
+            // Set final score logic
+            const finalScore = Math.round(score);
+            scoreDisplay.innerText = finalScore;
+            
+            scoreDisplay.className = "text-7xl font-black mb-6 transition-colors duration-500 drop-shadow-sm ";
+            if(finalScore >= 80) scoreDisplay.className += "text-emerald-500";
+            else if(finalScore >= 60) scoreDisplay.className += "text-blue-500";
+            else if(finalScore >= 40) scoreDisplay.className += "text-amber-500";
+            else scoreDisplay.className += "text-rose-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Scroll menuju skor
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            quizForm.reset();
+            renderQuiz(); // Reset UI total dengan cara menggambar ulang DOM
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

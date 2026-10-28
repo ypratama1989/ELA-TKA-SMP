@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard TKA IPA SMP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .transition-transform {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+
+        /* Mencegah highlight text saat double click/tap cepat di perangkat mobile */
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 bg-slate-50">
+
+    <header class="w-full bg-white shadow-xs py-3 sm:py-4 px-4 sm:px-6 z-10 shrink-0 border-b border-slate-100">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <h1 class="text-lg sm:text-2xl font-bold text-indigo-600 tracking-tight">TKA IPA <span class="text-slate-800 font-medium">Flashcards</span></h1>
+            <button onclick="initApp()" class="text-xs sm:text-sm bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors font-semibold flex items-center gap-1.5 sm:gap-2 border border-indigo-100" title="Acak ulang kartu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Acak & Mulai</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col justify-center items-center px-3 sm:px-6 py-4 sm:py-6 w-full max-w-3xl mx-auto relative">
+        
+        <!-- Indikator Progres Mobile (Tampil di atas kartu pada layar kecil) -->
+        <div id="progress-text-mobile" class="sm:hidden text-xs font-semibold text-slate-500 mb-3 bg-white px-3.5 py-1 rounded-full shadow-xs border border-slate-200/80">
+            Memuat...
+        </div>
+
+        <!-- Wadah Kartu 3D -->
+        <div class="perspective-1000 w-full h-72 sm:h-96 md:h-[400px] cursor-pointer no-select group" id="flashcard-container" onclick="flipCard()">
+            <div id="flashcard-inner" class="relative w-full h-full transition-transform transform-style-3d shadow-xl rounded-2xl sm:rounded-[2.5rem]">
+                
+                <!-- Sisi Depan (Pertanyaan) -->
+                <div class="absolute inset-0 w-full h-full backface-hidden bg-white border border-slate-100 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-10 flex flex-col justify-center items-center text-center group-hover:shadow-2xl transition-shadow">
+                    <span id="topic-front" class="absolute top-4 sm:top-8 bg-indigo-50 text-indigo-600 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-sm font-semibold tracking-wide uppercase border border-indigo-100">Topik</span>
+                    <h2 id="question-text" class="text-base sm:text-2xl md:text-3xl font-semibold text-slate-800 leading-snug sm:leading-relaxed px-1 sm:px-4 overflow-y-auto max-h-[180px] sm:max-h-none">Pertanyaan akan muncul di sini?</h2>
+                </div>
+
+                <!-- Sisi Belakang (Jawaban) -->
+                <div class="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-indigo-500 to-indigo-700 text-white border border-indigo-600 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-10 flex flex-col justify-center items-center text-center rotate-y-180">
+                    <span id="topic-back" class="absolute top-4 sm:top-8 bg-white/20 backdrop-blur-sm text-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-sm font-semibold tracking-wide uppercase border border-white/20">Topik</span>
+                    <h2 id="answer-text" class="text-base sm:text-2xl md:text-3xl font-medium leading-snug sm:leading-relaxed px-1 sm:px-4 overflow-y-auto max-h-[180px] sm:max-h-none">Jawaban akan muncul di sini.</h2>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Area Kontrol (Previous, Progress, Next) -->
+        <div class="w-full mt-4 sm:mt-8 flex justify-between items-center px-1 sm:px-2 gap-2">
+            <button id="btn-prev" onclick="prevCard()" class="flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white shadow-xs border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-200 hover:shadow disabled:opacity-40 disabled:cursor-not-allowed transition-all font-semibold text-xs sm:text-base shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Sebelumnya</span>
+            </button>
+            
+            <div id="progress-text-desktop" class="hidden sm:block text-sm sm:text-base font-semibold text-slate-500 bg-white px-5 py-2 rounded-full shadow-xs border border-slate-100 whitespace-nowrap">
+                Kartu 1 dari 100
+            </div>
+            
+            <button id="btn-next" onclick="nextCard()" class="flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all font-semibold text-xs sm:text-base shrink-0">
+                <span>Selanjutnya</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const rawQuestions = [
+            // Topik 1: Bumi dan Tata Surya (6)
+            { topic: "Bumi dan Tata Surya", question: "Planet terbesar dalam tata surya kita adalah?", answer: "Yupiter" },
+            { topic: "Bumi dan Tata Surya", question: "Garis edar planet yang berbentuk elips mengelilingi matahari disebut?", answer: "Orbit" },
+            { topic: "Bumi dan Tata Surya", question: "Benda langit yang mampu memancarkan cahayanya sendiri disebut?", answer: "Bintang" },
+            { topic: "Bumi dan Tata Surya", question: "Peristiwa terhalangnya cahaya matahari yang menuju ke bumi oleh bulan (posisi Matahari-Bulan-Bumi segaris) disebut?", answer: "Gerhana Matahari" },
+            { topic: "Bumi dan Tata Surya", question: "Planet di tata surya yang memiliki sistem cincin yang sangat jelas dan indah adalah?", answer: "Saturnus" },
+            { topic: "Bumi dan Tata Surya", question: "Waktu yang diperlukan bumi untuk berputar satu kali pada porosnya (1 hari) disebut?", answer: "Kala Rotasi" },
+
+            // Topik 2: Ekologi (6)
+            { topic: "Ekologi", question: "Ilmu yang mempelajari hubungan timbal balik antara makhluk hidup dengan lingkungannya disebut?", answer: "Ekologi" },
+            { topic: "Ekologi", question: "Kumpulan dari beberapa populasi makhluk hidup yang berbeda spesies dan hidup bersama di suatu wilayah disebut?", answer: "Komunitas" },
+            { topic: "Ekologi", question: "Hubungan simbiosis antara jamur Penicillium dengan bakteri (jamur menghambat bakteri) termasuk jenis?", answer: "Amensalisme (Antagonisme)" },
+            { topic: "Ekologi", question: "Organisme (seperti bakteri dan jamur) yang berperan menguraikan sisa-sisa makhluk hidup yang telah mati disebut?", answer: "Dekomposer (Pengurai)" },
+            { topic: "Ekologi", question: "Dalam rantai makanan, tumbuhan hijau bertindak menempati tingkat trofik sebagai?", answer: "Produsen" },
+            { topic: "Ekologi", question: "Hubungan yang saling menguntungkan antara dua makhluk hidup yang berbeda jenis (seperti lebah dan bunga) disebut?", answer: "Simbiosis Mutualisme" },
+
+            // Topik 3: Gerak dan Gaya (6)
+            { topic: "Gerak dan Gaya", question: "Perubahan kedudukan atau posisi suatu benda terhadap titik acuan tertentu disebut?", answer: "Gerak" },
+            { topic: "Gerak dan Gaya", question: "Hukum Newton I menyatakan tentang kecenderungan benda untuk mempertahankan keadaannya, yang disebut juga sifat?", answer: "Kelembaman (Inersia)" },
+            { topic: "Gerak dan Gaya", question: "Gaya yang bekerja pada dua permukaan benda yang bersentuhan dengan arah berlawanan dengan arah gerak disebut?", answer: "Gaya Gesek" },
+            { topic: "Gerak dan Gaya", question: "Besaran skalar yang menyatakan jarak yang ditempuh per satuan waktu adalah?", answer: "Kelajuan" },
+            { topic: "Gerak dan Gaya", question: "Percepatan gravitasi menyebabkan buah yang jatuh bebas dari pohon mengalami jenis gerak?", answer: "Gerak Lurus Berubah Beraturan (GLBB) Dipercepat" },
+            { topic: "Gerak dan Gaya", question: "Satuan gaya dalam Sistem Internasional (SI) adalah?", answer: "Newton (N)" },
+
+            // Topik 4: Getaran, Gelombang dan Cahaya (6)
+            { topic: "Getaran, Gel. & Cahaya", question: "Banyaknya getaran yang terjadi dalam waktu satu detik disebut?", answer: "Frekuensi" },
+            { topic: "Getaran, Gel. & Cahaya", question: "Gelombang yang arah rambatnya tegak lurus dengan arah getarnya (seperti gelombang tali) disebut?", answer: "Gelombang Transversal" },
+            { topic: "Getaran, Gel. & Cahaya", question: "Jarak antara dua rapatan atau dua renggangan yang saling berdekatan pada gelombang longitudinal disebut?", answer: "Satu Panjang Gelombang (Lambda)" },
+            { topic: "Getaran, Gel. & Cahaya", question: "Peristiwa pembelokan arah cahaya karena melewati dua medium yang berbeda kerapatannya disebut?", answer: "Pembiasan (Refraksi)" },
+            { topic: "Getaran, Gel. & Cahaya", question: "Jenis cermin yang sifatnya menyebarkan cahaya (divergen) dan sering digunakan pada kaca spion adalah?", answer: "Cermin Cembung" },
+            { topic: "Getaran, Gel. & Cahaya", question: "Kemampuan lensa mata untuk mencembung dan memipih menyesuaikan jarak benda yang dilihat disebut?", answer: "Daya Akomodasi" },
+
+            // Topik 5: Klasifikasi Makhluk Hidup (6)
+            { topic: "Klasifikasi Makhluk Hidup", question: "Bapak taksonomi yang memperkenalkan sistem tata nama ganda (Binomial Nomenklatur) adalah?", answer: "Carolus Linnaeus" },
+            { topic: "Klasifikasi Makhluk Hidup", question: "Urutan takson pada hewan dari tingkat tertinggi hingga terendah adalah Kingdom, Filum, Classis, Ordo, Familia, Genus, dan?", answer: "Spesies" },
+            { topic: "Klasifikasi Makhluk Hidup", question: "Makhluk hidup uniseluler yang belum memiliki membran inti sel (prokariotik) dimasukkan dalam kingdom?", answer: "Monera" },
+            { topic: "Klasifikasi Makhluk Hidup", question: "Kelompok besar hewan yang memiliki tulang belakang disebut golongan?", answer: "Vertebrata" },
+            { topic: "Klasifikasi Makhluk Hidup", question: "Ciri khas mamalia yang membedakannya secara mutlak dengan kelas aves (burung) atau reptil adalah?", answer: "Memiliki kelenjar susu (glandula mammae) dan berambut" },
+            { topic: "Klasifikasi Makhluk Hidup", question: "Tumbuhan paku, lumut, dan tumbuhan berbiji secara taksonomi digolongkan dalam kingdom?", answer: "Plantae" },
+
+            // Topik 6: Listrik Dinamis (6)
+            { topic: "Listrik Dinamis", question: "Aliran muatan listrik dari potensial tinggi (kutub positif) ke potensial rendah (kutub negatif) disebut?", answer: "Arus Listrik" },
+            { topic: "Listrik Dinamis", question: "Hukum yang menyatakan kuat arus sebanding dengan tegangan dan berbanding terbalik dengan hambatan adalah?", answer: "Hukum Ohm" },
+            { topic: "Listrik Dinamis", question: "Rangkaian listrik di mana komponen-komponennya disusun secara berderet tanpa adanya titik percabangan disebut rangkaian?", answer: "Seri" },
+            { topic: "Listrik Dinamis", question: "Alat ukur yang dipasang secara seri dan digunakan untuk mengukur kuat arus listrik adalah?", answer: "Amperemeter" },
+            { topic: "Listrik Dinamis", question: "Satuan standar internasional (SI) untuk hambatan listrik adalah?", answer: "Ohm (Ω)" },
+            { topic: "Listrik Dinamis", question: "Hukum yang menyatakan jumlah arus masuk pada suatu titik percabangan sama dengan jumlah arus yang keluar adalah?", answer: "Hukum Kirchhoff I" },
+
+            // Topik 7: Listrik Statis (6)
+            { topic: "Listrik Statis", question: "Penggaris plastik yang digosokkan ke rambut kering akan bermuatan listrik apa sehingga dapat menarik kertas?", answer: "Negatif" },
+            { topic: "Listrik Statis", question: "Alat yang digunakan untuk mendeteksi ada tidaknya muatan listrik pada suatu benda disebut?", answer: "Elektroskop" },
+            { topic: "Listrik Statis", question: "Bagian dari inti atom (nukleus) yang tidak bermuatan listrik dinamakan?", answer: "Neutron" },
+            { topic: "Listrik Statis", question: "Gaya tarik/tolak dua muatan sebanding dengan besar muatannya dan berbanding terbalik dengan kuadrat jaraknya, merupakan bunyi hukum?", answer: "Hukum Coulomb" },
+            { topic: "Listrik Statis", question: "Bahan yang sangat sulit atau tidak dapat menghantarkan arus listrik (seperti kayu dan plastik) disebut?", answer: "Isolator" },
+            { topic: "Listrik Statis", question: "Proses pelepasan muatan listrik statis dalam jumlah sangat besar dari awan ke bumi disebut fenomena?", answer: "Petir (Kilat)" },
+
+            // Topik 8: Magnet (6)
+            { topic: "Magnet", question: "Bahan yang ditarik dengan sangat kuat oleh magnet, seperti besi, baja, dan kobalt, digolongkan sebagai benda?", answer: "Ferromagnetik" },
+            { topic: "Magnet", question: "Arah garis-garis gaya magnet di bagian luar magnet selalu bergerak dari kutub ... menuju kutub ...?", answer: "Utara menuju Selatan" },
+            { topic: "Magnet", question: "Cara pembuatan magnet dengan mengalirkan arus listrik searah (DC) pada lilitan kawat sebuah inti besi disebut?", answer: "Elektromagnetik" },
+            { topic: "Magnet", question: "Jika sebuah batang magnet dipotong menjadi dua bagian di tengahnya, apa yang terjadi pada potongannya?", answer: "Menjadi dua magnet baru, masing-masing dengan kutub utara & selatan" },
+            { topic: "Magnet", question: "Sudut penyimpangan yang dibentuk antara arah jarum kompas dengan arah kutub utara-selatan bumi sebenarnya disebut?", answer: "Sudut Deklinasi" },
+            { topic: "Magnet", question: "Transformator yang berfungsi untuk menaikkan tegangan arus bolak-balik (AC) disebut?", answer: "Transformator Step-up" },
+
+            // Topik 9: Pewarisan Sifat & Bioteknologi (6)
+            { topic: "Genetika & Bioteknologi", question: "Ilmuwan yang dijuluki Bapak Genetika karena penelitiannya menggunakan kacang ercis (Pisum sativum) adalah?", answer: "Gregor Johann Mendel" },
+            { topic: "Genetika & Bioteknologi", question: "Sifat makhluk hidup yang tampak dan dapat diamati dari luar, seperti warna bunga atau bentuk rambut, disebut?", answer: "Fenotipe" },
+            { topic: "Genetika & Bioteknologi", question: "Molekul beruntai ganda (double helix) di dalam inti sel yang menyimpan seluruh informasi genetik adalah?", answer: "DNA (Deoxyribonucleic Acid)" },
+            { topic: "Genetika & Bioteknologi", question: "Persilangan antara dua individu sejenis dengan memperhatikan dua sifat beda sekaligus disebut persilangan?", answer: "Dihibrid" },
+            { topic: "Genetika & Bioteknologi", question: "Bioteknologi yang memanfaatkan mikroorganisme secara langsung tanpa rekayasa genetika (contoh: fermentasi tape) disebut bioteknologi?", answer: "Konvensional" },
+            { topic: "Genetika & Bioteknologi", question: "Proses pembuatan tempe dari kedelai memanfaatkan peran penting dari jamur jenis?", answer: "Rhizopus oligosporus" },
+
+            // Topik 10: Reproduksi Manusia (6)
+            { topic: "Reproduksi Manusia", question: "Pada organ reproduksi wanita, di bagian manakah proses fertilisasi (pembuahan sel telur oleh sperma) umumnya terjadi?", answer: "Tuba Fallopii (Oviduk)" },
+            { topic: "Reproduksi Manusia", question: "Hormon yang dikeluarkan kelenjar hipofisis dan merangsang pematangan folikel/ovum di ovarium adalah?", answer: "FSH (Follicle Stimulating Hormone)" },
+            { topic: "Reproduksi Manusia", question: "Organ berupa rongga berotot tempat embrio/janin tumbuh dan berkembang hingga lahir disebut?", answer: "Uterus (Rahim)" },
+            { topic: "Reproduksi Manusia", question: "Pembelahan sel pada pembentukan sperma dan ovum yang menghasilkan sel anak dengan jumlah kromosom separuh sel induk disebut?", answer: "Pembelahan Meiosis" },
+            { topic: "Reproduksi Manusia", question: "Saluran reproduksi pada pria yang berfungsi sebagai tempat penyimpanan sementara dan pematangan sperma adalah?", answer: "Epididimis" },
+            { topic: "Reproduksi Manusia", question: "Penyakit menular seksual berbahaya (raja singa) yang disebabkan oleh infeksi bakteri Treponema pallidum disebut?", answer: "Sifilis" },
+
+            // Topik 11: Sel (5)
+            { topic: "Sel", question: "Unit struktural dan fungsional terkecil penyusun tubuh makhluk hidup adalah?", answer: "Sel" },
+            { topic: "Sel", question: "Organel sel yang dijuluki 'The Power House of Cell' karena berfungsi sebagai pusat respirasi penghasil energi adalah?", answer: "Mitokondria" },
+            { topic: "Sel", question: "Organel pada sel tumbuhan yang mengandung pigmen hijau dan berfungsi sebagai tempat fotosintesis adalah?", answer: "Kloroplas" },
+            { topic: "Sel", question: "Perbedaan utama yang memisahkan sel prokariotik (misal bakteri) dan eukariotik adalah ada tidaknya?", answer: "Membran inti sel (Nukleus)" },
+            { topic: "Sel", question: "Organel terbesar dalam sel eukariotik yang berfungsi mengatur seluruh aktivitas dan metabolisme sel adalah?", answer: "Inti Sel (Nukleus)" },
+
+            // Topik 12: Sistem Pencernaan Manusia (5)
+            { topic: "Pencernaan Manusia", question: "Enzim ptialin (amilase) yang ada dalam air liur di mulut berfungsi untuk mengubah amilum (karbohidrat) menjadi?", answer: "Maltosa / Glukosa (Gula sederhana)" },
+            { topic: "Pencernaan Manusia", question: "Gerakan otot meremas dan mendorong makanan di sepanjang kerongkongan agar masuk ke lambung disebut gerak?", answer: "Peristaltik" },
+            { topic: "Pencernaan Manusia", question: "Proses penyerapan sari-sari makanan secara maksimal terjadi pada organ pencernaan bagian mana?", answer: "Usus Halus (Ileum / Usus Penyerapan)" },
+            { topic: "Pencernaan Manusia", question: "Cairan empedu yang sangat penting fungsinya untuk mengemulsikan lemak di lambung diproduksi oleh organ?", answer: "Hati (Hepar)" },
+            { topic: "Pencernaan Manusia", question: "Dua enzim utama pencernaan protein yaitu Renin dan Pepsin, dihasilkan dan bekerja secara optimal di organ?", answer: "Lambung" },
+
+            // Topik 13: Struktur Bumi (5)
+            { topic: "Struktur Bumi", question: "Lapisan bumi paling luar dan padat yang menjadi tempat tinggal manusia dan makhluk hidup lainnya disebut?", answer: "Kerak Bumi (Litosfer)" },
+            { topic: "Struktur Bumi", question: "Di lapisan atmosfer manakah terdapat gas Ozon (O3) pelindung bumi dari paparan radiasi ultraviolet matahari?", answer: "Stratosfer" },
+            { topic: "Struktur Bumi", question: "Getaran atau guncangan gempa bumi yang terjadi akibat dari letusan atau aktivitas gunung berapi dinamakan gempa?", answer: "Vulkanik" },
+            { topic: "Struktur Bumi", question: "Proses pengikisan atau pengangkutan partikel batuan/tanah oleh aliran air, hembusan angin, atau gletser es disebut?", answer: "Erosi" },
+            { topic: "Struktur Bumi", question: "Magma yang telah berhasil keluar menembus kawah gunung berapi dan mengalir mencapai permukaan bumi disebut?", answer: "Lava" },
+
+            // Topik 14: Suhu, Kalor dan Pemuaian (5)
+            { topic: "Suhu, Kalor, Pemuaian", question: "Suhu mutlak yang ditetapkan sebagai standar SI, di mana 0 derajatnya adalah suhu molekul berhenti bergerak, yaitu skala?", answer: "Kelvin" },
+            { topic: "Suhu, Kalor, Pemuaian", question: "Perpindahan kalor (panas) yang disertai perpindahan partikel-partikel zat perantaranya (contoh: air mendidih) disebut?", answer: "Konveksi" },
+            { topic: "Suhu, Kalor, Pemuaian", question: "Perpindahan kalor panas dari matahari sampai ke bumi melalui ruang hampa udara tanpa perantara terjadi secara?", answer: "Radiasi" },
+            { topic: "Suhu, Kalor, Pemuaian", question: "Peristiwa bertambahnya panjang, luas, atau volume suatu benda karena benda tersebut dipanaskan disebut?", answer: "Pemuaian" },
+            { topic: "Suhu, Kalor, Pemuaian", question: "Pada tekanan udara standar (1 atm), berapakah suhu saat air murni tepat mendidih jika diukur dengan termometer Celcius?", answer: "100°C" },
+
+            // Topik 15: Tekanan Zat (5)
+            { topic: "Tekanan Zat", question: "Gaya apung ke atas pada benda yang dicelupkan sama dengan berat zat cair yang dipindahkan, adalah bunyi Hukum?", answer: "Archimedes" },
+            { topic: "Tekanan Zat", question: "Alat mekanik seperti pompa hidrolik dan dongkrak hidrolik mobil dibuat berdasarkan prinsip fluida pada Hukum?", answer: "Pascal" },
+            { topic: "Tekanan Zat", question: "Alat pengukur cuaca yang digunakan khusus untuk mengukur besarnya tekanan udara luar (tekanan atmosfer) disebut?", answer: "Barometer" },
+            { topic: "Tekanan Zat", question: "Menurut Hukum Boyle, pada ruang tertutup dan suhu konstan, maka tekanan gas akan berbanding ... dengan volumenya?", answer: "Terbalik" },
+            { topic: "Tekanan Zat", question: "Pembuluh vaskuler yang memanfaatkan prinsip kapilaritas zat cair untuk mengangkat air tanah dari akar ke daun tumbuhan adalah?", answer: "Xilem (Pembuluh Kayu)" },
+
+            // Topik 16: Unsur, Senyawa, Campuran (5)
+            { topic: "Unsur, Senyawa, Campuran", question: "Zat tunggal paling sederhana yang sudah tidak dapat diuraikan lagi menjadi zat lain melalui reaksi kimia biasa disebut?", answer: "Unsur" },
+            { topic: "Unsur, Senyawa, Campuran", question: "Gabungan dari dua macam unsur atau lebih yang diikat melalui reaksi kimia dengan perbandingan massa tetap disebut?", answer: "Senyawa" },
+            { topic: "Unsur, Senyawa, Campuran", question: "Campuran (seperti air gula) di mana zat-zat penyusunnya tidak dapat dibedakan lagi dan merata disebut campuran?", answer: "Homogen (Larutan)" },
+            { topic: "Unsur, Senyawa, Campuran", question: "Metode pemisahan campuran cairan (contoh: air dan alkohol) yang didasarkan pada perbedaan titik didih zat penyusunnya disebut?", answer: "Distilasi (Penyulingan)" },
+            { topic: "Unsur, Senyawa, Campuran", question: "Apa lambang atau rumus kimia senyawa untuk molekul Air murni dan Karbon Dioksida berturut-turut?", answer: "H₂O dan CO₂" },
+
+            // Topik 17: Usaha, Energi dan Pesawat Sederhana (5)
+            { topic: "Usaha & Energi", question: "Dalam fisika, besarnya hasil kali antara gaya yang bekerja pada benda dengan perpindahan yang searah gaya dinamakan?", answer: "Usaha" },
+            { topic: "Usaha & Energi", question: "Energi yang tersimpan pada suatu benda yang diakibatkan oleh ketinggian posisi atau kedudukannya dinamakan energi?", answer: "Potensial Gravitasi" },
+            { topic: "Usaha & Energi", question: "Hukum yang menyatakan bahwa energi tidak dapat diciptakan/dimusnahkan, hanya bisa diubah bentuknya dinamakan Hukum?", answer: "Kekekalan Energi" },
+            { topic: "Usaha & Energi", question: "Tuas/pengungkit, katrol, bidang miring, dan roda berporos merupakan jenis alat yang secara umum disebut?", answer: "Pesawat Sederhana" },
+            { topic: "Usaha & Energi", question: "Gunting, tang, dan jungkat-jungkit merupakan contoh tuas jenis pertama karena posisi titik tumpu berada di antara?", answer: "Titik Beban dan Titik Kuasa" },
+
+            // Topik 18: Zat dan Perubahannya (5)
+            { topic: "Zat dan Perubahannya", question: "Wujud zat yang letak molekulnya sangat berdekatan, bentuk tetap, dan gaya tarik antar molekul sangat kuat adalah?", answer: "Zat Padat" },
+            { topic: "Zat dan Perubahannya", question: "Peristiwa alamiah perubahan wujud langsung dari fase gas menjadi padat (contoh pembentukan butir salju) dinamakan?", answer: "Mengkristal (Deposisi)" },
+            { topic: "Zat dan Perubahannya", question: "Kertas yang dibakar api hingga menjadi abu dan gas karbon pembakaran adalah contoh dari jenis perubahan?", answer: "Kimia" },
+            { topic: "Zat dan Perubahannya", question: "Kerapatan materi atau massa jenis (ρ) dari suatu zat dirumuskan sebagai perbandingan antara massa zat dibagi dengan?", answer: "Volume" },
+            { topic: "Zat dan Perubahannya", question: "Bongkahan es yang mencair dan air yang menguap tidak menghasilkan zat baru, sehingga digolongkan dalam perubahan?", answer: "Fisika" }
+        ];
+
+        let shuffledQuestions = [];
+        let currentCardIndex = 0;
+        let isFlipped = false;
+
+        // Elemen DOM
+        const flashcardInner = document.getElementById('flashcard-inner');
+        const questionText = document.getElementById('question-text');
+        const answerText = document.getElementById('answer-text');
+        const topicFront = document.getElementById('topic-front');
+        const topicBack = document.getElementById('topic-back');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const progressTextDesktop = document.getElementById('progress-text-desktop');
+        const progressTextMobile = document.getElementById('progress-text-mobile');
+
+        // Algoritma Fisher-Yates untuk mengacak array
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            // Selama masih ada elemen yang belum diacak
+            while (currentIndex != 0) {
+                // Pilih elemen tersisa
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                // Tukar (swap) dengan elemen saat ini
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Fungsi menyiapkan aplikasi di awal
+        function initApp() {
+            // Duplikat array asli agar aslinya tidak termodifikasi
+            shuffledQuestions = shuffleArray([...rawQuestions]);
+            currentCardIndex = 0;
+            renderCard();
+        }
+
+        // Menampilkan kartu ke layar berdasarkan index
+        function renderCard() {
+            const data = shuffledQuestions[currentCardIndex];
+            
+            // Render Konten
+            questionText.innerText = data.question;
+            answerText.innerText = data.answer;
+            topicFront.innerText = data.topic;
+            topicBack.innerText = data.topic;
+
+            // Render Progres (Kartu X dari Total)
+            const progressStr = `Kartu ${currentCardIndex + 1} dari ${shuffledQuestions.length}`;
+            progressTextDesktop.innerText = progressStr;
+            progressTextMobile.innerText = progressStr;
+
+            // Atur status tombol
+            btnPrev.disabled = currentCardIndex === 0;
+            btnNext.disabled = currentCardIndex === shuffledQuestions.length - 1;
+        }
+
+        // Fungsi memutar balik kartu
+        function flipCard() {
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                flashcardInner.classList.add('rotate-y-180');
+            } else {
+                flashcardInner.classList.remove('rotate-y-180');
+            }
+        }
+
+        // Fungsi pergi ke kartu selanjutnya
+        function nextCard() {
+            if (currentCardIndex < shuffledQuestions.length - 1) {
+                changeCardContent(currentCardIndex + 1);
+            }
+        }
+
+        // Fungsi kembali ke kartu sebelumnya
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                changeCardContent(currentCardIndex - 1);
+            }
+        }
+
+        // Mengatur transisi pergantian konten jika kartu sedang dibalik
+        function changeCardContent(newIndex) {
+            if (isFlipped) {
+                // Balikkan kartu ke posisi pertanyaan (tanpa tunggu)
+                flashcardInner.classList.remove('rotate-y-180');
+                isFlipped = false;
+                
+                // Beri sedikit jeda waktu agar animasi balik (unflip) mulai berjalan 
+                // sebelum teks di-update, sehingga pengguna tidak kaget.
+                setTimeout(() => {
+                    currentCardIndex = newIndex;
+                    renderCard();
+                }, 150);
+            } else {
+                currentCardIndex = newIndex;
+                renderCard();
+            }
+        }
+
+        // Jalankan saat dokumen dimuat
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Dukungan Navigasi Keyboard (Panah Kiri & Kanan, Spasi)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+    </script>
+</body>
+</html>

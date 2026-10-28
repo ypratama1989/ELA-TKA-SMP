@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Biologi: Klasifikasi Makhluk Hidup - EDUFILLAH</title>
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#10B981', // Emerald 500 for Biology theme
+                        primaryHover: '#059669', // Emerald 600
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom radio button styling */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        /* Menggunakan :has() untuk menyorot label saat input diceklis */
+        .option-label:has(.option-input:checked) {
+            border-color: #10B981;
+            background-color: #ECFDF5;
+        }
+        .option-label:has(.option-input:checked) .radio-circle {
+            border-color: #10B981;
+        }
+        .option-label:has(.option-input:checked) .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #10B981;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Status styling for Correct/Wrong after submit */
+        .status-correct {
+            border-color: #10B981 !important;
+            background-color: #ECFDF5 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10B981 !important;
+        }
+        .status-correct .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #10B981 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .status-wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEF2F2 !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #EF4444 !important;
+        }
+        .status-wrong .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #EF4444 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Smooth fade in for elements */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Helper class for pre/code blocks */
+        .code-block {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-10">
+
+    <!-- Header dengan Tombol Kembali -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-gray-600 hover:text-primary transition-colors font-medium">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1 ml-4 truncate">
+                Latihan Biologi (Klasifikasi Makhluk Hidup)
+            </h1>
+        </div>
+    </header>
+
+    <!-- Kontainer Utama -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Instruksi -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 border-l-4 border-l-primary">
+            <h2 class="text-xl font-semibold mb-2"><i class="fas fa-info-circle text-primary mr-2"></i>Petunjuk Pengerjaan</h2>
+            <p class="text-gray-600 text-sm md:text-base">
+                Pilihlah salah satu jawaban yang paling tepat! Kamu tidak diwajibkan mengisi semua soal, namun soal yang kosong akan bernilai 0. Klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk melihat skor dan pembahasan lengkap.
+            </p>
+        </div>
+
+        <!-- Form Kuis -->
+        <form id="quiz-form">
+            <div id="questions-container">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="text-center mt-10">
+                <button type="button" onclick="checkAnswers()" id="btn-submit" class="bg-primary hover:bg-primaryHover text-white font-semibold py-4 px-10 rounded-full shadow-lg transform transition hover:-translate-y-1 text-lg w-full md:w-auto">
+                    <i class="fas fa-check-circle mr-2"></i> Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Area Hasil dan Pembahasan (Awalnya Sembunyi) -->
+        <div id="result-section" class="hidden mt-12 bg-white p-8 rounded-3xl shadow-xl text-center border-t-8 border-t-primary fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Skor Akhir Kamu</h2>
+            <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-emerald-50 text-5xl font-extrabold text-primary mb-4 border-4 border-emerald-100">
+                <span id="final-score">0</span>
+            </div>
+            <p id="score-message" class="text-gray-600 text-lg mb-8 font-medium">Luar biasa! Terus tingkatkan rasa ingin tahumu!</p>
+            
+            <button type="button" onclick="resetQuiz()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition-colors flex items-center justify-center mx-auto">
+                <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-gray-500 text-sm font-medium">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logika Kuis -->
+    <script>
+        // Data Soal dan Pembahasan (Diperkaya)
+        const quizData = [
+            {
+                id: 1,
+                question: "Seorang siswa mengamati sebuah benda di laboratorium. Benda tersebut dapat bergerak ketika disentuh, mengeluarkan gas karbondioksida, namun tidak menunjukkan pertumbuhan ukuran dan tidak dapat berkembang biak. Berdasarkan karakteristik tersebut, kesimpulan yang paling tepat mengenai benda tersebut adalah...",
+                options: {
+                    A: "Termasuk makhluk hidup karena dapat bergerak dan bernapas.",
+                    B: "Termasuk benda mati karena tidak memiliki seluruh ciri kehidupan secara lengkap.",
+                    C: "Termasuk makhluk hidup transisi karena menunjukkan sebagian ciri kehidupan.",
+                    D: "Termasuk benda mati yang mengalami proses biologis buatan."
+                },
+                correct: "B",
+                explanation: "Untuk bisa disebut sebagai 'makhluk hidup', sesuatu harus memiliki <b>semua</b> ciri-ciri kehidupan tanpa terkecuali, yaitu: bergerak, bernapas, tumbuh, berkembang biak, butuh makan, peka terhadap rangsang, dan mengeluarkan zat sisa. Jika ada satu atau dua ciri saja (seperti mobil mainan yang bisa bergerak dan mengeluarkan asap knalpot), ia tetap digolongkan sebagai <b>benda mati</b> karena tidak bisa tumbuh dan beranak!"
+            },
+            {
+                id: 2,
+                question: "Perhatikan kunci determinasi sederhana berikut!<br><br><div class='code-block'>1. a. Memiliki tulang belakang ............................. (Ke nomor 2)\n   b. Tidak memiliki tulang belakang .................... (Ke nomor 3)\n2. a. Tubuh ditutupi oleh rambut .......................... Mamalia\n   b. Tubuh ditutupi oleh sisik ............................. (Ke nomor 4)\n3. a. Memiliki kaki berbuku-buku ......................... Arthropoda\n   b. Tubuh lunak tanpa kaki .............................. Mollusca\n4. a. Bernapas dengan insang sepanjang hidupnya ... Pisces\n   b. Bernapas dengan paru-paru ........................ Reptilia</div><br>Jika seorang siswa mengamati seekor kucing, maka urutan nomor kunci determinasi yang tepat untuk mengidentifikasi kucing tersebut adalah...",
+                options: {
+                    A: "1a &rarr; 2a",
+                    B: "1a &rarr; 2b &rarr; 4b",
+                    C: "1b &rarr; 3a",
+                    D: "1b &rarr; 3b"
+                },
+                correct: "A",
+                explanation: "Mari kita analisis kucing bersama-sama! Pertama, apakah kucing punya tulang belakang? Ya, berarti kita pilih <b>1a</b> (lanjut ke nomor 2). Di nomor 2, apakah kulit kucing bersisik seperti ular atau berambut (berbulu)? Tentu saja berambut lebat! Maka kita pilih <b>2a</b>. Karena 2a langsung menunjuk ke kelompok 'Mamalia', maka perjalanan identifikasi selesai di urutan <b>1a &rarr; 2a</b>."
+            },
+            {
+                id: 3,
+                question: "Perhatikan nama ilmiah dari tiga organisme berikut:<br>1) <i>Felis catus</i><br>2) <i>Felis chaus</i><br>3) <i>Panthera tigris</i><br><br>Berdasarkan sistem tata nama ganda (Binomial Nomenclature), pernyataan yang paling benar mengenai hubungan kekerabatan ketiga organisme tersebut adalah...",
+                options: {
+                    A: "Organisme 1 dan 2 memiliki kekerabatan paling dekat karena berada dalam genus yang sama.",
+                    B: "Organisme 2 dan 3 memiliki kekerabatan paling dekat karena memiliki ukuran tubuh yang mirip.",
+                    C: "Organisme 1 dan 3 memiliki kekerabatan paling dekat karena termasuk dalam spesies yang sama.",
+                    D: "Ketiga organisme tidak memiliki hubungan kekerabatan karena nama belakangnya berbeda."
+                },
+                correct: "A",
+                explanation: "Dalam tata nama ilmiah (Binomial), kata <b>pertama</b> menunjukkan marga/keluarga besarnya (Genus). <i>Felis catus</i> (Kucing rumah) dan <i>Felis chaus</i> (Kucing hutan) sama-sama memiliki nama depan <i>Felis</i>, artinya mereka ibarat sepupu dekat di dalam satu marga. Sedangkan <i>Panthera tigris</i> (Harimau) marganya adalah <i>Panthera</i>, jadi kekerabatannya lebih jauh dengan si <i>Felis</i>."
+            },
+            {
+                id: 4,
+                question: "Perhatikan diagram kladogram sederhana di bawah ini!<br><br><div class='code-block'>[Hiu] ------ [Ikan Mas] ------ [Katak] ------ [Kelinci]\n  |\n  +---(Rahang)---+\n                 |\n                 +-------(Paru-paru)-----+\n                                         |\n                                         +--------(Rambut)----------+</div><br>Berdasarkan kladogram di atas, karakteristik yang membedakan antara Katak dan Kelinci adalah keberadaan...",
+                options: {
+                    A: "Rahang berengsel",
+                    B: "Paru-paru",
+                    C: "Rambut",
+                    D: "Tulang belakang"
+                },
+                correct: "C",
+                explanation: "Kladogram (pohon evolusi) dibaca dari kiri ke kanan. Ciri yang tertulis di bawah garis, dimiliki oleh hewan-hewan di sebelah kanannya. Katak dan Kelinci sama-sama berada di sebelah kanan 'Paru-paru', jadi keduanya punya paru-paru. Tapi coba lihat letak kata 'Rambut'! Ia muncul tepat di persimpangan sebelum Kelinci. Artinya, hanya Kelinci yang punya rambut, sedangkan Katak tidak."
+            },
+            {
+                id: 5,
+                question: "Seorang peneliti mengamati sampel sel dari organisme misterius di bawah mikroskop elektron. Hasil pengamatan menunjukkan:<br>- Memiliki dinding sel yang tersusun atas kitin.<br>- Tidak memiliki kloroplas.<br>- Bersifat multiseluler berbentuk filamen (hifa).<br><br>Berdasarkan karakteristik tersebut, keputusan pengelompokan yang paling tepat untuk organisme ini adalah memasukkannya ke dalam Kingdom...",
+                options: {
+                    A: "Plantae, karena memiliki dinding sel dan multiseluler.",
+                    B: "Protista, karena struktur tubuhnya masih sangat sederhana.",
+                    C: "Fungi, karena memiliki dinding sel kitin dan tidak berklorofil.",
+                    D: "Monera, karena tersusun atas hifa-hifa halus."
+                },
+                correct: "C",
+                explanation: "Kata kuncinya ada pada 'dinding sel kitin' dan 'tidak berkloroplas' (tidak bisa fotosintesis). Tanaman (Plantae) memang punya dinding sel, tapi terbuat dari <i>selulosa</i> dan mereka hijau karena punya kloroplas. Makhluk hidup dengan ciri-ciri hifa (benang-benang halus), berdinding sel dari kitin, dan menyerap makanannya (heterotrof) adalah karakteristik mutlak milik keluarga <b>Jamur (Fungi)</b>."
+            },
+            {
+                id: 6,
+                question: "Di bawah mikroskop, tampak irisan melintang batang suatu tumbuhan yang menunjukkan berkas pengangkut (xilem dan floem) tersebar secara acak di seluruh jaringan dasar, tanpa adanya kambium. Berdasarkan karakteristik anatomi tersebut, tumbuhan ini dapat diklasifikasikan ke dalam kelompok...",
+                options: {
+                    A: "Dikotil, karena berkas pengangkutnya tersebar.",
+                    B: "Monokotil, karena tidak memiliki kambium dan berkas pengangkut tersebar.",
+                    C: "Gymnospermae, karena berkas pengangkutnya tidak teratur.",
+                    D: "Pteridophyta, karena belum memiliki kambium sejati."
+                },
+                correct: "B",
+                explanation: "Ini adalah trik membedakan jenis tumbuhan dari batangnya!<br>1. <b>Dikotil (biji belah):</b> Saluran airnya (berkas pengangkut) tersusun sangat rapi membentuk lingkaran seperti roda ban, dan mereka punya kambium yang membuat batangnya bisa tumbuh membesar dan berkayu (contoh: pohon mangga).<br>2. <b>Monokotil (biji tunggal):</b> Saluran airnya berantakan/tersebar acak (seperti wajah berbintik) dan tidak punya kambium sehingga batangnya biasanya kecil memanjang (contoh: pohon jagung, kelapa, rumput). Maka batang acak itu pasti batang Monokotil."
+            },
+            {
+                id: 7,
+                question: "Organisme bersel satu yang memiliki inti sel seluler (eukariotik), bergerak menggunakan rambut getar (silia), dan sering ditemukan di air tawar yang kaya bahan organik dikelompokkan ke dalam...",
+                options: {
+                    A: "Bakteri (Monera)",
+                    B: "Protista mirip hewan (Protozoa)",
+                    C: "Protista mirip tumbuhan (Alga)",
+                    D: "Fungi mikroskopis"
+                },
+                correct: "B",
+                explanation: "Mari kita bedah sifatnya: Bersel satu, punya inti sel sejati (eukariotik), dan bisa 'berenang' kesana-kemari pakai rambut getar (silia). Karena ia bisa bergerak aktif berburu makanan layaknya seekor hewan, ilmuwan menyebutnya sebagai <b>Protista mirip hewan</b> atau <b>Protozoa</b> (Proto = pertama, Zoa = hewan). Contoh terkenalnya adalah si 'sandal air' <i>Paramecium</i>."
+            },
+            {
+                id: 8,
+                question: "Mengapa jamur (Fungi) tidak lagi dikelompokkan ke dalam Kingdom Plantae (tumbuhan) dalam sistem klasifikasi modern, meskipun keduanya memiliki dinding sel dan tidak dapat berpindah tempat?",
+                options: {
+                    A: "Jamur bersifat heterotrof dan dinding selnya tersusun atas kitin, sedangkan tumbuhan bersifat autotrof dengan dinding sel selulosa.",
+                    B: "Jamur tidak memiliki organel sel bermembran (prokariotik), sedangkan tumbuhan bersifat eukariotik.",
+                    C: "Jamur berkembang biak dengan spora, sedangkan semua tumbuhan berkembang biak dengan biji.",
+                    D: "Jamur tidak memiliki jaringan pengangkut xilem dan floem, sedangkan semua tumbuhan memilikinya."
+                },
+                correct: "A",
+                explanation: "Zaman dulu, jamur dianggap keluarga tumbuhan karena sama-sama kaku tertanam di tanah. Namun setelah diteliti, jamur ketahuan <b>tidak bisa memasak makanannya sendiri (Heterotrof)</b>; mereka hidup dengan menyedot sisa-sisa mahluk hidup lain! Berbeda dengan Tumbuhan hijau yang super mandiri memasak makanan pakai cahaya matahari (Autotrof). Selain itu, batu bata pembuat tubuhnya juga beda: Jamur pakai <i>kitin</i> (mirip kulit kepiting), tumbuhan pakai <i>selulosa</i>."
+            },
+            {
+                id: 9,
+                question: "Seorang siswa menemukan hewan dengan ciri-ciri berikut: suhu tubuhnya berubah-ubah mengikuti suhu lingkungan (poikiloterm), jantungnya terdiri dari tiga ruang (dua atrium, satu ventrikel), dan kulitnya selalu basah/berlendir. Hewan tersebut termasuk dalam kelas...",
+                options: {
+                    A: "Pisces",
+                    B: "Amphibia",
+                    C: "Reptilia",
+                    D: "Aves"
+                },
+                correct: "B",
+                explanation: "Ciri 'kulit basah/berlendir' adalah kunci utamanya. Hewan yang kulitnya harus selalu basah karena mereka menggunakannya untuk bernapas membantu paru-parunya adalah golongan <b>Amfibi (Amphibia)</b>, seperti katak. Jika ia Reptil, kulitnya akan kering dan bersisik tajam. Jika Pisces (ikan), ia bernapas dengan insang di air, bukan kulit berlendir di darat."
+            },
+            {
+                id: 10,
+                question: "Ditemukan organisme baru di palung laut dalam dengan ciri: multiseluler, heterotrof, sel-selnya tidak memiliki dinding sel, dan memiliki kemampuan untuk berpindah tempat secara aktif pada fase tertentu dalam hidupnya. Beberapa ilmuwan berdebat mengenai klasifikasinya. Evaluasi manakah yang paling tepat untuk menempatkan organisme tersebut?",
+                options: {
+                    A: "Dimasukkan ke Kingdom Protista karena habitatnya di laut dalam.",
+                    B: "Dimasukkan ke Kingdom Plantae karena mampu beradaptasi di lingkungan ekstrem.",
+                    C: "Dimasukkan ke Kingdom Fungi karena bersifat heterotrof di laut dalam.",
+                    D: "Dimasukkan ke Kingdom Animalia karena multiseluler, heterotrof, dan selnya tidak berdinding."
+                },
+                correct: "D",
+                explanation: "Ada 3 syarat mutlak yang membuat sebuah makhluk dijuluki sebagai HEWAN (Animalia):<br>1. Tubuhnya dibentuk oleh banyak sel (Multiseluler).<br>2. Tidak punya dinding sel pelindung (makanya tubuh kita kenyal/empuk).<br>3. Makan dari luar/butuh makhluk lain (Heterotrof).<br>Organisme baru misterius itu lolos ke-3 syarat ini, jadi tanpa ragu ia masuk Kingdom <b>Animalia</b>!"
+            },
+            {
+                id: 11,
+                question: "Perhatikan bagan dikotomi tumbuhan berikut!<br><br><div class='code-block'>Tumbuhan\n-- 1. Menghasilkan biji ......................... Spermatophyta\n-- 2. Tidak menghasilkan biji\n   -- a. Memiliki pembuluh angkut ......... Pteridophyta\n   -- b. Tidak memiliki pembuluh angkut ... Bryophyta</div><br>Berdasarkan bagan di atas, perbedaan mendasar antara lumut (Bryophyta) dan paku (Pteridophyta) adalah...",
+                options: {
+                    A: "Lumut menghasilkan biji, sedangkan paku menghasilkan spora.",
+                    B: "Paku memiliki pembuluh angkut, sedangkan lumut tidak memiliki pembuluh angkut.",
+                    C: "Lumut termasuk tumbuhan berbiji, sedangkan paku termasuk tumbuhan tidak berbiji.",
+                    D: "Paku tidak memiliki akar sejati, sedangkan lumut memiliki akar sejati."
+                },
+                correct: "B",
+                explanation: "Di tabel terlihat sangat jelas. Lumut dan Paku sama-sama berada di bawah payung nomor 2 (Tidak menghasilkan biji alias pakai Spora). Nah yang membedakan mereka berdua adalah di huruf 'a' dan 'b'. Paku (Pteridophyta) berada di jalur 'Memiliki pembuluh angkut' (punya urat air/xilem floem), sedangkan si mungil Lumut (Bryophyta) ada di jalur 'Tidak memiliki pembuluh angkut' sehingga ukuran tubuhnya sangat ceper."
+            },
+            {
+                id: 12,
+                question: "Penulisan nama ilmiah padi yang benar menurut aturan tata nama ganda (Binomial Nomenclature) adalah...",
+                options: {
+                    A: "<i>oryza sativa</i>",
+                    B: "Oryza Sativa",
+                    C: "<i>Oryza sativa</i>",
+                    D: "Oryza sativa"
+                },
+                correct: "C",
+                explanation: "Rumus tata nama ilmiah buatan Carolus Linnaeus itu tegas:<br>1. Terdiri dari 2 kata.<br>2. Kata pertama diawali huruf <b>BESAR</b>, kata kedua diawali huruf <b>kecil</b>.<br>3. Tulisannya harus dicetak <b>Miring (Italic)</b> jika diketik komputer. <br>Sehingga penulisan yang benar dan sah adalah <i>Oryza sativa</i> (O besar, s kecil, dan miring)."
+            },
+            {
+                id: 13,
+                question: "Suatu hewan memiliki tubuh yang terbagi menjadi kepala, dada, dan perut yang menyatu (sefalotoraks), memiliki kaki sebanyak 5 pasang (10 kaki), dan hidup di lingkungan air. Hewan tersebut dikelompokkan ke dalam kelas...",
+                options: {
+                    A: "Insecta",
+                    B: "Arachnida",
+                    C: "Crustacea",
+                    D: "Myriapoda"
+                },
+                correct: "C",
+                explanation: "Ayo kita kenali kelompok monster kecil (Arthropoda) ini berdasarkan jumlah kakinya!<br>- <i>Insecta</i> (Serangga/Semut) kakinya 3 pasang (6 kaki).<br>- <i>Arachnida</i> (Laba-laba) kakinya 4 pasang (8 kaki).<br>- <i>Crustacea</i> (Udang & Kepiting) kakinya <b>5 pasang (10 kaki)</b>, badannya bercangkang keras, dan suka hidup di perairan.<br>- <i>Myriapoda</i> (Kelabang) kakinya super banyak. Maka hewan air berkaki 10 ini pasti si Udang/Kepiting (Crustacea)!"
+            },
+            {
+                id: 14,
+                question: "Pada awalnya, Ernst Haeckel mengusulkan sistem 3 Kingdom dengan menambahkan Kingdom Protista. Analisis yang paling mendasari pemisahan Protista dari Kingdom Plantae dan Animalia adalah...",
+                options: {
+                    A: "Protista memiliki kemampuan fotosintesis yang jauh lebih kuat dibanding tumbuhan.",
+                    B: "Banyak organisme mikroskopis yang memiliki ciri transisi, seperti Euglena yang dapat bergerak aktif seperti hewan tetapi berklorofil seperti tumbuhan.",
+                    C: "Protista hanya dapat hidup di perairan, sedangkan Plantae dan Animalia hanya hidup di darat.",
+                    D: "Protista tidak memiliki materi genetik berupa DNA di dalam selnya."
+                },
+                correct: "B",
+                explanation: "Ilmuwan dulu kebingungan saat mikroskop ditemukan. Mereka melihat <i>Euglena</i>, semacam plankton yang punya klorofil hijau (bisa fotosintesis kayak daun) tapi punya cambuk ekor untuk berenang kesana kemari dan bisa memakan kuman lain (kayak hewan pemangsa). Karena dia tidak cocok dimasukkan ke kelompok Hewan murni maupun Tumbuhan murni (mahluk galau/transisi), akhirnya dibuatkanlah 'kamar khusus' bernama Kingdom Protista."
+            },
+            {
+                id: 15,
+                question: "Dalam klasifikasi modern, penggunaan analisis DNA (sekuensing genetik) dinilai jauh lebih akurat dibandingkan klasifikasi tradisional yang hanya berdasarkan kesamaan morfologi (bentuk luar). Evaluasi berikut yang mendukung pernyataan tersebut adalah...",
+                options: {
+                    A: "Analisis morfologi sering kali mengecoh karena adanya evolusi konvergen, di mana dua organisme yang tidak berkerabat dekat memiliki bentuk tubuh mirip akibat adaptasi lingkungan yang sama.",
+                    B: "Analisis DNA selalu menghasilkan pengelompokan yang sama persis dengan analisis morfologi sehingga lebih praktis.",
+                    C: "Morfologi luar makhluk hidup tidak pernah berubah sepanjang hayatnya, sedangkan DNA terus berubah setiap hari.",
+                    D: "Analisis DNA hanya dapat digunakan untuk mengklasifikasikan tumbuhan, bukan hewan atau bakteri."
+                },
+                correct: "A",
+                explanation: "Hati-hati, melihat buku dari sampulnya saja bisa menipu! Contohnya: Lumba-lumba dan Hiu badannya sama-sama seperti torpedo bersirip panjang. Kalau lihat fisiknya saja (Morfologi), pasti kita sebut mereka saudara. Padahal DNA membuktikan bahwa Hiu itu ikan bertelur, sedangkan Lumba-lumba mamalia menyusui yang lebih berkerabat dekat dengan kambing! Tes DNA membongkar tipuan alam (Evolusi konvergen) ini dengan akurat."
+            },
+            {
+                id: 16,
+                question: "Hewan yang memiliki simetri tubuh radial, tubuh berpori (ostium), dan hidup menetap di dasar laut (sesil) digolongkan ke dalam filum...",
+                options: {
+                    A: "Coelenterata",
+                    B: "Porifera",
+                    C: "Platyhelminthes",
+                    D: "Echinodermata"
+                },
+                correct: "B",
+                explanation: "Kata 'pori-pori (ostium)' adalah kunci utamanya. Hewan ini mirip bongkahan spons cuci piring raksasa yang menempel kaku di dasar laut sambil menyaring air. Oleh karena tubuhnya penuh pori (lubang-lubang), hewan ini dinamakan filum <b>Porifera</b> (<i>Porus</i> = lubang, <i>Ferre</i> = membawa). Tokoh kartun Spongebob Squarepants terinspirasi dari hewan Porifera ini!"
+            },
+            {
+                id: 17,
+                question: "Tumbuhan pinus (<i>Pinus merkusii</i>) dimasukkan ke dalam kelompok Gymnospermae (tumbuhan berbiji terbuka) karena...",
+                options: {
+                    A: "Bijinya tidak dilindungi oleh daun buah (ovarium) melainkan terletak pada strobilus.",
+                    B: "Tidak memiliki bunga sebagai alat perkembangbiakan.",
+                    C: "Menggugurkan daunnya pada musim kemarau untuk mengurangi penguapan.",
+                    D: "Memiliki pembuluh angkut yang sangat sederhana dibandingkan tumbuhan dikotil."
+                },
+                correct: "A",
+                explanation: "Pernah makan buah mangga? Biji mangga aman terlindungi di dalam 'daging buah' yang manis. Mangga disebut biji tertutup. Berbeda dengan pohon Pinus! Biji pinus nongkrong begitu saja alias telanjang di permukaan daun-daun keras (disebut runjung/strobilus), tanpa selimut daging buah. Oleh sebab itulah Pinus dijuluki <b>Gymnospermae (Gymnos = Telanjang/terbuka, Spermae = biji)</b>."
+            },
+            {
+                id: 18,
+                question: "Bakteri <i>Lactobacillus bulgaricus</i> bermanfaat dalam pembuatan yoghurt. Bakteri ini dimasukkan ke dalam Kingdom Monera karena memiliki ciri khas utama yaitu...",
+                options: {
+                    A: "Bersel banyak (multiseluler)",
+                    B: "Tidak memiliki membran inti sel (prokariotik)",
+                    C: "Memiliki dinding sel yang tebal dari selulosa",
+                    D: "Mampu bergerak aktif dengan flagela"
+                },
+                correct: "B",
+                explanation: "Syarat masuk ke geng Kingdom Monera (kerajaan para bakteri) itu hanya satu tapi sangat ketat: Mereka <b>Prokariotik</b>! Apa itu prokariotik? Artinya, materi genetik atau otak sel mereka berserakan telanjang di dalam tubuhnya, tidak dibungkus rapi oleh sebuah kapsul (membran inti sel). Sedangkan Kingdom lain dari mulai Protista sampai Hewan sudah punya bungkus rapi (Eukariotik)."
+            },
+            {
+                id: 19,
+                question: "Seorang siswa mengelompokkan lumba-lumba, hiu, dan paus ke dalam kelompok 'Ikan' karena ketiganya hidup di air dan memiliki sirip untuk berenang. Evaluasi yang tepat terhadap pengelompokan yang dilakukan siswa tersebut adalah...",
+                options: {
+                    A: "Benar, karena habitat dan alat gerak merupakan dasar utama klasifikasi hewan air.",
+                    B: "Salah, karena lumba-lumba dan paus bernapas dengan paru-paru serta menyusui anaknya, sehingga keduanya termasuk kelas Mamalia, bukan Pisces.",
+                    C: "Benar, karena secara morfologi luar ketiganya memiliki bentuk tubuh streamline yang identik dengan ikan.",
+                    D: "Salah, karena hiu bernapas dengan paru-paru sedangkan lumba-lumba bernapas dengan insang."
+                },
+                correct: "B",
+                explanation: "Siswa tersebut terkecoh! Meski Lumba-lumba dan Paus jago berenang layaknya ikan, anatomi tubuh dalam mereka bercerita lain. Mereka melahirkan anak (bukan bertelur), menyusui bayinya, berdarah panas, dan jika kamu perhatikan, sesekali mereka harus muncul ke permukaan laut untuk menghirup oksigen menggunakan <b>paru-paru</b> mereka (melalui lubang sembur), persis seperti manusia. Jadi, Paus dan Lumba-lumba adalah <b>Mamalia laut</b>, bukan ikan (Pisces)."
+            },
+            {
+                id: 20,
+                question: "Virus sering kali memicu perdebatan di kalangan ilmuwan biologi mengenai posisinya dalam sistem klasifikasi makhluk hidup. Alasan utama mengapa virus tidak dimasukkan ke dalam sistem klasifikasi 5 Kingdom makhluk hidup adalah...",
+                options: {
+                    A: "Virus berukuran sangat kecil (ultramikroskopis) sehingga sulit diamati.",
+                    B: "Virus tidak memiliki struktur seluler (aseluler) dan hanya dapat menunjukkan gejala hidup jika berada di dalam sel inang hidup.",
+                    C: "Virus memiliki materi genetik berupa RNA saja, tidak pernah memiliki DNA.",
+                    D: "Virus tidak dapat menyebabkan penyakit pada tumbuhan dan hewan tingkat tinggi."
+                },
+                correct: "B",
+                explanation: "Virus itu ibarat 'zombie' di dunia biologi. Mereka bukan sel yang hidup (aseluler); tidak punya perut (sitoplasma) dan tidak bisa makan. Kalau mereka menempel di meja, mereka membeku seperti benda mati (kristal). Tapi uniknya, begitu mereka menempel dan masuk ke dalam tubuh manusia atau sel hidup lain, 'program jahat' mereka aktif lalu menggandakan diri (berkembang biak). Karena keanehan ini, mereka ditendang dari 5 Kingdom makhluk hidup sejati."
+            }
+        ];
+
+        // Parser text untuk tag [GAMBAR: ...] menjadi tag <img> (jika ada - cadangan)
+        function parseContent(text) {
+            return text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" class="max-w-full h-auto rounded-lg shadow-md my-4 mx-auto block border border-gray-200">');
+        }
+
+        // Fungsi Render Soal
+        function renderQuiz() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = ''; // Bersihkan container
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Card Pembungkus Soal
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6";
+                card.id = `card-q${questionNum}`;
+                
+                // Header & Teks Soal
+                const questionText = document.createElement('h3');
+                questionText.className = "text-lg font-medium text-gray-800 mb-5 leading-relaxed";
+                questionText.innerHTML = `<span class="bg-emerald-100 text-primary font-bold px-3 py-1 rounded-md mr-2">Soal ${questionNum}</span> <br class="block sm:hidden"><div class="mt-3 sm:inline sm:mt-0">${parseContent(q.question)}</div>`;
+                card.appendChild(questionText);
+
+                // Kontainer Pilihan Jawaban
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = "flex flex-col space-y-3";
+
+                // Loop Opsi (A, B, C, D)
+                for (const [key, value] of Object.entries(q.options)) {
+                    const label = document.createElement('label');
+                    // Tambahkan .option-label untuk sinkron dengan selektor CSS :has()
+                    label.className = "option-label relative flex items-start p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50";
+                    label.htmlFor = `q${questionNum}_${key}`;
+
+                    const input = document.createElement('input');
+                    input.type = "radio";
+                    input.name = `q${questionNum}`;
+                    input.id = `q${questionNum}_${key}`;
+                    input.value = key;
+                    input.className = "option-input sr-only"; // Hide default radio
+
+                    const circle = document.createElement('div');
+                    circle.className = "radio-circle flex-shrink-0 w-6 h-6 border-2 border-gray-300 rounded-full mr-4 relative mt-0.5 transition-colors";
+
+                    const textSpan = document.createElement('div');
+                    textSpan.className = "text-gray-700 font-medium";
+                    textSpan.innerHTML = `<span class="font-bold mr-1">${key}.</span> ${parseContent(value)}`;
+
+                    label.appendChild(input);
+                    label.appendChild(circle);
+                    label.appendChild(textSpan);
+                    optionsWrapper.appendChild(label);
+                }
+                card.appendChild(optionsWrapper);
+
+                // Kotak Pembahasan (Awalnya Sembunyi)
+                const explanationBox = document.createElement('div');
+                explanationBox.id = `exp-q${questionNum}`;
+                explanationBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed";
+                
+                const expTitle = document.createElement('div');
+                expTitle.id = `exp-title-q${questionNum}`;
+                expTitle.className = "font-bold mb-2 flex items-center";
+                
+                const expContent = document.createElement('div');
+                expContent.innerHTML = parseContent(q.explanation);
+                
+                explanationBox.appendChild(expTitle);
+                explanationBox.appendChild(expContent);
+
+                card.appendChild(explanationBox);
+                container.appendChild(card);
+            });
+        }
+
+        // Panggil fungsi render saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', renderQuiz);
+
+        // Fungsi Periksa Jawaban
+        function checkAnswers() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                const userAnswer = formData.get(`q${questionNum}`);
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                const expTitle = document.getElementById(`exp-title-q${questionNum}`);
+                
+                // Ambil semua label opsi di soal ini untuk di-reset stylingnya dan matikan input
+                document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                    input.disabled = true; // Disable input setelah disubmit
+                });
+
+                if (userAnswer === q.correct) {
+                    correctCount++;
+                    
+                    // Style UI untuk Jawaban Benar
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-emerald-50 border-emerald-500 text-emerald-900 block fade-in";
+                    expTitle.innerHTML = `<i class="fas fa-check-circle text-emerald-500 text-xl mr-2"></i> Benar! Jawaban: ${q.correct}`;
+                    
+                    // Highlight opsi yang benar
+                    const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                    selectedLabel.classList.add('status-correct');
+
+                } else {
+                    // Style UI untuk Jawaban Salah atau Kosong
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-red-50 border-red-500 text-red-900 block fade-in";
+                    let titleText = userAnswer 
+                        ? `<i class="fas fa-times-circle text-red-500 text-xl mr-2"></i> Salah.`
+                        : `<i class="fas fa-exclamation-circle text-orange-500 text-xl mr-2"></i> Tidak dijawab.`;
+                    expTitle.innerHTML = `${titleText} Jawaban yang tepat: <b>${q.correct}</b>`;
+                    
+                    // Highlight opsi yang disalahkan user (jika ada isinya)
+                    if (userAnswer) {
+                        const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                        selectedLabel.classList.add('status-wrong');
+                    }
+                    // Highlight (dengan warna hijau) opsi kunci yang sebetulnya benar
+                    const correctLabel = document.getElementById(`q${questionNum}_${q.correct}`).parentElement;
+                    correctLabel.classList.add('status-correct');
+                }
+            });
+
+            // Hitung Skor (Skala 0 - 100)
+            const finalScore = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Tampilkan Skor di UI
+            const resultSection = document.getElementById('result-section');
+            const finalScoreEl = document.getElementById('final-score');
+            const scoreMessageEl = document.getElementById('score-message');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            finalScoreEl.innerText = finalScore;
+            
+            if (finalScore === 100) {
+                scoreMessageEl.innerText = "Sempurna! Kamu pantas menjadi ilmuwan Biologi sejati!";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerText = "Luar biasa! Pengetahuanmu tentang makhluk hidup sudah sangat luas.";
+            } else if (finalScore >= 50) {
+                scoreMessageEl.innerText = "Kerja bagus! Pelajari lagi bagian klasifikasi yang membuatmu terkecoh.";
+            } else {
+                scoreMessageEl.innerText = "Jangan menyerah! Dunia biologi itu luas. Yuk baca lagi pembahasannya yang seru di atas!";
+            }
+
+            resultSection.classList.remove('hidden');
+            btnSubmit.classList.add('hidden'); // Sembunyikan tombol submit
+
+            // Scroll mulus ke bawah (bagian skor)
+            // scrollIntoView disabled to prevent screen jumping
+        }
+
+        // Fungsi Ulangi Tes
+        function resetQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.reset(); // Reset form radio buttons
+
+            // Re-enable inputs dan hapus styling/kelas
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Sembunyikan box pembahasan
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                expBox.classList.add('hidden');
+                expBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed"; // reset classes
+                
+                // Reset radio styling dan enable kembali
+                document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.disabled = false;
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                });
+            });
+
+            // Sembunyikan hasil & tampilkan tombol submit
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('btn-submit').classList.remove('hidden');
+
+            // Scroll otomatis ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t4',
+          topicIndex: 4,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Sistem Reproduksi Manusia</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdf2f8; }
+        pre::-webkit-scrollbar { height: 8px; }
+        pre::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 4px; }
+        pre::-webkit-scrollbar-track { background: #fff1f2; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-rose-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="p-2 bg-rose-700 hover:bg-rose-800 rounded-full transition duration-200 cursor-pointer" title="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div>
+                    <h1 class="text-xl font-bold">Latihan Soal Biologi</h1>
+                    <p class="text-xs text-rose-200">Sistem Reproduksi Manusia & Kesehatan</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-rose-100">
+            <p class="text-sm text-gray-600">Pilihlah jawaban yang paling tepat. Anda tidak perlu mengisi semua soal terlebih dahulu; cukup tekan tombol <strong>Periksa Jawaban</strong> di bagian bawah untuk melihat skor skala 0&ndash;100 dan pembahasan lengkapnya secara instan.</p>
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q1">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">1.</span>Perhatikan beberapa organ reproduksi pria berikut!<br>
+                (1) Testis<br>(2) Vas deferens<br>(3) Epididimis<br>(4) Uretra<br><br>
+                Urutan jalannya sel sperma dari tempat pembentukan hingga keluar dari tubuh yang benar adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q1" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. (1) &ndash; (2) &ndash; (3) &ndash; (4)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q1" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. (1) &ndash; (3) &ndash; (2) &ndash; (4)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q1" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. (3) &ndash; (1) &ndash; (2) &ndash; (4)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q1" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. (4) &ndash; (3) &ndash; (2) &ndash; (1)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Jalur jalannya sperma dimulai dari <strong>Testis</strong> (1) sebagai tempat pembentukan/spermatogenesis &rarr; menuju <strong>Epididimis</strong> (3) untuk pematangan dan penyimpanan sementara &rarr; disalurkan lewat saluran <strong>Vas deferens</strong> (2) &rarr; dan akhirnya keluar tubuh melalui saluran <strong>Uretra</strong> (4) di dalam penis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="C" id="q2">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">2.</span>Seorang remaja laki-laki mengalami perubahan fisik berupa suara yang menjadi lebih berat dan tumbuhnya rambut di area tertentu. Hormon yang paling bertanggung jawab terhadap munculnya ciri-ciri kelamin sekunder tersebut diproduksi oleh organ ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q2" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Epididimis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q2" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Vesikula seminalis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q2" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Testis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q2" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Kelenjar prostat</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Ciri kelamin sekunder pada pria (seperti suara membesar, kumis, janggut, dan otot bidang) dikendalikan oleh hormon testosteron. Hormon ini dihasilkan oleh sel-sel Leydig yang berada di dalam organ <strong>Testis</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q3">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">3.</span>Perhatikan deskripsi organ reproduksi wanita berikut!<br>
+                <em>(1 = Ovarium, 2 = Tuba Fallopi / Oviduk, 3 = Uterus / Rahim, 4 = Vagina)</em><br><br>
+                Proses fertilisasi (peleburan sel sperma dan sel telur) serta tempat perkembangan zigot hingga menjadi janin secara berurutan terjadi pada organ nomor ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q3" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. 1 dan 2</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q3" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. 2 dan 3</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q3" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. 2 dan 4</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q3" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. 3 dan 4</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Tempat terjadinya pembuahan atau fertilisasi adalah di saluran telur atau <strong>Tuba Fallopi / Oviduk</strong> (nomor 2). Setelah dibuahi, zigot akan berjalan turun dan menanamkan diri (implantasi) di dalam <strong>Uterus / Rahim</strong> (nomor 3) untuk tumbuh dan berkembang menjadi janin.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="A" id="q4">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">4.</span>Oogenesis adalah proses pembentukan sel telur (ovum) pada wanita. Hasil akhir dari satu sel induk telur (oosit primer) yang mengalami pembelahan meiosis adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q4" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. 1 ootid yang fungsional dan 3 polosit (badan polar)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q4" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. 4 ovum yang fungsional dan siap dibuahi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q4" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. 2 ovum fungsional dan 2 badan polar</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q4" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. 3 ootid fungsional dan 1 badan polar</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Berbeda dengan spermatogenesis yang menghasilkan 4 sel sperma fungsional, pembelahan meiosis pada oogenesis bersifat asimetris. Dari 1 oosit primer, hasil akhirnya adalah <strong>1 ootid fungsional</strong> (yang matang menjadi ovum) serta <strong>3 badan polar (polosit)</strong> berukuran kecil yang nantinya akan hancur/lisis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q5">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">5.</span>Pernyataan berikut yang menggambarkan hubungan yang tepat antara hormon dan fasenya dalam siklus menstruasi adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q5" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Estrogen memicu peluruhan dinding rahim pada fase menstruasi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q5" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Progesteron meningkat pesat setelah ovulasi untuk menebalkan dinding rahim</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q5" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. LH (Luteinizing Hormone) menurun drastis sesaat sebelum ovulasi terjadi</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q5" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. FSH (Follicle Stimulating Hormone) berfungsi menghambat pertumbuhan folikel baru</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Setelah terjadinya ovulasi (fase sekresi/luteal), korpus luteum memproduksi hormon <strong>progesteron dalam jumlah tinggi</strong>. Hormon ini bertugas merawat, mempertahankan, dan menebalkan dinding rahim (endometrium) agar siap jika terjadi penempelan embrio.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q6">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">6.</span>Seorang wanita memiliki siklus menstruasi normal 28 hari. Jika hari pertama menstruasi terakhirnya adalah tanggal 1 Oktober, maka perkiraan tanggal terjadinya ovulasi (pelepasan sel telur) berikutnya adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q6" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. 5 Oktober</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q6" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. 14 Oktober</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q6" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. 28 Oktober</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q6" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. 12 November</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Dalam siklus menstruasi normal 28 hari, peristiwa ovulasi selalu terjadi kurang lebih <strong>14 hari sebelum hari pertama menstruasi berikutnya</strong> (atau sekitar hari ke-14 dari awal menstruasi). Jika hari pertama tanggal 1 Oktober, maka $1 + 13 =$ <strong>14 Oktober</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="C" id="q7">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">7.</span>Selama masa kehamilan, janin di dalam rahim ibu dilindungi oleh beberapa membran kehamilan. Membran yang membatasi rongga tempat janin berkembang dan menghasilkan cairan ketuban untuk melindungi janin dari benturan fisik adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q7" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Korion</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q7" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Alantois</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q7" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Amnion</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q7" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Sakus vitelinus</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Kantung air ketuban dibentuk oleh membran <strong>amnion</strong>. Cairan di dalamnya berfungsi sebagai peredam kejut alami (menghindari benturan fisik dari luar), menjaga suhu tubuh janin tetap stabil, dan memungkinkan janin bergerak bebas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q8">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">8.</span>Perhatikan gejala penyakit berikut!<br>
+                &bull; Timbul luka memerah dan basah di daerah kelamin (chancre) namun tidak terasa sakit.<br>
+                &bull; Disebabkan oleh bakteri berbentuk spiral <em>Treponema pallidum</em>.<br>
+                &bull; Jika tidak diobati, dapat merusak organ tubuh lain seperti otak dan jantung.<br><br>
+                Berdasarkan gejala di atas, penyakit menular seksual yang dimaksud adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q8" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Gonore</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q8" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Sifilis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q8" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Herpes genitalis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q8" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Keputihan (Kandidiasis)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Ciri khas luka chancre (luka bersih tidak sakit) serta agen bakteri spiral <em>Treponema pallidum</em> adalah indikator medis mutlak untuk penyakit menular seksual bernama <strong>Sifilis</strong> (raja singa).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q9">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">9.</span>Upaya menjaga kesehatan sistem reproduksi yang paling tepat dilakukan saat masa menstruasi bagi remaja perempuan adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q9" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Menggunakan sabun pembersih kewanitaan dengan pH tinggi setiap hari</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q9" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Mengganti pembalut minimal 2-3 jam sekali atau saat terasa lembap</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q9" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Membatasi konsumsi air putih agar tidak sering buang air kecil</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q9" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Membilas organ intim dari arah belakang ke depan setelah buang air</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Saat menstruasi, darah haid yang tertampung di pembalut menjadi sarang empuk bagi bakteri dan jamur untuk berkembang biak. Oleh karena itu, pembalut wajib <strong>diganti secara berkala setiap 2&ndash;3 jam sekali</strong> untuk menjaga kebersihan dan mencegah iritasi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q10">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">10.</span>Mengapa kebiasaan mengenakan celana ketat dan berbahan tidak menyerap keringat sangat tidak dianjurkan bagi kesehatan sistem reproduksi pria?</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q10" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Dapat menurunkan produksi hormon testosteron secara permanen</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q10" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Meningkatkan suhu di sekitar testis sehingga mengganggu proses spermatogenesis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q10" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Menyumbat saluran vas deferens sehingga sperma tidak bisa keluar</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q10" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Mempercepat terjadinya ejakulasi dini pada usia remaja</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Testis berada di dalam skrotum di luar rongga tubuh karena pembentukan sperma (spermatogenesis) memerlukan suhu yang sedikit lebih dingin daripada suhu inti tubuh normal ($1&ndash;2^\circ\text{C}$ di bawahnya). Celana ketat menaikkan suhu skrotum, sehingga kualitas sel sperma dapat rusak atau menurun.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="C" id="q11">
+                <p class="font-semibold text-lg mb-2"><span class="text-rose-600 mr-2">11.</span>Perhatikan tabel perbedaan pembelahan sel berikut!</p>
+                <div class="overflow-x-auto mb-4 border rounded-lg">
+                    <table class="min-w-full bg-white text-sm text-left">
+                        <thead class="bg-rose-50 text-rose-900 border-b">
+                            <tr>
+                                <th class="py-2 px-3 text-center">No</th>
+                                <th class="py-2 px-3 border-l">Karakteristik</th>
+                                <th class="py-2 px-3 border-l">Mitosis</th>
+                                <th class="py-2 px-3 border-l">Meiosis</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="py-2 px-3 text-center font-bold">1</td>
+                                <td class="py-2 px-3 border-l">Tempat terjadinya</td>
+                                <td class="py-2 px-3 border-l">Sel tubuh (somatis)</td>
+                                <td class="py-2 px-3 border-l">Sel kelamin (gamet)</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-3 text-center font-bold">2</td>
+                                <td class="py-2 px-3 border-l">Jumlah sel anakan</td>
+                                <td class="py-2 px-3 border-l">2 sel anakan</td>
+                                <td class="py-2 px-3 border-l">4 sel anakan</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-3 text-center font-bold">3</td>
+                                <td class="py-2 px-3 border-l">Sifat kromosom</td>
+                                <td class="py-2 px-3 border-l">Haploid (n)</td>
+                                <td class="py-2 px-3 border-l">Diploid (2n)</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-3 text-center font-bold">4</td>
+                                <td class="py-2 px-3 border-l">Tujuan pembelahan</td>
+                                <td class="py-2 px-3 border-l">Pertumbuhan & perbaikan</td>
+                                <td class="py-2 px-3 border-l">Pembentukan gamet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="font-semibold text-lg mb-4">Perbedaan pembelahan mitosis dan meiosis yang tidak tepat ditunjukkan oleh nomor ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q11" value="A" class="mr-3 w-4 h-4 text-rose-600 shrink-0"> A. 1</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q11" value="B" class="mr-3 w-4 h-4 text-rose-600 shrink-0"> B. 2</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q11" value="C" class="mr-3 w-4 h-4 text-rose-600 shrink-0"> C. 3</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q11" value="D" class="mr-3 w-4 h-4 text-rose-600 shrink-0"> D. 4</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Pernyataan nomor 3 keliru/terbalik. Sifat kromosom sel anak hasil <strong>mitosis bersifat diploid (2n)</strong>, sedangkan sel anak hasil <strong>meiosis bersifat haploid (n)</strong> untuk keperluan fertilisasi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q12">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">12.</span>Seorang pasien didiagnosis menderita AIDS setelah melakukan tes darah. Hubungan yang paling tepat antara virus penyebab, cara penularan, dan dampak penyakit tersebut terhadap tubuh pasien adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q12" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Disebabkan oleh HPV, menular lewat udara, merusak sistem pernapasan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q12" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Disebabkan oleh HIV, menular lewat jarum suntik bersama, merusak sistem kekebalan tubuh</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q12" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Disebabkan oleh HSV, menular lewat makanan, merusak sistem pencernaan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q12" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Disebabkan oleh HIV, menular lewat bersentuhan kulit, merusak sel darah merah</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>AIDS disebabkan oleh virus <strong>HIV</strong> (<em>Human Immunodeficiency Virus</em>). Virus ini menyerang sel darah putih (limfosit T), yang berdampak pada rusaknya <strong>sistem kekebalan tubuh</strong> manusia. Penularannya terjadi lewat cairan tubuh seperti darah (misal penggunaan jarum suntik tidak steril secara bergantian) dan hubungan seksual.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q13">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">13.</span>Perhatikan ilustrasi siklus hormonal wanita! Jika hormon X mengalami lonjakan konsentrasi yang sangat tinggi (<em>peak</em>) tepat menjelang pertengahan siklus (hari ke-14), peristiwa biologis yang dipicu oleh hormon X tersebut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q13" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Menstruasi (peluruhan endometrium)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q13" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Ovulasi (pelepasan oosit sekunder)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q13" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Implantasi (penempelan embrio)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q13" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Fertilisasi (pembuahan sel telur)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Lonjakan tajam hormon LH (<em>LH surge</em>) pada pertengahan siklus haid adalah pemicu utama pecahnya folikel matang untuk melepaskan sel telur ke tuba fallopi. Proses pelepasan sel telur matang ini dinamakan <strong>ovulasi</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q14">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">14.</span>Seorang pria dewasa memutuskan untuk menjalani prosedur vasektomi sebagai metode kontrasepsi jangka panjang. Evaluasi yang paling tepat mengenai dampak prosedur ini terhadap sistem reproduksi pria tersebut adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q14" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Pria tersebut tidak lagi mampu menghasilkan sperma maupun hormon testosteron</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q14" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Pria tersebut tetap menghasilkan sperma, namun sperma tidak dapat keluar karena saluran vas deferens dipotong/diikat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q14" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Pria tersebut kehilangan kemampuan ereksi karena aliran darah ke penis terhambat</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q14" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Air mani yang dikeluarkan pria tersebut tidak lagi mengandung cairan semen dari kelenjar prostat</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Vasektomi adalah operasi kecil pemotongan saluran <strong>vas deferens</strong>. Testis tetap memproduksi sperma dan hormon testosteron secara normal, tetapi sel sperma tertahan di dalam tubuh dan diserap kembali oleh sistem imun tubuh sehingga air mani tidak lagi mengandung sel sperma.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="A" id="q15">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">15.</span>Pada proses fertilisasi, jutaan sel sperma akan berusaha menembus dinding sel telur. Bagian sperma yang mengandung enzim hidrolitik (seperti akrosin dan hialuronidase) untuk menembus lapisan pelindung sel telur (zona pelusida) terletak pada bagian ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q15" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Kepala (akrosom)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q15" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Leher (sentriol)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q15" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Badan (mitokondria)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q15" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Ekor (flagela)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Bagian depan <strong>kepala sperma</strong> dilapisi oleh tudung khusus yang disebut <strong>akrosom</strong>. Akrosom menyimpan enzim pencerna khusus untuk melubangi pelindung ovum agar inti sel sperma berhasil masuk bersatu.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q16">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">16.</span>Seorang wanita mengalami keputihan tidak biasa: cairan kehijauan, berbusa, bau busuk, disertai gatal/perih. Hasil lab menunjukkan adanya mikroorganisme bersel satu yang bergerak aktif dengan flagela. Penyakit dan agen penyebabnya adalah ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q16" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Kandidiasis disebabkan oleh jamur <em>Candida albicans</em></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q16" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Trikomoniasis disebabkan oleh protozoa <em>Trichomonas vaginalis</em></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q16" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Gonore disebabkan oleh bakteri <em>Neisseria gonorrhoeae</em></label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q16" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Klamidiasis disebabkan oleh bakteri <em>Chlamydia trachomatis</em></label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Infeksi menular seksual dengan gejala keputihan berbusa kehijauan serta disebabkan oleh mikroorganisme eukariotik bersel satu berflagela adalah ciri khas <strong>Trikomoniasis</strong> yang dipicu oleh parasit protozoa <em>Trichomonas vaginalis</em>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="A" id="q17">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">17.</span>Mengapa bayi kembar identik (monozigot) selalu memiliki jenis kelamin yang sama dan wajah yang sangat mirip, sedangkan bayi kembar fraternal (dizigot) bisa memiliki jenis kelamin berbeda dan wajah tidak mirip?</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q17" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Kembar identik berasal dari 1 sel telur dibuahi 1 sperma lalu membelah, sedangkan kembar fraternal berasal dari 2 sel telur berbeda dan 2 sperma berbeda</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q17" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Kembar identik berasal dari dua sel telur dibuahi satu sperma, sedangkan kembar fraternal dari satu sel telur dibuahi dua sperma</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q17" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Kembar identik dipengaruhi faktor nutrisi ibu, sedangkan kembar fraternal oleh genetik ayah</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q17" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Kembar identik mengalami pembelahan mitosis tidak sempurna, sedangkan kembar fraternal meiosis cepat</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Bayi kembar identik (monozigot) lahir dari satu zigot tunggal yang membelah dua, sehingga susunan DNA-nya sama persis. Sebaliknya, kembar fraternal (dizigot) terbentuk ketika dua sel telur matang secara bersamaan dan masing-masing dibuahi oleh dua sperma berbeda, sehingga genetik mereka selayaknya saudara kandung biasa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="C" id="q18">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">18.</span>Seorang remaja mengeluhkan nyeri hebat di bagian bawah perutnya setiap kali mendekati masa menstruasi (dismenore). Setelah dievaluasi oleh dokter, ditemukan jaringan endometrium yang tumbuh di luar rongga rahim, misalnya di ovarium atau tuba fallopi. Gangguan ini dikenal sebagai ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q18" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Mioma uteri</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q18" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Kanker serviks</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q18" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Endometriosis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q18" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Kista ovarium</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Kondisi medis di mana jaringan dinding rahim (endometrium) tumbuh di luar tempat seharusnya (seperti di indung telur atau dinding panggul) disebut <strong>Endometriosis</strong>. Jaringan ini tetap merespons hormon bulanan wanita sehingga memicu peradangan dan nyeri haid yang luar biasa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q19">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">19.</span>Perhatikan beberapa tindakan berikut!<br>
+                (1) Mengganti celana dalam minimal dua kali sehari.<br>
+                (2) Melakukan hubungan seksual bebas sebelum menikah.<br>
+                (3) Menggunakan handuk yang bersih, kering, dan tidak lembap.<br>
+                (4) Menggunakan jarum suntik secara bergantian saat membuat tato.<br><br>
+                Tindakan preventif yang paling efektif untuk menjaga kesehatan kebersihan organ reproduksi secara umum ditunjukkan oleh nomor ....</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q19" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. (1) dan (2)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q19" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. (1) dan (3)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q19" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. (2) dan (4)</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q19" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. (3) dan (4)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Cara merawat kebersihan fisik organ reproduksi secara harian adalah dengan menjaga kekeringan area intim (mengganti pakaian dalam minimal 2 kali sehari) serta menghindari penggunaan handuk lembap bersama (1 dan 3). Pilihan 2 dan 4 adalah perilaku berisiko tinggi penularan penyakit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-transparent hover:border-rose-100 transition-colors question-item" data-answer="B" id="q20">
+                <p class="font-semibold text-lg mb-4"><span class="text-rose-600 mr-2">20.</span>Di sebuah daerah, angka pernikahan usia dini cukup tinggi. Banyak remaja perempuan di bawah usia 18 tahun yang sudah hamil. Dari sudut pandang medis dan perkembangan organ reproduksi, mengapa kehamilan pada usia terlalu dini (di bawah 20 tahun) sangat berisiko tinggi bagi keselamatan ibu dan janin?</p>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q20" value="A" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> A. Hormon estrogen dan progesteron belum diproduksi sama sekali oleh ovarium remaja perempuan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q20" value="B" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> B. Organ reproduksi seperti rahim dan panggul belum berkembang sempurna secara anatomis dan fisiologis untuk menopang kehamilan</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q20" value="C" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> C. Sel telur yang dihasilkan pada usia remaja selalu memiliki kelainan kromosom yang menyebabkan keguguran otomatis</label>
+                    <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-rose-50 transition"><input type="radio" name="q20" value="D" class="mt-1 mr-3 w-4 h-4 text-rose-600 shrink-0"> D. Sistem kekebalan tubuh remaja perempuan akan menganggap janin sebagai benda asing dan langsung menghancurkannya</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Edukatif:</strong></p>
+                        <p>Secara biologis, struktur panggul dan otot rahim remaja belia belum matang sepenuhnya untuk menanggung beban kehamilan serta proses persalinan. Hal ini memicu risiko tinggi seperti preeklampsia, keguguran, cacat lahir, atau komplikasi persalinan yang mengancam nyawa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Area -->
+            <div class="flex justify-center mb-10 mt-8">
+                <button type="button" id="btnSubmit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-transform transform hover:scale-105 text-lg cursor-pointer">
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Container (Hidden Default) -->
+        <div id="resultContainer" class="hidden bg-white rounded-xl shadow-lg border-2 border-rose-500 p-8 text-center mb-12 transform transition-all animate-fade-in">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Evaluasi Selesai!</h2>
+            <p class="text-gray-600 mb-8">Periksa rincian pembahasan di atas untuk memahami materi lebih dalam. Berikut adalah skor akhir Anda (0&ndash;100):</p>
+            
+            <div class="inline-block bg-rose-50 border-4 border-rose-200 rounded-full h-40 w-40 flex items-center justify-center mb-8 shadow-inner mx-auto">
+                <span id="scoreDisplay" class="text-5xl font-black text-rose-600 drop-shadow-sm">0</span>
+            </div>
+            
+            <div class="flex justify-center">
+                <button type="button" id="btnReset" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition border border-gray-300 shadow-sm hover:shadow cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Ulangi Tes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-sm font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const quizForm = document.getElementById('quizForm');
+            const resultContainer = document.getElementById('resultContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-item');
+            
+            const TOTAL_QUESTIONS = questions.length; // 20 soal
+            const POINT_PER_QUESTION = 100 / TOTAL_QUESTIONS; // 5 poin per soal
+
+            quizForm.addEventListener('submit', (e) => e.preventDefault());
+
+            btnSubmit.addEventListener('click', () => {
+                let currentScore = 0;
+
+                questions.forEach((q) => {
+                    const qId = q.id;
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const selectedOption = q.querySelector(`input[name="${qId}"]:checked`);
+                    
+                    const explanationBox = q.querySelector('.explanation');
+                    const statusText = explanationBox.querySelector('.status');
+
+                    explanationBox.classList.remove('hidden', 'bg-rose-50', 'border-rose-300', 'bg-red-50', 'border-red-300', 'text-rose-800', 'text-red-800');
+                    q.classList.remove('border-rose-300', 'border-red-300', 'bg-rose-50/20', 'bg-red-50/20');
+
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        if (userAnswer === correctAnswer) {
+                            currentScore += POINT_PER_QUESTION;
+                            explanationBox.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-800');
+                            q.classList.add('border-rose-300', 'bg-rose-50/20'); 
+                            statusText.innerHTML = `✅ Pintar Sekali! Jawaban Anda Benar (Opsi ${userAnswer})`;
+                        } else {
+                            explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                            q.classList.add('border-red-300', 'bg-red-50/20');
+                            statusText.innerHTML = `❌ Kurang Tepat. Pilihan Anda: ${userAnswer} | Kunci Jawaban Benar: ${correctAnswer}`;
+                        }
+                    } else {
+                        explanationBox.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+                        q.classList.add('border-red-300', 'bg-red-50/20');
+                        statusText.innerHTML = `⚠️ Anda belum menjawab soal ini. Kunci Jawaban Benar: ${correctAnswer}`;
+                    }
+                    
+                    explanationBox.style.display = 'block';
+                });
+
+                scoreDisplay.innerText = Math.round(currentScore);
+                
+                btnSubmit.parentElement.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 100);
+            });
+
+            btnReset.addEventListener('click', () => {
+                quizForm.reset();
+
+                questions.forEach(q => {
+                    const explanationBox = q.querySelector('.explanation');
+                    explanationBox.style.display = 'none';
+                    explanationBox.classList.add('hidden');
+                    explanationBox.classList.remove('bg-rose-50', 'border-rose-300', 'bg-red-50', 'border-red-300', 'text-rose-800', 'text-red-800');
+                    q.classList.remove('border-rose-300', 'border-red-300', 'bg-rose-50/20', 'bg-red-50/20');
+                });
+
+                resultContainer.classList.add('hidden');
+                btnSubmit.parentElement.classList.remove('hidden');
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t14',
+          topicIndex: 14,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

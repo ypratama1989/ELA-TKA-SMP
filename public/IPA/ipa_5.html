@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Ekosistem & Lingkungan</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --correct-bg: #D1FAE5;
+            --correct-border: #10B981;
+            --wrong-bg: #FEE2E2;
+            --wrong-border: #EF4444;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #F9FAFB;
+            border-color: #D1D5DB;
+        }
+
+        .option-label input {
+            margin-top: 4px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        /* State Classes for JS */
+        .option-label.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: #065F46;
+        }
+
+        .option-label.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: #991B1B;
+        }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box.bg-green {
+            background-color: #ECFDF5;
+            border-left: 4px solid var(--correct-border);
+        }
+
+        .explanation-box.bg-red {
+            background-color: #FEF2F2;
+            border-left: 4px solid var(--wrong-border);
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .btn-submit, .btn-retry {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover, .btn-retry:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-submit:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container { margin: 15px auto; }
+            .question-card { padding: 15px; }
+            .btn-submit { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button class="btn-back" onclick="history.back()">&#8592; Kembali</button>
+        <h1>Kuis Ekosistem & Lingkungan</h1>
+    </div>
+
+    <div class="container">
+        <form id="quizForm">
+            <!-- Soal 1 -->
+            <div class="question-card" id="q1">
+                <div class="question-text">1. Di sebuah ekosistem kebun, ditemukan cacing tanah yang hidup di dalam tanah yang gembur dan lembap. Hubungan antara cacing tanah dengan kondisi tanah tersebut menunjukkan bahwa...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q1" value="A"> <span class="option-text">A. Komponen biotik tidak dipengaruhi oleh komponen abiotik.</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"> <span class="option-text">B. Komponen biotik memengaruhi dan dipengaruhi oleh komponen abiotik.</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"> <span class="option-text">C. Komponen abiotik sepenuhnya menentukan kelangsungan hidup produsen saja.</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"> <span class="option-text">D. Komponen biotik hanya berinteraksi dengan sesama komponen biotik lainnya.</span></label>
+                </div>
+                <div class="explanation-box" id="exp1" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Ingat ya, <b>biotik</b> itu makhluk hidup (cacing), sedangkan <b>abiotik</b> itu benda mati (tanah/air). Cacing butuh tanah yang lembap agar bisa bernapas melalui kulitnya (Biotik dipengaruhi Abiotik). Di sisi lain, cacing yang rajin menggali membuat tanah menjadi gembur dan subur (Biotik memengaruhi Abiotik). Jadi, keduanya saling memengaruhi layaknya tim yang kompak!</div>
+                </div>
+            </div>
+
+            <!-- Soal 2 -->
+            <div class="question-card" id="q2">
+                <div class="question-text">2. Perhatikan rantai makanan berikut!<br><br><code>Padi &rarr; Belalang &rarr; Katak &rarr; Ular &rarr; Elang</code><br><br>Jika populasi katak tiba-tiba menurun drastis akibat perburuan liar, dampak langsung yang akan terjadi pada ekosistem tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q2" value="A"> <span class="option-text">A. Populasi belalang menurun dan populasi ular meningkat.</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"> <span class="option-text">B. Populasi belalang meningkat dan populasi ular menurun.</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"> <span class="option-text">C. Populasi padi meningkat dan populasi elang meningkat.</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"> <span class="option-text">D. Populasi belalang menurun dan populasi padi menurun.</span></label>
+                </div>
+                <div class="explanation-box" id="exp2" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Mari kita lihat posisinya. Katak adalah "polisi" yang memakan belalang, sekaligus "makanan" bagi ular. Jika katak menghilang, belalang akan bebas berkembang biak tanpa takut dimangsa (populasi belalang <b>meningkat</b>). Sebaliknya, ular akan kelaparan karena makanan favoritnya hilang (populasi ular <b>menurun</b>).</div>
+                </div>
+            </div>
+
+            <!-- Soal 3 -->
+            <div class="question-card" id="q3">
+                <div class="question-text">3. Penggunaan pestisida kimia secara berlebihan di lahan pertanian dapat menyebabkan fenomena biomagnifikasi. Organisme yang akan mengakumulasi konsentrasi racun paling tinggi di dalam tubuhnya adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q3" value="A"> <span class="option-text">A. Produsen karena menyerap air tanah langsung.</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"> <span class="option-text">B. Konsumen primer karena memakan tumbuhan hijau.</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"> <span class="option-text">C. Konsumen puncak karena berada di tingkat trofik tertinggi.</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"> <span class="option-text">D. Dekomposer karena menguraikan sisa-sisa makhluk hidup.</span></label>
+                </div>
+                <div class="explanation-box" id="exp3" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content"><b>Biomagnifikasi</b> adalah penumpukan racun dari makhluk kecil ke makhluk besar. Racun pestisida tidak bisa dibuang lewat urin/kotoran. Jadi, belalang makan banyak rumput beracun, katak makan banyak belalang beracun, dan elang (konsumen puncak) makan banyak katak. Akhirnya, tumpukan racun paling banyak mengendap di tubuh elang!</div>
+                </div>
+            </div>
+
+            <!-- Soal 4 -->
+            <div class="question-card" id="q4">
+                <div class="question-text">4. Sebuah danau mengalami pencemaran akibat limpahan pupuk pertanian (nitrogen dan fosfat) dari lahan di sekitarnya, menyebabkan tumbuhan eceng gondok tumbuh sangat cepat hingga menutupi permukaan air (eutrofikasi). Langkah penanganan yang paling efektif dan ramah lingkungan untuk memulihkan ekosistem danau tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q4" value="A"> <span class="option-text">A. Menyemprotkan herbisida kimia ke seluruh permukaan danau untuk mematikan eceng gondok.</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"> <span class="option-text">B. Melakukan pengerukan lumpur danau dan memanen eceng gondok secara berkala untuk dijadikan pupuk kompos.</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"> <span class="option-text">C. Memasukkan spesies ikan pemakan tumbuhan dalam jumlah besar tanpa batas.</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"> <span class="option-text">D. Menutup aliran air yang masuk ke danau agar tidak ada lagi pasokan air dari luar.</span></label>
+                </div>
+                <div class="explanation-box" id="exp4" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Menyemprot bahan kimia (A) malah bikin danau tambah beracun. Menutup aliran air (D) akan mengeringkan danau. Cara paling ramah lingkungan adalah <b>mengangkat eceng gondok</b> tersebut dari air, lalu menjadikannya kompos. Selain membersihkan permukaan danau agar sinar matahari bisa masuk lagi, kita juga mendapatkan pupuk alami yang berguna!</div>
+                </div>
+            </div>
+
+            <!-- Soal 5 -->
+            <div class="question-card" id="q5">
+                <div class="question-text">5. Peran bakteri pengurai (dekomposer) dalam siklus materi di dalam ekosistem sangat krusial. Jika aktivitas dekomposer terhenti, dampak jangka panjang yang akan terjadi adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q5" value="A"> <span class="option-text">A. Jumlah produsen akan meningkat pesat karena tidak ada pembusukan.</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"> <span class="option-text">B. Siklus nutrisi terhambat sehingga tanah kehilangan kesuburannya.</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"> <span class="option-text">C. Konsumen sekunder akan mengambil alih peran pengurai.</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"> <span class="option-text">D. Energi matahari tidak dapat diserap oleh tumbuhan hijau.</span></label>
+                </div>
+                <div class="explanation-box" id="exp5" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Bayangkan pengurai itu seperti petugas kebersihan alam. Jika mereka mogok kerja, bangkai hewan dan daun kering akan menumpuk menjadi sampah. Nutrisi penting yang ada di dalam bangkai tersebut akan terkurung dan tidak bisa kembali ke tanah. Akibatnya, tanah menjadi tidak subur dan tumbuhan tidak bisa hidup.</div>
+                </div>
+            </div>
+
+            <!-- Soal 6 -->
+            <div class="question-card" id="q6">
+                <div class="question-text">6. Perhatikan grafik pertumbuhan populasi tikus di sebuah gudang berikut!<br>*(Asumsikan grafik menunjukkan pertumbuhan logistik yang awalnya naik cepat lalu mendatar setelah mencapai kapasitas daya dukung lingkungan/carrying capacity)*<br><br>Faktor <b>abiotik</b> yang paling mungkin membatasi pertumbuhan populasi tikus tersebut hingga mencapai kondisi konstan (mendatar) adalah keterbatasan...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q6" value="A"> <span class="option-text">A. Jumlah predator alami di dalam gudang.</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"> <span class="option-text">B. Ruang tempat tinggal dan ketersediaan air bersih.</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"> <span class="option-text">C. Kompetitor dari spesies pengerat lainnya.</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"> <span class="option-text">D. Penyakit menular yang menyerang populasi tikus.</span></label>
+                </div>
+                <div class="explanation-box" id="exp6" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Kunci di soal ini adalah kata <b>Abiotik</b> (benda mati). Predator, pesaing (kompetitor), dan bakteri penyakit adalah faktor Biotik (makhluk hidup). Ruang tempat tinggal (luas gudang) dan air adalah faktor Abiotik. Jika gudang sudah penuh sesak, tikus tidak bisa bertambah banyak lagi.</div>
+                </div>
+            </div>
+
+            <!-- Soal 7 -->
+            <div class="question-card" id="q7">
+                <div class="question-text">7. Untuk mengendalikan hama ulat grayak pada tanaman jagung, seorang petani memutuskan untuk mengintroduksi (memasukkan) burung pemakan ulat ke lahannya. Namun, setelah beberapa bulan, burung tersebut juga mulai memakan buah-buahan lokal dan mengusir burung asli daerah tersebut. Evaluasi yang tepat terhadap tindakan petani tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q7" value="A"> <span class="option-text">A. Berhasil, karena hama ulat berkurang tanpa menimbulkan efek samping pada rantai makanan.</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"> <span class="option-text">B. Kurang tepat, karena introduksi spesies asing dapat mengganggu keseimbangan ekosistem lokal (menjadi spesies invasif).</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"> <span class="option-text">C. Sangat tepat, karena keanekaragaman hayati di lahan pertanian tersebut menjadi meningkat.</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"> <span class="option-text">D. Gagal total, karena burung tersebut sama sekali tidak memakan ulat grayak yang menjadi target.</span></label>
+                </div>
+                <div class="explanation-box" id="exp7" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Memasukkan hewan dari luar daerah (spesies asing) harus sangat hati-hati. Terkadang niat baik malah jadi bencana karena hewan tersebut bisa menjadi <b>Spesies Invasif</b> (penjajah). Bukannya hanya memakan hama, burung asing itu malah merusak buah petani dan menyingkirkan burung asli yang sudah hidup damai di sana.</div>
+                </div>
+            </div>
+
+            <!-- Soal 8 -->
+            <div class="question-card" id="q8">
+                <div class="question-text">8. Kelembapan udara dan suhu tanah merupakan komponen abiotik yang sangat memengaruhi jenis tumbuhan yang dapat hidup di suatu wilayah. Tumbuhan xerofit seperti kaktus dapat bertahan hidup di lingkungan gurun yang ekstrem karena...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q8" value="A"> <span class="option-text">A. Memiliki daun lebar untuk mempercepat penguapan air.</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"> <span class="option-text">B. Memiliki akar pendek untuk menghindari penyerapan air berlebih.</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"> <span class="option-text">C. Memiliki batang tebal berdaging untuk menyimpan air dan daun berbentuk duri.</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"> <span class="option-text">D. Tidak memerlukan cahaya matahari untuk proses fotosintesis.</span></label>
+                </div>
+                <div class="explanation-box" id="exp8" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Xerofit artinya tumbuhan yang jago hidup di tempat kering/panas. Agar air di tubuhnya tidak cepat menguap kepanasan, kaktus mengubah daunnya menjadi duri kecil. Selain itu, kaktus menggunakan batang tebalnya (sukulen) seperti "botol minum" besar untuk menyimpan air cadangan saat hujan jarang turun.</div>
+                </div>
+            </div>
+
+            <!-- Soal 9 -->
+            <div class="question-card" id="q9">
+                <div class="question-text">9. Penebangan hutan skala besar (deforestasi) mengganggu siklus karbon global. Dampak langsung dari hilangnya vegetasi hutan terhadap komponen abiotik atmosfer adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q9" value="A"> <span class="option-text">A. Penurunan kadar karbon dioksida (CO<sub>2</sub>) karena tidak ada respirasi tumbuhan.</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"> <span class="option-text">B. Peningkatan kadar oksigen (O<sub>2</sub>) akibat penguapan air yang tinggi.</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"> <span class="option-text">C. Peningkatan kadar karbon dioksida (CO<sub>2</sub>) yang memicu efek rumah kaca.</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"> <span class="option-text">D. Penurunan suhu udara global secara signifikan.</span></label>
+                </div>
+                <div class="explanation-box" id="exp9" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Pohon adalah mesin penyerap gas jahat (CO<sub>2</sub>) nomor satu di bumi melalui proses fotosintesis. Jika jutaan pohon ditebang, gas CO<sub>2</sub> dari kendaraan dan pabrik tidak ada yang menyerap. Gas ini akan menumpuk di udara seperti selimut tebal yang menjebak panas matahari, menyebabkan bumi makin panas (Efek Rumah Kaca).</div>
+                </div>
+            </div>
+
+            <!-- Soal 10 -->
+            <div class="question-card" id="q10">
+                <div class="question-text">10. Hubungan antara tanaman benalu yang hidup menempel pada pohon mangga merupakan bentuk interaksi...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q10" value="A"> <span class="option-text">A. Simbiosis mutualisme, karena kedua pihak saling diuntungkan.</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"> <span class="option-text">B. Simbiosis komensalisme, karena benalu untung dan pohon mangga tidak dirugikan.</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"> <span class="option-text">C. Simbiosis parasitisme, karena benalu menyerap air dan unsur hara dari pohon mangga sehingga merugikan inangnya.</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"> <span class="option-text">D. Kompetisi, karena keduanya saling berebut cahaya matahari secara seimbang.</span></label>
+                </div>
+                <div class="explanation-box" id="exp10" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Benalu itu numpang hidup tapi nakal! Dia menusukkan akar isapnya ke dalam batang pohon mangga untuk mencuri air dan makanan (unsur hara). Akibatnya, pohon mangga (sang inang) menjadi kekurangan makanan, kurus, dan bisa mati. Karena satu untung dan satu rugi, ini disebut <b>Simbiosis Parasitisme</b>.</div>
+                </div>
+            </div>
+
+            <!-- Soal 11 -->
+            <div class="question-card" id="q11">
+                <div class="question-text">11. Pembangunan bendungan besar di sebuah sungai dapat mengubah ekosistem perairan secara drastis. Evaluasi dampak pembangunan bendungan terhadap kelangsungan hidup ikan migratori (seperti ikan sidat atau salmon) yang tepat adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q11" value="A"> <span class="option-text">A. Populasi ikan migratori akan meningkat karena air bendungan menjadi lebih tenang.</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"> <span class="option-text">B. Jalur migrasi ikan terputus sehingga mengganggu siklus reproduksi dan menurunkan populasi mereka.</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"> <span class="option-text">C. Ikan migratori akan berevolusi dengan cepat menjadi spesies darat.</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"> <span class="option-text">D. Kualitas air di hulu akan membaik sehingga ikan tidak perlu bermigrasi lagi.</span></label>
+                </div>
+                <div class="explanation-box" id="exp11" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Ikan salmon atau sidat punya kebiasaan unik: mereka harus berenang jauh ke hulu sungai untuk bertelur (berkembang biak). Jika kita membangun bendungan beton raksasa di tengah sungai, jalan pulang mereka tertutup. Karena tidak bisa mencapai tempat bertelur, bayi-bayi ikan tidak lahir dan populasi mereka menurun drastis.</div>
+                </div>
+            </div>
+
+            <!-- Soal 12 -->
+            <div class="question-card" id="q12">
+                <div class="question-text">12. Di dalam ekosistem, energi yang ditransfer dari satu tingkat trofik ke tingkat trofik berikutnya di atasnya hanya sekitar 10%. Sisa energi sebesar 90% hilang dalam bentuk...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q12" value="A"> <span class="option-text">A. Oksigen yang dilepaskan ke udara bebas.</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"> <span class="option-text">B. Panas tubuh, aktivitas metabolisme, dan zat sisa yang tidak tercerna.</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"> <span class="option-text">C. Cadangan makanan yang disimpan di dalam tanah.</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"> <span class="option-text">D. Energi kimia yang dihancurkan oleh produsen.</span></label>
+                </div>
+                <div class="explanation-box" id="exp12" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Kenapa tidak 100% energi berpindah saat kelinci dimakan ular? Karena saat kelinci masih hidup, dia sudah menghabiskan 90% energi makanannya untuk berlari (bergerak), bernapas (metabolisme), menghangatkan tubuhnya (panas), dan membuang kotoran (feses). Jadi, yang tersisa menjadi daging untuk ular makan hanya sekitar 10% saja.</div>
+                </div>
+            </div>
+
+            <!-- Soal 13 -->
+            <div class="question-card" id="q13">
+                <div class="question-text">13. Dua spesies burung pemakan serangga hidup di pohon yang sama. Spesies A mencari makan di bagian dahan bawah, sedangkan Spesies B mencari makan di bagian pucuk pohon teratas. Interaksi ini menunjukkan...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q13" value="A"> <span class="option-text">A. Kompetisi langsung yang menyebabkan salah satu spesies punah.</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"> <span class="option-text">B. Pembagian relung ekologi (niche partitioning) untuk mengurangi kompetisi.</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"> <span class="option-text">C. Simbiosis parasitisme antara Spesies A dan Spesies B.</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"> <span class="option-text">D. Predasi di mana Spesies B memangsa Spesies A.</span></label>
+                </div>
+                <div class="explanation-box" id="exp13" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Ibarat dua anak yang ingin bermain balok di ruangan yang sama. Agar tidak berantem (kompetisi), anak pertama main di karpet, anak kedua main di atas meja. Di alam, perilaku berbagi wilayah mencari makan pada pohon yang sama ini disebut <b>Pembagian Relung Ekologi</b>. Dengan begitu, keduanya bisa hidup damai berdampingan!</div>
+                </div>
+            </div>
+
+            <!-- Soal 14 -->
+            <div class="question-card" id="q14">
+                <div class="question-text">14. Sebuah lahan bekas tambang batu bara mengalami kerusakan parah: tanahnya sangat asam, miskin unsur hara, dan gersang. Metode restorasi lingkungan yang paling tepat dan berkelanjutan untuk memulihkan lahan tersebut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q14" value="A"> <span class="option-text">A. Menimbun seluruh lahan dengan pasir pantai agar terlihat bersih.</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"> <span class="option-text">B. Melakukan bioremediasi menggunakan mikroba pengikat nitrogen dilanjutkan dengan penanaman tanaman pionir.</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"> <span class="option-text">C. Membakar sisa-sisa vegetasi agar abu pembakaran menyuburkan tanah secara instan.</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"> <span class="option-text">D. Membiarkan lahan tersebut tanpa intervensi apa pun agar pulih secara alami dalam waktu singkat.</span></label>
+                </div>
+                <div class="explanation-box" id="exp14" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Tanah tambang itu seperti "tanah sakit" yang butuh diobati dari dalam. <b>Bioremediasi</b> berarti kita menggunakan makhluk hidup kecil (mikroba) sebagai "dokter" untuk menetralisir racun dan membawa nutrisi (nitrogen) ke tanah. Setelah tanah membaik sedikit, baru kita tanam <b>tanaman pionir</b> (seperti lumut/rumput kuat) untuk mengembalikan kesuburan tanah perlahan-lahan.</div>
+                </div>
+            </div>
+
+            <!-- Soal 15 -->
+            <div class="question-card" id="q15">
+                <div class="question-text">15. Perhatikan jaring-jaring makanan berikut!<br>*(Rumput dimakan oleh Belalang dan Kelinci. Belalang dimakan oleh Katak dan Burung Pipit. Katak dan Kelinci dimakan oleh Ular. Ular dimakan oleh Elang).*<br><br>Jika populasi kelinci punah akibat wabah penyakit, bagaimana pengaruhnya terhadap populasi ular dan belalang?</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q15" value="A"> <span class="option-text">A. Populasi ular akan menurun drastis, sedangkan populasi belalang akan meningkat karena tekanan predasi (pemangsaan) berkurang.</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"> <span class="option-text">B. Populasi ular akan meningkat karena beralih memakan rumput, sedangkan populasi belalang tetap.</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"> <span class="option-text">C. Populasi ular dan belalang kedua-duanya akan punah seketika.</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"> <span class="option-text">D. Populasi ular akan menurun, sedangkan populasi belalang juga akan menurun karena ular beralih memakan katak lebih banyak.</span></label>
+                </div>
+                <div class="explanation-box" id="exp15" data-answer="A">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: A)</div>
+                    <div class="explanation-content">Mari berpikir seperti detektif ekosistem!<br>1. Kelinci punah &rarr; Ular kehilangan salah satu makanan utamanya &rarr; Ular kelaparan dan populasinya <b>menurun drastis</b>.<br>2. Karena lapar, ular yang tersisa memburu katak gila-gilaan &rarr; Populasi Katak hancur berantakan.<br>3. Ingat, katak adalah musuh belalang. Jika katak habis dimakan ular, belalang bisa bebas pesta rumput tanpa takut dimakan. Akhirnya, populasi belalang <b>meningkat tajam</b>! <i>(Catatan: Pilihan A adalah urutan logis yang paling tepat secara sains).</i></div>
+                </div>
+            </div>
+
+            <!-- Soal 16 -->
+            <div class="question-card" id="q16">
+                <div class="question-text">16. Perbedaan mendasar antara rantai makanan perumput (grazing food chain) dan rantai makanan detritus (detrital food chain) terletak pada...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q16" value="A"> <span class="option-text">A. Tingkat trofik tertinggi yang dicapai oleh konsumen puncak.</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"> <span class="option-text">B. Sumber energi awal, di mana rantai makanan perumput dimulai dari produsen (tumbuhan hijau) sedangkan detritus dimulai dari bahan organik mati.</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"> <span class="option-text">C. Jenis lingkungan tempat terjadinya rantai makanan tersebut (darat vs air).</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"> <span class="option-text">D. Jumlah energi yang ditransfer pada setiap tingkat trofiknya.</span></label>
+                </div>
+                <div class="explanation-box" id="exp16" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Sangat mudah membedakannya dari mana mereka bermula. <b>Rantai perumput</b> selalu dimulai dari makhluk hidup hijau yang berfotosintesis (contoh: Rumput &rarr; Belalang). Sedangkan <b>Rantai detritus</b> dimulai dari serpihan makhluk yang sudah mati seperti daun busuk atau bangkai (contoh: Daun mati &rarr; Cacing tanah &rarr; Burung).</div>
+                </div>
+            </div>
+
+            <!-- Soal 17 -->
+            <div class="question-card" id="q17">
+                <div class="question-text">17. Pemerintah kota merencanakan pembuatan "Sabuk Hijau" (Green Belt) berupa hutan kota di sekeliling wilayah industri. Evaluasi efektivitas kebijakan ini terhadap kualitas lingkungan kota yang paling tepat adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q17" value="A"> <span class="option-text">A. Tidak efektif karena pohon justru menghasilkan karbon dioksida pada malam hari yang memperparah polusi.</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"> <span class="option-text">B. Sangat efektif karena pohon bertindak sebagai penyerap karbon dioksida, penyaring debu industri, dan menjaga keanekaragaman hayati lokal.</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"> <span class="option-text">C. Kurang efektif karena lahan hutan kota lebih baik digunakan untuk pemukiman buruh industri.</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"> <span class="option-text">D. Efektif hanya jika pohon yang ditanam adalah tanaman hias berukuran kecil.</span></label>
+                </div>
+                <div class="explanation-box" id="exp17" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Hutan kota (Sabuk Hijau) bertindak sebagai "paru-paru kota" sekaligus "masker raksasa" bagi area pabrik. Daun-daun pohon lebat sangat efektif menjebak debu berterbangan (polutan partikulat), menyerap asap gas buang beracun dari cerobong pabrik, dan meredam suara bising, sehingga udara perumahan di sekitarnya tetap bersih.</div>
+                </div>
+            </div>
+
+            <!-- Soal 18 -->
+            <div class="question-card" id="q18">
+                <div class="question-text">18. Akibat pemanasan global, suhu rata-rata air laut meningkat. Hal ini menyebabkan karang mengalami pemutihan (coral bleaching). Mekanisme ekologis yang menjelaskan fenomena ini adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q18" value="A"> <span class="option-text">A. Karang memakan terlalu banyak alga sehingga warnanya memudar.</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"> <span class="option-text">B. Suhu tinggi merusak struktur kalsium karbonat karang secara langsung dalam hitungan jam.</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"> <span class="option-text">C. Karang melepaskan alga simbiotisnya (Zooxanthellae) yang sensitif terhadap suhu panas, sehingga kehilangan sumber makanan dan warnanya.</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"> <span class="option-text">D. Ikan-ikan karang bermigrasi meninggalkan karang sehingga karang menjadi stres dan memutih.</span></label>
+                </div>
+                <div class="explanation-box" id="exp18" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Terumbu karang dan alga <i>Zooxanthellae</i> (baca: Zuk-san-te-la) adalah sahabat sejati. Alga menumpang hidup di tubuh karang, dan sebagai gantinya ia memberi warna indah dan makanan hasil fotosintesis ke karang. Jika air terlalu panas, karang menjadi stres dan membuang sahabatnya (alga) keluar. Akibatnya karang kehilangan warna warninya (jadi putih/bleaching) dan pelan-pelan mati kelaparan.</div>
+                </div>
+            </div>
+
+            <!-- Soal 19 -->
+            <div class="question-card" id="q19">
+                <div class="question-text">19. Pada ekosistem estuari (pertemuan air tawar dan air laut), organisme harus mampu beradaptasi dengan fluktuasi salinitas (kadar garam) yang tinggi. Pohon bakau (mangrove) mengatasi tantangan abiotik ini dengan cara...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q19" value="A"> <span class="option-text">A. Menggugurkan daunnya pada musim hujan untuk mengurangi kadar garam.</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"> <span class="option-text">B. Memiliki kelenjar khusus di bawah daun untuk mengekskresikan kelebihan garam.</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"> <span class="option-text">C. Menyerap air laut sebanyak-banyaknya tanpa menyaringnya sama sekali.</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"> <span class="option-text">D. Menutup stomata secara permanen sepanjang hidupnya.</span></label>
+                </div>
+                <div class="explanation-box" id="exp19" data-answer="B">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: B)</div>
+                    <div class="explanation-content">Air garam sangat beracun bagi kebanyakan tanaman darat. Hebatnya, pohon Bakau memiliki kemampuan super! Saat akar mereka tidak sengaja menyerap garam, daun bakau memiliki kelenjar khusus yang berfungsi "berkeringat". Mereka mengeluarkan butiran garam dari tubuhnya ke permukaan daun, lalu garam itu hanyut saat hujan turun.</div>
+                </div>
+            </div>
+
+            <!-- Soal 20 -->
+            <div class="question-card" id="q20">
+                <div class="question-text">20. Terjadi tumpahan minyak mentah di kawasan pantai akibat kebocoran kapal tanker. Dari pilihan berikut, evaluasi metode penanggulangan yang paling kecil risikonya terhadap kerusakan ekosistem pantai lebih lanjut adalah...</div>
+                <div class="options-container">
+                    <label class="option-label"><input type="radio" name="q20" value="A"> <span class="option-text">A. Menyemprotkan detergen kimia dosis tinggi untuk melarutkan minyak ke dasar laut.</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"> <span class="option-text">B. Membakar lapisan minyak di permukaan air laut secara langsung.</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"> <span class="option-text">C. Menggunakan teknik bioremediasi dengan memanfaatkan bakteri pemakan hidrokarbon (Pseudomonas putida).</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"> <span class="option-text">D. Membiarkan minyak menguap dengan sendirinya oleh panas matahari tanpa tindakan apa pun.</span></label>
+                </div>
+                <div class="explanation-box" id="exp20" data-answer="C">
+                    <div class="explanation-title">Pembahasan (Jawaban Benar: C)</div>
+                    <div class="explanation-content">Detergen kimia dan pembakaran akan menghasilkan racun baru bagi lingkungan. Metode tercanggih dan teraman adalah menggunakan agen biologi (bakteri). Bakteri unik ini memakan minyak (hidrokarbon) lalu mengeluarkannya menjadi kotoran berupa gas CO<sub>2</sub> dan air murni yang sama sekali tidak berbahaya bagi ikan-ikan di pantai. Proses ini disebut <b>Bioremediasi</b>.</div>
+                </div>
+            </div>
+
+            <button type="button" id="btn-submit" class="btn-submit" onclick="checkAnswers()">Periksa Jawaban</button>
+            
+            <div id="result" class="result-container">
+                <h2>Nilai Akhir Anda:</h2>
+                <div class="score-display" id="score-display">0</div>
+                <p id="score-message">Terus semangat belajar, kamu pasti bisa!</p>
+                <button type="button" class="btn-retry" onclick="resetTest()">Ulangi Tes</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer-text">
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </div>
+
+    <script>
+        const totalQuestions = 20;
+        const scorePerQuestion = 5;
+
+        function checkAnswers() {
+            let totalScore = 0;
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Jawaban Telah Diperiksa";
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const questionDiv = document.getElementById(`q${i}`);
+                const expBox = document.getElementById(`exp${i}`);
+                const correctAnswer = expBox.getAttribute('data-answer');
+                const radios = document.getElementsByName(`q${i}`);
+                
+                let isAnswered = false;
+                
+                // Cek setiap opsi radio
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong'); // reset class dulu
+
+                    if (radio.checked) {
+                        isAnswered = true;
+                        if (radio.value === correctAnswer) {
+                            totalScore += scorePerQuestion;
+                            label.classList.add('correct');
+                            expBox.classList.add('bg-green');
+                            expBox.classList.remove('bg-red');
+                        } else {
+                            label.classList.add('wrong');
+                            expBox.classList.add('bg-red');
+                            expBox.classList.remove('bg-green');
+                        }
+                    }
+
+                    // Selalu highlight jawaban yang benar agar siswa tahu
+                    if (radio.value === correctAnswer) {
+                        label.style.borderColor = "var(--correct-border)";
+                        if(!radio.checked) {
+                             label.style.borderStyle = "dashed";
+                        }
+                    }
+                }
+
+                // Jika tidak dijawab, kasih border merah netral pada box pembahasan
+                if (!isAnswered) {
+                    expBox.classList.add('bg-red');
+                }
+
+                expBox.classList.add('show');
+            }
+
+            // Tampilkan Nilai
+            const resultDiv = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            
+            scoreDisplay.innerText = totalScore;
+            
+            if(totalScore >= 90) {
+                scoreMessage.innerText = "Luar biasa! Pemahaman biologimu sangat brilian!";
+            } else if (totalScore >= 70) {
+                scoreMessage.innerText = "Bagus sekali! Pertahankan dan tingkatkan terus belajarmu.";
+            } else {
+                scoreMessage.innerText = "Jangan menyerah, baca lagi pembahasannya ya, kamu pasti bisa!";
+            }
+
+            resultDiv.style.display = 'block';
+
+            // Auto scroll ke bawah perlahan
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        }
+
+        function resetTest() {
+            const form = document.getElementById('quizForm');
+            form.reset();
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const expBox = document.getElementById(`exp${i}`);
+                expBox.classList.remove('show', 'bg-green', 'bg-red');
+
+                const radios = document.getElementsByName(`q${i}`);
+                for (let radio of radios) {
+                    const label = radio.closest('.option-label');
+                    label.classList.remove('correct', 'wrong');
+                    label.style.borderColor = "";
+                    label.style.borderStyle = "";
+                }
+            }
+
+            document.getElementById('result').style.display = 'none';
+            
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Periksa Jawaban";
+
+            // Scroll ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t5',
+          topicIndex: 5,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

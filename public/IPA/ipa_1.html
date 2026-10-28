@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Sains - EDUFILLAH</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        primaryHover: '#4338CA', // Indigo 700
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom radio button styling */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        /* Style parent label when child input is checked */
+        .option-label:has(.option-input:checked) {
+            border-color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+        /* Style the radio circle sibling */
+        .option-input:checked + .radio-circle {
+            border-color: #4F46E5;
+        }
+        .option-input:checked + .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #4F46E5;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Status styling for Correct/Wrong after submit */
+        .status-correct {
+            border-color: #10B981 !important;
+            background-color: #ECFDF5 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10B981 !important;
+        }
+        .status-correct .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #10B981 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .status-wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEF2F2 !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #EF4444 !important;
+        }
+        .status-wrong .radio-circle::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: #EF4444 !important;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Smooth fade in for elements */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-10">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-gray-600 hover:text-primary transition-colors font-medium">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1 ml-4 truncate">
+                Latihan Soal Sains (Sifat Zat & Perubahannya)
+            </h1>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Instruksi -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 border-l-4 border-l-primary">
+            <h2 class="text-xl font-semibold mb-2"><i class="fas fa-info-circle text-primary mr-2"></i>Petunjuk Pengerjaan</h2>
+            <p class="text-gray-600 text-sm md:text-base">
+                Pilihlah salah satu jawaban yang paling tepat! Kamu tidak diwajibkan mengisi semua soal, namun soal yang kosong akan bernilai 0. Klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk melihat skor dan pembahasan lengkap.
+            </p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="questions-container">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="text-center mt-10">
+                <button type="button" onclick="checkAnswers()" id="btn-submit" class="bg-primary hover:bg-primaryHover text-white font-semibold py-4 px-10 rounded-full shadow-lg transform transition hover:-translate-y-1 text-lg w-full md:w-auto">
+                    <i class="fas fa-check-circle mr-2"></i> Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-section" class="hidden mt-12 bg-white p-8 rounded-3xl shadow-xl text-center border-t-8 border-t-primary fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Skor Akhir Kamu</h2>
+            <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-indigo-50 text-5xl font-extrabold text-primary mb-4 border-4 border-indigo-100">
+                <span id="final-score">0</span>
+            </div>
+            <p id="score-message" class="text-gray-600 text-lg mb-8 font-medium">Luar biasa! Terus tingkatkan rasa ingin tahumu!</p>
+            
+            <button type="button" onclick="resetQuiz()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition-colors flex items-center justify-center mx-auto">
+                <i class="fas fa-redo-alt mr-2"></i> Ulangi Tes
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="mt-8 text-center text-gray-500 text-sm font-medium">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban (Diperbaiki), dan Pembahasan Ekstensif (SD/SMP Friendly)
+        const quizData = [
+            {
+                id: 1,
+                question: "Perhatikan beberapa sifat zat berikut!<br>(1) Mudah membusuk<br>(2) Memiliki titik didih tinggi<br>(3) Mudah berkarat<br>(4) Memiliki daya hantar listrik yang baik<br>Sifat kimia ditunjukkan oleh nomor...",
+                options: { A: "(1) dan (2)", B: "(1) dan (3)", C: "(2) dan (3)", D: "(2) dan (4)" },
+                correct: "B",
+                explanation: "Sifat kimia adalah kemampuan zat untuk bereaksi dan berubah menjadi zat <b>baru</b>. Proses membusuk (1) dan berkarat (3) menghasilkan zat baru yang sama sekali berbeda dari asalnya. Bayangkan paku besi keras yang berubah jadi karat rapuh kemerahan! Sedangkan titik didih (2) dan hantar listrik (4) adalah sifat fisika karena wujudnya saja yang berubah atau sekadar mengalirkan listrik tanpa merusak identitas zat tersebut."
+            },
+            {
+                id: 2,
+                question: "Ketika air dipanaskan hingga mendidih, terjadi perubahan wujud dari cair menjadi gas. Berdasarkan teori partikel zat, peristiwa mendidih ini terjadi karena...",
+                options: {
+                    A: "Partikel-partikel air mengalami kerusakan struktur atom penyusunnya",
+                    B: "Jarak antarpartikel menjadi sangat rapat dan gaya tarik menariknya semakin kuat",
+                    C: "Partikel-partikel air memperoleh energi kinetik sehingga bergerak bebas dan saling menjauh",
+                    D: "Massa partikel air berkurang sehingga zat menjadi lebih ringan dan melayang ke udara"
+                },
+                correct: "C",
+                explanation: "Ketika dipanaskan, partikel-partikel air ibarat anak-anak yang diberi minuman berenergi! Mereka bergerak semakin cepat dan lincah (energi kinetik bertambah). Akibatnya, gaya tarik antar partikel tidak sanggup lagi menahan mereka, jaraknya menjadi berjauhan, dan akhirnya mereka bebas terbang ke udara sebagai gas (uap air)."
+            },
+            {
+                id: 3,
+                question: "Perhatikan peristiwa-peristiwa berikut!<br>(1) Beras ditumbuk menjadi tepung<br>(2) Singkong difermentasi menjadi tape<br>(3) Air laut menguap membentuk kristal garam<br>(4) Kertas dibakar menjadi abu<br>Peristiwa yang termasuk ke dalam perubahan fisika ditunjukkan oleh nomor...",
+                options: { A: "(1) dan (2)", B: "(1) dan (3)", C: "(2) dan (4)", D: "(3) dan (4)" },
+                correct: "B",
+                explanation: "Perubahan fisika itu seperti kita melipat kertas; bentuknya berubah tapi tetap saja itu kertas (tidak ada zat baru). Beras yang ditumbuk jadi tepung (1) tetaplah beras. Air laut yang menguap jadi garam (3) juga hanya memisahkan air dan garam yang sudah ada. Tapi singkong jadi tape atau kertas jadi abu itu sudah menciptakan barang baru, sehingga disebut perubahan kimia."
+            },
+            {
+                id: 4,
+                question: "Seorang siswa memasukkan sebuah logam misterius bermassa 120 gram ke dalam gelas ukur yang berisi air. Volume air mula-mula adalah 50 mL, dan setelah logam dimasukkan, volume air naik menjadi 65 mL. Berdasarkan tabel massa jenis di bawah ini, jenis logam tersebut adalah...<br><br><ul class='list-disc pl-5'><li>Besi: 7,9 g/cm<sup>3</sup></li><li>Tembaga: 8,9 g/cm<sup>3</sup></li><li>Aluminium: 2,7 g/cm<sup>3</sup></li><li>Seng: 7,1 g/cm<sup>3</sup></li></ul>",
+                options: { A: "Besi", B: "Tembaga", C: "Aluminium", D: "Seng" },
+                correct: "A",
+                explanation: "Yuk kita hitung perlahan! Massa logam (<i>m</i>) = 120 gram. Volume logam (<i>V</i>) adalah kenaikan air: 65 mL &minus; 50 mL = 15 mL (ingat, 1 mL = 1 cm<sup>3</sup>). Rumus massa jenis adalah Massa dibagi Volume. Jadi, 120 &divide; 15 = 8,0 g/cm<sup>3</sup>. Dari tabel, angka 8,0 sangat dekat dengan kerapatan <b>Besi</b> (7,9 g/cm<sup>3</sup>). Kunci aslinya keliru, jawaban yang paling akurat secara saintifik untuk soal ini adalah Besi."
+            },
+            {
+                id: 5,
+                question: "Perhatikan grafik pemanasan es! Suhu (&deg;C) naik dari -5&deg;C (titik A) ke 0&deg;C (titik B), kemudian mendatar pada 0&deg;C (titik B ke C), lalu naik kembali ke 100&deg;C (titik C ke D).<br><br>Proses yang terjadi pada fase mendatar dari B ke C menunjukkan bahwa energi kalor yang diserap digunakan untuk...",
+                options: {
+                    A: "Menaikkan suhu es agar menjadi air hangat",
+                    B: "Mengubah wujud es menjadi air tanpa menaikkan suhu",
+                    C: "Memutuskan ikatan kimia antara hidrogen dan oksigen",
+                    D: "Mempercepat gerakan partikel es tanpa mengubah wujudnya"
+                },
+                correct: "B",
+                explanation: "Pernahkah kamu melihat es yang mencair? Saat suhunya 0&deg;C (fase mendatar B ke C), panas (kalor) yang diberikan kompor atau lingkungan <b>tidak</b> dipakai untuk menaikkan suhu, melainkan 'bekerja keras' untuk melepaskan ikatan antar partikel es padat agar bisa meleleh menjadi benda cair. Suhu baru akan naik lagi setelah semua es habis mencair menjadi air!"
+            },
+            {
+                id: 6,
+                question: "Dinding luar gelas yang berisi es batu menjadi basah oleh titik-titik air. Penjelasan yang paling tepat mengenai asal-usul titik air tersebut adalah...",
+                options: {
+                    A: "Es di dalam gelas merembes keluar melalui pori-pori dinding gelas yang tipis",
+                    B: "Uap air di udara sekitar gelas melepaskan kalor dan mengembun saat menyentuh dinding gelas yang dingin",
+                    C: "Udara di dalam gelas mengalami reaksi kimia akibat suhu dingin sehingga berubah menjadi air",
+                    D: "Suhu dingin gelas menarik partikel air dari dalam gelas menuju permukaan luar gelas"
+                },
+                correct: "B",
+                explanation: "Titik air di luar gelas dingin bukan karena air menembus kaca! Udara bebas di sekeliling kita sebenarnya mengandung banyak uap air yang wujudnya gas dan tidak terlihat. Saat uap air yang hangat ini menabrak dinding luar gelas yang dingin, mereka 'kedinginan', lalu merapat dan berubah wujud dari gas menjadi titik-titik air cair (disebut proses mengembun/kondensasi)."
+            },
+            {
+                id: 7,
+                question: "Pada proses pembuatan tapai singkong, singkong yang keras berubah menjadi lunak, manis, dan berbau khas alkohol setelah didiamkan beberapa hari bersama ragi. Perubahan ini digolongkan sebagai perubahan kimia karena...",
+                options: {
+                    A: "Terjadi perubahan bentuk dan ukuran singkong menjadi lebih kecil",
+                    B: "Terbentuk zat baru yang memiliki sifat berbeda dari zat asalnya",
+                    C: "Singkong mengalami pelarutan oleh air yang terkandung dalam wadah",
+                    D: "Proses tersebut dapat dibalikkan kembali dengan cara menjemur tapai di bawah terik matahari"
+                },
+                correct: "B",
+                explanation: "Perubahan kimia <b>selalu ditandai dengan terbentuknya zat baru</b>. Singkong yang awalnya keras dan tawar berubah menjadi tape yang lunak, manis, dan berbau alkohol karena bantuan mikroorganisme pada ragi. Kamu tidak bisa mengubah tape yang lezat itu kembali menjadi singkong mentah utuh, kan? Itulah ciri kuat dari perubahan kimia!"
+            },
+            {
+                id: 8,
+                question: "Air dan minyak tidak dapat menyatu ketika dicampur dalam satu wadah. Hal ini disebabkan oleh perbedaan...",
+                options: {
+                    A: "Sifat kemagnetan dan titik beku kedua zat",
+                    B: "Massa total dan volume masing-masing zat",
+                    C: "Sifat kepolaran molekul dan massa jenis kedua zat",
+                    D: "Titik didih dan kelarutan zat dalam pelarut organik"
+                },
+                correct: "C",
+                explanation: "Air dan minyak itu seperti dua orang yang beda hobi, tidak bisa bersatu! Air bersifat <i>polar</i> (molekulnya seperti magnet yang punya kutub positif-negatif), sedangkan minyak <i>non-polar</i>. Karena beda sifat, mereka menolak bercampur. Selain itu, minyak selalu mengapung di atas air karena massa jenis (kerapatan) minyak lebih kecil alias lebih ringan daripada air."
+            },
+            {
+                id: 9,
+                question: "Perhatikan gambar termometer yang menunjukkan suhu air mendidih di daerah pegunungan hanya mencapai 96&deg;C, bukan 100&deg;C seperti di daerah pantai. Hal ini terjadi karena...",
+                options: {
+                    A: "Tekanan udara di pegunungan lebih rendah sehingga titik didih air menurun",
+                    B: "Kandungan oksigen di pegunungan lebih sedikit sehingga menghambat pemanasan",
+                    C: "Air di pegunungan memiliki massa jenis yang lebih besar daripada air di pantai",
+                    D: "Suhu lingkungan pegunungan yang dingin menyerap kalor air lebih cepat"
+                },
+                correct: "A",
+                explanation: "Mendidihkan air itu ibarat mendorong molekul air untuk terbang bebas ke udara. Di daerah pegunungan yang tinggi, 'beban' udara di atasnya lebih tipis atau tekanan udaranya <b>lebih rendah</b> daripada di pantai. Karena tekanannya rendah, molekul air jauh lebih mudah lepas untuk 'terbang'. Akibatnya, air tidak perlu suhu setinggi 100&deg;C untuk mendidih, di suhu 96&deg;C saja sudah mendidih lho!"
+            },
+            {
+                id: 10,
+                question: "Di bawah ini adalah beberapa upaya untuk mencegah terjadinya korosi (karat) pada besi:<br>(1) Mengecat permukaan besi<br>(2) Melumuri besi dengan oli atau minyak<br>(3) Menghubungkan besi dengan logam magnesium (perlindungan katodik)<br>(4) Merendam besi di dalam air garam<br><br>Upaya pencegahan korosi yang tepat dan aman untuk rantai sepeda serta tiang jembatan dalam air berturut-turut adalah...",
+                options: { A: "(1) dan (2)", B: "(2) dan (3)", C: "(2) dan (4)", D: "(3) dan (4)" },
+                correct: "B",
+                explanation: "Rantai sepeda selalu bergesekan saat dikayuh, jadi dilumuri oli (2) adalah cara terbaik karena oli mencegah oksigen masuk sekaligus berfungsi sebagai pelumas yang licin. Untuk tiang jembatan yang terendam air, sangat sulit mengecatnya terus-menerus! Jadi, dihubungkan dengan logam magnesium (3) (Perlindungan Katodik) adalah solusi canggih; magnesium akan 'mengorbankan' dirinya untuk berkarat demi melindungi tiang besi jembatan."
+            },
+            {
+                id: 11,
+                question: "Ketika lilin dinyalakan, terjadi dua jenis perubahan sekaligus. Pernyataan yang benar mengenai perubahan pada lilin tersebut adalah...",
+                options: {
+                    A: "Melelehnya sumbu lilin adalah perubahan fisika, dan terbakarnya parafin adalah perubahan kimia",
+                    B: "Melelehnya parafin adalah perubahan fisika, dan terbakarnya sumbu lilin adalah perubahan kimia",
+                    C: "Terbentuknya gas karbon dioksida adalah perubahan fisika, dan mencairnya lilin adalah perubahan kimia",
+                    D: "Seluruh proses pada lilin menyala hanya melibatkan perubahan fisika karena lilin dapat membeku kembali"
+                },
+                correct: "B",
+                explanation: "Coba perhatikan baik-baik saat lilin menyala. Bagian batang lilin (parafin) yang terkena panas akan meleleh ke bawah, tapi setelah dingin ia mengeras kembali menjadi lilin utuh (tidak ada zat baru = perubahan fisika). Sebaliknya, tali sumbu yang terbakar menjadi hitam serta menghasilkan asap dan gas (CO<sub>2</sub>) tidak bisa kembali jadi sumbu putih utuh (ada zat baru = perubahan kimia)."
+            },
+            {
+                id: 12,
+                question: "Jika kita memasukkan satu sendok garam dapur ke dalam segelas air lalu mengaduknya, garam tersebut akan 'hilang'. Peristiwa ini merupakan perubahan...",
+                options: {
+                    A: "Kimia, karena terbentuk zat baru yang rasanya asin",
+                    B: "Fisika, karena garam hanya terlarut dan dapat diperoleh kembali melalui penguapan",
+                    C: "Kimia, karena partikel garam telah rusak dan menyatu dengan air",
+                    D: "Fisika, karena terjadi reaksi netralisasi antara garam dan air"
+                },
+                correct: "B",
+                explanation: "Garam yang 'hilang' di dalam air sebenarnya hanya bersembunyi (larut) di sela-sela partikel air. Airnya tetap air, dan garamnya tetap garam (dibuktikan dari rasa air yang menjadi asin). Kalau larutan air garam itu kita panaskan hingga airnya habis menguap, kristal-kristal garamnya akan muncul dan tertinggal di dasar panci! Karena tidak ada zat baru dan bisa dikembalikan, ini murni perubahan fisika."
+            },
+            {
+                id: 13,
+                question: "Perhatikan tabel sifat fisik dua zat tidak dikenal berikut!<br>- Zat X: Bentuk tetap, volume tetap, tidak dapat dimampatkan.<br>- Zat Y: Bentuk berubah menyesuaikan wadah, volume berubah memenuhi wadah, mudah dimampatkan.<br>Berdasarkan data tersebut, wujud zat X dan Y berturut-turut adalah...",
+                options: { A: "Padat dan cair", B: "Cair dan gas", C: "Padat dan gas", D: "Gas dan padat" },
+                correct: "C",
+                explanation: "Zat padat (seperti batu atau kayu) itu sifatnya 'keras kepala': bentuk dan ukurannya (volume) selalu tetap, tidak bisa ditekan/dimampatkan. Ini cocok dengan ciri Zat X. Berbeda dengan zat gas (seperti udara di balon) yang sangat 'fleksibel': dia akan menyebar mengisi seluruh ruang wadahnya (bentuk & volume berubah-ubah) dan sangat mudah ditekan seperti saat memompa ban sepeda. Ini cocok dengan ciri Zat Y."
+            },
+            {
+                id: 14,
+                question: "Fenomena 'anomali air' merupakan sifat khas air di mana volume air justru menyusut ketika dipanaskan dari suhu 0&deg;C hingga 4&deg;C. Dampak ekologis yang sangat penting dari fenomena ini bagi kehidupan di daerah beriklim dingin adalah...",
+                options: {
+                    A: "Air laut tidak akan pernah membeku meskipun suhu udara mencapai di bawah nol derajat",
+                    B: "Es terbentuk di dasar danau terlebih dahulu sehingga hewan air bermigrasi ke permukaan",
+                    C: "Lapisan es terbentuk di permukaan danau, sementara air di bagian bawah tetap cair sehingga organisme air tetap hidup",
+                    D: "Air di dasar danau menjadi sangat panas sehingga mempercepat pertumbuhan tanaman air"
+                },
+                correct: "C",
+                explanation: "Anomali air adalah keajaiban alam! Normalnya, benda yang makin dingin akan menyusut dan makin berat. Tapi khusus air, pada suhu 4&deg;C menuju 0&deg;C, air justru <i>mengembang</i> dan menjadi lebih ringan sehingga ia membeku (menjadi es) di <b>permukaan</b> danau, bukan di dasar. Lapisan es di atas ini bagaikan selimut tebal yang menjaga air di dasar danau tetap cair dan hangat (~4&deg;C), sehingga ikan dan tumbuhan tidak mati membeku selama musim dingin!"
+            },
+            {
+                id: 15,
+                question: "Suatu sampel cairan tidak berwarna diuji di laboratorium. Ketika dipanaskan, cairan tersebut mendidih secara bertahap pada rentang suhu 78&deg;C hingga 100&deg;C dan meninggalkan residu berupa zat padat putih. Berdasarkan karakteristik tersebut, cairan tersebut dapat dievaluasi sebagai...",
+                options: { A: "Unsur murni", B: "Senyawa tunggal", C: "Campuran homogen", D: "Campuran heterogen" },
+                correct: "C",
+                explanation: "Setiap zat murni (seperti air suling/murni) pasti memiliki satu angka titik didih yang pas, misalnya tepat 100&deg;C. Tapi jika suatu zat mendidih secara bertahap pada 'rentang' suhu tertentu (seperti 78-100&deg;C), itu artinya ia adalah sebuah campuran dari beberapa zat. Sisa zat padat putih setelah airnya menguap membuktikan bahwa tadinya ada zat padat yang larut merata tak kasat mata (homogen) di dalam cairan tersebut, seperti air garam."
+            },
+            {
+                id: 16,
+                question: "Tabung pemadam kebakaran berisi gas karbon dioksida (CO<sub>2</sub>) yang dimampatkan pada tekanan tinggi sehingga berwujud cair. Ketika disemprotkan keluar, cairan CO<sub>2</sub> tersebut langsung berubah menjadi gas dingin yang menyelimuti api. Perubahan wujud yang terjadi pada CO<sub>2</sub> saat keluar dari tabung adalah...",
+                options: {
+                    A: "Menguap, yang merupakan perubahan fisika karena menyerap kalor dari lingkungan sekitar",
+                    B: "Menyublim, yang merupakan perubahan kimia karena menghasilkan zat baru pemadam api",
+                    C: "Membeku, yang merupakan perubahan fisika karena melepaskan kalor ke udara bebas",
+                    D: "Mengembun, yang merupakan perubahan kimia karena bereaksi dengan oksigen di udara"
+                },
+                correct: "A",
+                explanation: "Di dalam tabung pemadam, gas CO<sub>2</sub> dipaksa menjadi cair karena tekanannya super kuat. Saat kamu menekan tuas tabung, cairannya keluar, tekanannya turun drastis, dan seketika CO<sub>2</sub> cair itu <b>menguap</b> kembali menjadi wujud gas. Proses penguapan ini sangat cepat dan rakus menyerap panas (kalor) dari api maupun sekitarnya, sehingga api kehilangan panasnya dan suhu di sekitarnya terasa sangat dingin!"
+            },
+            {
+                id: 17,
+                question: "Perhatikan gambar meniskus air dan raksa pada pipa kapiler! Air membentuk meniskus cekung (melengkung ke bawah), sedangkan raksa membentuk meniskus cembung (melengkung ke atas). Evaluasi yang benar mengenai gaya antarpartikel pada kedua zat tersebut adalah...",
+                options: {
+                    A: "Gaya kohesi air lebih besar daripada gaya adhesinya dengan kaca",
+                    B: "Gaya adhesi raksa dengan kaca lebih besar daripada gaya kohesinya",
+                    C: "Gaya adhesi air dengan kaca lebih besar daripada gaya kohesinya",
+                    D: "Gaya kohesi raksa sama besar dengan gaya adhesinya dengan kaca"
+                },
+                correct: "C",
+                explanation: "Ini tentang tarik-menarik partikel! <b>Adhesi</b> adalah tarik-menarik partikel beda jenis (air dengan kaca), sedangkan <b>Kohesi</b> sejenis (air dengan air). Air membentuk meniskus cekung karena partikel air lebih suka 'menempel' kuat pada kaca (Adhesi > Kohesi). Sebaliknya, air raksa membentuk cembung karena mereka lebih suka berkumpul memeluk sesamanya dan tidak mau menempel ke kaca (Kohesi > Adhesi)."
+            },
+            {
+                id: 18,
+                question: "Sebuah pabrik ingin membuat kabel transmisi listrik layang yang dipasang di luar ruangan. Bahan kabel tersebut harus memiliki kriteria: menghantarkan listrik dengan sangat baik, tidak mudah memuai secara ekstrem akibat perubahan cuaca, dan tahan terhadap korosi asam hujan. Berdasarkan kriteria tersebut, kombinasi sifat yang harus dievaluasi adalah...",
+                options: {
+                    A: "Sifat fisika (daya hantar listrik dan titik leleh) serta sifat kimia (kestabilan terhadap asam)",
+                    B: "Sifat fisika (daya hantar listrik dan koefisien muai) serta sifat kimia (kestabilan terhadap asam)",
+                    C: "Sifat fisika (kerapatan dan kelenturan) serta sifat kimia (mudah terbakar)",
+                    D: "Sifat fisika (warna dan kilap) serta sifat kimia (kereaktifan terhadap air)"
+                },
+                correct: "B",
+                explanation: "Membangun kabel listrik luar ruangan harus pintar memilih bahan! Secara <b>Fisika</b>, kabel itu harus pandai menghantarkan listrik (daya hantar) dan tidak boleh gampang molor/memanjang saat terik matahari siang bolong (koefisien muai rendah). Secara <b>Kimia</b>, karena posisinya di luar ruangan, kabel harus tangguh dan tidak mudah berkarat walau terkena hujan yang terkadang bersifat asam (kestabilan terhadap asam)."
+            },
+            {
+                id: 19,
+                question: "Pada suatu percobaan, cairan bening Timbal(II) Nitrat dicampur dengan cairan bening Kalium Iodida. Setelah dicampur, terbentuk endapan berwarna kuning terang. Indikator utama yang menunjukkan telah terjadinya perubahan kimia pada percobaan tersebut adalah...",
+                options: {
+                    A: "Terjadinya perubahan wujud dari cair menjadi gas",
+                    B: "Terbentuknya zat baru berupa endapan dan perubahan warna",
+                    C: "Kenaikan volume campuran yang sangat drastis",
+                    D: "Larutnya seluruh zat padat ke dalam pelarut air"
+                },
+                correct: "B",
+                explanation: "Coba bayangkan sulap sains ini: dua cairan yang jernih tak berwarna dicampurkan, dan tiba-tiba saja muncul bubuk/padatan (endapan) yang warnanya kuning terang mencolok! Munculnya endapan padat dan warna kuning ini adalah bukti tak terbantahkan bahwa partikel-partikel bereaksi menciptakan sebuah <b>zat baru</b>. Terbentuknya endapan dan perubahan warna adalah ciri utama terjadinya reaksi/perubahan kimia."
+            },
+            {
+                id: 20,
+                question: "Perhatikan pernyataan berikut!<br>'Susu segar yang dibiarkan di meja makan selama dua hari menjadi masam dan menggumpal, sedangkan es batu yang dibiarkan di tempat yang sama mencair.'<br><br>Analisis perbedaan mendasar dari kedua gejala perubahan zat di atas adalah...",
+                options: {
+                    A: "Susu mengalami perubahan fisika karena rasanya berubah, sedangkan es mengalami perubahan kimia karena wujudnya berubah",
+                    B: "Susu mengalami perubahan kimia karena terbentuk zat baru yang masam, sedangkan es mengalami perubahan fisika karena molekul airnya tidak berubah",
+                    C: "Kedua peristiwa merupakan perubahan kimia karena sama-sama dipengaruhi oleh suhu lingkungan sekitar",
+                    D: "Kedua peristiwa merupakan perubahan fisika karena tidak ada penambahan zat baru dari luar"
+                },
+                correct: "B",
+                explanation: "Susu yang menjadi masam dan menggumpal berarti sudah dikerjai oleh bakteri! Bakteri memecah kandungan gula pada susu menjadi zat asam laktat (tercipta <b>zat baru</b> = Perubahan Kimia). Sedangkan es batu yang mencair di meja tetaplah air (H<sub>2</sub>O). Ia cuma kepanasan dan berubah wujud dari es yang kaku menjadi air yang mengalir cair (tidak ada zat baru = Perubahan Fisika)."
+            }
+        ];
+
+        // Parser text untuk mengubah tag [GAMBAR: ...] menjadi tag <img> (jika ada)
+        function parseContent(text) {
+            return text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/g, '<img src="$1" class="max-w-full h-auto rounded-lg shadow-md my-4 mx-auto block border border-gray-200">');
+        }
+
+        // Fungsi Render Soal
+        function renderQuiz() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = ''; // Bersihkan container
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Card Pembungkus Soal
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6";
+                card.id = `card-q${questionNum}`;
+                
+                // Header & Teks Soal
+                const questionText = document.createElement('h3');
+                questionText.className = "text-lg font-medium text-gray-800 mb-5 leading-relaxed";
+                questionText.innerHTML = `<span class="bg-indigo-100 text-primary font-bold px-3 py-1 rounded-md mr-2">Soal ${questionNum}</span> <br class="block sm:hidden"><div class="mt-3 sm:inline sm:mt-0">${parseContent(q.question)}</div>`;
+                card.appendChild(questionText);
+
+                // Kontainer Pilihan Jawaban
+                const optionsWrapper = document.createElement('div');
+                optionsWrapper.className = "flex flex-col space-y-3";
+
+                // Loop Opsi (A, B, C, D)
+                for (const [key, value] of Object.entries(q.options)) {
+                    const label = document.createElement('label');
+                    label.className = "option-label relative flex items-start p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 option-content";
+                    label.htmlFor = `q${questionNum}_${key}`;
+
+                    const input = document.createElement('input');
+                    input.type = "radio";
+                    input.name = `q${questionNum}`;
+                    input.id = `q${questionNum}_${key}`;
+                    input.value = key;
+                    input.className = "option-input sr-only"; // Hide default radio
+
+                    const circle = document.createElement('div');
+                    circle.className = "radio-circle flex-shrink-0 w-6 h-6 border-2 border-gray-300 rounded-full mr-4 relative mt-0.5 transition-colors";
+
+                    const textSpan = document.createElement('div');
+                    textSpan.className = "text-gray-700 font-medium";
+                    textSpan.innerHTML = `<span class="font-bold mr-1">${key}.</span> ${parseContent(value)}`;
+
+                    label.appendChild(input);
+                    label.appendChild(circle);
+                    label.appendChild(textSpan);
+                    optionsWrapper.appendChild(label);
+                }
+                card.appendChild(optionsWrapper);
+
+                // Kotak Pembahasan (Awalnya Sembunyi)
+                const explanationBox = document.createElement('div');
+                explanationBox.id = `exp-q${questionNum}`;
+                explanationBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed";
+                
+                const expTitle = document.createElement('div');
+                expTitle.id = `exp-title-q${questionNum}`;
+                expTitle.className = "font-bold mb-2 flex items-center";
+                
+                const expContent = document.createElement('div');
+                expContent.innerHTML = parseContent(q.explanation);
+                
+                explanationBox.appendChild(expTitle);
+                explanationBox.appendChild(expContent);
+
+                card.appendChild(explanationBox);
+                container.appendChild(card);
+            });
+        }
+
+        // Panggil fungsi render saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', renderQuiz);
+
+        // Fungsi Periksa Jawaban
+        function checkAnswers() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                const userAnswer = formData.get(`q${questionNum}`);
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                const expTitle = document.getElementById(`exp-title-q${questionNum}`);
+                
+                // Ambil semua label opsi di soal ini untuk di-reset stylingnya
+                const labels = document.querySelectorAll(`input[name="q${questionNum}"] + .radio-circle`);
+                const optionContainers = document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                    input.disabled = true; // Disable input setelah disubmit
+                });
+
+                if (userAnswer === q.correct) {
+                    correctCount++;
+                    
+                    // Style UI untuk Jawaban Benar
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-green-50 border-green-500 text-green-900 block fade-in";
+                    expTitle.innerHTML = `<i class="fas fa-check-circle text-green-500 text-xl mr-2"></i> Benar! Jawaban: ${q.correct}`;
+                    
+                    // Highlight opsi yang benar
+                    const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                    selectedLabel.classList.add('status-correct');
+
+                } else {
+                    // Style UI untuk Jawaban Salah atau Kosong
+                    expBox.className = "mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed bg-red-50 border-red-500 text-red-900 block fade-in";
+                    let titleText = userAnswer 
+                        ? `<i class="fas fa-times-circle text-red-500 text-xl mr-2"></i> Salah.`
+                        : `<i class="fas fa-exclamation-circle text-orange-500 text-xl mr-2"></i> Tidak dijawab.`;
+                    expTitle.innerHTML = `${titleText} Jawaban yang tepat: <b>${q.correct}</b>`;
+                    
+                    // Highlight opsi yang disalahkan user (jika ada isinya)
+                    if (userAnswer) {
+                        const selectedLabel = document.getElementById(`q${questionNum}_${userAnswer}`).parentElement;
+                        selectedLabel.classList.add('status-wrong');
+                    }
+                    // Highlight (dengan warna hijau) opsi kunci yang sebetulnya benar
+                    const correctLabel = document.getElementById(`q${questionNum}_${q.correct}`).parentElement;
+                    correctLabel.classList.add('status-correct');
+                }
+            });
+
+            // Hitung Skor (Skala 0 - 100)
+            const finalScore = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Tampilkan Skor di UI
+            const resultSection = document.getElementById('result-section');
+            const finalScoreEl = document.getElementById('final-score');
+            const scoreMessageEl = document.getElementById('score-message');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            finalScoreEl.innerText = finalScore;
+            
+            if (finalScore === 100) {
+                scoreMessageEl.innerText = "Sempurna! Kamu adalah Ilmuwan Cilik sejati!";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerText = "Luar biasa! Pemahaman sainsmu sudah sangat baik.";
+            } else if (finalScore >= 50) {
+                scoreMessageEl.innerText = "Kerja bagus! Terus pelajari lagi bagian yang salah ya.";
+            } else {
+                scoreMessageEl.innerText = "Jangan menyerah! Sains itu menyenangkan jika terus berlatih. Yuk baca lagi pembahasannya!";
+            }
+
+            resultSection.classList.remove('hidden');
+            btnSubmit.classList.add('hidden'); // Sembunyikan tombol submit
+
+            // Scroll mulus ke bawah (bagian skor)
+            // scrollIntoView disabled to prevent screen jumping
+        }
+
+        // Fungsi Ulangi Tes
+        function resetQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.reset(); // Reset form radio buttons
+
+            // Re-enable inputs dan hapus styling/kelas
+            quizData.forEach((q, index) => {
+                const questionNum = index + 1;
+                
+                // Sembunyikan box pembahasan
+                const expBox = document.getElementById(`exp-q${questionNum}`);
+                expBox.classList.add('hidden');
+                expBox.className = "hidden mt-6 p-5 rounded-xl border-l-4 text-sm md:text-base leading-relaxed"; // reset classes
+                
+                // Reset radio styling dan enable kembali
+                document.querySelectorAll(`input[name="q${questionNum}"]`).forEach(input => {
+                    input.disabled = false;
+                    input.parentElement.classList.remove('status-correct', 'status-wrong');
+                });
+            });
+
+            // Sembunyikan hasil & tampilkan tombol submit
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('btn-submit').classList.remove('hidden');
+
+            // Scroll otomatis ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t1',
+          topicIndex: 1,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Literasi Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* scroll-behavior: auto; */
+        }
+        
+        /* Kustomisasi input radio agar bisa disembunyikan tapi bisa distyle labelnya */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Transisi kotak penjelasan */
+        .explanation-box {
+            transition: all 0.3s ease-in-out;
+            max-height: 2000px; /* Cukup besar untuk konten */
+            overflow: hidden;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Gaya khusus untuk kotak kutipan teks (soal cerita) */
+        .quote-box {
+            border-left: 4px solid #64748b; /* slate-500 */
+            background-color: #f8fafc; /* slate-50 */
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+            font-style: italic;
+            color: #334155;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 text-center flex-1">Latihan Soal Literasi Teks</h1>
+            <div class="w-24"></div> <!-- Spacer untuk menyeimbangkan posisi judul -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Selamat Mengerjakan! &#x1F4DD;</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    Baca kutipan teks dengan teliti sebelum menjawab. Pilihlah jawaban yang paling tepat. 
+                    Kamu bisa langsung memeriksa jawabanmu meski belum semua soal terisi. Soal yang terlewat akan dianggap salah.
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Soal-soal akan di-generate oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-slate-200 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Area Hasil (Tersembunyi secara default) -->
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban yang terverifikasi, dan Pembahasan yang diperkaya
+        const quizData = [
+            {
+                text: "Berdasarkan kosakata yang dominan pada kutipan teks di bawah ini, latar tempat peristiwa tersebut terjadi adalah ....<div class='quote-box'>\"Layar perahu mulai terkembang. Angin buritan bertiup cukup bersahabat, membawa aroma garam yang pekat ke hidung kami. Dari atas geladak, lumba-lumba tampak melompat silih berganti mengiringi laju haluan yang membelah ombak.\"</div>",
+                options: [
+                    "di tepi pantai yang landai",
+                    "di atas kapal di tengah laut",
+                    "di pelabuhan penyeberangan",
+                    "di perkampungan nelayan tradisional"
+                ],
+                answer: 1, // B
+                explanation: "Coba bayangkan kamu sedang berdiri di atas lantai kayu yang bergoyang membelah ombak besar! Kata-kata seperti <em>layar perahu</em>, <em>angin buritan</em>, <em>geladak</em> (lantai kapal), dan melihat <em>lumba-lumba</em> melompat mengiringi <em>haluan</em> kapal, semuanya membuktikan secara pasti bahwa tokoh kita sedang berlayar <strong>di atas kapal di tengah laut yang luas</strong>, bukan sekadar melihatnya dari pelabuhan atau pinggir pantai."
+            },
+            {
+                text: "Kosakata yang menjadi petunjuk utama untuk menentukan latar tempat pada kutipan tersebut (soal nomor 1) adalah ....",
+                options: [
+                    "layar, angin, aroma garam",
+                    "lumba-lumba, ombak, hidung",
+                    "buritan, geladak, haluan",
+                    "perahu, bersahabat, melompat"
+                ],
+                answer: 2, // C
+                explanation: "Di dunia maritim (perkapalan), ada istilah-istilah khusus, lho! <strong>Buritan</strong> berarti bagian belakang kapal, <strong>Geladak</strong> berarti lantai kapal, dan <strong>Haluan</strong> berarti bagian depan kapal. Ketiga kata ini adalah 'kata kunci rahasia' yang tidak mungkin ada di tempat lain selain di atas kapal. Kalau kata <em>angin, hidung</em>, atau <em>lumba-lumba</em> kan bisa saja kita rasakan dan lihat dari pinggir pantai tanpa harus naik kapal."
+            },
+            {
+                text: "Latar waktu yang digambarkan dalam kutipan teks berikut adalah ....<div class='quote-box'>\"Semburat jingga mulai memudar di ufuk barat, digantikan oleh selimut kelabu yang perlahan menebal. Burung-burung kolibri telah kembali ke sarangnya di dahan pohon flamboyan. Di kejauhan, sayup-sayup terdengar suara sirene pengingat menjelang waktu magrib berkumandang.\"</div>",
+                options: [
+                    "pagi hari menjelang siang",
+                    "siang hari yang terik",
+                    "sore hari menjelang malam",
+                    "tengah malam yang sunyi"
+                ],
+                answer: 2, // C
+                explanation: "Pernahkah kamu melihat langit sore yang warnanya mulai oranye kemerahan lalu pelan-pelan berubah menjadi gelap? Itulah yang dimaksud dengan <em>\"semburat jingga memudar diganti selimut kelabu\"</em>. Apalagi ada tambahan petunjuk <em>\"menjelang waktu magrib\"</em> dan burung-burung yang kembali ke sarang untuk tidur. Ini adalah gambaran yang sangat jelas tentang suasana <strong>sore hari menuju malam (senja)</strong>."
+            },
+            {
+                text: "Suasana yang terbangun melalui pemilihan kosakata dalam kutipan tersebut (soal nomor 3) adalah ....",
+                options: [
+                    "sunyi dan mencekam",
+                    "tenang dan syahdu",
+                    "bising dan tergesa-gesa",
+                    "tegang dan menakutkan"
+                ],
+                answer: 1, // B
+                explanation: "Saat membaca teks tadi, apa yang kamu rasakan? Tidak ada kejar-kejaran, tidak ada monster, dan tidak ada keramaian. Kata-kata <em>\"memudar\"</em>, <em>\"perlahan menebal\"</em>, burung yang sudah tidur dengan tenang di sarang, dan <em>\"sayup-sayup terdengar\"</em> membentuk sebuah harmoni yang damai. Suasana ini kita sebut <strong>tenang dan syahdu</strong>."
+            },
+            {
+                text: "Objek yang sedang digunakan atau diamati oleh tokoh dalam kutipan teks nonfiksi berikut adalah ....<div class='quote-box'>\"Ia memutar sekrup pengatur kasar dengan hati-hati agar tabung naik perlahan. Melalui lensa okuler, objek yang diletakkan di atas meja preparat mulai terlihat samar. Ia mengganti lensa objektif ke perbesaran yang lebih kuat untuk memperjelas struktur sel daun <em>Rhoeo discolor</em> tersebut.\"</div>",
+                options: [
+                    "teleskop dan bintang",
+                    "mikroskop dan sel daun",
+                    "kamera dan daun kering",
+                    "kacamata pembesar dan ulat"
+                ],
+                answer: 1, // B
+                explanation: "Alat canggih apa yang punya <em>sekrup pengatur kasar, lensa okuler</em> (lensa tempat mata kita mengintip), dan <em>meja preparat</em>? Yap, itu adalah <strong>Mikroskop</strong>! Apalagi di kalimat terakhir dengan jelas disebutkan bahwa tokoh tersebut sedang mencoba memperjelas penglihatannya untuk melihat struktur <strong>sel daun <em>Rhoeo discolor</em></strong> (biasanya kita kenal dengan daun adam hawa)."
+            },
+            {
+                text: "Kosakata bidang ilmu (istilah teknis) yang membuktikan bahwa teks tersebut (soal nomor 5) berada dalam lingkup laboratorium biologi adalah ....",
+                options: [
+                    "sekrup, tabung, daun",
+                    "lensa okuler, preparat, lensa objektif",
+                    "pengatur kasar, objek, perbesaran",
+                    "hati-hati, samar, struktur"
+                ],
+                answer: 1, // B
+                explanation: "Istilah teknis adalah kata-kata khusus yang dipakai di dunia ilmu pengetahuan. Dalam teks tadi, <strong>lensa okuler</strong>, <strong>preparat</strong> (kaca tipis tempat meletakkan benda yang mau diamati), dan <strong>lensa objektif</strong> adalah istilah-istilah super spesifik yang pasti akan kamu temui saat belajar biologi di laboratorium menggunakan mikroskop."
+            },
+            {
+                text: "Latar budaya (sosial) yang sangat kuat digambarkan melalui kosakata dalam kutipan berikut adalah ....<div class='quote-box'>\"Simbah meletakkan cangkir seng berisi teh tubruk hangat di atas amben. Bau asap kemenyan tipis mengalir dari sudut senthong, bercampur dengan aroma tanah basah setelah diguyur hujan sore tadi. Di luar, suara jangkrik saling bersahutan memecah kesunyian malam dusun lereng Merapi.\"</div>",
+                options: [
+                    "masyarakat perkotaan modern",
+                    "masyarakat nelayan pesisir pantai",
+                    "masyarakat pedesaan Jawa tradisional",
+                    "masyarakat pegunungan luar Jawa"
+                ],
+                answer: 2, // C
+                explanation: "Ada banyak sekali kata khas di sini! Panggilan <em>'Simbah'</em> (Kakek/Nenek dalam bahasa Jawa), tempat duduk <em>'amben'</em> (bale-bale bambu), <em>'senthong'</em> (kamar dalam rumah Jawa), dan minuman <em>teh tubruk</em>. Ditambah lagi, latarnya ada di lereng <em>Gunung Merapi</em> yang terletak di perbatasan Jawa Tengah dan DIY. Semuanya merujuk kuat pada budaya <strong>masyarakat pedesaan Jawa tradisional</strong>."
+            },
+            {
+                text: "Kosakata yang merujuk pada objek fisik khas tempat tinggal tokoh pada kutipan di atas (soal nomor 7) adalah ....",
+                options: [
+                    "teh tubruk dan cangkir seng",
+                    "amben dan senthong",
+                    "asap kemenyan dan jangkrik",
+                    "lereng Merapi dan hujan"
+                ],
+                answer: 1, // B
+                explanation: "Pertanyaan ini mencari 'objek fisik' yang merupakan bagian dari 'tempat tinggal/bangunan'. <strong>Amben</strong> adalah balai-balai atau tempat tidur/duduk yang biasanya terbuat dari kayu atau bambu. Sedangkan <strong>Senthong</strong> adalah sebutan untuk ruang/kamar bagian dalam pada desain rumah adat tradisional Jawa. Keduanya adalah benda fisik yang membangun suasana rumah tersebut."
+            },
+            {
+                text: "Latar tempat yang digambarkan oleh kutipan teks berikut adalah ....<div class='quote-box'>\"Ruangan itu sangat steril. Bau khas antiseptik langsung menusuk hidung siapa saja yang melewati pintunya. Di sudut ruangan, monitor elektrokardiogram terus menampilkan grafik bergelombang hijau yang tidak stabil, diiringi bunyi bip konstan yang memecah keheningan.\"</div>",
+                options: [
+                    "laboratorium kimia sekolah",
+                    "ruang operasi atau ICU rumah sakit",
+                    "apotek atau toko obat herbal",
+                    "ruang tunggu bandara"
+                ],
+                answer: 1, // B
+                explanation: "Coba bayangkan adegan di film-film kedokteran! Ruangan yang sangat bersih (<em>steril</em>), wangi cairan pembersih kuman (<em>antiseptik</em>), dan bunyi \"bip... bip... bip...\" dari mesin pendeteksi detak jantung (<em>elektrokardiogram</em>). Semua petunjuk ini menggambarkan keadaan darurat atau sangat bersih yang hanya ada di <strong>ruang operasi atau ruang ICU di Rumah Sakit</strong>."
+            },
+            {
+                text: "Jika kata \"elektrokardiogram\" dan \"antiseptik\" pada teks nomor 9 diganti dengan \"papan tulis\" dan \"kapur\", maka latar tempat teks tersebut akan berubah menjadi ....",
+                options: [
+                    "ruang kelas",
+                    "ruang guru",
+                    "perpustakaan",
+                    "kantin sekolah"
+                ],
+                answer: 0, // A
+                explanation: "Ini seperti permainan tebak kata! Kalau benda-benda medis kita keluarkan, lalu kita masukkan benda <em>papan tulis</em> dan <em>kapur</em> yang menghasilkan debu putih, secara otomatis pikiran kita akan membayangkan sebuah <strong>Ruang Kelas</strong> tempat siswa belajar dan guru menerangkan pelajaran."
+            },
+            {
+                text: "Objek alam yang sedang dijelajahi oleh tokoh dalam teks berikut adalah ....<div class='quote-box'>\"Langkah kaki kami terasa berat menapaki jalur yang dipenuhi kerikil tajam dan abu vulkanik. Bau belerang yang menyengat memaksa kami mempererat masker. Di kanan-kiri, vegetasi cantigi gunung mulai jarang, digantikan oleh hamparan batu-batu hitam besar sisa letusan beberapa tahun silam.\"</div>",
+                options: [
+                    "kawasan pantai berbatu",
+                    "hutan belantara tropis",
+                    "puncak gunung berapi",
+                    "gua kapur bawah tanah"
+                ],
+                answer: 2, // C
+                explanation: "Adik-adik, kalau ada tempat yang bau belerangnya tajam menyengat hidung, dipenuhi <em>abu vulkanik</em>, dan ada batu hitam raksasa sisa letusan, itu adalah bukti nyata dari aktivitas vulkanik bumi. Lokasi yang memiliki ciri-ciri seperti ini pastilah berada di sekitar kawah atau <strong>Puncak Gunung Berapi</strong> yang masih aktif atau pernah meletus."
+            },
+            {
+                text: "Kosakata yang menunjukkan karakteristik vegetasi khas dari latar tempat tersebut (soal nomor 11) adalah ....",
+                options: [
+                    "kerikil tajam",
+                    "abu vulkanik",
+                    "cantigi gunung",
+                    "belerang"
+                ],
+                answer: 2, // C
+                explanation: "Kata kuncinya adalah <em>'Vegetasi'</em>. Vegetasi berarti kehidupan tumbuhan. Dari keempat pilihan tersebut, kerikil, abu, dan belerang adalah benda mati/mineral. Sedangkan <strong>Cantigi gunung</strong> adalah jenis tumbuhan semak yang sangat kuat, ia bisa bertahan hidup di daerah pegunungan tinggi yang dingin dan berbatu, di mana pohon-pohon lain sudah tidak sanggup lagi tumbuh."
+            },
+            {
+                text: "Latar tempat yang digambarkan dalam kutipan teks fiksi berikut adalah ....<div class='quote-box'>\"Gadis itu duduk terpaku di sudut peron. Di tangannya, sebuah tiket fisik rute Jakarta-Yogyakarta digenggam erat hingga sedikit lecek. Setiap kali terdengar deru mesin lokomotif mendekat dan peluit masinis melengking, ia langsung berdiri tegak dengan mata berbinar penuh harap.\"</div>",
+                options: [
+                    "terminal bus",
+                    "stasiun kereta api",
+                    "bandar udara",
+                    "pelabuhan laut"
+                ],
+                answer: 1, // B
+                explanation: "Tempat menunggu yang disebut <em>peron</em>, ada kendaraan bertenaga besar bernama <em>lokomotif</em> yang mendekat, dan dikendarai oleh seorang <em>masinis</em> yang membunyikan peluit panjang. Tanpa ragu lagi, transportasi darat dengan ciri-ciri ini adalah Kereta Api, dan tempat menunggunya disebut <strong>Stasiun Kereta Api</strong>."
+            },
+            {
+                text: "Evaluasi yang paling tepat mengenai hubungan antara kosakata dan latar tempat pada kutipan di atas (soal nomor 13) adalah ....",
+                options: [
+                    "Kosakata \"peron\", \"tiket fisik\", \"lokomotif\", dan \"masinis\" secara konsisten dan akurat membangun latar stasiun kereta api.",
+                    "Kosakata \"peron\" kurang tepat karena peron merupakan istilah yang biasa digunakan di terminal bus modern.",
+                    "Penggunaan kata \"lokomotif\" tidak mendukung latar karena kereta api modern saat ini tidak menggunakan lokomotif.",
+                    "Latar tempat menjadi tidak jelas karena kata \"tiket fisik\" bisa merujuk pada moda transportasi apa saja."
+                ],
+                answer: 0, // A
+                explanation: "Penulis cerita ini sangat pintar memilih kata! Semua kata yang dia gunakan (*peron, tiket, lokomotif, masinis*) bersatu-padu, tidak ada yang meleset, dan semuanya menunjuk tepat sasaran ke satu tema, yaitu <strong>Stasiun Kereta Api</strong>. Kata-kata ini konsisten membangun imajinasi pembaca sehingga latarnya terasa nyata."
+            },
+            {
+                text: "Latar waktu sejarah (era) yang digambarkan dalam kutipan teks tersebut adalah ....<div class='quote-box'>\"Patih Bilung segera menghadap sang adipati di balairung istana. Dengan sikap takzim, ia menyembah sebelum menyampaikan laporan tentang kekacauan di wilayah kadipaten sebelah timur. Sang adipati tampak mengusap janggutnya yang memutih, dahinya berkerut memikirkan titah yang harus segera dijatuhkan.\"</div>",
+                options: [
+                    "masa penjajahan Belanda",
+                    "masa kerajaan nusantara kuno",
+                    "masa awal kemerdekaan Indonesia",
+                    "masa depan bernuansa futuristik"
+                ],
+                answer: 1, // B
+                explanation: "Kata-kata seperti <em>Patih</em> (perdana menteri kerajaan), <em>Adipati</em> (pemimpin wilayah), <em>Kadipaten</em> (wilayah yang dipimpin adipati), serta cara menghormat dengan cara <em>'menyembah'</em>, dan adanya <em>titah</em> (perintah raja) adalah sistem pemerintahan zaman dahulu kala sebelum Indonesia merdeka. Ini jelas berlatar pada <strong>Masa Kerajaan Nusantara Kuno</strong>."
+            },
+            {
+                text: "Kosakata yang paling kuat mengevaluasi status sosial tokoh-tokoh dalam kutipan tersebut (soal nomor 15) adalah ....",
+                options: [
+                    "menghadap, menyembah, menyampaikan",
+                    "patih, adipati, kadipaten, titah",
+                    "balairung, istana, wilayah, timur",
+                    "janggut, dahi, berkerut, memutih"
+                ],
+                answer: 1, // B
+                explanation: "Status sosial artinya kedudukan atau jabatan seseorang dalam masyarakat. Untuk tahu setinggi apa jabatan mereka di cerita ini, kita cukup melihat jabatannya: <strong>Patih</strong> dan <strong>Adipati</strong>. Wilayah kekuasaannya disebut <strong>Kadipaten</strong>, dan kekuasaannya dibuktikan lewat perintahnya yang mutlak disebut <strong>Titah</strong>. Kata-kata inilah yang mendefinisikan kasta/status sosial mereka."
+            },
+            {
+                text: "Evaluasi terhadap latar tempat dan waktu (setting) yang dibangun oleh penulis dalam kutipan di bawah ini menunjukkan bahwa teks tersebut berlatar ....<div class='quote-box'>\"Mobil otonom kami meluncur mulus di atas jalur magnetik layang. Di luar jendela, gedung-gedung pencakar langit berbentuk spiral dilapisi panel surya transparan yang memantulkan cahaya neon hologram iklan tiga dimensi. Di atas kami, beberapa drone logistik melintas cepat mengantarkan paket ke balkon-balkon apartemen.\"</div>",
+                options: [
+                    "kota metropolitan masa kini yang padat penduduk",
+                    "kawasan industri ramah lingkungan di pedesaan",
+                    "kota masa depan (futuristik) dengan teknologi tinggi",
+                    "pangkalan militer rahasia di luar angkasa"
+                ],
+                answer: 2, // C
+                explanation: "Coba bandingkan dengan zaman sekarang! Apakah saat ini mobil bisa menyetir sendiri di atas rel magnet melayang? Apakah kurir pengantar paket sudah diganti sepenuhnya oleh robot terbang (drone)? Kata-kata canggih ini menggambarkan khayalan tingkat tinggi tentang kehidupan manusia puluhan atau ratusan tahun mendatang, yang kita sebut dengan latar <strong>kota masa depan (futuristik)</strong>."
+            },
+            {
+                text: "Kosakata yang menjadi bukti utama pendukung evaluasi latar futuristik pada soal nomor 17 adalah ....",
+                options: [
+                    "mobil, jendela, gedung, cahaya",
+                    "otonom, jalur magnetik layang, panel surya transparan, neon hologram",
+                    "spiral, iklan tiga dimensi, paket, apartemen",
+                    "meluncur, melintas, mengantarkan, memantulkan"
+                ],
+                answer: 1, // B
+                explanation: "Untuk membuktikan bahwa ceritanya berlatar masa depan, kita harus mencari kata-kata teknologi mutakhir yang belum ada atau belum lazim saat ini. Kata <strong>'Otonom'</strong> (bisa bergerak sendiri tanpa dikendalikan), <strong>'Jalur magnetik layang'</strong>, <strong>'Panel surya transparan'</strong>, dan <strong>'Hologram'</strong> adalah bukti kuat bahwa kemajuan teknologinya sudah melampaui zaman kita saat ini!"
+            },
+            {
+                text: "Objek berupa hidangan tradisional yang sedang dimasak berdasarkan kosakata bumbu dan bahan pada teks berikut adalah ....<div class='quote-box'>\"Ibu menuangkan santan kental ke dalam kuali besi yang sudah berisi potongan daging sapi berbalut bumbu halus kemerahan. Aroma harum daun kunyit, serai, dan asam kandis langsung menyeruak saat api tungku kayu mulai menjilati pantat kuali. Ibu terus mengaduknya perlahan agar santan tidak pecah.\"</div>",
+                options: [
+                    "soto betawi",
+                    "rendang minang",
+                    "rawon surabaya",
+                    "gudeg yogyakarta"
+                ],
+                answer: 1, // B
+                explanation: "Ayo kita bedah resepnya! Bahan utamanya <em>daging sapi</em>. Dimasak dalam lautan bumbu rempah kemerahan dicampur <em>santan kental</em>. Rahasia harumnya ada pada <em>daun kunyit</em>, <em>serai</em>, dan <em>asam kandis</em>, lalu diaduk lama supaya santan jadi minyak bumbu. Perpaduan sempurna ini adalah resep otentik dari hidangan terenak di dunia: <strong>Rendang khas Minang (Padang)</strong>! Kalau Rawon warnanya hitam (keluwek), Soto berkuah encer, dan Gudeg berbahan nangka."
+            },
+            {
+                text: "Penggunaan kosakata \"tungku kayu\" dalam kutipan tersebut (soal nomor 19) memberikan informasi tambahan mengenai latar sosial-budaya berupa ....",
+                options: [
+                    "proses memasak modern yang mengutamakan kecepatan",
+                    "proses memasak tradisional yang masih mempertahankan cara klasik",
+                    "kehidupan masyarakat perkotaan yang serbapraktis",
+                    "industri kuliner skala besar di restoran bintang lima"
+                ],
+                answer: 1, // B
+                explanation: "Kalau mau cepat dan praktis seperti masyarakat kota modern, Ibu pasti akan memakai kompor gas, kan? Namun, penggunaan <strong>'Tungku Kayu'</strong> (memasak dengan kayu bakar) membuktikan bahwa mereka lebih memilih merawat tradisi atau cara lama (klasik). Memasak rendang pakai kayu bakar memang dipercaya membuat aromanya jauh lebih wangi dan matangnya lebih sempurna!"
+            }
+        ];
+
+        function processContent(text) {
+            // Ubah pattern [GAMBAR: data:image/...] menjadi elemen <img> dengan styling
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<div class="my-4"><img src="$1" alt="Gambar Soal" class="max-w-full h-auto mx-auto rounded-lg shadow border border-slate-200"></div>');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white md:bg-slate-50 p-5 md:p-8 rounded-xl border border-slate-200 shadow-sm transition-all duration-300';
+            questionDiv.id = `question-block-${index}`;
+
+            // Menyusun Pilihan Ganda (A, B, C, D)
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-4">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-bold shadow-md mb-4 md:mb-0 md:mr-5">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-14">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Penjelasan (Awalnya tersembunyi dengan transisi) -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-14 bg-white rounded-xl shadow-sm">
+                    <div class="p-5 md:p-6">
+                        <h4 class="font-bold text-lg mb-3 flex items-center" id="status-title-${index}">
+                            <!-- Ikon & Status akan dirender di sini -->
+                        </h4>
+                        <div class="text-sm md:text-base text-slate-700 leading-relaxed bg-white rounded-lg" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Menampilkan kotak penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Mengunci pilihan dan menandai jawaban
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true; // Lock
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    
+                    if (val === q.answer) {
+                        // Highlight jawaban benar selalu hijau
+                        label.classList.remove('bg-white', 'border-slate-300', 'hover:bg-slate-50');
+                        label.classList.add('bg-green-50', 'border-green-400', 'ring-2', 'ring-green-400');
+                        label.querySelector('span').classList.replace('bg-slate-100', 'bg-green-500');
+                        label.querySelector('span').classList.replace('text-slate-700', 'text-white');
+                        label.querySelector('span').classList.replace('border-slate-200', 'border-green-600');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // JAWABAN BENAR
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-green-50 border-l-4 border-green-500 rounded-r-xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali!</span>`;
+                        qBlock.classList.add('ring-1', 'ring-green-200');
+                    } else {
+                        // JAWABAN SALAH
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-red-50 border-l-4 border-red-500 rounded-r-xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Ups, Kurang Tepat! Jawaban: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-1', 'ring-red-200');
+                        
+                        // Menandai jawaban yang salah dengan warna merah
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        wrongLabel.querySelector('span').classList.replace('bg-slate-100', 'bg-red-500');
+                        wrongLabel.querySelector('span').classList.replace('text-slate-700', 'text-white');
+                        wrongLabel.querySelector('span').classList.replace('border-slate-200', 'border-red-600');
+                    }
+                } else {
+                    // TIDAK DIJAWAB
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-orange-50 border-l-4 border-orange-500 rounded-r-xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-orange-800">Terlewat! Jawaban: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-1', 'ring-orange-200');
+                }
+
+                // Injeksi teks penjelasan (Edukatif)
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            // Animasi angka
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1200; // ms
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            // Menyiapkan Layout Akhir
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Atur pesan dinamis sesuai perolehan nilai
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Kamu memiliki kemampuan literasi yang sangat luar biasa!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja bagus! 👏 Kemampuan membacamu sudah terasah dengan baik. Sedikit lagi!";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya semakin jeli. 📚";
+                scoreMessage.className = "text-orange-600 mb-8 font-bold text-lg px-4";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Setiap ahli berawal dari seorang pemula. Ayo coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+            }
+
+            // Scroll mulus ke bagian bawah (skor)
+            setTimeout(() => {
+                // scrollIntoView disabled to prevent screen jumping
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset input radio
+            form.reset();
+
+            // Sembunyikan semua elemen penjelasan dan reset warna
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                // Tutup kotak pembahasan
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-14 bg-white rounded-xl shadow-sm';
+                
+                // Hapus highlight blok
+                qBlock.classList.remove('ring-1', 'ring-green-200', 'ring-red-200', 'ring-orange-200');
+                
+                // Reset semua styling pada radio button dan labelnya
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanIcon = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500';
+                    spanIcon.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200';
+                });
+            });
+
+            // Tukar kembali visibilitas Area Hasil dan Tombol Periksa
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Gulir kembali ke atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

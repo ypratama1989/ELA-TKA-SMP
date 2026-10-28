@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Continuous Tenses - EDUFILLAH</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc; /* Lighter modern slate */
+        }
+        
+        /* Custom Radio Button Styling */
+        .custom-radio {
+            accent-color: #0284c7;
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        /* Highlight checked option */
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #0369a1; 
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Animation for explanations and score */
+        .explanation {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Special style for dialog or context text */
+        .context-text {
+            background-color: #e0f2fe; 
+            border-left: 4px solid #0284c7; 
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-slate-600 hover:text-sky-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-lg sm:text-xl font-bold text-sky-700 hidden sm:block">Latihan Soal Continuous Tenses</h1>
+            <div class="w-20 sm:hidden"></div> <!-- Balancer for mobile view -->
+        </div>
+    </header>
+
+    <main class="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Uji Penguasaan Continuous Tenses</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Kerjakan 20 soal grammar di bawah ini. Cermati penanda waktu (time signals) untuk membedakan Present, Past, dan Future Continuous. Semangat!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <!-- Soal 1 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">1. Look at the window! The rain ... very hard right now. We cannot go to the playground.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio">
+                            <span class="ml-3">A. falls</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio">
+                            <span class="ml-3">B. is falling</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio">
+                            <span class="ml-3">C. was falling</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be falling</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (is falling)</strong><br><br>
+                        <strong>Mari kita bedah kuncinya:</strong><br>
+                        Perhatikan penanda waktu <em>"right now"</em> (sekarang juga) dan kata <em>"Look!"</em> (Lihat!). Ini menunjukkan kejadiannya <strong>sedang berlangsung detik ini juga</strong>.<br>
+                        Oleh karena itu, kita harus memakai <strong>Present Continuous Tense</strong> (To be + Verb-ing). Subjek <em>"The rain"</em> itu tunggal (It), jadi kita pakai <em>is</em> + <em>falling</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <div class="context-text">
+                        Rina : "Why are you turning off the television?"<br>
+                        Dito : "Because I ... to study for the English exam. The noise distracts me."
+                    </div>
+                    <p class="font-semibold text-lg mb-4">2. Fill in the blank!</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio">
+                            <span class="ml-3">A. try</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio">
+                            <span class="ml-3">B. am trying</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio">
+                            <span class="ml-3">C. was trying</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be trying</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (am trying)</strong><br><br>
+                        <strong>Alasannya gampang banget!</strong><br>
+                        Rina bertanya kenapa Dito mematikan TV <em>saat ini</em> (are you turning off). Dito mematikan TV karena <strong>saat ini juga</strong> ia <em>sedang mencoba</em> belajar dan merasa terganggu.<br>
+                        Kejadian yang sedang berlangsung saat berbicara selalu memakai <strong>Present Continuous Tense</strong>. Karena subjeknya <em>"I"</em> (Saya), maka pasangannya adalah <em>am</em> + <em>trying</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">3. Sinta and her family ... their new house in Surabaya at this very moment. They look very busy.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio">
+                            <span class="ml-3">A. are cleaning</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio">
+                            <span class="ml-3">B. is cleaning</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio">
+                            <span class="ml-3">C. were cleaning</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be cleaning</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (are cleaning)</strong><br><br>
+                        <strong>Awas jebakan Subjek!</strong><br>
+                        Waktunya jelas: <em>"at this very moment"</em> (tepat pada saat ini), jadi kita pakai Present Continuous. Tapi pilih <em>are</em> atau <em>is</em>?<br>
+                        Lihat subjeknya: <em>Sinta <strong>and</strong> her family</em>. Karena ada lebih dari satu orang (jamak / they), kita wajib memakai <em>To Be</em> untuk jamak yaitu <strong>are</strong>. Jadi jawabannya <em>are cleaning</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 4 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">4. Read the following sentences!<br>
+                    (1) She is always complaining about her homework.<br>
+                    (2) The sun is rising in the east every morning.<br>
+                    (3) I am understanding the lesson very well now.<br>
+                    (4) They are playing football in the rain.<br><br>
+                    Which of the sentences above show the correct use of the Present Continuous Tense?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio">
+                            <span class="ml-3">A. (1) and (2)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio">
+                            <span class="ml-3">B. (2) and (3)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio">
+                            <span class="ml-3">C. (1) and (4)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio">
+                            <span class="ml-3">D. (3) and (4)</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (1 dan 4)</strong><br><br>
+                        <strong>Mari kita cek satu-satu:</strong><br>
+                        - Kalimat (1) <strong>BENAR</strong>. Lho, kok ada "always"? Present Continuous bisa dipakai dengan kata <em>always</em> untuk menunjukkan keluhan atau rasa kesal (kebiasaan buruk).<br>
+                        - Kalimat (2) SALAH. Fakta alam (matahari terbit) harus pakai Simple Present: <em>The sun rises...</em><br>
+                        - Kalimat (3) SALAH. Kata "understand" (paham) adalah kata kerja perasaan/pikiran (stative verb). Tidak boleh ditambah -ing! Seharusnya cukup: <em>I understand...</em><br>
+                        - Kalimat (4) <strong>BENAR</strong>. Ini adalah fungsi dasar, yaitu kegiatan fisik yang sedang dilakukan saat ini.
+                    </div>
+                </div>
+
+                <!-- Soal 5 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <div class="context-text">
+                        Teacher : "Where is Adrian? The class has already started."<br>
+                        Budi : "He ... in the library, Ma'am. He told me he needed to find a dictionary."
+                    </div>
+                    <p class="font-semibold text-lg mb-4">5. Fill in the blank!</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio">
+                            <span class="ml-3">A. is searching</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio">
+                            <span class="ml-3">B. was searching</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio">
+                            <span class="ml-3">C. will be searching</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio">
+                            <span class="ml-3">D. searches</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (is searching)</strong><br><br>
+                        <strong>Analisa situasinya:</strong><br>
+                        Guru bertanya keberadaan Adrian <strong>sekarang</strong> (Where <em>is</em> Adrian?). <br>
+                        Budi menjawab aktivitas yang sedang Adrian lakukan *pada saat ini juga* di perpustakaan. Maka pastinya kita menggunakan Present Continuous Tense: <em>He is searching</em> (Dia sedang mencari).
+                    </div>
+                </div>
+
+                <!-- Soal 6 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">6. Evaluate the following dialogue:<br>
+                    Ahmad : "Can I borrow your laptop now?"<br>
+                    Baim : "I'm sorry, you can't. I ... it to write my weekly report."<br><br>
+                    The most grammatically and contextually appropriate phrase to fill in the blank is...</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio">
+                            <span class="ml-3">A. use</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio">
+                            <span class="ml-3">B. am using</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio">
+                            <span class="ml-3">C. was using</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be using</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (am using)</strong><br><br>
+                        <strong>Kenapa Baim menolak?</strong><br>
+                        Ahmad ingin meminjam laptop *"now"* (sekarang). Baim tidak bisa meminjamkannya karena <strong>saat ini juga</strong> ia <em>sedang menggunakan</em> laptop tersebut.<br>
+                        Kalimat penolakan dengan alasan yang sedang berlangsung detik ini menggunakan Present Continuous: <strong>I am using</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 7 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">7. I ... my English homework when suddenly the lights went out last night.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio">
+                            <span class="ml-3">A. am doing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio">
+                            <span class="ml-3">B. was doing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio">
+                            <span class="ml-3">C. did</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be doing</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (was doing)</strong><br><br>
+                        <strong>Selamat datang di Past Continuous Tense!</strong><br>
+                        Perhatikan ada kata kunci *"last night"* (tadi malam). Berarti kejadiannya di masa lampau.<br>
+                        Di sini ada dua kejadian: (1) mengerjakan PR, (2) tiba-tiba lampu mati. Aksi yang <em>sedang berlangsung lebih dulu</em> sebelum diganggu oleh aksi lain harus menggunakan <strong>Past Continuous</strong> (was/were + Verb-ing).<br>
+                        Karena subjeknya "I", pasangannya adalah <strong>was doing</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 8 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">8. While mother ... dinner in the kitchen, father was washing his motorcycle in the garage.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio">
+                            <span class="ml-3">A. is cooking</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio">
+                            <span class="ml-3">B. was cooking</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio">
+                            <span class="ml-3">C. cooked</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be cooking</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (was cooking)</strong><br><br>
+                        <strong>Trik kata "While":</strong><br>
+                        Kata <em>While</em> (Sementara/Sedangkan) sering dipakai untuk menggabungkan dua aksi yang <strong>sedang berlangsung bersamaan</strong> di masa lampau (Parallel actions).<br>
+                        Coba lihat kalimat kedua: Ayah <em>was washing</em> (Past Continuous). Karena mereka berdua melakukan kegiatan secara bersamaan di masa lampau, kalimat ibu juga wajib Past Continuous: <strong>was cooking</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 9 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <div class="context-text">
+                        Yesterday afternoon, Lisa started reading a novel at 3:00 PM and finished it at 5:00 PM. Her friend, Dina, came to her house at 4:00 PM.
+                    </div>
+                    <p class="font-semibold text-lg mb-4">9. Based on the situation, which of the following statements is correct?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio">
+                            <span class="ml-3">A. When Dina came, Lisa read a novel.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio">
+                            <span class="ml-3">B. When Dina came, Lisa was reading a novel.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio">
+                            <span class="ml-3">C. While Dina was coming, Lisa read a novel.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio">
+                            <span class="ml-3">D. Lisa was reading a novel when Dina was coming.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Mari kita urutkan kejadiannya:</strong><br>
+                        Lisa membaca dari jam 15.00 sampai 17.00. Dina datang jam 16.00.<br>
+                        Artinya, persis pada saat Dina datang, kegiatan membaca Lisa <strong>sedang berlangsung</strong> (belum selesai).<br>
+                        Rumus baku untuk aksi yang terpotong di masa lampau: Aksi singkat yang menyela pakai Simple Past (<em>When Dina came</em>), aksi panjang yang sedang berlangsung pakai Past Continuous (<em>Lisa was reading...</em>).
+                    </div>
+                </div>
+
+                <!-- Soal 10 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">10. Dani : "I called you three times at 8 o'clock yesterday morning, but you didn't answer."<br>
+                    Edo : "Oh, I'm sorry. I ... a bath at that time so I couldn't hear my phone."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio">
+                            <span class="ml-3">A. take</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio">
+                            <span class="ml-3">B. am taking</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio">
+                            <span class="ml-3">C. was taking</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be taking</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (was taking)</strong><br><br>
+                        <strong>Fungsi lain Past Continuous:</strong><br>
+                        Past Continuous tidak hanya dipakai kalau ada kata <em>when/while</em>. Ia juga dipakai untuk menyatakan kejadian yang <strong>sedang berlangsung pada waktu yang sangat spesifik di masa lalu</strong>.<br>
+                        Waktu spesifiknya adalah <em>"at 8 o'clock yesterday morning"</em> (jam 8 kemarin pagi). Saat jam 8 teng itu, Edo <em>sedang</em> mandi, sehingga ia memakai: <strong>I was taking a bath</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 11 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">11. Choose the most grammatically correct sentence that describes a past interrupted action!</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio">
+                            <span class="ml-3">A. We were sleeping when the earthquake is happening.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio">
+                            <span class="ml-3">B. We slept when the earthquake was happening.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio">
+                            <span class="ml-3">C. We were sleeping when the earthquake happened.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio">
+                            <span class="ml-3">D. We are sleeping when the earthquake happened.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Rumus Interrupted Action (Kejadian disela):</strong><br>
+                        Aksi yang durasinya lama (sudah berlangsung lebih dulu) memakai <strong>Past Continuous</strong>.<br>
+                        Aksi yang durasinya singkat/tiba-tiba mengagetkan memakai <strong>Simple Past Tense (V2)</strong>.<br>
+                        Logikanya: Kami *sedang tidur* (were sleeping), lalu tiba-tiba gempa *terjadi* (happened). Opsi C merangkai rumus ini dengan sangat sempurna!
+                    </div>
+                </div>
+
+                <!-- Soal 12 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <div class="context-text">
+                        Yesterday at 10:00 AM, the students of Class 9A were in the laboratory. <u>They were doing a chemistry experiment.</u>
+                    </div>
+                    <p class="font-semibold text-lg mb-4">12. Which question matches the underlined activity?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio">
+                            <span class="ml-3">A. What did the students do yesterday at 10:00 AM?</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio">
+                            <span class="ml-3">B. What were the students doing yesterday at 10:00 AM?</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio">
+                            <span class="ml-3">C. What are the students doing in the laboratory?</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio">
+                            <span class="ml-3">D. What will the students be doing yesterday at 10:00 AM?</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Menyesuaikan jawaban dengan pertanyaan:</strong><br>
+                        Kalimat yang digarisbawahi <em>"They were doing..."</em> menggunakan Past Continuous Tense. Ini menunjukkan kegiatan spesifik yang *sedang* terjadi pada jam 10 pagi kemarin.<br>
+                        Maka pertanyaan yang tepat juga harus memakai pola Past Continuous: <em>"What <strong>were</strong> the students <strong>doing</strong>...?"</em> (Apa yang sedang siswa lakukan...).
+                    </div>
+                </div>
+
+                <!-- Soal 13 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">13. "The wind was blowing fiercely and the rain was pouring down when we arrived at the cabin."<br>What does this sentence imply about the background situation?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio">
+                            <span class="ml-3">A. The wind and rain started after we arrived.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio">
+                            <span class="ml-3">B. The wind and rain stopped when we arrived.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio">
+                            <span class="ml-3">C. The wind and rain were already in progress before we arrived.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio">
+                            <span class="ml-3">D. We arrived first, then the wind and rain began.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Trik Membaca Cerita (Storytelling):</strong><br>
+                        Penulis cerita sering memakai Past Continuous (<em>was blowing, was pouring</em>) di awal kalimat untuk membangun suasana (background description).<br>
+                        Artinya, saat tokoh "kami" tiba di kabin, angin dan hujannya <strong>sudah berlangsung sejak tadi dan masih berlangsung</strong> (<em>already in progress</em>). Mereka tiba di tengah-tengah cuaca buruk tersebut.
+                    </div>
+                </div>
+
+                <!-- Soal 14 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">14. Don't call me tomorrow at 9:00 AM because I ... an important presentation in front of the board of directors.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio">
+                            <span class="ml-3">A. will deliver</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio">
+                            <span class="ml-3">B. am delivering</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio">
+                            <span class="ml-3">C. will be delivering</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio">
+                            <span class="ml-3">D. was delivering</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (will be delivering)</strong><br><br>
+                        <strong>Selamat datang di Future Continuous Tense!</strong><br>
+                        Perhatikan ada larangan menelepon <strong>"besok jam 9 pagi"</strong>. Kenapa dilarang? Karena tepat pada jam tersebut di masa depan, saya <em>sedang</em> melakukan presentasi.<br>
+                        Sesuatu yang akan sedang berlangsung di masa depan wajib menggunakan Future Continuous Tense. Rumusnya: <strong>will be + Verb-ing</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 15 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">15. Sarah : "Can we meet tomorrow afternoon around 2 PM?"<br>
+                    Tania : "I'm afraid not. I ... my semester project with my group members at that time."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio">
+                            <span class="ml-3">A. will be discussing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio">
+                            <span class="ml-3">B. am discussing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio">
+                            <span class="ml-3">C. was discussing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio">
+                            <span class="ml-3">D. discuss</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (will be discussing)</strong><br><br>
+                        <strong>Mirip dengan soal sebelumnya!</strong><br>
+                        Tania menolak diajak bertemu <em>besok jam 2 siang</em>. Alasannya, karena pada jam tersebut ia <em>akan sedang</em> berdiskusi dengan kelompoknya.<br>
+                        Ingat rumusnya: Waktu masa depan yang spesifik = Future Continuous Tense (<strong>will be + Verb-ing</strong>).
+                    </div>
+                </div>
+
+                <!-- Soal 16 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">16. This time next week, the students of grade 9 ... their holiday in Bali.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio">
+                            <span class="ml-3">A. will enjoy</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio">
+                            <span class="ml-3">B. will be enjoying</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio">
+                            <span class="ml-3">C. are enjoying</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio">
+                            <span class="ml-3">D. were enjoying</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (will be enjoying)</strong><br><br>
+                        <strong>Kenali Time Signal (Penanda Waktu)-nya:</strong><br>
+                        Frasa <em>"This time next week"</em> artinya "Pada jam/waktu seperti ini di minggu depan". Ini adalah penunjuk waktu yang sangat presisi di masa depan.<br>
+                        Jika kita berkhayal membayangkan apa yang sedang kita lakukan di waktu tersebut minggu depan, kita wajib memakai <strong>Future Continuous</strong> (will be + enjoying).
+                    </div>
+                </div>
+
+                <!-- Soal 17 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">17. Read the dialogue below!<br>
+                    Father : "Will you be using the car tonight, Son?"<br>
+                    Rian : "No, Father. I ... to the cinema with my friends by motorcycle."<br>
+                    The best option to complete the dialogue is...</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio">
+                            <span class="ml-3">A. will be going</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio">
+                            <span class="ml-3">B. was going</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio">
+                            <span class="ml-3">C. am going</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio">
+                            <span class="ml-3">D. go</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (will be going)</strong><br><br>
+                        <strong>Samakan Tenses-nya!</strong><br>
+                        Ayah bertanya menggunakan Future Continuous Tense (*"Will you be using..."*). Rian juga menceritakan apa yang *akan sedang* ia lakukan nanti malam ("tonight") dengan tenses yang sepadan, yaitu: <strong>I will be going</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 18 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <div class="context-text">
+                        The school band has a tight schedule. Tomorrow, they plan to practice from 1:00 PM to 4:00 PM.
+                    </div>
+                    <p class="font-semibold text-lg mb-4">18. If someone wants to meet the band members tomorrow at 2:30 PM, what will they be doing?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio">
+                            <span class="ml-3">A. They will practice.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio">
+                            <span class="ml-3">B. They will be practicing.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio">
+                            <span class="ml-3">C. They are practicing.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio">
+                            <span class="ml-3">D. They were practicing.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Mari kita berlogika!</strong><br>
+                        Jadwal latihan band adalah besok dari jam 13.00 sampai 16.00. Jika ada yang datang menemui mereka jam 14.30, maka mereka <strong>sedang berada di tengah-tengah kegiatan latihan</strong>.<br>
+                        Karena kejadiannya besok, kita menggunakan Future Continuous: <em>They will be practicing</em> (Mereka akan sedang berlatih).
+                    </div>
+                </div>
+
+                <!-- Soal 19 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">19. Read the sentences below!<br>
+                    (1) At this time tomorrow, my father will be flying to Tokyo.<br>
+                    (2) She will be sleep when you arrive tonight.<br>
+                    (3) They will be playing basketball at 4 PM tomorrow.<br>
+                    (4) I will being studying when the movie starts.<br><br>
+                    Which sentences show the correct grammatical structure of the Future Continuous Tense?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio">
+                            <span class="ml-3">A. (1) and (2)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio">
+                            <span class="ml-3">B. (2) and (4)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio">
+                            <span class="ml-3">C. (1) and (3)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio">
+                            <span class="ml-3">D. (3) and (4)</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (1 dan 3)</strong><br><br>
+                        <strong>Bedah Rumusnya (Subject + will be + Verb-ing):</strong><br>
+                        - Kalimat (1) BENAR: <em>will be flying</em>.<br>
+                        - Kalimat (2) SALAH: Kurang -ing. Seharusnya <em>will be sleep<strong>ing</strong></em>.<br>
+                        - Kalimat (3) BENAR: <em>will be playing</em>.<br>
+                        - Kalimat (4) SALAH: Kata <em>being</em> berlebihan dan merusak tatanan kata. Seharusnya cukup <em>will be studying</em>.<br>
+                        Jadi yang sempurna adalah nomor 1 dan 3.
+                    </div>
+                </div>
+
+                <!-- Soal 20 -->
+                <div class="question-block mb-14" data-answer="D">
+                    <p class="font-semibold text-lg mb-4">20. Teacher : "Why do you need to learn the Future Continuous Tense?"<br>
+                    Student : "To express an action that ..."<br>
+                    Which of the following is the most accurate completion of the student's answer?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio">
+                            <span class="ml-3">A. will be completed before a specific time in the future.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio">
+                            <span class="ml-3">B. is happening right now at the moment of speaking.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio">
+                            <span class="ml-3">C. was in progress at a specific moment in the past.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio">
+                            <span class="ml-3">D. will be in progress at a specific point of time in the future.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: D</strong><br><br>
+                        <strong>Kesimpulan Materi:</strong><br>
+                        - Opsi A adalah untuk <em>Future Perfect</em> (akan sudah selesai).<br>
+                        - Opsi B adalah untuk <em>Present Continuous</em> (sedang terjadi sekarang).<br>
+                        - Opsi C adalah untuk <em>Past Continuous</em> (sedang terjadi di masa lalu).<br>
+                        - Opsi D adalah definisi asli dari <strong>Future Continuous Tense</strong>, yaitu kejadian yang <em>akan sedang dalam proses (berlangsung)</em> pada titik waktu tertentu di masa depan.
+                    </div>
+                </div>
+
+                <!-- Hasil Skor (Hidden by Default) -->
+                <div id="score-container" class="hidden my-10 p-8 bg-sky-50 rounded-2xl border-2 border-sky-200 text-center shadow-inner">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-2">Skor Akhir Kamu:</h3>
+                    <div id="score-display" class="text-7xl font-extrabold text-sky-600 mb-4 drop-shadow-sm">0</div>
+                    <p id="score-message" class="text-lg text-slate-600 font-medium"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pb-6">
+                    <button type="button" id="check-btn" class="bg-sky-600 hover:bg-sky-700 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-slate-700 hover:bg-slate-800 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="py-8 text-center text-slate-500 font-medium mt-auto w-full bg-slate-50 border-t border-slate-200">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // 20 Questions total, max score 100 (5 points each)
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach((q) => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    // Injecting rationale into explanation div
+                    explanationDiv.innerHTML = rationaleHTML; 
+
+                    radios.forEach(radio => {
+                        // Lock inputs so they cannot be changed after checking
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Tampilan Benar (Hijau)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-emerald-50 text-emerald-900 border-emerald-500 block shadow-sm';
+                            } else {
+                                // Tampilan Salah (Merah)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                            }
+                        }
+                    });
+
+                    // Handle unanswered questions (mark as incorrect visually)
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                        explanationDiv.innerHTML = '<strong class="text-rose-700 flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Oops, kamu belum menjawab pertanyaan ini!</strong><hr class="border-rose-200 my-3">' + rationaleHTML;
+                    }
+                });
+
+                // Score Calculation
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                
+                // Score Counter Animation
+                let currentScore = 0;
+                const scoreInterval = setInterval(() => {
+                    if (currentScore >= finalScore) {
+                        clearInterval(scoreInterval);
+                        scoreDisplay.textContent = finalScore;
+                    } else {
+                        currentScore++;
+                        scoreDisplay.textContent = currentScore;
+                    }
+                }, 20); // Counter speed
+
+                // Set motivational message based on score
+                if (finalScore === 100) {
+                    scoreMessage.innerHTML = "🎉 Sempurna! Penguasaan materi Continuous Tenses kamu sangat luar biasa.";
+                } else if (finalScore >= 80) {
+                    scoreMessage.innerHTML = "🌟 Kerja yang sangat bagus! Sedikit lagi mencapai kesempurnaan.";
+                } else if (finalScore >= 60) {
+                    scoreMessage.innerHTML = "👍 Cukup baik. Jangan lupa baca pembahasannya lagi biar makin paham ya!";
+                } else {
+                    scoreMessage.innerHTML = "💪 Jangan menyerah! Pelajari pelan-pelan rumusnya, pasti kamu bisa!";
+                }
+
+                // Show Results & Toggle Buttons
+                scoreContainer.style.display = 'block';
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Smooth scroll down to score box
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset form inputs (Vanilla JS)
+                form.reset();
+
+                // Revert to initial state
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; // Unlock inputs
+                    });
+                    
+                    // Hide explanations
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.style.display = 'none';
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Hide score & reset buttons
+                scoreContainer.style.display = 'none';
+                scoreDisplay.textContent = '0';
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Smooth scroll to top of the page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

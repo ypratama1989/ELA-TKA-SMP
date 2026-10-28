@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Literasi Edufillah</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Kustomisasi input radio agar bisa disembunyikan tapi bisa distyle labelnya */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Transisi kotak penjelasan */
+        .explanation-box {
+            transition: all 0.3s ease-in-out;
+            max-height: 2500px; /* Cukup besar untuk konten panjang */
+            overflow: hidden;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Gaya khusus untuk kotak kutipan teks (soal cerita) */
+        .quote-box {
+            border-left: 4px solid #64748b; /* slate-500 */
+            background-color: #f8fafc; /* slate-50 */
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+            font-style: italic;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        /* Gaya untuk bagan teks pre-formatted */
+        .diagram-box {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 text-center flex-1">Kuis Literasi & Pemetaan Ide</h1>
+            <div class="w-24"></div> <!-- Spacer untuk menyeimbangkan posisi judul -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Selamat Mengerjakan! &#x1F4DD;</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    Baca setiap teks dan perhatikan bagan/kerangka yang diberikan dengan teliti. 
+                    Kamu bisa langsung memeriksa jawabanmu kapan saja. Soal yang terlewat akan ditandai. Semangat!
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Soal-soal akan di-generate oleh JavaScript di sini -->
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-slate-200 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <!-- Area Hasil -->
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message">Terus semangat belajarnya!</p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        // Data Soal, Kunci Jawaban yang terverifikasi, dan Pembahasan yang diperkaya
+        const quizData = [
+            {
+                text: "<strong>Teks 1 (untuk soal nomor 1-3)</strong><div class='quote-box'>(1) Sampah plastik menjadi ancaman serius bagi ekosistem laut global. (2) Berdasarkan data riset, jutaan ton limbah plastik masuk ke samudra setiap tahunnya dan terurai menjadi mikroplastik yang berbahaya. (3) Dampak langsungnya adalah kematian biota laut akibat mengonsumsi atau terjerat plastik. (4) Oleh karena itu, diperlukan langkah konkret seperti pengurangan penggunaan plastik sekali pakai dan optimalisasi sistem daur ulang di tingkat rumah tangga.</div>Jika teks di atas akan dibuat menjadi sebuah bagan konsep (<em>mind map</em>), manakah pengelompokan ide pokok yang paling tepat untuk mengisi cabang utama?",
+                options: [
+                    "(1) Penyebab sampah plastik, (2) Jenis-jenis plastik di laut",
+                    "(1) Masalah/Dampak sampah plastik di laut, (2) Solusi penanganan",
+                    "(1) Data riset mikroplastik, (2) Cara mendaur ulang sampah rumah tangga",
+                    "(1) Kematian biota laut, (2) Kampanye bebas plastik sekali pakai"
+                ],
+                answer: 1, // B
+                explanation: "Halo adik-adik! <em>Mind map</em> atau peta pikiran biasanya membagi sebuah teks besar menjadi cabang-cabang utama yang merangkum keseluruhan isi. Yuk kita bedah Teks 1:<br><br>1. Kalimat (1), (2), dan (3) menceritakan tentang betapa bahayanya sampah plastik bagi laut dan hewan laut. Ini adalah kelompok <strong>Masalah/Dampak</strong>.<br>2. Kalimat (4) memberikan jalan keluar (kurangi plastik, daur ulang). Ini adalah kelompok <strong>Solusi penanganan</strong>.<br><br>Jadi, cabang utama yang paling mewakili <em>seluruh</em> isi teks adalah membaginya menjadi dua kelompok besar: Masalah dan Solusinya. Jawaban B sangat tepat!"
+            },
+            {
+                text: "Perhatikan draf kerangka karangan berikut!<div class='diagram-box'>Tema: Ancaman Sampah Plastik di Laut\nI. Pendahuluan: Pernyataan umum tentang sampah plastik\nII. Pembahasan:\n   A. Data volume limbah plastik tahunan\n   B. [...]\nIII. Solusi: Pengurangan plastik sekali pakai dan daur ulang</div>Gagasan yang paling tepat untuk melengkapi bagian II.B berdasarkan isi Teks 1 adalah...",
+                options: [
+                    "Proses pembuatan plastik sekali pakai",
+                    "Dampak mikroplastik terhadap biota laut",
+                    "Peran pemerintah dalam regulasi lingkungan",
+                    "Jenis-jenis biota laut yang dilindungi"
+                ],
+                answer: 1, // B
+                explanation: "Mari kita analisis kerangka karangan ini! Bagian II (Pembahasan) harus berisi rincian masalah dari Teks 1. Poin II.A sudah diisi dengan data volume limbah (berdasarkan kalimat 2 teks).<br><br>Nah, setelah membicarakan volume sampah, kalimat (3) di dalam Teks 1 membahas tentang apa? Ya, teks membahas: <em>\"Dampak langsungnya adalah kematian biota laut...\"</em>. Oleh karena itu, poin II.B yang paling pas untuk melengkapi kerangka tersebut adalah <strong>Dampak mikroplastik terhadap biota laut</strong>. Kita harus selalu berpatokan pada isi teks aslinya, ya!"
+            },
+            {
+                text: "Seorang siswa membuat bagan alur sebab-akibat berdasarkan Teks 1:<div class='diagram-box'>Limbah plastik masuk laut &rarr; Terurai menjadi mikroplastik &rarr; [X] &rarr; Kematian biota laut.</div>Konsep yang paling tepat untuk mengisi kotak <code>[X]</code> agar alur berpikir bagan tersebut logis adalah...",
+                options: [
+                    "Kampanye pengurangan plastik dilakukan",
+                    "Biota laut mengonsumsi mikroplastik",
+                    "Sistem daur ulang dioptimalkan",
+                    "Riset tentang laut dipublikasikan"
+                ],
+                answer: 1, // B
+                explanation: "Bagan sebab-akibat (kausalitas) harus memiliki urutan peristiwa yang masuk akal. Coba bayangkan ceritanya:<br>Plastik masuk laut &rarr; hancur jadi mikroplastik &rarr; lalu apa yang terjadi sebelum hewan laut mati?<br><br>Menurut kalimat (3) di teks, kematian itu terjadi <em>\"akibat <strong>mengonsumsi</strong> atau terjerat plastik.\"</em> Jadi, mata rantai yang hilang (kotak X) adalah hewan-hewan (biota) laut tersebut secara tidak sengaja memakan/mengonsumsi mikroplastik. Pilihan B melengkapi alur logika ini dengan sangat sempurna!"
+            },
+            {
+                text: "<strong>Teks 2 (untuk soal nomor 4-6)</strong><div class='quote-box'>Lidah buaya (<em>Aloe vera</em>) dikenal sebagai tanaman multifungsi. Pada bagian daunnya, terdapat gel bening yang kaya akan vitamin, mineral, dan antioksidan. Manfaat utama gel ini adalah mempercepat penyembuhan luka bakar ringan karena memberikan efek mendinginkan. Selain itu, lidah buaya juga sering digunakan dalam industri kosmetik untuk melembapkan kulit dan memperkuat akar rambut.</div>Perhatikan bagan klasifikasi manfaat lidah buaya berikut:<div class='diagram-box'>Manfaat Lidah Buaya:\n1. Medis/Kesehatan: [P]\n2. Kecantikan/Kosmetik: [Q]</div>Isian yang paling tepat untuk menggantikan <code>[P]</code> dan <code>[Q]</code> secara berurutan adalah...",
+                options: [
+                    "[P] Menyembuhkan luka bakar; [Q] Melembapkan kulit dan memperkuat rambut",
+                    "[P] Kaya akan vitamin; [Q] Mengandung antioksidan tinggi",
+                    "[P] Bahan industri kosmetik; [Q] Efek mendinginkan kulit",
+                    "[P] Tanaman multifungsi; [Q] Memiliki gel bening pada daun"
+                ],
+                answer: 0, // A
+                explanation: "Teks 2 dengan jelas membagi kegunaan lidah buaya ke dalam dua bidang utama:<br><br>1. Bidang Medis/Kesehatan (P): Di teks tertulis <em>\"mempercepat penyembuhan luka bakar ringan\"</em>.<br>2. Bidang Kecantikan/Kosmetik (Q): Di teks tertulis <em>\"melembapkan kulit dan memperkuat akar rambut\"</em>.<br><br>Pilihan A memasukkan informasi tersebut ke tempat yang tepat pada bagan. Ingat, vitamin dan antioksidan adalah <em>kandungan</em>, bukan <em>manfaat</em> langsung yang sedang ditanyakan dalam klasifikasi bagan ini."
+            },
+            {
+                text: "Evaluasilah kerangka teks deskripsi tentang lidah buaya berikut!<div class='diagram-box'>1. Definisi umum lidah buaya\n2. Kandungan zat pada daun lidah buaya\n3. Cara menanam lidah buaya di pot\n4. Manfaat lidah buaya untuk kesehatan dan kecantikan</div>Bagian kerangka yang tidak relevan jika didasarkan pada informasi yang disajikan dalam Teks 2 adalah nomor...",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ],
+                answer: 2, // C
+                explanation: "Saat kita mengevaluasi (menilai) sebuah kerangka berdasarkan teks sumber, kita harus memastikan semua poin benar-benar ada di teks tersebut.<br><br>- Poin 1 (Definisi) ada di teks (kalimat pertama).<br>- Poin 2 (Kandungan) ada di teks (vitamin, mineral, dsb).<br>- Poin 4 (Manfaat) sangat jelas ada di teks.<br>- Namun, coba cari info tentang <strong>\"Cara menanam lidah buaya di pot\"</strong> (Poin 3). Apakah ada? Tidak sama sekali! Teks 2 tidak membahas cara bercocok tanam. Jadi, poin 3 adalah bagian yang tidak relevan."
+            },
+            {
+                text: "Jika Anda ingin menyusun infografis berdasarkan Teks 2, elemen visual manakah yang paling tidak efektif untuk dimasukkan ke dalam bagan?",
+                options: [
+                    "Gambar daun lidah buaya dengan label kandungan vitamin dan mineral",
+                    "Diagram alur langkah-langkah memanen lidah buaya skala industri",
+                    "Ikon salep/medis yang dihubungkan dengan teks \"penyembuhan luka bakar\"",
+                    "Ikon botol losion dan rambut sehat yang dihubungkan dengan teks \"kosmetik\""
+                ],
+                answer: 1, // B
+                explanation: "Infografis adalah informasi berupa teks yang disajikan dengan gambar agar mudah dipahami. Syarat utamanya: gambarnya harus sesuai dengan isi teks!<br><br>Pilihan A, C, dan D sangat efektif karena semua itu dibahas di dalam Teks 2 (kandungan, penyembuhan luka, kosmetik). Tapi, apakah Teks 2 membahas tentang pabrik atau <strong>\"cara memanen skala industri\"</strong>? Tidak! Memasukkan diagram memanen justru akan membuat pembaca bingung karena informasinya melenceng dari topik teks (tidak efektif)."
+            },
+            {
+                text: "<strong>Teks 3 (untuk soal nomor 7-9)</strong><div class='quote-box'>Pembuatan kompos organik dari sampah dapur dapat dilakukan melalui tiga tahap utama. Pertama, tahap persiapan, yaitu memilah sampah organik (sisa sayur, buah) dari sampah anorganik, serta menyiapkan wadah komposter yang berlubang. Kedua, tahap pengolahan, yang meliputi pencampuran sampah dengan tanah dan aktivator EM4, serta menjaga kelembapan dengan penyiraman berkala. Ketiga, tahap pematangan, di mana kompos didiamkan selama 4-6 minggu hingga berwarna kehitaman dan tidak berbau menyengat.</div>Perhatikan bagan alur prosedur pembuatan kompos berikut:<div class='diagram-box'>Pemilahan sampah &rarr; Penyiapan wadah &rarr; Pencampuran tanah &amp; EM4 &rarr; Penyiraman berkala &rarr; [Y] &rarr; Kompos siap pakai.</div>Frasa yang paling tepat untuk mengisi bagian <code>[Y]</code> sesuai dengan Teks 3 adalah...",
+                options: [
+                    "Penyaringan kompos dari kerikil",
+                    "Pendiaman selama 4-6 minggu",
+                    "Penambahan sampah anorganik",
+                    "Pengemasan kompos ke dalam plastik"
+                ],
+                answer: 1, // B
+                explanation: "Bagan alur (<em>flowchart</em>) ini menggambarkan kronologi/urutan waktu pembuatan kompos. Mari kita cocokkan dengan Teks 3:<br>- Tahap persiapan (Pemilahan & Penyiapan wadah) sudah tertulis.<br>- Tahap pengolahan (Pencampuran & Penyiraman) sudah tertulis.<br>- Lalu, apa tahap terakhir sebelum kompos matang (siap pakai)? Teks menyebutkan tahap pematangan yaitu: <em>\"kompos <strong>didiamkan selama 4-6 minggu</strong>\"</em>.<br>Maka, kotak [Y] pastilah proses pendiaman tersebut. Pilihan B sangat logis dan akurat!"
+            },
+            {
+                text: "Seorang siswa menyusun kerangka prosedur pembuatan kompos sebagai berikut:<div class='diagram-box'>I. Tahap Persiapan\n   A. Memilah sampah organik\n   B. Menyiapkan komposter\n\nII. Tahap Pengolahan\n   A. Mencampur sampah dengan tanah dan EM4\n   B. Menjaga kelembapan\n\nIII. Tahap Pematangan\n   A. Mendiamkan kompos 4-6 minggu\n   B. Mengemas dan menjual kompos ke pasar</div>Evaluasilah kerangka di atas! Manakah bagian yang tidak sesuai dengan isi Teks 3?",
+                options: [
+                    "Bagian I.A karena pemilahan sampah harusnya dilakukan di akhir.",
+                    "Bagian II.B karena penyiraman berkala tidak perlu dimasukkan dalam pengolahan.",
+                    "Bagian III.B karena informasi penjualan tidak disebutkan dan tidak relevan dengan teks.",
+                    "Semua bagian sudah sepenuhnya sesuai dan tidak ada kesalahan logis."
+                ],
+                answer: 2, // C
+                explanation: "Yuk jadi detektif teks lagi! Kita periksa poin per poin.<br>Bagian I dan II sudah sangat cocok dengan isi teks. Bagian III.A (mendiamkan kompos) juga benar.<br>Tetapi perhatikan poin <strong>III.B (Mengemas dan menjual kompos)</strong>. Teks 3 berhenti bercerita ketika kompos berubah warna jadi hitam dan tidak berbau (matang/siap pakai). Tidak ada satu kata pun yang menyebutkan tentang berjualan di pasar! Karenanya, menambahkan informasi yang dikarang sendiri (III.B) membuat kerangka tersebut jadi tidak sesuai dengan teks."
+            },
+            {
+                text: "Mengapa penyusunan bagan alur (<em>flowchart</em>) sangat cocok digunakan untuk memetakan informasi dalam Teks 3 dibandingkan dengan bagan pohon (<em>tree diagram</em>)?",
+                options: [
+                    "Karena Teks 3 menjelaskan klasifikasi jenis-jenis sampah dapur secara hierarkis.",
+                    "Karena Teks 3 menyajikan proses kronologis yang memiliki urutan langkah sistematis.",
+                    "Karena Teks 3 membandingkan kelebihan kompos organik dengan pupuk kimia.",
+                    "Karena Teks 3 berisi argumen-argumen tentang pentingnya menjaga kebersihan lingkungan."
+                ],
+                answer: 1, // B
+                explanation: "Setiap jenis bagan punya kegunaannya sendiri-sendiri lho!<br>- <strong>Bagan pohon (tree diagram)</strong> cocok untuk menjabarkan pengelompokan/klasifikasi (misalnya: jenis-jenis mamalia, atau struktur organisasi kelas).<br>- <strong>Bagan alur (flowchart)</strong> sangat cocok untuk teks prosedur (cara membuat sesuatu), karena bagan ini menggunakan tanda panah (&rarr;) untuk menunjukkan <strong>urutan langkah/proses kronologis yang berurutan dari awal sampai akhir</strong>.<br>Karena Teks 3 menceritakan tahapan membuat kompos langkah demi langkah, maka flowchart (Pilihan B) adalah jodoh yang paling pas!"
+            },
+            {
+                text: "<strong>Teks 4 (untuk soal nomor 10-12)</strong><div class='quote-box'>Transportasi publik di kota-kota besar memiliki peran ganda. Di satu sisi, ia berfungsi sebagai urat nadi perekonomian yang memobilisasi pekerja dengan biaya murah. Di sisi lain, transportasi publik yang terintegrasi dengan baik menjadi solusi utama dalam menekan angka kemacetan dan polusi udara akibat kendaraan pribadi. Namun, tantangan terbesar terletak pada penyediaan armada yang nyaman dan ketepatan waktu yang konsisten agar masyarakat mau beralih.</div>Perhatikan bagan analisis SWOT (Kekuatan, Kelemahan, Peluang, Ancaman) yang dirancang berdasarkan Teks 4 berikut:<div class='diagram-box'>- Kekuatan (Strength): Biaya murah, memobilisasi pekerja.\n- Manfaat Lingkungan: Menekan kemacetan dan polusi.\n- Tantangan (Challenge): [Z]</div>Isian yang paling tepat untuk melengkapi bagian <code>[Z]</code> adalah...",
+                options: [
+                    "Kurangnya minat masyarakat terhadap isu lingkungan hidup",
+                    "Penyediaan armada yang nyaman dan konsistensi ketepatan waktu",
+                    "Kenaikan tarif transportasi publik secara berkala",
+                    "Persaingan ketat dengan penyedia jasa transportasi online"
+                ],
+                answer: 1, // B
+                explanation: "Analisis teks ini sebenarnya sangat mudah jika kita jeli membaca! Di dalam bagan diminta untuk mengisi kolom \"Tantangan (Challenge)\".<br>Sekarang mari kita lihat kalimat terakhir Teks 4. Di sana tertulis secara gamblang: <em>\"Namun, <strong>tantangan terbesar terletak pada penyediaan armada yang nyaman dan ketepatan waktu yang konsisten</strong>...\"</em><br>Kamu hanya perlu mencocokkan kata kunci \"tantangan\" di soal dengan yang ada di teks. Pilihan B menyalin solusi ini dengan tepat."
+            },
+            {
+                text: "Jika teks tersebut diubah menjadi kerangka karangan eksposisi perbandingan, manakah struktur hubungan gagasan yang paling tepat?",
+                options: [
+                    "Kelebihan transportasi publik VS Tantangan operasionalnya",
+                    "Sejarah transportasi masa lalu VS Transportasi masa depan",
+                    "Peran pemerintah daerah VS Peran pemerintah pusat",
+                    "Dampak polusi udara VS Dampak kemacetan jalan raya"
+                ],
+                answer: 0, // A
+                explanation: "Teks 4 menyajikan dua sisi dari satu koin (transportasi publik).<br>- Sisi pertama (kalimat 1-3) membahas betapa bagusnya transportasi publik (biaya murah, kurangi polusi/kemacetan). Ini adalah <strong>Kelebihannya</strong>.<br>- Sisi kedua (kalimat terakhir) membahas apa yang masih menjadi kendala (armada belum nyaman, suka telat). Ini adalah <strong>Tantangannya</strong>.<br>Jadi, jika dibuat kerangka perbandingan, topik utamanya pasti menimbang antara \"Manfaat/Kelebihan VS Tantangan/Kelemahannya\". Pilihan A merangkum struktur pemikiran teks ini dengan cemerlang!"
+            },
+            {
+                text: "Cermati bagan hubungan antar-ide berikut!<div class='diagram-box'>Transportasi Publik Terintegrasi &rarr; [Hubungan X] &rarr; Penurunan Polusi Udara.</div>Jenis hubungan logis yang digambarkan oleh <code>[Hubungan X]</code> berdasarkan Teks 4 adalah...",
+                options: [
+                    "Hubungan perbandingan",
+                    "Hubungan sebab-akibat (kausalitas)",
+                    "Hubungan definisi/penjelasan",
+                    "Hubungan pertentangan (konsesif)"
+                ],
+                answer: 1, // B
+                explanation: "Mari kita baca simbol panah (&rarr;) sebagai kata \"menyebabkan\" atau \"mengakibatkan\". <br>Kalimat di bagan berbunyi: Transportasi yang baik <strong>[menyebabkan]</strong> turunnya polusi udara. Benar kan?<br>Di dalam tata bahasa, hubungan di mana kejadian yang satu menimbulkan kejadian yang lain disebut sebagai <strong>hubungan sebab-akibat (kausalitas)</strong>. Jika transportasi bagus (sebab), maka masyarakat tidak pakai mobil pribadi, sehingga polusi turun (akibat)."
+            },
+            {
+                text: "<strong>Teks 5 (untuk soal nomor 13-16)</strong><div class='quote-box'>Kecerdasan Buatan (AI) telah merambah dunia pendidikan. Penerapan AI membawa dampak positif berupa personalisasi pembelajaran, di mana materi disesuaikan dengan kecepatan belajar masing-masing siswa. Selain itu, AI membantu guru dalam mengotomatisasi tugas-tugas administratif seperti koreksi ujian. Kendati demikian, ketergantungan berlebih pada AI dikhawatirkan dapat mengikis kemampuan berpikir kritis siswa dan mengurangi interaksi sosial yang humanis di kelas.</div>Seorang guru meminta siswa membuat bagan pro-kontra (diskusi) berdasarkan Teks 5. Evaluasilah draf bagan buatan siswa berikut:<div class='diagram-box'>Sisi Pro (Positif):\n1. Personalisasi pembelajaran sesuai kecepatan siswa.\n2. Membantu guru mengoreksi ujian otomatis.\n\nSisi Kontra (Negatif):\n1. Mengurangi beban kerja administratif guru.\n2. Mengikis kemampuan berpikir kritis siswa.</div>Kesalahan evaluasi pada draf bagan di atas terletak pada...",
+                options: [
+                    "Sisi Pro nomor 1 seharusnya masuk ke sisi Kontra karena memanjakan siswa.",
+                    "Sisi Kontra nomor 1 tidak logis karena pengurangan beban kerja guru adalah dampak positif (Pro).",
+                    "Sisi Pro nomor 2 salah karena guru tidak membutuhkan bantuan teknologi AI.",
+                    "Sisi Kontra nomor 2 salah karena berpikir kritis tidak ada hubungannya dengan AI."
+                ],
+                answer: 1, // B
+                explanation: "Dalam membuat teks diskusi/pro-kontra, kita harus teliti membedakan mana kebaikan (Pro) dan mana keburukan (Kontra).<br>Coba lihat poin Sisi Kontra nomor 1: <em>\"Mengurangi beban kerja administratif guru\"</em>. Apakah membuat pekerjaan guru menjadi lebih ringan itu hal yang buruk/negatif? Tentu saja tidak! Itu adalah sebuah keuntungan. <br>Oleh karena itu, memasukkan hal menguntungkan ke dalam kolom Kontra (Negatif) adalah sebuah kesalahan logika yang fatal. Jawaban B sangat akurat mengidentifikasi kesalahan ini."
+            },
+            {
+                text: "Berdasarkan Teks 5, jika kita membuat peta pikiran (<em>mind map</em>) dengan tema \"AI dalam Pendidikan\", manakah yang merupakan sub-cabang yang tepat di bawah cabang \"Dampak Negatif\"?",
+                options: [
+                    "Otomatisasi koreksi ujian",
+                    "Pembelajaran personal",
+                    "Penurunan interaksi sosial humanis",
+                    "Efisiensi waktu guru"
+                ],
+                answer: 2, // C
+                explanation: "Untuk menjawab ini, kita cukup melihat kalimat terakhir Teks 5 yang diawali dengan frasa perlawanan: <em>\"Kendati demikian... dikhawatirkan dapat...\"</em> (Ini penanda dampak negatif).<br>Apa saja yang ditakutkan? (1) Mengikis kemampuan berpikir kritis, dan (2) <strong>Mengurangi interaksi sosial yang humanis</strong> di kelas.<br>Dari pilihan yang ada, otomatisasi (A), pembelajaran personal (B), dan efisiensi waktu (D) semuanya adalah hal-hal positif. Hanya pilihan C yang merupakan sisi gelap/negatif."
+            },
+            {
+                text: "Perhatikan kerangka karangan acak berikut!<div class='diagram-box'>(p) Kekhawatiran penurunan kemampuan berpikir kritis siswa.\n(q) Peran AI dalam personalisasi pembelajaran siswa.\n(r) Pengantar tentang masuknya teknologi AI di sekolah.\n(s) Otomatisasi tugas administratif guru oleh AI.</div>Jika kerangka di atas disusun berdasarkan struktur Teks 5 (Pendahuluan &rarr; Dampak Positif &rarr; Dampak Negatif), urutan yang paling logis adalah...",
+                options: [
+                    "(r) &rarr; (q) dan (s) &rarr; (p)",
+                    "(q) &rarr; (r) &rarr; (s) &rarr; (p)",
+                    "(r) &rarr; (p) &rarr; (q) dan (s)",
+                    "(p) &rarr; (s) &rarr; (q) &rarr; (r)"
+                ],
+                answer: 0, // A
+                explanation: "Mari kita susun puzzle kerangka ini berdasarkan urutan Teks 5:<br>1. <strong>Pendahuluan:</strong> Pasti diawali dengan pengenalan topik, yaitu (r) Pengantar masuknya AI.<br>2. <strong>Dampak Positif:</strong> Teks menyebutkan 2 kebaikan secara berurutan, yaitu (q) personalisasi untuk siswa, disusul (s) otomatisasi tugas guru.<br>3. <strong>Dampak Negatif:</strong> Ditutup dengan kekhawatirannya, yaitu (p) penurunan kemampuan berpikir kritis.<br>Jadi urutan yang benar adalah: (r) lalu positif (q dan s), dan terakhir negatif (p). Pilihan A mewakili struktur ini dengan sempurna."
+            },
+            {
+                text: "Mengapa bagian \"koreksi ujian otomatis\" diletakkan sejajar dengan \"personalisasi pembelajaran\" dalam bagan manfaat AI?",
+                options: [
+                    "Karena keduanya merupakan dampak negatif yang dihindari guru.",
+                    "Karena keduanya merupakan fungsi administratif yang dilakukan oleh siswa.",
+                    "Karena keduanya setara sebagai poin-poin dampak positif penggunaan AI dalam teks.",
+                    "Karena keduanya tidak memiliki hubungan langsung dengan dunia pendidikan."
+                ],
+                answer: 2, // C
+                explanation: "Di dalam sebuah bagan/pemetaan ide (mind map), elemen-elemen yang diletakkan pada level cabang yang sejajar artinya memiliki tingkat derajat atau kategori yang sama.<br>\"Koreksi ujian otomatis\" (memudahkan guru) dan \"personalisasi pembelajaran\" (memudahkan siswa) berada di bawah payung besar yang sama, yaitu <strong>dampak positif atau manfaat</strong> penggunaan AI di sekolah (sebagaimana tertulis di awal kalimat kedua Teks 5). Karena itulah posisinya sejajar/setara (Pilihan C)."
+            },
+            {
+                text: "<strong>Teks 6 (untuk soal nomor 17-20)</strong><div class='quote-box'>Taman Nasional Komodo (TNK) didirikan pada tahun 1980 untuk melindungi hewan purba komodo (<em>Varanus komodoensis</em>). Seiring berjalannya waktu, tujuan pengelolaan TNK meluas. Selain perlindungan komodo, TNK juga difungsikan untuk melindungi kelestarian keanekaragaman hayati laut di sekitarnya, termasuk terumbu karang dan lumba-lumba. Kini, TNK juga dikembangkan sebagai pusat ekowisata dunia yang menyeimbangkan antara konservasi alam dan pemberdayaan ekonomi masyarakat lokal.</div>Evaluasilah bagan perkembangan fungsi Taman Nasional Komodo (TNK) berikut!<div class='diagram-box'>Tahun 1980: Melindungi komodo\n      &darr;\nPerkembangan: Melindungi biota laut (terumbu karang &amp; lumba-lumba)\n      &darr;\nKini: [M]</div>Isian yang paling tepat untuk melengkapi kotak <code>[M]</code> agar sesuai dengan perkembangan mutakhir TNK pada Teks 6 adalah...",
+                options: [
+                    "Menutup kawasan dari wisatawan asing demi kelestarian alam",
+                    "Pusat ekowisata yang menyeimbangkan konservasi dan ekonomi lokal",
+                    "Penangkaran komodo secara besar-besaran di luar habitat aslinya",
+                    "Pemindahan seluruh penduduk lokal ke luar area taman nasional"
+                ],
+                answer: 1, // B
+                explanation: "Bagan ini menelusuri garis waktu (<em>timeline</em>) berdirinya TNK. Untuk mengisi kondisi \"Kini\", kita tinggal merujuk pada kalimat terakhir di Teks 6.<br>Tertulis jelas di sana: <em>\"<strong>Kini</strong>, TNK juga dikembangkan sebagai pusat ekowisata dunia yang menyeimbangkan antara konservasi alam dan pemberdayaan ekonomi masyarakat lokal.\"</em><br>Dengan menyalin langsung ide pokok dari kalimat tersebut, kita tahu bahwa Pilihan B adalah jawaban yang dicari."
+            },
+            {
+                text: "Jika Anda ditugaskan menyusun kerangka laporan hasil observasi berdasarkan Teks 6, bagian manakah yang paling tepat diletakkan pada struktur \"Deskripsi Manfaat/Fungsi\"?",
+                options: [
+                    "Sejarah pendirian TNK pada tahun 1980 oleh pemerintah.",
+                    "Klasifikasi ilmiah komodo sebagai hewan purba (<em>Varanus komodoensis</em>).",
+                    "Fungsi ganda TNK sebagai area konservasi hayati dan pusat ekowisata.",
+                    "Letak geografis Taman Nasional Komodo di Provinsi NTT."
+                ],
+                answer: 2, // C
+                explanation: "Teks Laporan Hasil Observasi (LHO) umumnya memiliki 3 bagian: Pernyataan Umum (definisi), Deskripsi Bagian (detail fisik/jenis), dan Deskripsi Manfaat (kegunaan/fungsi).<br>Jika kita ditanya isi \"Deskripsi Manfaat/Fungsi\", maka kita harus mencari informasi tentang apa kegunaan/peran TNK tersebut saat ini.<br>Pilihan C yang menjelaskan bahwa TNK berguna sebagai \"area konservasi dan pusat ekowisata\" adalah materi yang paling pas untuk mendeskripsikan manfaat/kegunaan taman nasional itu bagi makhluk hidup dan masyarakat sekitarnya."
+            },
+            {
+                text: "Perhatikan bagan hubungan konsep berikut:<div class='diagram-box'>Tujuan TNK:\n- Konservasi (Komodo &amp; Biota Laut)\n- [X] (Pemberdayaan Ekonomi Lokal)</div>Konsep yang paling tepat untuk mengisi <code>[X]</code> agar mencerminkan prinsip \"ekowisata\" yang seimbang dalam teks adalah...",
+                options: [
+                    "Industrialisasi",
+                    "Eksploitasi",
+                    "Edukasi/Ekonomi",
+                    "Urbanisasi"
+                ],
+                answer: 2, // C
+                explanation: "Dalam Teks 6, \"ekowisata\" (pariwisata berbasis lingkungan) digambarkan sebagai penyeimbang antara alam (Konservasi) dan manusianya (Pemberdayaan masyarakat).<br>Karena petunjuk di dalam kurung berbunyi <em>(Pemberdayaan Ekonomi Lokal)</em>, maka istilah umum yang tepat mewakili poin tersebut adalah kegiatan <strong>Ekonomi (atau Edukasi-Ekonomi)</strong>. Industrialisasi dan eksploitasi justru merusak alam, sedangkan urbanisasi (pindah ke kota) tidak relevan dengan pengelolaan wisata alam lokal."
+            },
+            {
+                text: "Seorang siswa membuat kesimpulan kerangka teks: <em>\"Taman Nasional Komodo awalnya didirikan hanya untuk pariwisata, namun sekarang fokus pada perlindungan komodo.\"</em><br><br>Bagaimanakah hasil evaluasi Anda terhadap kesimpulan kerangka tersebut berdasarkan Teks 6?",
+                options: [
+                    "Benar, karena pariwisata adalah tujuan utama pendirian TNK pada tahun 1980.",
+                    "Salah, karena TNK sejak awal didirikan untuk melindungi komodo, baru kemudian berkembang ke biota laut dan ekowisata.",
+                    "Benar, karena komodo baru ditemukan setelah TNK menjadi pusat ekowisata dunia.",
+                    "Salah, karena teks tidak menyebutkan adanya aktivitas perlindungan biota laut di TNK."
+                ],
+                answer: 1, // B
+                explanation: "Kesimpulan buatan siswa tersebut terbalik atau <em>\"ngawur\"</em>! Mari kita luruskan berdasarkan kalimat-kalimat di Teks 6:<br>- <strong>Awalnya (1980):</strong> TNK didirikan untuk <em>melindungi komodo</em> (Bukan pariwisata!).<br>- <strong>Kini:</strong> Perkembangannya baru meluas menjadi perlindungan biota laut dan dikembangkan menjadi <em>pusat ekowisata</em>.<br>Karena kesimpulan siswa memutarbalikkan fakta sejarah yang ada di teks, maka evaluasi yang tepat adalah menolaknya dengan alasan logis seperti pada Pilihan B (Salah, karena sejak awal didirikan untuk perlindungan, baru berkembang jadi wisata)."
+            }
+        ];
+
+        function processContent(text) {
+            // Ubah pattern [GAMBAR: data:image/...] menjadi elemen <img> dengan styling responsif
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<div class="my-5"><img src="$1" alt="Gambar Referensi" class="max-w-full h-auto mx-auto rounded-xl shadow-md border border-slate-200"></div>');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'bg-white md:bg-slate-50 p-5 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300';
+            questionDiv.id = `question-block-${index}`;
+
+            // Menyusun Pilihan Ganda (A, B, C, D)
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-400 peer-focus:ring-2 peer-focus:ring-blue-500">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            // Merakit struktur HTML per soal
+            questionDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start mb-5">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.text)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-14">
+                    ${optionsHTML}
+                </div>
+                <!-- Kotak Penjelasan (Awalnya tersembunyi dengan transisi halus) -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-14 bg-white rounded-xl shadow-sm">
+                    <div class="p-5 md:p-6">
+                        <h4 class="font-bold text-lg mb-3 flex items-center" id="status-title-${index}">
+                            <!-- Ikon & Status Jawaban (Benar/Salah) akan dirender di sini -->
+                        </h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/60 p-4 rounded-lg border border-slate-100/50" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                // Buka/Tampilkan kotak penjelasan
+                explanationBox.classList.remove('hidden-box');
+
+                // Mengunci semua input radio agar tidak bisa diubah lagi
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    
+                    // Highlight Kunci Jawaban yang Benar (Selalu Hijau)
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-300', 'hover:bg-slate-50');
+                        label.classList.add('bg-green-50', 'border-green-400', 'ring-2', 'ring-green-400');
+                        label.querySelector('span').classList.replace('bg-slate-100', 'bg-green-500');
+                        label.querySelector('span').classList.replace('text-slate-700', 'text-white');
+                        label.querySelector('span').classList.replace('border-slate-200', 'border-green-600');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // KONDISI: JAWABAN BENAR
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-green-50 border-l-[6px] border-green-500 rounded-r-xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali!</span>`;
+                        qBlock.classList.add('ring-1', 'ring-green-200', 'bg-green-50/20');
+                    } else {
+                        // KONDISI: JAWABAN SALAH
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-red-50 border-l-[6px] border-red-500 rounded-r-xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Ups, Kurang Tepat! Jawaban: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-1', 'ring-red-200', 'bg-red-50/20');
+                        
+                        // Tandai pilihan pengguna yang salah dengan warna merah
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        wrongLabel.querySelector('span').classList.replace('bg-slate-100', 'bg-red-500');
+                        wrongLabel.querySelector('span').classList.replace('text-slate-700', 'text-white');
+                        wrongLabel.querySelector('span').classList.replace('border-slate-200', 'border-red-600');
+                    }
+                } else {
+                    // KONDISI: TIDAK DIJAWAB / TERLEWAT
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-14 bg-orange-50 border-l-[6px] border-orange-400 rounded-r-xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-6 h-6 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-orange-800">Soal Terlewat! Jawaban: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-1', 'ring-orange-200', 'bg-orange-50/30');
+                }
+
+                // Masukkan teks pembahasan yang sudah diekspansi secara mendalam
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            
+            // Animasi perhitungan angka (Counter)
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1200; // Total waktu animasi (ms)
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Atur pesan dinamis sesuai rentang perolehan nilai
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Kamu memiliki kemampuan logika dan analisa yang luar biasa!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja bagus! 👏 Analisamu sudah sangat baik. Sedikit lagi menuju sempurna!";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup baik! Yuk baca lagi bagian pembahasannya supaya lebih tajam dalam membedah teks. 📚";
+                scoreMessage.className = "text-orange-600 mb-8 font-bold text-lg px-4";
+            } else {
+                scoreMessage.innerHTML = "Jangan patah semangat! Membaca struktur teks butuh latihan. Ayo pahami pembahasannya dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+            }
+
+            // Scroll otomatis yang mulus ke bagian bawah skor
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset input radio HTML form
+            form.reset();
+
+            // Sembunyikan penjelasan dan kembalikan warna UI seperti semula
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-14 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-1', 'ring-green-200', 'bg-green-50/20', 'ring-red-200', 'bg-red-50/20', 'ring-orange-200', 'bg-orange-50/30');
+                
+                // Reset semua label pilihan ganda
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanIcon = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-400 peer-focus:ring-2 peer-focus:ring-blue-500';
+                    spanIcon.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200';
+                });
+            });
+
+            // Tampilkan kembali tombol periksa, sembunyikan kotak skor akhir
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Scroll mulus kembali ke ujung atas kuis
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>

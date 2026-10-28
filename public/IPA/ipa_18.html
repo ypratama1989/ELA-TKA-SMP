@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Kemagnetan & Elektromagnetik</title>
+    <style>
+        /* ==========================================
+           CUSTOM CSS MURNI (100% OFFLINE)
+           ========================================== */
+        :root {
+            --primary: #0284c7; /* Sky Blue 600 */
+            --primary-hover: #0369a1;
+            --primary-light: #e0f2fe;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .header-title h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 2px;}
+        .header-title p { font-size: 0.85rem; opacity: 0.9; }
+
+        /* MAIN CONTAINER */
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            width: 100%;
+        }
+
+        .info-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* QUESTION CARDS */
+        .question-card {
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: border-color 0.3s;
+        }
+
+        .q-text { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; }
+        .q-num { color: var(--primary); margin-right: 8px; }
+
+        /* ASCII & PRE */
+        pre, .ascii-box {
+            background-color: var(--bg-page);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #334155;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        img { max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 16px; }
+
+        /* OPTIONS */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .option-label:hover { background-color: var(--primary-light); border-color: #bae6fd; }
+
+        .option-label input {
+            margin-top: 4px;
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .opt-text { flex-grow: 1; }
+
+        /* EXPLANATION BOX */
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .exp-correct { background-color: var(--success-bg); border: 1px solid var(--success); color: #064e3b; }
+        .exp-wrong { background-color: var(--danger-bg); border: 1px solid var(--danger); color: #7f1d1d; }
+
+        .exp-title { font-weight: bold; margin-bottom: 8px; font-size: 1rem; }
+        .explanation ul, .explanation ol { padding-left: 20px; margin-top: 8px; margin-bottom: 8px; }
+
+        .card-correct { border-color: var(--success); }
+        .card-wrong { border-color: var(--danger); }
+
+        /* BUTTONS & RESULT */
+        .submit-area { display: flex; justify-content: center; margin: 40px 0; }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(2, 132, 199, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-submit:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .result-box {
+            display: none;
+            background-color: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            animation: slideDown 0.5s;
+        }
+
+        .result-box h2 { font-size: 1.8rem; margin-bottom: 10px; }
+        
+        .score-circle {
+            background-color: var(--primary-light);
+            border: 6px solid #7dd3fc;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 24px auto;
+        }
+
+        .score-text { font-size: 3.5rem; font-weight: 900; color: var(--primary); }
+
+        .btn-reset {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-reset:hover { background-color: #e2e8f0; }
+
+        /* FOOTER */
+        footer {
+            background-color: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 24px 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .question-card { padding: 16px; }
+            .btn-submit { width: 100%; }
+            .score-circle { width: 120px; height: 120px; }
+            .score-text { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <button onclick="history.back()" class="back-btn" title="Kembali">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="header-title">
+                <h1>Latihan Soal IPA Fisika</h1>
+                <p>Kemagnetan & Induksi Elektromagnetik</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="info-box">
+            Pilihlah jawaban yang Anda anggap paling benar. Anda tidak diwajibkan mengisi seluruh soal untuk menekan tombol <strong>Periksa Jawaban</strong> di akhir halaman. Soal yang terlewat akan otomatis dihitung salah dan pembahasannya akan terbuka.
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="question-card" id="q1" data-answer="D">
+                <div class="q-text"><span class="q-num">1.</span>Perhatikan pernyataan berikut!
+                    <ol style="margin-top: 8px; margin-left: 16px;">
+                        <li>Kutub magnet yang senama akan saling tarik-menarik.</li>
+                        <li>Gaya magnet terbesar berada pada bagian tengah magnet.</li>
+                        <li>Magnet selalu memiliki dua kutub, yaitu kutub utara dan kutub selatan.</li>
+                        <li>Sifat kemagnetan dapat hilang jika magnet dipanaskan atau dipukul-pukul.</li>
+                    </ol>
+                    <br>Pernyataan yang benar mengenai sifat-sifat magnet ditunjukkan oleh nomor ....
+                </div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q1" value="A"><span class="opt-text">A. (1) dan (2)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="B"><span class="opt-text">B. (1) dan (3)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="C"><span class="opt-text">C. (2) dan (4)</span></label>
+                    <label class="option-label"><input type="radio" name="q1" value="D"><span class="opt-text">D. (3) dan (4)</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Pembahasan Sifat Dasar Magnet:</strong></p>
+                    <ul>
+                        <li>Pernyataan (1) <strong>Salah</strong>. Kutub senama (U dengan U atau S dengan S) akan saling tolak-menolak.</li>
+                        <li>Pernyataan (2) <strong>Salah</strong>. Daya tarik gaya magnet terbesar justru berada pada <em>ujung-ujung kutubnya</em>, sedangkan bagian tengahnya adalah bagian paling lemah.</li>
+                        <li>Pernyataan (3) <strong>Benar</strong>. Magnet selalu bersifat dipol (memiliki Kutub Utara dan Kutub Selatan), meskipun dipotong sekecil apapun.</li>
+                        <li>Pernyataan (4) <strong>Benar</strong>. Memanaskan, membakar, atau membanting magnet akan merusak dan mengacak arah "magnet elementer" di dalamnya, sehingga sifat magnetiknya hilang.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="question-card" id="q2" data-answer="A">
+                <div class="q-text"><span class="q-num">2.</span>Sebuah paku besi didekatkan pada sebuah magnet tetap sehingga paku tersebut dapat menarik klip kertas di dekatnya. Namun, setelah paku dijauhkan dari magnet tetap, klip kertas yang menempel pada paku segera berjatuhan. Berdasarkan peristiwa tersebut, metode pembuatan magnet dan sifat kemagnetan paku yang terbentuk adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q2" value="A"><span class="opt-text">A. induksi, bersifat sementara</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="B"><span class="opt-text">B. induksi, bersifat permanen</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="C"><span class="opt-text">C. elektromagnetik, bersifat sementara</span></label>
+                    <label class="option-label"><input type="radio" name="q2" value="D"><span class="opt-text">D. menggosok, bersifat permanen</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Pemahaman Cara Pembuatan Magnet:</strong></p>
+                    <p>Metode pembuatan magnet dibagi tiga: Menggosok, Induksi (Mendekatkan/Menempelkan), dan Elektromagnet (Melilitkan kabel berarus). Karena paku hanya "didekatkan", metode ini disebut <strong>Induksi</strong>.</p>
+                    <p>Bahan yang digunakan adalah Besi (bukan Baja). Besi memiliki sifat magnet elementer yang mudah berputar teratur (mudah jadi magnet), tetapi juga <strong>mudah kembali acak</strong> (sifat kemagnetan mudah hilang). Oleh karena itu, saat dijauhkan dari magnet utama, kemagnetan besi langsung hilang alias <strong>Sementara (Temporer)</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="question-card" id="q3" data-answer="B">
+                <div class="q-text"><span class="q-num">3.</span>Perhatikan gambar pembuatan magnet dengan cara menggosok berikut!
+<pre>
+[ Magnet Tetap ] --> Arah gosokan searah (K menuju L)
+   U     S
+
+   v     v
+(  K ------ L  ) --> Batang Besi X - Y
+   X        Y
+</pre>
+                Jika ujung S (Selatan) magnet tetap digosokkan secara searah dari ujung X ke ujung Y pada batang besi secara berulang-ulang, maka kutub magnet yang terbentuk pada batang besi X-Y adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q3" value="A"><span class="opt-text">A. X menjadi kutub utara, Y menjadi kutub selatan</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="B"><span class="opt-text">B. X menjadi kutub selatan, Y menjadi kutub utara</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="C"><span class="opt-text">C. X dan Y menjadi kutub utara</span></label>
+                    <label class="option-label"><input type="radio" name="q3" value="D"><span class="opt-text">D. X dan Y menjadi kutub selatan</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Aturan Emas Pembuatan Magnet Cara Menggosok:</strong></p>
+                    <p>Syarat mutlak yang harus diingat: <strong>"Ujung benda yang TERAKHIR KALI tersentuh gosokan, akan memiliki kutub yang BERLAWANAN dengan kutub magnet yang menggosoknya."</strong></p>
+                    <ol>
+                        <li>Magnet penggosok yang menempel di batang besi adalah ujung <strong>S (Selatan)</strong>.</li>
+                        <li>Arah gosokan dari X berjalan menuju Y. Artinya bagian besi yang terlepas atau disentuh paling terakhir adalah <strong>ujung Y</strong>.</li>
+                        <li>Maka, ujung Y harus <em>berlawanan</em> dengan S, yaitu <strong>Utara (U)</strong>.</li>
+                        <li>Jika Y adalah Utara, otomatis <strong>X adalah Selatan (S)</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="question-card" id="q4" data-answer="A">
+                <div class="q-text"><span class="q-num">4.</span>Migrasi burung merupakan salah satu fenomena alam menakjubkan yang memanfaatkan medan magnet bumi. Burung menggunakan partikel magnetik yang ada di dalam tubuhnya untuk mendeteksi medan magnet bumi sebagai navigasi arah. Partikel magnetik alami yang terdapat pada tubuh hewan tersebut dikenal dengan istilah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q4" value="A"><span class="opt-text">A. magnetit</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="B"><span class="opt-text">B. hematit</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="C"><span class="opt-text">C. kobalt</span></label>
+                    <label class="option-label"><input type="radio" name="q4" value="D"><span class="opt-text">D. neoridium</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Fakta Biomagnetisme:</strong></p>
+                    <p>Hewan seperti burung merpati, salmon, dan lebah madu memiliki "kompas internal" alami di dalam sel-sel tubuh mereka. Kompas biomagnetik ini terbentuk dari mineral kristal oksida besi yang sangat sensitif terhadap tarikan magnet bumi. Senyawa kimia alami ini (Fe<sub>3</sub>O<sub>4</sub>) dinamakan <strong>Magnetit</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="question-card" id="q5" data-answer="B">
+                <div class="q-text"><span class="q-num">5.</span>Penyu laut melakukan migrasi melintasi Samudra Atlantik untuk mencari makan dan berkembang biak. Ketika penyu laut mendeteksi wilayah dengan medan magnet yang kuat, mereka akan menyesuaikan arah renangnya. Perilaku navigasi penyu laut ini sangat dipengaruhi oleh kemampuan mendeteksi ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q5" value="A"><span class="opt-text">A. sudut deklinasi bumi saja</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="B"><span class="opt-text">B. sudut inklinasi dan intensitas medan magnet bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="C"><span class="opt-text">C. perbedaan suhu air laut akibat arus magnetik</span></label>
+                    <label class="option-label"><input type="radio" name="q5" value="D"><span class="opt-text">D. gelombang sonar yang dipantulkan oleh dasar laut</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Kemampuan Ajaib Penyu Laut:</strong></p>
+                    <p>Para ilmuwan kelautan membuktikan bahwa penyu layaknya memiliki peta GPS bawaan. Mereka tidak hanya merasakan arah Utara-Selatan, tetapi dapat memetakan posisi tepatnya di lautan dengan mendeteksi dua hal sekaligus dari magnet bumi: <strong>Intensitas (kekuatan) medan magnet</strong> dan <strong>Sudut Inklinasi</strong> (kemiringan sudut garis gaya magnet menembus laut). Kombinasi unik ini ibarat membaca garis bujur dan lintang kompas laut.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="question-card" id="q6" data-answer="B">
+                <div class="q-text"><span class="q-num">6.</span>Perhatikan ilustrasi kompas berikut!<br>
+                    <span style="display:inline-block; margin: 10px 0; padding: 10px; background:#f1f5f9; border-left: 4px solid var(--primary); font-style: italic;">[Ilustrasi: Ketika kompas diletakkan di daerah khatulistiwa, jarumnya mendatar. Namun saat dibawa mendekati Kutub Utara bumi, ujung utara jarum kompas menukik condong ke bawah menembus tanah]</span><br>
+                    Sudut miring yang terbentuk antara jarum kompas dengan permukaan horizontal bumi akibat fenomena tersebut disebut ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q6" value="A"><span class="opt-text">A. sudut deklinasi</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="B"><span class="opt-text">B. sudut inklinasi</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="C"><span class="opt-text">C. sudut deviasi</span></label>
+                    <label class="option-label"><input type="radio" name="q6" value="D"><span class="opt-text">D. sudut azimuth</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Mengenal Istilah Kompas Bumi:</strong></p>
+                    <ul>
+                        <li><strong>Sudut Inklinasi:</strong> Adalah sudut yang dibentuk jarum kompas terhadap bidang datar (horizontal). Ini terjadi karena gaya tarik bumi ada di kedalaman tanah kutub, sehingga jarum akan "menukik" atau "mendongak".</li>
+                        <li><strong>Sudut Deklinasi:</strong> Adalah sudut simpangan jarum kompas ke arah Kiri/Kanan (Timur/Barat) dari arah kutub Utara Geografis murni, karena letak kutub magnet bumi tidak persis sejajar dengan poros putaran bumi.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="question-card" id="q7" data-answer="B">
+                <div class="q-text"><span class="q-num">7.</span>Sekelompok ilmuwan menemukan jenis bakteri baru di dasar danau yang selalu bergerak menuju ke arah utara geografis bumi. Setelah dianalisis, bakteri tersebut memiliki organel khusus berisi rantai kristal magnetik (magnetosom). Bakteri jenis ini diklasifikasikan sebagai ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q7" value="A"><span class="opt-text">A. Bakteri Magnetotropik</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="B"><span class="opt-text">B. Bakteri Magnetotaktik</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="C"><span class="opt-text">C. Bakteri Magnetofilik</span></label>
+                    <label class="option-label"><input type="radio" name="q7" value="D"><span class="opt-text">D. Bakteri Magnetostatik</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Mikrobiologi Navigasi:</strong></p>
+                    <p>Organisme super mikroskopis yang memiliki organel magnetosom (berisi Fe<sub>3</sub>O<sub>4</sub>) untuk menavigasi dirinya merayap ke dasar lumpur yang miskin oksigen searah dengan garis magnet bumi dinamakan <strong>Bakteri Magnetotaktik</strong> (*Magnetotactic Bacteria / MTB*). Gerakan otomatis bakteri akibat stimulus magnet ini dinamakan respon *magnetotaksis*.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="question-card" id="q8" data-answer="A">
+                <div class="q-text"><span class="q-num">8.</span>Perhatikan gambar kawat penghantar berarus listrik berikut!
+<pre>
+   ^ I (Arah arus ke atas / Utara)
+   |
+   |        . P (Titik P di sebelah kanan kawat)
+   |
+   |
+</pre>
+                Berdasarkan kaidah tangan kanan Oersted, arah medan magnet (B) yang dihasilkan di titik P yang berada di sebelah kanan kawat berarus listrik ke atas adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q8" value="A"><span class="opt-text">A. masuk ke dalam bidang kertas (menjauhi pembaca)</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="B"><span class="opt-text">B. keluar dari bidang kertas (menuju pembaca)</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="C"><span class="opt-text">C. searah dengan arah arus listrik</span></label>
+                    <label class="option-label"><input type="radio" name="q8" value="D"><span class="opt-text">D. berlawanan dengan arah arus listrik</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Kaidah Tangan Kanan Pertama (Oersted):</strong></p>
+                    <p>Gunakan tangan kanan Anda, acungkan jempol ke udara dan kepalkan sisa empat jari Anda.</p>
+                    <ul>
+                        <li><strong>Ibu jari</strong> mewakili arah Arus (I). Arahkan ibu jari Anda lurus ke atas layar.</li>
+                        <li><strong>Keempat jari yang melingkar</strong> mewakili putaran Medan Magnet (B).</li>
+                        <li>Letakkan titik P (fokus perhatian Anda) di sebelah kanan jempol. Perhatikan ujung-ujung keempat jari Anda di sebelah kanan: mereka menusuk <strong>masuk menembus layar/kertas menjauhi muka Anda</strong>. (Simbolnya biasa ditulis tanda silang [x]).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="question-card" id="q9" data-answer="C">
+                <div class="q-text"><span class="q-num">9.</span>Sebuah kawat penghantar sepanjang 2 meter ditempatkan tegak lurus di dalam medan magnet homogen berkekuatan 0,5 Tesla. Jika kawat tersebut dialiri arus listrik sebesar 4 Ampere, maka besar gaya Lorentz yang dialami oleh kawat tersebut adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q9" value="A"><span class="opt-text">A. 1 Newton</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="B"><span class="opt-text">B. 2 Newton</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="C"><span class="opt-text">C. 4 Newton</span></label>
+                    <label class="option-label"><input type="radio" name="q9" value="D"><span class="opt-text">D. 8 Newton</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Perhitungan Fisika Gaya Lorentz:</strong></p>
+                    <p>Rumus dasar Gaya Lorentz pada kawat lurus berarus adalah perkalian dari ketiga komponen kuatnya: <strong>F = B &times; I &times; L</strong></p>
+                    <p>Diketahui dari soal:</p>
+                    <ul>
+                        <li>Panjang kawat (L) = 2 m</li>
+                        <li>Kuat Medan Magnet (B) = 0,5 T</li>
+                        <li>Kuat Arus (I) = 4 A</li>
+                    </ul>
+                    <p>Maka hitungannya: F = 0,5 &times; 4 &times; 2 = 2 &times; 2 = <strong>4 Newton</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="question-card" id="q10" data-answer="A">
+                <div class="q-text"><span class="q-num">10.</span>Perhatikan informasi arah arus listrik (I) dan medan magnet (B) berikut!
+<pre>
+   I : Ke arah kanan (sumbu X positif)
+   B : Masuk menembus bidang layar (menjauhi pembaca)
+</pre>
+                Berdasarkan kaidah tangan kanan untuk gaya Lorentz, arah dorongan gaya Lorentz (F) yang dialami oleh kawat tersebut akan bergerak ke arah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q10" value="A"><span class="opt-text">A. atas (sumbu Y positif)</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="B"><span class="opt-text">B. bawah (sumbu Y negatif)</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="C"><span class="opt-text">C. kiri (sumbu X negatif)</span></label>
+                    <label class="option-label"><input type="radio" name="q10" value="D"><span class="opt-text">D. keluar bidang (mendekati pembaca)</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Kaidah Tangan Kanan Terbuka (Gaya Lorentz):</strong></p>
+                    <p>Praktekkan dengan tangan kanan Anda terbuka lurus seperti polisi menyetop mobil:</p>
+                    <ol>
+                        <li>Arahkan <strong>Ibu Jari (Arus/I)</strong> lurus ke arah Kanan.</li>
+                        <li>Arahkan keempat <strong>Jari telunjuk hingga kelingking (Medan B)</strong> lurus ke depan seolah menusuk layar HP/Monitor Anda.</li>
+                        <li>Arah hadap <strong>Telapak Tangan</strong> Anda adalah arah dorongan Gaya Lorentz (F). Telapak tangan Anda akan otomatis menghadap ke arah <strong>Atas (Sumbu Y positif)</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="question-card" id="q11" data-answer="D">
+                <div class="q-text"><span class="q-num">11.</span>Alat-alat teknologi canggih berikut ini beroperasi memanfaatkan prinsip gaya Lorentz yang mengubah energi listrik menjadi gerak mekanis, <em>kecuali</em> ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q11" value="A"><span class="opt-text">A. motor listrik (penggerak kipas/mobil listrik)</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="B"><span class="opt-text">B. galvanometer (jarum ukur listrik)</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="C"><span class="opt-text">C. speaker (membran pengeras suara)</span></label>
+                    <label class="option-label"><input type="radio" name="q11" value="D"><span class="opt-text">D. dinamo sepeda (pembangkit listrik lampu)</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Perbedaan Motor Listrik vs Generator:</strong></p>
+                    <p>Gaya Lorentz adalah fenomena kawat yang tiba-tiba "bergerak" karena diberi arus di dekat magnet (Prinsip Listrik menjadi Gerak). Contohnya Motor Listrik, Speaker (membrane bergetar), dan jarum Galvanometer yang berputar.</p>
+                    <p>Sedangkan <strong>Dinamo Sepeda dan Generator</strong> bekerja dengan prinsip kebalikannya: <em>Induksi Elektromagnetik</em> (Hukum Faraday). Kita putar (Gerak mekanik ban sepeda) magnetnya di dekat kumparan untuk "menciptakan/memeras" energi <em>Listrik</em> yang akan menyalakan lampu.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="question-card" id="q12" data-answer="A">
+                <div class="q-text"><span class="q-num">12.</span>Perhatikan faktor-faktor berikut!
+                    <ol style="margin-top: 8px; margin-left: 16px;">
+                        <li>Kecepatan gerakan magnet keluar-masuk kumparan.</li>
+                        <li>Jumlah lilitan pada kumparan.</li>
+                        <li>Kekuatan magnet yang digunakan.</li>
+                        <li>Diameter ketebalan kawat tembaga kumparan.</li>
+                    </ol>
+                    <br>Menurut Hukum Faraday, faktor-faktor yang secara langsung memengaruhi besarnya tegangan listrik (Gaya Gerak Listrik / GGL induksi) pada ujung kumparan ditunjukkan oleh nomor ....
+                </div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q12" value="A"><span class="opt-text">A. (1), (2), dan (3)</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="B"><span class="opt-text">B. (1), (3), dan (4)</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="C"><span class="opt-text">C. (2), (3), dan (4)</span></label>
+                    <label class="option-label"><input type="radio" name="q12" value="D"><span class="opt-text">D. (1), (2), dan (4)</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Mengingat Hukum Induksi Faraday:</strong></p>
+                    <p>Bapak Michael Faraday menyimpulkan bahwa tegangan listrik induksi yang dihasilkan oleh dinamo dipengaruhi oleh seberapa banyak "garis-garis magnet" dipotong dalam waktu singkat.</p>
+                    <p>Agar voltase yang dihasilkan besar, kita butuh: Magnet yang sangat kuat (3), Kawat lilitan yang diputar sangat banyak (2), dan Gerakan putaran magnet yang sangat ngebut/cepat (1).</p>
+                    <p><em>Ketebalan kawat tembaga (4) hanya berpengaruh pada hambatan panas kawat, tidak pada voltase GGL induksi secara langsung.</em></p>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="question-card" id="q13" data-answer="B">
+                <div class="q-text"><span class="q-num">13.</span>Pembangkit listrik (Generator) memiliki dua varian, yakni penghasil AC (arus bolak-balik) dan DC (arus searah). Komponen sparepart fisik yang membedakan output generator AC dengan generator DC secara drastis adalah pada bagian penyalur arusnya, yakni ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q13" value="A"><span class="opt-text">A. generator AC menggunakan komutator (cincin belah), sedangkan DC cincin geser ganda</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="B"><span class="opt-text">B. generator AC menggunakan cincin geser ganda utuh, sedangkan DC menggunakan komutator (cincin belah)</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="C"><span class="opt-text">C. generator AC menggunakan magnet permanen, sedangkan DC menggunakan elektromagnet murni</span></label>
+                    <label class="option-label"><input type="radio" name="q13" value="D"><span class="opt-text">D. generator AC menggunakan sikat karbon, sedangkan DC tidak perlu sikat karbon</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Rahasia Cincin Dinamo:</strong></p>
+                    <p>Secara default, putaran kumparan generator menghasilkan arus bolak-balik karena memotong kutub U dan S secara bergantian.</p>
+                    <ul>
+                        <li>Untuk menghasilkan murni listrik arus rumahan (<strong>AC</strong>), putaran ini disalurkan polos lewat dua <strong>Cincin Geser Ganda (Slip Ring)</strong> utuh.</li>
+                        <li>Agar listriknya searah seperti baterai (<strong>DC</strong>), dibutuhkan komponen pemutus arus setengah putaran yang disebut <strong>Cincin Belah (Komutator)</strong>. Cincin yang terbelah dua ini memaksa arus selalu keluar searah secara periodik.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="question-card" id="q14" data-answer="C">
+                <div class="q-text"><span class="q-num">14.</span>Sebuah kotak transformator *step-down* memiliki efisiensi mesin 80%. Tegangan masuk (Primer) dipasang pada 220 Volt, dan menghasilkan tegangan keluar (Sekunder) 110 Volt. Jika alat elektronik yang dicolokkan menarik kuat arus sekunder sebesar 2 Ampere, maka kuat arus yang masuk di lilitan primer adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q14" value="A"><span class="opt-text">A. 0,8 A</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="B"><span class="opt-text">B. 1,0 A</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="C"><span class="opt-text">C. 1,25 A</span></label>
+                    <label class="option-label"><input type="radio" name="q14" value="D"><span class="opt-text">D. 2,5 A</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Perhitungan Efisiensi Trafo:</strong></p>
+                    <p>Efisiensi (&eta;) adalah perbandingan Daya Keluar (P<sub>s</sub>) dan Daya Masuk (P<sub>p</sub>). Ingat rumus Daya P = V &times; I.</p>
+                    <ol>
+                        <li>Hitung Daya Sekunder (Output): P<sub>s</sub> = V<sub>s</sub> &times; I<sub>s</sub> = 110 V &times; 2 A = <strong>220 Watt</strong>.</li>
+                        <li>Gunakan Efisiensi 80% (0,8) untuk cari Daya Primer sesungguhnya:<br>
+                            0,8 = P<sub>s</sub> &divide; P<sub>p</sub><br>
+                            0,8 = 220 &divide; P<sub>p</sub><br>
+                            P<sub>p</sub> = 220 &divide; 0,8 = <strong>275 Watt</strong>.
+                        </li>
+                        <li>Cari Kuat Arus Primer (I<sub>p</sub>):<br>
+                            P<sub>p</sub> = V<sub>p</sub> &times; I<sub>p</sub><br>
+                            275 W = 220 V &times; I<sub>p</sub><br>
+                            I<sub>p</sub> = 275 &divide; 220 = <strong>1,25 Ampere</strong>.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="question-card" id="q15" data-answer="C">
+                <div class="q-text"><span class="q-num">15.</span>Perhatikan tabel spesifikasi lilitan dua buah mesin transformator (trafo) berikut!
+<pre>
+   Tipe Trafo   | V_Primer | V_Sekunder | N_Primer | N_Sekunder
+   -------------|----------|------------|----------|-----------
+    Trafo A     |   220 V  |   1100 V   | 500 lilt | 2500 lilt
+    Trafo B     |   220 V  |     55 V   | 1000 lilt|  250 lilt
+</pre>
+                Berdasarkan pembacaan data, identifikasi jenis trafo yang benar adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q15" value="A"><span class="opt-text">A. Trafo A adalah Step-down karena Voltase Primer lebih kecil dari Sekunder</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="B"><span class="opt-text">B. Trafo B adalah Step-up karena Lilitan Primer lebih besar dari Lilitan Sekunder</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="C"><span class="opt-text">C. Trafo A adalah Step-up karena Voltase Sekunder (1100) > Voltase Primer (220)</span></label>
+                    <label class="option-label"><input type="radio" name="q15" value="D"><span class="opt-text">D. Trafo B adalah Step-up karena Lilitan Sekunder (250) < Lilitan Primer (1000)</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Ciri Identitas Trafo:</strong></p>
+                    <p><strong>Step-Up (Penaik Tegangan):</strong> Tegangan keluar harus lebih besar (V<sub>s</sub> &gt; V<sub>p</sub>). Syarat mutlaknya adalah kawat sekundernya harus dililit lebih banyak (N<sub>s</sub> &gt; N<sub>p</sub>).</p>
+                    <p><strong>Step-Down (Penurun Tegangan):</strong> Tegangan keluar lebih kecil (V<sub>s</sub> &lt; V<sub>p</sub>). Jumlah lilitan sekundernya lebih sedikit (N<sub>s</sub> &lt; N<sub>p</sub>).</p>
+                    <ul>
+                        <li><strong>Trafo A:</strong> Tegangan naik dari 220V jadi 1100V. Ini jelas <strong>Trafo Step-Up</strong>.</li>
+                        <li><strong>Trafo B:</strong> Tegangan turun dari 220V ke 55V. Ini jelas <strong>Trafo Step-Down</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="question-card" id="q16" data-answer="B">
+                <div class="q-text"><span class="q-num">16.</span>Sebuah rumah sakit menggunakan mesin raksasa <em>Magnetic Resonance Imaging</em> (MRI) untuk memindai mendeteksi tumor otak secara akurat. Teknologi ini sangat bergantung pada medan magnet raksasa. Secara fisika medis, medan magnet ekstrem ini ditugaskan untuk menembus tubuh manusia bertujuan ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q16" value="A"><span class="opt-text">A. membakar sel-sel tumor kanker secara langsung menggunakan panas induksi magnetik</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="B"><span class="opt-text">B. menyearahkan barisan arah rotasi spin proton atom hidrogen (air) di dalam tubuh pasien agar bereaksi dengan sensor radio komputer</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="C"><span class="opt-text">C. mempercepat aliran darah yang mengandung zat besi pasien agar kontras pembuluh darah organ menjadi jernih</span></label>
+                    <label class="option-label"><input type="radio" name="q16" value="D"><span class="opt-text">D. memancarkan radiasi gamma untuk membekukan pergerakan sel otot</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Rahasia Fisika Medis (MRI):</strong></p>
+                    <p>Tubuh manusia 70% mengandung air. Air kaya akan atom Hidrogen. Proton hidrogen ini diam-diam berputar (spin) ke arah acak di dalam tubuh seperti gasing magnetik kecil.</p>
+                    <p>Saat tubuh masuk tabung terowongan MRI, <strong>medan magnet buatan yang sangat raksasa</strong> (puluhan ribu kali lipat magnet bumi) memaksa semua proton hidrogen itu berbaris lurus serempak mengikuti arah magnet. Kemudian alat menembakkan gelombang radio singkat untuk mengganggu barisan proton tersebut. Saat proton kembali berbaris, mereka memancarkan sinyal gelombang balasan yang ditangkap komputer dan dirajut menjadi gambar 3D irisan otak yang sangat detil.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="question-card" id="q17" data-answer="B">
+                <div class="q-text"><span class="q-num">17.</span>Kereta peluru <em>Maglev</em> (Magnetic Levitation) di Jepang dan Tiongkok mampu melaju menembus kecepatan 500 km/jam tanpa bersentuhan dengan bantalan rel sedikit pun. Evaluasi prinsip fisika luar biasa yang menyebabkan keajaiban rel ini terjadi adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q17" value="A"><span class="opt-text">A. gaya gesek udara dihilangkan drastis dengan menciptakan ruang hampa udara di bawah terowongan kereta</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="B"><span class="opt-text">B. gaya tolak-menolak kutub elektromagnetik sejenis antara perut kereta dan badan rel, menolak beban gravitasi mengangkat kereta hingga melayang 10cm</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="C"><span class="opt-text">C. gaya gravitasi ditiadakan sementara menggunakan superkonduktor pendingin nitrogen di ruang kabin penumpang</span></label>
+                    <label class="option-label"><input type="radio" name="q17" value="D"><span class="opt-text">D. induksi rel magnetik memutar roda turbin angin di atap kereta menghasilkan kecepatan suprasonik</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Teknologi Melayang (Levitasi):</strong></p>
+                    <p>Musuh terbesar yang menghambat laju gerak kereta besi konvensional adalah roda bajanya yang bergesekan berat dengan rel. Kereta Maglev meniadakan roda!</p>
+                    <p>Prinsip dasarnya menggunakan <strong>Tolak-menolak kutub senama (U-U atau S-S)</strong>. Rel dan kereta dipasangi kumparan elektromagnet superkonduktor. Saat listrik dinyalakan, gaya tolak magnet tersebut sangat kuat hingga mampu mengangkat beban puluhan ton kereta agar "melayang kaku" (levitasi) mengudara tipis dari bantalan rel. Karena tak ada lagi gesekan logam, kereta bisa didorong maju dengan kecepatan yang menyerupai laju pesawat terbang.</p>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="question-card" id="q18" data-answer="C">
+                <div class="q-text"><span class="q-num">18.</span>Siswa sekolah dasar bereksperimen membuat magnet pengangkat pasir besi. Ia melilitkan kawat tembaga pada sebatang paku dan menyambungkannya ke batu baterai ABC 1,5 Volt. Merasa hisapannya lemah, ia ingin mem-<em>boost</em> kekuatan elektromagnetik ciptaannya tersebut. Rencana solusi yang paling masuk akal adalah ....
+<pre>
+ 1) Mengganti inti paku besi dengan besi baja murni.
+ 2) Menumpuk melipatgandakan jumlah putaran lilitan kawat tembaga pada paku.
+ 3) Mengganti baterai 1,5V dengan baterai Kotak 9 Volt.
+ 4) Merenggangkan kawat agar jarak lilitan menjauh.
+</pre>
+                </div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q18" value="A"><span class="opt-text">A. Menggunakan solusi (1) dan (2)</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="B"><span class="opt-text">B. Menggunakan solusi (1) dan (4)</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="C"><span class="opt-text">C. Menggunakan solusi (2) dan (3)</span></label>
+                    <label class="option-label"><input type="radio" name="q18" value="D"><span class="opt-text">D. Menggunakan solusi (3) dan (4)</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Meningkatkan Kekuatan Medan Elektromagnet (Solenoida):</strong></p>
+                    <p>Rumus kekuatan magnet buatan (B) sebanding lurus dengan <strong>Arus Listrik (I)</strong> dan <strong>Banyaknya Jumlah Lilitan Kerapatan Kawat (N)</strong>.</p>
+                    <ul>
+                        <li><strong>(2) Menambah lilitan:</strong> Semakin banyak putaran kawat melilit rapet, semakin besar akumulasi fluks gaya tariknya.</li>
+                        <li><strong>(3) Membesarkan Baterai ke 9V:</strong> Voltase besar akan menyuntikkan aliran Arus Ampere yang jauh lebih deras. Arus besar = Magnet kuat.</li>
+                        <li><em>(Catatan: Besi baja (1) malah lebih "alot" dijadikan elektromagnet ketimbang besi lunak. Merenggangkan lilitan (4) malah merusak daya padat medan magnet).</em></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="question-card" id="q19" data-answer="C">
+                <div class="q-text"><span class="q-num">19.</span>Pemerintah menancapkan menara tiang transmisi listrik tegangan sangat tinggi (SUTET) melintasi pegunungan dari pabrik PLTU hingga ke gardu distribusi pinggir kota. Mengapa listrik tersebut harus disuntik pompa Trafo Step-Up hingga menembus angka ekstrem 500.000 Volt sebelum dikirimkan via kabel baja jauh?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q19" value="A"><span class="opt-text">A. Memaksa arus listrik meloncat membelah awan agar elektron tiba lebih cepat masuk ke kota</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="B"><span class="opt-text">B. Menurunkan suhu kawat transmisi hingga membeku sehingga tembaga kabel menara tidak mencair</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="C"><span class="opt-text">C. Meningkatkan tegangan maksimal agar arus yang mengalir menjadi super kecil, demi mencegah terbuangnya energi menjadi panas kesia-siaan sepanjang jalur transmisi jarak jauh</span></label>
+                    <label class="option-label"><input type="radio" name="q19" value="D"><span class="opt-text">D. Mengubah murni arus bolak-balik (AC) menjadi arus Searah Baterai (DC) karena DC tahan badai petir</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Alasan Fisika Ekonomis Tegangan Ekstra Tinggi (SUTET):</strong></p>
+                    <p>PLN memproduksi listrik dengan total Daya (P) yang raksasa. Ingat rumus Daya: <strong>P = V &times; I</strong>.</p>
+                    <p>Jika kita mengirim listrik lewat kabel sejauh ratusan kilometer, kabel tersebut ibarat hambatan (R) yang akan membakar dan menyedot energi listrik mengubahnya menjadi panas terbuang sia-sia di angkasa. Kehilangan Daya (Rugi Panas) rumusnya adalah <strong>P<sub>hilang</sub> = I<sup>2</sup> &times; R</strong>.</p>
+                    <p>Perhatikan bahwa "kerugian" ini dipengaruhi oleh <strong>Kuadrat Arus (I<sup>2</sup>)</strong>! Semakin besar arusnya, semakin raksasa energi yang terbuang jadi panas. Oleh karenanya, agar Arus (I) mengalir sangat kecil namun Daya (P) tetap besar, <strong>PLN menggelembungkan Tegangannya (V) setinggi mungkin hingga 500 kiloVolt memakai Trafo Step-up</strong>. Kerugian panas jadi minimal dan listrik selamat sampai kota!</p>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="question-card" id="q20" data-answer="B">
+                <div class="q-text"><span class="q-num">20.</span>Jurnal sains lingkungan laut meneliti laporan insiden populasi penyu bermigrasi yang mendadak kehilangan "kompas" insting arah navigasinya dan tersesat berputar-putar manakala kebetulan berenang melewati lintasan kawasan yang terdapat proyek instalasi parit kabel listrik raksasa bawah laut beraliran AC. Analisis fisis rasional terhadap misteri terganggunya naluri hewan purba tersebut adalah ....</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q20" value="A"><span class="opt-text">A. Listrik AC voltase tinggi membakar sedimen terumbu karang penghasil oksigen kompas</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="B"><span class="opt-text">B. Aliran bolak-balik kabel laut meradiasikan medan elektromagnet buatan yang memancarkan sinyal kacau, yang akhirnya menutupi kemurnian sinyal kutub geomagnetik bumi</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="C"><span class="opt-text">C. Listrik bocor melubangi selaput karet konduktor dan menyengat kejut kelenjar otak reseptor penyu secara parsial</span></label>
+                    <label class="option-label"><input type="radio" name="q20" value="D"><span class="opt-text">D. Ukuran fisik pipa gorong-gorong kabel tembaga tersebut merusak sensor hidrodinamika radar sonar perut penyu</span></label>
+                </div>
+                <div class="explanation">
+                    <div class="exp-title"></div>
+                    <p><strong>Polusi Elektromagnetik Bawah Laut:</strong></p>
+                    <p>Penyu bergantung mutlak membaca medan gaya tarikan Magnet Bumi yang alami, halus, dan stabil dari Kutub Utara-Selatan. Hukum Fisika menyatakan, setiap <strong>kabel yang dialiri arus listrik pasti akan membangkitkan induksi "Medan Magnet Buatan" di sekeliling kabel tersebut.</strong></p>
+                    <p>Apalagi arus yang mengalir di proyek laut tersebut adalah AC (Bolak-balik kuat). Ia menghasilkan riak-riak gelombang medan magnet buatan bervoltase sangat bising secara masif di sekeliling wilayah kabel, sehingga menindih (menginterfensi/mengacaukan) "peta magnet murni" sinyal bumi. Akibatnya, GPS biologis (magnetit) dalam hidung penyu menjadi nge-*bug* dan tersesat arah.</p>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-area">
+                <button type="button" id="btnSubmit" class="btn-submit">
+                    Periksa Jawaban Kuis
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Board -->
+        <div id="resultContainer" class="result-box">
+            <h2>Evaluasi Latihan Selesai!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Silakan gulir pelan-pelan layar ke atas untuk membedah langkah-langkah logika fisika di setiap nomor soal.</p>
+            
+            <div class="score-circle">
+                <span id="scoreDisplay" class="score-text">0</span>
+            </div>
+            
+            <button type="button" id="btnReset" class="btn-reset">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                </svg>
+                Ulangi Ujian Ulang
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <!-- INTERACTION LOGIC (Vanilla JS) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('quizForm');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const resultBox = document.getElementById('resultContainer');
+            const scoreText = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-card');
+            
+            const TOTAL_SOAL = questions.length; 
+            const POIN_PER_SOAL = 100 / TOTAL_SOAL;
+
+            /* Mencegah default form browser saat ENTER ditekan */
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+
+            /* Logika Pengecekan Skor & Pembedahan Soal */
+            btnSubmit.addEventListener('click', function() {
+                let poin = 0;
+
+                questions.forEach(function(q) {
+                    const qID = q.id;
+                    const kunciJawaban = q.getAttribute('data-answer');
+                    // Mendapatkan elemen radio yang diklik (jika ada)
+                    const terjawab = q.querySelector(`input[name="${qID}"]:checked`);
+                    
+                    const boxBahas = q.querySelector('.explanation');
+                    const titleBahas = q.querySelector('.exp-title');
+
+                    // Bersihkan warna merah/hijau dari state cek sebelumnya
+                    boxBahas.classList.remove('exp-correct', 'exp-wrong');
+                    q.classList.remove('card-correct', 'card-wrong');
+
+                    if (terjawab) {
+                        if (terjawab.value === kunciJawaban) {
+                            poin += POIN_PER_SOAL;
+                            boxBahas.classList.add('exp-correct');
+                            q.classList.add('card-correct');
+                            titleBahas.innerHTML = `&#10004; Luar Biasa! Pemahaman Fisis Anda Sangat Tepat (Opsi ${terjawab.value})`;
+                        } else {
+                            boxBahas.classList.add('exp-wrong');
+                            q.classList.add('card-wrong');
+                            titleBahas.innerHTML = `&#10006; Kurang Tepat. (Pilihan Anda: ${terjawab.value} | Kunci Ilmiah: ${kunciJawaban})`;
+                        }
+                    } else {
+                        // Tidak Dikerjakan (Default Salah)
+                        boxBahas.classList.add('exp-wrong');
+                        q.classList.add('card-wrong');
+                        titleBahas.innerHTML = `&#9888; Ops, Anda Melewati Soal Ini. (Kunci Benar: ${kunciJawaban})`;
+                    }
+
+                    // Menampilkan pop-up tersembunyi bedah soal
+                    boxBahas.style.display = 'block';
+                });
+
+                // Cetak total nilai dibulatkan (0-100)
+                scoreText.innerText = Math.round(poin);
+
+                // Hilangkan Tombol Periksa, Tampilkan Skor Raksasa
+                btnSubmit.parentElement.style.display = 'none';
+                resultBox.style.display = 'block';
+
+                // Bawa mata pengguna pelan-pelan turun ke area nilai
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 150);
+            });
+
+            /* Logika Mengulang Tes dari 0 */
+            btnReset.addEventListener('click', function() {
+                // Menghapus titik-titik radio yang di checked
+                form.reset();
+
+                // Membersihkan kartu & menyembunyikan tulisan bahas
+                questions.forEach(function(q) {
+                    const boxBahas = q.querySelector('.explanation');
+                    boxBahas.style.display = 'none';
+                    boxBahas.classList.remove('exp-correct', 'exp-wrong');
+                    q.classList.remove('card-correct', 'card-wrong');
+                });
+
+                // Sembunyikan Skor, panggil balik Tombol Submit
+                resultBox.style.display = 'none';
+                btnSubmit.parentElement.style.display = 'flex';
+
+                // Lempar view otomatis ngacir balik ke Pucuk soal 1
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t18',
+          topicIndex: 18,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

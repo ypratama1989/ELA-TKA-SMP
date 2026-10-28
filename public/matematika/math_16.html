@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Kesebangunan dan Kekongruenan</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="radio"] {
+            display: none; 
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-label:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+        }
+
+        .radio-circle {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col selection:bg-blue-200 selection:text-blue-900">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-2 rounded-lg transition font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[90px]"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-12">
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">Kesebangunan & Kekongruenan</h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Kerjakan soal-soal di bawah ini dengan teliti. Anda dapat memeriksa jawaban kapan saja untuk melihat pembahasan lengkapnya.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer soal akan diisi dinamis oleh JavaScript -->
+            </div>
+
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-md border border-gray-200 text-center sticky bottom-4 z-40 transform transition-all">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-2 fade-in">
+                    <p class="text-xl font-semibold text-gray-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8 drop-shadow-sm">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-gray-200 hover:border-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 py-8 mt-12 border-t-4 border-blue-600">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-2 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Dua bangun datar dikatakan kongruen jika memenuhi syarat...",
+                options: [
+                    "A. Sisi-sisi yang bersesuaian sama panjang dan sudut-sudut yang bersesuaian sama besar",
+                    "B. Sisi-sisi yang bersesuaian memiliki perbandingan yang sama dan sudut-sudut yang bersesuaian sama besar",
+                    "C. Sisi-sisi yang bersesuaian sama panjang dan sudut-sudut yang bersesuaian memiliki perbandingan yang sama",
+                    "D. Sudut-sudut yang bersesuaian sama besar tanpa memperhatikan panjang sisi"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Ingat Perbedaan Dasar!</strong><br>&bull; <strong>Kongruen:</strong> Artinya <em>kembar identik</em>. Ukuran panjang sisinya harus sama persis, dan besar sudutnya juga harus sama persis.<br>&bull; <strong>Sebangun:</strong> Artinya <em>mirip tapi beda ukuran</em> (seperti foto yang di-zoom). Sudutnya sama, tapi sisinya hanya sebanding (punya skala).<br><br>Karena ditanya kongruen, maka jawaban yang tepat adalah sisi sama panjang dan sudut sama besar (Opsi A)."
+            },
+            {
+                question: "Segitiga ABC kongruen dengan segitiga PQR. Jika panjang AB = 8 cm, BC = 15 cm, dan AC = 17 cm, serta sudut A = sudut P dan sudut B = sudut Q, maka panjang sisi QR adalah...",
+                options: [
+                    "A. 8 cm",
+                    "B. 15 cm",
+                    "C. 17 cm",
+                    "D. 23 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Trik Mencocokkan Sisi:</strong> Pada dua bangun yang kongruen, sisi yang sama panjang selalu berada di depan sudut yang sama besar.<br><br>1. Diketahui &ang;A = &ang;P dan &ang;B = &ang;Q. Otomatis sudut ketiga juga sama: &ang;C = &ang;R.<br>2. Kita ditanya panjang sisi <strong>QR</strong> (pada segitiga PQR). Sisi QR terletak tepat di depan sudut P.<br>3. Karena &ang;P = &ang;A, maka sisi yang seletak dengan QR adalah sisi di depan &ang;A pada segitiga ABC, yaitu sisi <strong>BC</strong>.<br>4. Karena BC = 15 cm, maka QR juga pasti = <strong>15 cm</strong>."
+            },
+            {
+                question: "Perhatikan beberapa pernyataan berikut mengenai dua bangun datar yang sebangun:<br>(1) Sudut-sudut yang bersesuaian sama besar.<br>(2) Sisi-sisi yang bersesuaian sama panjang.<br>(3) Perbandingan panjang sisi-sisi yang bersesuaian adalah senilai.<br>(4) Luas kedua bangun tersebut selalu sama.<br>Pernyataan yang benar mengenai syarat dua bangun datar sebangun adalah...",
+                options: [
+                    "A. (1) dan (2)",
+                    "B. (1) dan (3)",
+                    "C. (2) dan (3)",
+                    "D. (3) dan (4)"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Evaluasi Konsep Kesebangunan:</strong><br>Dua bangun datar dikatakan sebangun jika mereka memiliki bentuk yang sama persis, meskipun ukurannya berbeda (bisa lebih besar atau lebih kecil). Syarat mutlaknya adalah:<br>&check; <strong>(1) Sudut-sudutnya sama besar</strong> (agar bentuknya tidak berubah/mencong).<br>&check; <strong>(3) Perbandingan sisinya senilai</strong> (membesar atau mengecil secara proporsional).<br><br><em>Pernyataan (2) dan (4) adalah ciri-ciri bangun yang <strong>kongruen</strong> (kembar identik), bukan sekadar sebangun.</em>"
+            },
+            {
+                question: "Sebuah tiang bendera yang tingginya 3 meter menghasilkan bayangan sepanjang 2 meter. Pada saat yang sama, sebuah gedung memiliki bayangan sepanjang 18 meter. Tinggi gedung tersebut sebenarnya adalah...",
+                options: [
+                    "A. 12 meter",
+                    "B. 20 meter",
+                    "C. 27 meter",
+                    "D. 36 meter"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Cahaya matahari yang datang pada saat bersamaan akan membentuk dua segitiga siku-siku yang <strong>sebangun</strong> antara benda dan bayangannya.<br><br><strong>Langkah Penyelesaian (Gunakan Perbandingan):</strong><br>Tinggi Gedung / Tinggi Tiang = Bayangan Gedung / Bayangan Tiang<br>Tinggi Gedung / 3 = 18 / 2<br>Tinggi Gedung / 3 = 9<br>Tinggi Gedung = 9 &times; 3 = <strong>27 meter</strong>."
+            },
+            {
+                question: "Sebuah foto berukuran 20 cm &times; 30 cm ditempelkan pada selembar karton. Di sebelah kiri, kanan, dan atas foto masih terdapat sisa karton selebar 3 cm. Jika foto dan karton tersebut sebangun, maka lebar sisa karton di bagian bawah foto adalah...",
+                options: [
+                    "A. 3 cm",
+                    "B. 5 cm",
+                    "C. 6 cm",
+                    "D. 9 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Mari kita petakan ukuran Foto (Kecil) dan Karton (Besar).<br>&bull; Lebar Foto = 20 cm, Tinggi Foto = 30 cm.<br>&bull; Lebar Karton = 20 + 3 (kiri) + 3 (kanan) = <strong>26 cm</strong>.<br>&bull; Tinggi Karton = 30 + 3 (atas) + x (bawah) = <strong>33 + x</strong> cm.<br><br>Karena sebangun, perbandingannya harus senilai:<br>Lebar Foto / Lebar Karton = Tinggi Foto / Tinggi Karton<br>20 / 26 = 30 / (33 + x)<br><em>(Sederhanakan 20/26 menjadi 10/13)</em><br>10 / 13 = 30 / (33 + x)<br>Kalikan silang:<br>10(33 + x) = 30 &times; 13<br>330 + 10x = 390<br>10x = 390 - 330 = 60<br>x = 60 &divide; 10 = <strong>6 cm</strong>."
+            },
+            {
+                question: "Pada segitiga siku-siku ABC dengan sudut siku-siku di B, ditarik garis tinggi BD ke sisi AC. Jika panjang AD = 4 cm dan CD = 9 cm, maka panjang garis tinggi BD adalah...",
+                options: [
+                    "A. 5 cm",
+                    "B. 6 cm",
+                    "C. 6,5 cm",
+                    "D. 13 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Teorema Air Mancur (Dalil Proyeksi Segitiga Siku-siku):</strong><br>Jika ada garis tinggi ditarik dari sudut siku-siku ke sisi miring, maka kuadrat garis tinggi tersebut sama dengan hasil kali potongan sisi miringnya.<br><br>Rumus Cepat: <strong>BD<sup>2</sup> = AD &times; CD</strong><br>BD<sup>2</sup> = 4 &times; 9<br>BD<sup>2</sup> = 36<br>BD = &radic;36 = <strong>6 cm</strong>."
+            },
+            {
+                question: "Pada trapesium ABCD, sisi AB sejajar dengan CD. Garis EF sejajar dengan AB dan memotong AD di E serta BC di F. Jika panjang CD = 10 cm, AB = 25 cm, dan perbandingan DE : EA = 2 : 3, maka panjang EF adalah...",
+                options: [
+                    "A. 15 cm",
+                    "B. 16 cm",
+                    "C. 18 cm",
+                    "D. 20 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Rumus Silang Trapesium Sebangun:</strong><br>Untuk mencari garis tengah (EF), kalikan silang perbandingan sisi tegak dengan garis sejajar di seberangnya, lalu bagi dengan total perbandingan.<br><br>Rumus: EF = ((DE &times; AB) + (EA &times; CD)) &divide; (DE + EA)<br>Gunakan rasio DE=2 dan EA=3.<br>EF = ((2 &times; 25) + (3 &times; 10)) &divide; (2 + 3)<br>EF = (50 + 30) &divide; 5<br>EF = 80 &divide; 5 = <strong>16 cm</strong>."
+            },
+            {
+                question: "Dua buah segitiga dinyatakan kongruen berdasarkan kriteria \"Sisi - Sudut - Sisi\". Arti dari kriteria tersebut adalah...",
+                options: [
+                    "A. Dua sisi yang bersesuaian sama panjang dan satu sudut di hadapan salah satu sisi tersebut sama besar",
+                    "B. Dua sudut yang bersesuaian sama besar dan satu sisi di antara kedua sudut tersebut sama panjang",
+                    "C. Dua sisi yang bersesuaian sama panjang dan sudut yang diapit oleh kedua sisi tersebut sama besar",
+                    "D. Ketiga sisi yang bersesuaian memiliki perbandingan yang sama"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Dalam geometri, urutan penyebutan kriteria itu sangat penting dan menggambarkan posisinya di gambar.<br><br>Kriteria <strong>\"Sisi - Sudut - Sisi\" (S-Sd-S)</strong> berarti sudutnya berada tepat di <strong>tengah-tengah (diapit)</strong> oleh dua sisi yang diukur.<br>Jadi, artinya adalah: Dua sisi yang bersesuaian sama panjang, dan sudut yang diapit oleh kedua sisi tersebut sama besar (Opsi C)."
+            },
+            {
+                question: "Dua buah persegi panjang masing-masing berukuran 16 cm &times; 12 cm dan 12 cm &times; 9 cm. Hubungan antara kedua persegi panjang tersebut adalah...",
+                options: [
+                    "A. Kongruen tetapi tidak sebangun",
+                    "B. Sebangun tetapi tidak kongruen",
+                    "C. Kongruen dan sebangun",
+                    "D. Tidak kongruen dan tidak sebangun"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mari kita periksa syarat kongruen dan sebangun:<br>1. <strong>Apakah Kongruen?</strong> Tentu tidak, karena ukurannya berbeda (16x12 jelas lebih besar dari 12x9).<br>2. <strong>Apakah Sebangun?</strong> Kita cek perbandingan Panjang terhadap Lebarnya.<br>&bull; Bangun 1: 16 &divide; 12 = <strong>4 : 3</strong>.<br>&bull; Bangun 2: 12 &divide; 9 = <strong>4 : 3</strong>.<br><br>Karena perbandingan dimensinya sama persis dan semua sudutnya sama (90&deg;), maka kedua persegi panjang ini <strong>Sebangun tetapi tidak kongruen</strong>."
+            },
+            {
+                question: "Sebuah model kapal memiliki panjang 30 cm dan lebar 12 cm. Jika panjang kapal sebenarnya adalah 45 meter, maka lebar kapal sebenarnya adalah...",
+                options: [
+                    "A. 15 meter",
+                    "B. 18 meter",
+                    "C. 20 meter",
+                    "D. 24 meter"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Model/miniatur selalu sebangun dengan benda aslinya.<br><br><strong>Langkah Penyelesaian:</strong><br>Panjang Model / Panjang Asli = Lebar Model / Lebar Asli<br>30 cm / 45 meter = 12 cm / Lebar Asli<br><br><em>(Tidak perlu mengubah satuan jika posisi atas sama-sama cm dan posisi bawah sama-sama meter, asalkan konsisten!)</em><br>30 &times; Lebar Asli = 12 &times; 45<br>30 &times; Lebar Asli = 540<br>Lebar Asli = 540 &divide; 30 = <strong>18 meter</strong>."
+            },
+            {
+                question: "Manakah dari pasangan bangun datar berikut yang sudah PASTI sebangun dalam kondisi apa pun?",
+                options: [
+                    "A. Dua buah segitiga sama kaki",
+                    "B. Dua buah belah ketupat",
+                    "C. Dua buah persegi",
+                    "D. Dua buah persegi panjang"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Mari Analisis Logisnya:</strong><br>&bull; A (Segitiga sama kaki): Bisa saja yang satu gemuk pendek, yang satu kurus tinggi. (Tidak pasti).<br>&bull; B (Belah ketupat): Bisa saja yang satu sudutnya lancip banget, yang lain hampir kotak. (Tidak pasti).<br>&bull; D (Persegi panjang): Bisa saja ukurannya 10x2 dan 10x9. Proporsinya beda. (Tidak pasti).<br>&bull; <strong>C (Persegi):</strong> Mau sekecil apapun atau sebesar apapun, semua sisi persegi selalu sama panjang (proporsi 1:1) dan semua sudutnya mutlak 90&deg;. Jadi, dua persegi sudah <strong>pasti selalu sebangun</strong>."
+            },
+            {
+                question: "Diketahui segitiga KLM dan segitiga XYZ sebangun. Jika panjang KL = 6 cm, LM = 8 cm, KM = 10 cm, dan XY = 9 cm, YZ = 12 cm, XZ = 15 cm, maka perbandingan luas segitiga KLM dengan luas segitiga XYZ adalah...",
+                options: [
+                    "A. 2 : 3",
+                    "B. 3 : 4",
+                    "C. 4 : 9",
+                    "D. 9 : 16"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep Sangat Penting:</strong> Perbandingan LUAS bangun yang sebangun adalah <strong>kuadrat</strong> dari perbandingan sisi-sisinya!<br><br>1. Cari perbandingan sisinya dulu (Skala/k). Ambil salah satu sisi yang bersesuaian, misalnya KL dan XY.<br>   Skala sisi = KL / XY = 6 / 9 = <strong>2 : 3</strong>.<br>2. Cari perbandingan luasnya:<br>   Luas KLM : Luas XYZ = (2)<sup>2</sup> : (3)<sup>2</sup> = <strong>4 : 9</strong>."
+            },
+            {
+                question: "Seorang arsitek membuat miniatur jembatan dengan skala 1 : 200. Jika luas permukaan jalan pada miniatur jembatan adalah 150 cm<sup>2</sup>, maka luas permukaan jalan pada jembatan sebenarnya adalah...",
+                options: [
+                    "A. 300 m<sup>2</sup>",
+                    "B. 600 m<sup>2</sup>",
+                    "C. 3.000 m<sup>2</sup>",
+                    "D. 6.000 m<sup>2</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Awas Jebakan Skala Luas!</strong><br>Skala 1:200 itu untuk besaran panjang. Untuk besaran <strong>LUAS</strong>, skalanya harus dikuadratkan, menjadi (1 : 200)<sup>2</sup> = <strong>1 : 40.000</strong>.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Luas Asli (dalam cm<sup>2</sup>) = Luas Miniatur &times; 40.000<br>   Luas Asli = 150 &times; 40.000 = 6.000.000 cm<sup>2</sup>.<br>2. Konversi ke meter persegi (dibagi 10.000 karena naiknya 2 tangga pangkat dua):<br>   6.000.000 &divide; 10.000 = <strong>600 m<sup>2</sup></strong>."
+            },
+            {
+                question: "Perhatikan segitiga ABC. Titik D terletak pada AB dan titik E terletak pada AC sehingga garis DE sejajar dengan BC. Jika panjang AD = 8 cm, DB = 4 cm, dan DE = 10 cm, maka panjang BC adalah...",
+                options: [
+                    "A. 5 cm",
+                    "B. 12 cm",
+                    "C. 15 cm",
+                    "D. 20 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Ada segitiga kecil (ADE) di dalam segitiga besar (ABC). Keduanya sebangun!<br><br><strong>Hati-hati:</strong> Jangan membandingkan sisi AD dengan sisi bawahnya saja (DB). Harus dibandingkan dengan sisi utuh segitiga besar (AB).<br>&bull; Sisi kiri kecil = AD = 8.<br>&bull; Sisi kiri besar = AB = 8 + 4 = 12.<br><br><strong>Perbandingan:</strong><br>Kiri Kecil / Kiri Besar = Alas Kecil / Alas Besar<br>AD / AB = DE / BC<br>8 / 12 = 10 / BC<br><em>(Sederhanakan 8/12 menjadi 2/3)</em><br>2 / 3 = 10 / BC &rarr; 2 &times; BC = 30 &rarr; BC = <strong>15 cm</strong>."
+            },
+            {
+                question: "Dua buah segitiga, yaitu segitiga PQR dan segitiga TUV, adalah kongruen. Diketahui besar sudut P = 45&deg;, sudut Q = 75&deg;, sudut T = 75&deg;, dan sudut U = 60&deg;. Pasangan sisi yang sama panjang adalah...",
+                options: [
+                    "A. PQ = TU",
+                    "B. QR = UV",
+                    "C. PR = TV",
+                    "D. QR = TU"
+                ],
+                correctAnswer: 3, // D (Telah dikoreksi)
+                explanation: "<em>Catatan Edukasi: Soal ini menjebak, kita harus memetakan semua sudut terlebih dahulu!</em><br><br>1. <strong>Lengkapi sudut Segitiga PQR:</strong> &ang;R = 180&deg; - (45&deg; + 75&deg;) = 180&deg; - 120&deg; = <strong>60&deg;</strong>.<br>2. <strong>Lengkapi sudut Segitiga TUV:</strong> &ang;V = 180&deg; - (75&deg; + 60&deg;) = 180&deg; - 135&deg; = <strong>45&deg;</strong>.<br><br>3. <strong>Mari Pasangkan Sudutnya:</strong><br>&bull; &ang;P (45&deg;) bersesuaian dengan &ang;V (45&deg;)<br>&bull; &ang;Q (75&deg;) bersesuaian dengan &ang;T (75&deg;)<br>&bull; &ang;R (60&deg;) bersesuaian dengan &ang;U (60&deg;)<br><br>4. <strong>Cari Sisi yang Sama:</strong> Sisi dibentuk oleh dua sudut di ujung-ujungnya.<br>Mari kita uji Opsi D: Sisi <strong>QR</strong> diapit sudut Q(75&deg;) dan R(60&deg;). Pada segitiga satunya, sisi yang diapit 75&deg; dan 60&deg; adalah sisi <strong>TU</strong>. Maka <strong>QR = TU</strong> adalah pernyataan yang benar!"
+            },
+            {
+                question: "Untuk mengukur lebar sebuah sungai, seorang pramuka menancapkan pasak di titik A, B, C, D, dan E sehingga terbentuk dua segitiga. Segitiga ABC sebangun dengan segitiga DEC. Jika jarak AB = 12 m, BC = 8 m, dan CD = 4 m (dengan AB sejajar DE), maka lebar sungai yang diwakili oleh panjang DE adalah...",
+                options: [
+                    "A. 4 meter",
+                    "B. 6 meter",
+                    "C. 8 meter",
+                    "D. 10 meter"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Ini adalah penerapan cerdas dari kesebangunan di dunia nyata (Pramuka)!<br><br>Karena Segitiga ABC sebangun dengan DEC, sisi-sisi yang letaknya bersesuaian memiliki rasio yang sama.<br>Tinggi Besar / Tinggi Kecil = Alas Besar / Alas Kecil<br>AB / DE = BC / CD<br>12 / DE = 8 / 4<br>12 / DE = 2<br>DE = 12 &divide; 2 = <strong>6 meter</strong>."
+            },
+            {
+                question: "Seorang siswa menyatakan: \"Jika dua buah segitiga memiliki tiga pasang sudut yang sama besar (Sudut-Sudut-Sudut), maka kedua segitiga tersebut pasti kongruen.\" Bagaimanakah evaluasi Anda terhadap pernyataan siswa tersebut?",
+                options: [
+                    "A. Benar, karena kesamaan sudut sudah cukup untuk membuktikan ukuran panjang sisinya juga sama.",
+                    "B. Benar, karena sudut yang sama akan otomatis membentuk bangun dengan luas yang sama.",
+                    "C. Salah, karena kesamaan sudut hanya menjamin kedua segitiga tersebut sebangun, tetapi belum tentu kongruen.",
+                    "D. Salah, karena syarat kongruen hanya dapat dibuktikan jika seluruh panjang sisinya berbeda."
+                ],
+                correctAnswer: 2, // C
+                explanation: "Pernyataan siswa tersebut <strong>Keliru/Salah</strong>.<br><br>Coba bayangkan sebuah segitiga sama sisi kecil yang panjang sisinya 2 cm, lalu bayangkan segitiga sama sisi besar yang panjang sisinya 100 meter. Keduanya memiliki sudut yang sama persis yaitu 60&deg;, 60&deg;, dan 60&deg;.<br><br>Apakah ukurannya sama (Kongruen)? Tentu tidak! Kesamaan ketiga sudut <strong>hanya menjamin bentuknya sama (Sebangun)</strong>, tetapi tidak menjamin ukurannya sama."
+            },
+            {
+                question: "Dua buah tabung memiliki perbandingan jari-jari alas r1 : r2 = 3 : 5 dan perbandingan tinggi t1 : t2 = 3 : 5. Seorang desainer menyatakan bahwa kedua tabung tersebut sebangun secara geometris. Evaluasilah pernyataan desainer tersebut!",
+                options: [
+                    "A. Benar, karena perbandingan dimensi yang bersesuaian (jari-jari dan tinggi) adalah senilai.",
+                    "B. Benar, karena semua tabung di dunia ini pasti sebangun tanpa melihat ukuran.",
+                    "C. Salah, karena tabung adalah bangun ruang lengkung sehingga tidak punya konsep kesebangunan.",
+                    "D. Salah, karena syarat kesebangunan tabung hanya ditentukan oleh tingginya saja."
+                ],
+                correctAnswer: 0, // A
+                explanation: "Pernyataan desainer tersebut <strong>Tepat/Benar</strong>.<br><br>Konsep kesebangunan tidak hanya berlaku untuk bangun datar 2D (seperti segitiga atau persegi), tetapi juga berlaku utuh untuk bangun ruang 3D (seperti tabung, kerucut, balok).<br><br>Syarat bangun ruang sebangun adalah <strong>semua</strong> perbandingan dimensi liniernya (panjang, lebar, tinggi, jari-jari) harus memiliki skala yang persis sama. Karena rasionya sama-sama 3:5, maka kedua tabung sah disebut sebangun."
+            },
+            {
+                question: "Diketahui trapesium ABCD sebangun dengan trapesium PQRS. Jika keliling trapesium ABCD adalah 36 cm dan perbandingan panjang sisi-sisi yang bersesuaian antara ABCD dan PQRS adalah 3 : 5, maka keliling trapesium PQRS adalah...",
+                options: [
+                    "A. 21,6 cm",
+                    "B. 45 cm",
+                    "C. 60 cm",
+                    "D. 100 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "<strong>Konsep Penting:</strong> Berbeda dengan Luas yang perbandingannya harus dikuadratkan, perbandingan untuk <strong>Keliling</strong> itu murni sama persis dengan perbandingan panjang sisinya! (Karena keliling hanya satuan garis lurus/1D).<br><br>Keliling ABCD / Keliling PQRS = Sisi ABCD / Sisi PQRS<br>36 / Keliling PQRS = 3 / 5<br>3 &times; Keliling PQRS = 36 &times; 5<br>3 &times; Keliling PQRS = 180<br>Keliling PQRS = 180 &divide; 3 = <strong>60 cm</strong>."
+            },
+            {
+                question: "Sebuah bingkai foto kayu berbentuk persegi panjang memiliki ukuran luar 80 cm &times; 60 cm. Lebar kayu bingkai tersebut adalah 5 cm di setiap sisi (atas, bawah, kiri, kanan). Evaluasilah apakah persegi panjang bagian dalam (tempat foto) sebangun dengan persegi panjang bagian luar bingkai!",
+                options: [
+                    "A. Sebangun, karena kedua bangun memiliki bentuk yang sama dan berasal dari bingkai yang sama.",
+                    "B. Sebangun, karena perbandingan panjang dan lebar bagian dalam sama dengan perbandingan luar.",
+                    "C. Tidak sebangun, karena perbandingan panjang dan lebar luar (80:60) tidak sama dengan dalam (70:50).",
+                    "D. Tidak sebangun, karena sudut-sudut pada persegi panjang bagian dalam berbeda."
+                ],
+                correctAnswer: 2, // C
+                explanation: "Mari kita buktikan dengan menghitung rasio (perbandingan) ukurannya.<br><br>1. <strong>Bagian Luar:</strong> Panjang = 80, Lebar = 60. Rasionya adalah 80:60 (Disederhanakan menjadi <strong>4 : 3</strong>).<br>2. <strong>Bagian Dalam:</strong><br>   &bull; Panjang = 80 - 5 (kiri) - 5 (kanan) = 70 cm.<br>   &bull; Lebar = 60 - 5 (atas) - 5 (bawah) = 50 cm.<br>   Rasionya adalah 70:50 (Disederhanakan menjadi <strong>7 : 5</strong>).<br><br>Karena rasio 4:3 <strong>TIDAK SAMA</strong> dengan 7:5, maka bentuk proporsionalnya berubah. Kesimpulannya: <strong>TIDAK SEBANGUN</strong>."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-8 relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <!-- Blue Accent Ribbon -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 opacity-80 rounded-l-2xl"></div>
+                        
+                        <!-- Question Header -->
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.5rem] h-10 rounded-xl bg-blue-100 text-blue-700 font-bold mr-4 text-base shadow-sm">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-xl font-medium text-gray-800 leading-relaxed pt-1 w-full">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="space-y-3 ml-0 md:ml-14">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-gray-700 text-base md:text-lg select-none">
+                                        <div class="radio-circle"></div>
+                                        <span class="flex-1">${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Explanation Area (Hidden initially) -->
+                        <div id="explanation_${index}" class="hidden mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border fade-in text-sm md:text-base relative overflow-hidden">
+                            <!-- Decorative icon inside explanation -->
+                            <div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none w-24 h-24">
+                                <svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="50" cy="50" r="50"/>
+                                </svg>
+                            </div>
+                            <div class="explanation-content relative z-10"></div>
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Initialize quiz rendering
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Lock all radio inputs to prevent cheating after checking
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                const explanationContent = explanationDiv.querySelector('.explanation-content');
+                
+                let isCorrect = false;
+                let statusBadge = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusBadge = `<span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Jawaban Tepat</span>`;
+                        bgClass = "bg-green-50";
+                        borderClass = "border-green-300";
+                        textClass = "text-green-900";
+                    } else {
+                        statusBadge = `<span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Jawaban Keliru</span>`;
+                        bgClass = "bg-red-50";
+                        borderClass = "border-red-300";
+                        textClass = "text-red-900";
+                        
+                        // Visually indicate the correct answer if the user got it wrong
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5"; 
+                        correctLabel.style.borderColor = "#10b981"; 
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                    }
+                } else {
+                    // Handle unanswered questions
+                    statusBadge = `<span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Dikosongkan</span>`;
+                    bgClass = "bg-orange-50";
+                    borderClass = "border-orange-300";
+                    textClass = "text-orange-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                }
+
+                explanationContent.innerHTML = `
+                    <div class="font-bold mb-4 pb-3 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-6 h-6 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : (selectedOption ? `<svg class="w-6 h-6 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`
+                                              : `<svg class="w-6 h-6 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`)
+                        }
+                        ${statusBadge}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass}">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                // Show explanation box
+                explanationDiv.className = `mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border ${bgClass} ${borderClass} fade-in text-sm md:text-base relative overflow-hidden block`;
+            });
+
+            // Display final score
+            scoreDisplay.innerText = Math.round(score);
+            scoreDisplay.className = "text-7xl font-black mb-8 drop-shadow-sm transition-colors duration-500 ";
+            
+            // Score color logic
+            if(score >= 80) scoreDisplay.className += "text-green-500";
+            else if(score >= 60) scoreDisplay.className += "text-blue-500";
+            else if(score >= 40) scoreDisplay.className += "text-orange-400";
+            else scoreDisplay.className += "text-red-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Auto scroll smoothly to the result area
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            quizForm.reset();
+            // Completely re-render to strip all inline styles (red/green highlights) cleanly
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Smooth scroll back to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

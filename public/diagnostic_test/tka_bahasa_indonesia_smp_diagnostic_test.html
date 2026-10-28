@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TKA BAHASA INDONESIA SMP — DIAGNOSTIC TEST</title>
+    <style>
+        /* ============================================================
+           CSS & DESIGN SYSTEM
+           ============================================================ */
+        :root {
+            /* Color Palette - Modern Educational Dashboard */
+            --bg-main: #050914; /* Navy sangat gelap */
+            --bg-card: #0f172a; /* Dark navy */
+            --bg-card-hover: #1e293b;
+            --bg-elevated: #1e293b;
+            
+            --accent-primary: #8b5cf6; /* Violet */
+            --accent-primary-hover: #7c3aed;
+            --accent-secondary: #3b82f6; /* Blue */
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8; /* Blue-gray */
+            --text-muted: #64748b;
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            
+            /* Status Colors */
+            --status-strong: #10b981; /* Green */
+            --status-proficient: #3b82f6; /* Blue */
+            --status-developing: #f59e0b; /* Orange/Yellow */
+            --status-gap: #ef4444; /* Red */
+            
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .text-accent { color: var(--accent-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+
+        /* Typography */
+        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 0.5rem; }
+        h2 { font-size: 1.75rem; margin-bottom: 1rem; }
+        h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+        
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .container-sm { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+            text-decoration: none;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background-color: var(--accent-primary); color: white; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--accent-primary-hover); }
+        .btn-secondary { background-color: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover:not(:disabled) { background-color: var(--bg-card-hover); }
+        .btn-outline { background-color: transparent; color: var(--accent-primary); border: 1px solid var(--accent-primary); }
+        .btn-outline:hover:not(:disabled) { background-color: rgba(139, 92, 246, 0.1); }
+        .btn-danger { background-color: transparent; color: var(--status-gap); border: 1px solid var(--status-gap); }
+        .btn-danger:hover { background-color: rgba(239, 68, 68, 0.1); }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-group label { font-weight: 600; color: var(--text-secondary); }
+        .form-control {
+            width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color); background-color: var(--bg-main);
+            color: var(--text-primary); font-family: var(--font-main); font-size: 1rem;
+            transition: var(--transition);
+        }
+        .form-control:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
+        
+        /* Cards & Badges */
+        .card { background-color: var(--bg-card); border-radius: var(--radius-md); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
+        .pill-badge { display: inline-block; padding: 0.25rem 0.75rem; background-color: rgba(139, 92, 246, 0.15); color: var(--accent-primary); border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .view-section { min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* Test Layout - Two Panel (Reading) */
+        .test-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); height: 80px; position: sticky; top: 0; z-index: 10; }
+        .timer-display { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; padding: 0.5rem 1rem; border-radius: var(--radius-sm); background-color: var(--bg-elevated); transition: color 0.3s ease; }
+        .timer-warning { color: var(--warning, #f59e0b); }
+        .timer-danger { color: var(--status-gap); animation: pulse 1s infinite; }
+        
+        .reading-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem; height: calc(100vh - 80px); max-width: 1400px; margin: 0 auto; width: 100%; }
+        
+        .panel { background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; }
+        .panel-header { padding: 1rem 1.5rem; background-color: var(--bg-elevated); border-bottom: 1px solid var(--border-color); font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .panel-content { padding: 1.5rem; overflow-y: auto; flex: 1; line-height: 1.8; }
+        
+        /* Stimulus specific */
+        .stimulus-title { font-size: 1.25rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 1rem; }
+        .stimulus-text { font-size: 1.1rem; color: var(--text-primary); white-space: pre-wrap; margin-bottom: 1rem; }
+        .text-type-badge { font-size: 0.75rem; background: var(--bg-main); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid var(--border-color); color: var(--text-secondary); text-transform: uppercase; }
+
+        /* Questions specific */
+        .question-text { font-size: 1.15rem; margin-bottom: 2rem; }
+        .options-grid { display: flex; flex-direction: column; gap: 1rem; }
+        .option-label { display: flex; align-items: center; padding: 1rem 1.5rem; background-color: var(--bg-elevated); border: 2px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); }
+        .option-label:hover { background-color: var(--bg-card-hover); border-color: var(--text-secondary); }
+        .option-label.selected { background-color: rgba(139, 92, 246, 0.1); border-color: var(--accent-primary); }
+        .option-input { display: none; }
+        .option-letter { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background-color: var(--bg-main); border-radius: 50%; margin-right: 1rem; font-weight: 700; color: var(--text-secondary); border: 1px solid var(--border-color); flex-shrink: 0; }
+        .option-label.selected .option-letter { background-color: var(--accent-primary); color: white; border-color: var(--accent-primary); }
+        .option-label:focus-within { box-shadow: 0 0 0 2px var(--accent-primary); }
+
+        .test-controls { display: flex; justify-content: space-between; padding: 1.5rem; border-top: 1px solid var(--border-color); background-color: var(--bg-elevated); gap: 1rem; }
+
+        /* Navigator Modal/Sidebar */
+        .navigator-wrapper { position: fixed; right: 0; top: 80px; bottom: 0; width: 320px; background-color: var(--bg-card); border-left: 1px solid var(--border-color); transform: translateX(100%); transition: transform 0.3s ease; z-index: 50; display: flex; flex-direction: column; }
+        .navigator-wrapper.show { transform: translateX(0); }
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-top: 1rem; overflow-y: auto; padding: 1.5rem; flex: 1; }
+        .nav-btn { aspect-ratio: 1; border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--bg-main); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .nav-btn:hover { background-color: var(--bg-elevated); }
+        .nav-btn.answered { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.5); }
+        .nav-btn.current { border: 2px solid var(--accent-primary); color: white; background-color: var(--bg-elevated); }
+        .nav-btn.bookmarked::after { content: '⚑'; position: absolute; top: -5px; right: -2px; color: var(--warning, #f59e0b); font-size: 0.7rem; }
+        
+        .progress-bar-container { height: 8px; background-color: var(--bg-main); border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
+        .progress-fill { height: 100%; background-color: var(--accent-primary); width: 0%; transition: width 0.3s ease; }
+
+        /* Custom Checkbox & Radio */
+        .custom-radio { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
+        .custom-radio:hover { background: var(--bg-card-hover); }
+        .custom-radio input[type="radio"], .custom-radio input[type="checkbox"] { margin-top: 0.25rem; width: 1.2rem; height: 1.2rem; accent-color: var(--accent-primary); }
+
+        /* Dashboard Results */
+        .score-box { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-lg); padding: 3rem; text-align: center; }
+        .score-value { font-size: 4rem; font-weight: 800; color: var(--accent-primary); line-height: 1; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        
+        .progress-stat { margin-bottom: 1rem; }
+        .progress-stat-header { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem; }
+        .stat-bar-bg { height: 10px; background-color: var(--bg-main); border-radius: 5px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; border-radius: 5px; }
+        
+        .comp-card { background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem; border-left-width: 4px; display: flex; flex-direction: column; justify-content: space-between; }
+        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: white; }
+        .tooltip { position: relative; cursor: help; border-bottom: 1px dotted var(--text-muted); }
+        .tooltip::after { content: attr(data-tooltip); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 10; }
+        .tooltip:hover::after { opacity: 1; }
+
+        .bg-strong { background-color: var(--status-strong); }
+        .bg-proficient { background-color: var(--status-proficient); }
+        .bg-developing { background-color: var(--status-developing); color: #000; }
+        .bg-gap { background-color: var(--status-gap); }
+        .border-strong { border-left-color: var(--status-strong); }
+        .border-proficient { border-left-color: var(--status-proficient); }
+        .border-developing { border-left-color: var(--status-developing); }
+        .border-gap { border-left-color: var(--status-gap); }
+
+        .priority-item { background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1rem; }
+
+        /* Review Mode */
+        .review-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--text-muted); }
+        .review-card.correct { border-left-color: var(--status-strong); }
+        .review-card.incorrect { border-left-color: var(--status-gap); }
+        .review-opt { padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-elevated); }
+        .review-opt.is-correct { background: rgba(16, 185, 129, 0.1); border-color: var(--status-strong); color: var(--status-strong); }
+        .review-opt.is-wrong { background: rgba(239, 68, 68, 0.1); border-color: var(--status-gap); color: var(--status-gap); text-decoration: line-through; }
+        .explanation-box { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--text-secondary); }
+
+        /* Modals & Overlays */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-content { background-color: var(--bg-card); border-radius: var(--radius-md); padding: 2rem; max-width: 500px; width: 90%; border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background-color: var(--bg-elevated); color: white; padding: 1rem 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--accent-primary); box-shadow: var(--shadow-md); z-index: 1050; transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(20px); pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 992px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .reading-layout { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; height: auto; display: block; }
+            .panel { margin-bottom: 1rem; height: auto; max-height: 50vh; }
+            .test-header { padding: 1rem; height: auto; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+            .timer-display { width: 100%; text-align: center; }
+            #btn-toggle-stimulus { display: inline-flex !important; }
+            .stimulus-panel-wrapper.collapsed { display: none; }
+            .navigator-wrapper { width: 100%; bottom: 0; top: auto; height: 60vh; transform: translateY(100%); border-left: none; border-top: 1px solid var(--border-color); }
+            .navigator-wrapper.show { transform: translateY(0); }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background-color: white; color: black; font-size: 12pt; }
+            .card, .score-box, .comp-card, .priority-item, .panel { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; page-break-inside: avoid; }
+            .text-secondary, .text-muted { color: #444 !important; }
+            .text-accent { color: black !important; font-weight: bold; }
+            .bg-strong, .bg-proficient, .bg-developing, .bg-gap { color: black !important; border: 1px solid #000; background: transparent !important;}
+            button, .btn, .navigator-wrapper, .test-header, .test-controls, .print-hide { display: none !important; }
+            .view-section { min-height: auto; display: block; }
+            .stat-bar-bg { background-color: #eee !important; border: 1px solid #ccc; }
+            .stat-bar-fill { background-color: #555 !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         VIEW: LANDING PAGE
+         ========================================== -->
+    <div id="view-landing" class="view-section">
+        <div class="container text-center flex flex-col justify-center items-center h-full" style="flex: 1;">
+            <div class="pill-badge mb-4">Assessment Internal</div>
+            <h1 class="text-accent">TKA BAHASA INDONESIA SMP</h1>
+            <h2>Diagnostic Test</h2>
+            <p class="text-secondary" style="max-width: 650px; margin: 0 auto; font-size: 1.1rem;">
+                “Temukan kemampuan membaca yang sudah kuat dan keterampilan yang perlu diprioritaskan sebelum TKA.”
+            </p>
+            
+            <div class="grid-3 w-full mt-8 mb-8" style="max-width: 900px; grid-template-columns: repeat(5, 1fr);">
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:1.75rem">60</div><div class="text-secondary text-sm">Soal</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:1.75rem">12</div><div class="text-secondary text-sm">Stimulus</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:1.75rem">11</div><div class="text-secondary text-sm">Kompetensi</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:1.75rem">75</div><div class="text-secondary text-sm">Menit</div></div>
+                <div class="card text-center"><div class="font-bold text-accent" style="font-size:1.75rem">3</div><div class="text-secondary text-sm">Domain</div></div>
+            </div>
+
+            <div class="mb-6">
+                <button class="btn btn-primary" style="font-size: 1.25rem; padding: 1rem 3rem;" onclick="app.navigate('identity')">MULAI DIAGNOSTIC</button>
+            </div>
+            
+            <p class="text-muted" style="max-width: 700px; font-size: 0.9rem;">
+                * Diagnostic ini tidak sekadar memberikan nilai. Sistem akan memetakan kemampuan memahami informasi tersurat, membuat inferensi, dan mengevaluasi teks.
+            </p>
+            
+            <div id="landing-resume-btn" class="mt-6 hidden">
+                <button class="btn btn-outline" onclick="app.checkExistingSession()">Lanjutkan Sesi Sebelumnya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: IDENTITY FORM
+         ========================================== -->
+    <div id="view-identity" class="view-section hidden">
+        <div class="container-sm flex flex-col justify-center h-full" style="flex: 1;">
+            <div class="card">
+                <h2 class="text-center mb-6">Data Siswa</h2>
+                <form id="identity-form" onsubmit="app.submitIdentity(event)">
+                    <div class="form-group">
+                        <label for="student-name">Nama Lengkap</label>
+                        <input type="text" id="student-name" class="form-control" required placeholder="Masukkan nama...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-class">Kelas</label>
+                        <select id="student-class" class="form-control" required>
+                            <option value="" disabled selected>Pilih kelas...</option>
+                            <option value="VII">VII (Tujuh)</option>
+                            <option value="VIII">VIII (Delapan)</option>
+                            <option value="IX">IX (Sembilan)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-target">Target Mengikuti Test</label>
+                        <select id="student-target" class="form-control" required>
+                            <option value="" disabled selected>Pilih target...</option>
+                            <option value="Persiapan awal">Persiapan awal</option>
+                            <option value="Penguatan materi">Penguatan materi</option>
+                            <option value="Persiapan intensif TKA">Persiapan intensif TKA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 2rem;">
+                        <label>Menurutmu, bagaimana kemampuan memahami bacaanmu saat ini?</label>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="1" required> 1. Sangat perlu diperbaiki</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="2"> 2. Perlu diperbaiki</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="3"> 3. Sedang</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="4"> 4. Baik</label>
+                            <label class="custom-radio"><input type="radio" name="self-assessment" value="5"> 5. Sangat baik</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-8">
+                        <button type="button" class="btn btn-secondary" onclick="app.navigate('landing')">Kembali</button>
+                        <button type="submit" class="btn btn-primary">LANJUTKAN</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: INSTRUCTIONS
+         ========================================== -->
+    <div id="view-instructions" class="view-section hidden">
+        <div class="container-sm flex flex-col justify-center h-full" style="flex: 1;">
+            <div class="card">
+                <h2 class="text-accent mb-2">Petunjuk Pengerjaan</h2>
+                <div class="flex gap-4 text-secondary font-semibold mb-6 pb-4" style="border-bottom: 1px solid var(--border-color); flex-wrap: wrap;">
+                    <span>60 Soal</span> • <span>12 Stimulus</span> • <span>75 Menit</span> • <span>11 Kompetensi</span>
+                </div>
+                
+                <ul class="text-secondary" style="margin-left: 1.5rem; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <li>Bacalah stimulus (teks bacaan) dengan teliti.</li>
+                    <li>Satu stimulus dapat digunakan untuk beberapa pertanyaan.</li>
+                    <li>Pilih satu jawaban yang paling tepat (A, B, C, atau D).</li>
+                    <li>Jawaban dapat diubah kapan saja sebelum test diselesaikan.</li>
+                    <li>Gunakan fitur "Tandai untuk ditinjau" jika ragu-ragu dan ingin kembali ke soal tersebut nanti.</li>
+                    <li>Tidak ada umpan balik (feedback) benar/salah selama test berlangsung.</li>
+                    <li>Jika waktu 75 menit habis, test akan otomatis diselesaikan dan disubmit.</li>
+                    <li>Progress tersimpan otomatis di browser (auto-save).</li>
+                </ul>
+                
+                <label class="custom-radio mb-6" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary);">
+                    <input type="checkbox" id="understand-check" onchange="document.getElementById('start-btn').disabled = !this.checked">
+                    <span class="font-semibold text-primary">Saya memahami petunjuk dan siap memulai test.</span>
+                </label>
+                
+                <div class="flex justify-between">
+                    <button class="btn btn-secondary" onclick="app.navigate('identity')">Kembali</button>
+                    <button id="start-btn" class="btn btn-primary" disabled onclick="app.startTest()">MULAI TEST SEKARANG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: TEST INTERFACE (TWO PANEL)
+         ========================================== -->
+    <div id="view-test" class="view-section hidden">
+        <div class="test-header">
+            <div>
+                <h3 style="margin: 0; font-size: 1.2rem;">TKA Bahasa Indonesia</h3>
+                <div class="text-secondary" style="font-size: 0.9rem;">Soal <span id="header-q-num">1</span> / 60</div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="app.toggleNavigator()">
+                Navigator Soal
+            </button>
+            
+            <div id="timer-display" class="timer-display">75:00</div>
+        </div>
+        
+        <div class="reading-layout">
+            <!-- Left Panel: Stimulus -->
+            <div class="panel stimulus-panel-wrapper" id="stimulus-panel-wrapper">
+                <div class="panel-header">
+                    <span>Teks Bacaan (Stimulus)</span>
+                    <span id="s-type" class="text-type-badge">Nonfiksi</span>
+                </div>
+                <div class="panel-content" id="s-content">
+                    <div id="s-title" class="stimulus-title">Title Here</div>
+                    <div id="s-text" class="stimulus-text">Text here...</div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Question -->
+            <div class="panel">
+                <div class="panel-header" style="justify-content: space-between;">
+                    <button id="btn-toggle-stimulus" class="btn btn-secondary hidden" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" onclick="app.toggleStimulusMobile()">Tampilkan Teks</button>
+                    <div id="q-domain" class="pill-badge" style="margin:0;">DOMAIN • KOMPETENSI</div>
+                    <button id="bookmark-btn" class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="app.toggleBookmark()">⚑ Tinjau Kembali</button>
+                </div>
+                
+                <div class="panel-content" style="display: flex; flex-direction: column;">
+                    <div id="q-text" class="question-text">Question text here...</div>
+                    <div class="options-grid" id="q-options" style="margin-bottom: 2rem;">
+                        <!-- Options Injected Here -->
+                    </div>
+                </div>
+                
+                <div class="test-controls">
+                    <button class="btn btn-secondary" onclick="app.prevQuestion()">← Prev</button>
+                    <button id="btn-next" class="btn btn-primary" onclick="app.nextQuestion()">Next →</button>
+                    <button id="btn-finish" class="btn btn-danger hidden" onclick="app.confirmSubmit()">Selesaikan Test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Drawer: Navigator -->
+        <div id="navigator-drawer" class="navigator-wrapper">
+            <div class="p-6 border-b" style="border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <span class="font-bold">Navigator</span>
+                <button class="btn btn-secondary" style="padding: 0.2rem 0.6rem;" onclick="app.toggleNavigator()">✕</button>
+            </div>
+            <div class="p-4" style="border-bottom: 1px solid var(--border-color);">
+                <div class="flex justify-between text-sm mb-1"><span class="text-secondary">Progress</span> <span id="progress-text" class="font-bold">0/60</span></div>
+                <div class="progress-bar-container"><div id="progress-fill" class="progress-fill"></div></div>
+            </div>
+            
+            <div id="nav-grid" class="nav-grid"></div>
+            
+            <div class="p-6" style="border-top: 1px solid var(--border-color); background: var(--bg-elevated);">
+                <div class="text-sm text-secondary mb-1 flex items-center gap-2"><span style="display:inline-block; width:12px; height:12px; background:rgba(59, 130, 246, 0.2); border:1px solid rgba(59, 130, 246, 0.5);"></span> Dijawab</div>
+                <div class="text-sm text-secondary mb-1 flex items-center gap-2"><span style="display:inline-block; width:12px; height:12px; background:var(--bg-main); border:1px solid var(--border-color);"></span> Belum Dijawab</div>
+                <div class="text-sm text-secondary flex items-center gap-2"><span style="color:var(--warning)">⚑</span> Ditandai</div>
+                <button class="btn btn-danger w-full mt-4" onclick="app.confirmSubmit()">SELESAIKAN TEST</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: RESULT DASHBOARD
+         ========================================== -->
+    <div id="view-result" class="view-section hidden">
+        <div class="container">
+            <div class="flex justify-between items-center mb-6 print-hide">
+                <h1 class="text-accent" style="margin: 0;">DIAGNOSTIC RESULT</h1>
+                <div class="flex gap-2">
+                    <button class="btn btn-secondary" onclick="app.copySummary()">Copy Ringkasan</button>
+                    <button class="btn btn-secondary" onclick="window.print()">Cetak Hasil</button>
+                </div>
+            </div>
+            
+            <div class="card mb-6" style="padding: 2rem;">
+                <div class="text-center mb-6">
+                    <h2 id="res-name" style="margin-bottom: 0;">Nama Siswa</h2>
+                    <div class="text-secondary">Kelas <span id="res-class"></span> • Tanggal: <span id="res-date"></span></div>
+                </div>
+
+                <div class="score-box">
+                    <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem;">Diagnostic Score</div>
+                    <div class="flex items-end justify-center">
+                        <span id="res-score" class="score-value">0</span>
+                        <span class="text-muted" style="font-size: 2rem; margin-bottom: 0.5rem;">/ 100</span>
+                    </div>
+                    <div class="flex gap-6 mt-6 text-secondary font-semibold justify-center flex-wrap">
+                        <span class="text-strong">✔ <span id="res-correct">0</span> benar</span>
+                        <span class="text-gap">✖ <span id="res-wrong">0</span> salah</span>
+                        <span>⚪ <span id="res-empty">0</span> kosong</span>
+                        <span>⏱ <span id="res-time">0</span> menit</span>
+                    </div>
+                </div>
+                <div class="text-center text-muted mt-4" style="font-size: 0.85rem; font-style: italic;">
+                    * Hasil ini merupakan diagnostic internal berdasarkan soal yang dikerjakan dan bukan nilai maupun prediksi resmi TKA.
+                </div>
+            </div>
+
+            <!-- Reading Skill & Text Type Profiles -->
+            <div class="grid-2 mb-6">
+                <div class="card">
+                    <h3 class="mb-4 pb-2 border-b" style="border-bottom: 1px solid var(--border-color);">Profil Keterampilan Membaca (Domain)</h3>
+                    <div id="res-domains"></div>
+                    <div id="res-skill-interp" class="mt-4 p-4 text-secondary bg-elevated" style="border-radius: var(--radius-sm); font-size: 0.9rem;"></div>
+                </div>
+                <div class="card">
+                    <h3 class="mb-4 pb-2 border-b" style="border-bottom: 1px solid var(--border-color);">Performa Jenis Teks</h3>
+                    <div id="res-text-types"></div>
+                </div>
+            </div>
+
+            <!-- Top Priorities -->
+            <div class="card mb-6" style="border: 1px solid var(--status-gap); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 6px; height: 100%; background-color: var(--status-gap);"></div>
+                <h2 style="color: var(--status-gap); display: flex; align-items: center; gap: 0.5rem;">
+                    ⚠️ TOP 5 PRIORITAS BELAJAR
+                </h2>
+                <p class="text-secondary mb-4">Area kompetensi yang paling membutuhkan penguatan. Disusun berdasarkan skor terendah dan beban level kognitif.</p>
+                <div id="res-priorities"></div>
+            </div>
+            
+            <div class="grid-2 mb-6">
+                <!-- Strengths -->
+                <div class="card" style="border-left: 4px solid var(--status-strong);">
+                    <h3 style="color: var(--status-strong);">Kekuatan Utama</h3>
+                    <p class="text-secondary mb-4 text-sm">Kompetensi yang sudah dikuasai dengan sangat baik.</p>
+                    <ul id="res-strengths" style="margin-left: 1.5rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;"></ul>
+                </div>
+                
+                <!-- Error Analysis -->
+                <div class="card" style="border-left: 4px solid var(--status-developing);">
+                    <h3 style="color: var(--status-developing);">Area yang Perlu Ditinjau</h3>
+                    <p class="text-secondary mb-4 text-sm">Pola kelemahan spesifik (miskonsepsi) berdasarkan pilihan jawaban yang salah.</p>
+                    <ul id="res-errors" style="margin-left: 1.5rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;"></ul>
+                </div>
+            </div>
+
+            <!-- Self Assessment -->
+            <div class="card mb-6 text-center bg-elevated">
+                <h3 class="mb-4">Perbandingan Persepsi dan Realita</h3>
+                <div class="flex justify-center gap-12 mb-4">
+                    <div>
+                        <div class="text-muted text-sm uppercase">Self-Assessment Awal</div>
+                        <div id="res-self" class="font-bold text-accent" style="font-size: 1.25rem;">-</div>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm uppercase">Performa Diagnostic</div>
+                        <div id="res-actual" class="font-bold text-accent" style="font-size: 1.25rem;">-</div>
+                    </div>
+                </div>
+                <div id="res-assess-interp" class="text-secondary text-sm"></div>
+            </div>
+
+            <!-- Competency Map -->
+            <div class="card mb-6">
+                <div class="flex justify-between items-end mb-4 flex-wrap gap-4">
+                    <h2 style="margin: 0;">Peta 11 Kompetensi</h2>
+                    <div class="flex gap-3 text-muted" style="font-size: 0.75rem;">
+                        <span class="flex items-center gap-1"><span class="bg-strong" style="width:10px;height:10px;display:inline-block;border-radius:2px;"></span> Strong (80-100)</span>
+                        <span class="flex items-center gap-1"><span class="bg-proficient" style="width:10px;height:10px;display:inline-block;border-radius:2px;"></span> Proficient (65-79)</span>
+                        <span class="flex items-center gap-1"><span class="bg-developing" style="width:10px;height:10px;display:inline-block;border-radius:2px;"></span> Developing (45-64)</span>
+                        <span class="flex items-center gap-1"><span class="bg-gap" style="width:10px;height:10px;display:inline-block;border-radius:2px;"></span> Gap (0-44)</span>
+                    </div>
+                </div>
+                
+                <div id="heatmap-container" class="grid-3"></div>
+            </div>
+
+            <div class="flex justify-center gap-4 mt-8 mb-8 print-hide" style="flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="app.navigate('review')">REVIEW JAWABAN</button>
+                <button class="btn btn-secondary" onclick="app.resetTest()">ULANGI DIAGNOSTIC</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW: REVIEW INTERFACE
+         ========================================== -->
+    <div id="view-review" class="view-section hidden">
+        <div class="container">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b" style="border-bottom: 1px solid var(--border-color);">
+                <div>
+                    <h1 class="text-accent" style="margin: 0; font-size: 2rem;">Review Jawaban</h1>
+                    <div class="text-secondary">Tinjau jawaban berdasarkan stimulus.</div>
+                </div>
+                <button class="btn btn-secondary" onclick="app.navigate('result')">Kembali ke Hasil</button>
+            </div>
+
+            <div class="flex gap-2 mb-6 flex-wrap" id="review-filters">
+                <button class="btn btn-secondary active-filter" data-filter="all" style="border-color:var(--accent-primary); background:rgba(139,92,246,0.1); color:white;">Semua (60)</button>
+                <button class="btn btn-secondary" data-filter="incorrect">Salah (<span id="count-wrong">0</span>)</button>
+                <button class="btn btn-secondary" data-filter="correct">Benar (<span id="count-correct">0</span>)</button>
+                <button class="btn btn-secondary" data-filter="unanswered">Kosong (<span id="count-empty">0</span>)</button>
+                <button class="btn btn-secondary" data-filter="bookmarked">Ditandai (<span id="count-marked">0</span>)</button>
+            </div>
+
+            <div id="review-list"></div>
+            
+            <div class="text-center mt-8 mb-8">
+                <button class="btn btn-secondary" onclick="app.navigate('result')">Kembali ke Dashboard Hasil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODALS & TOASTS
+         ========================================== -->
+    
+    <!-- Confirm Submit Modal -->
+    <div id="modal-submit" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h2 class="mb-4">Selesaikan Test?</h2>
+            <div class="flex justify-center gap-6 mb-6">
+                <div><div class="font-bold text-accent" style="font-size: 2rem;" id="modal-answered">0</div><div class="text-secondary text-sm">Terjawab</div></div>
+                <div><div class="font-bold text-gap" style="font-size: 2rem;" id="modal-unanswered">0</div><div class="text-secondary text-sm">Kosong</div></div>
+                <div><div class="font-bold" style="color: var(--warning, #f59e0b); font-size: 2rem;" id="modal-marked">0</div><div class="text-secondary text-sm">Ditandai</div></div>
+            </div>
+            <p id="modal-warning" class="text-gap mb-6 font-semibold hidden">Masih ada soal yang belum dijawab. Yakin ingin mengakhiri?</p>
+            <div class="flex gap-4 justify-center">
+                <button class="btn btn-secondary" onclick="app.closeModal('modal-submit')">KEMBALI KE TEST</button>
+                <button class="btn btn-primary" onclick="app.executeSubmit()">YA, SELESAIKAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Modal -->
+    <div id="modal-resume" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h2 class="mb-4">Sesi Ditemukan</h2>
+            <p class="text-secondary mb-6">Diagnostic test sebelumnya belum selesai (tersimpan secara lokal). Lanjutkan atau ulang dari awal?</p>
+            <div class="flex flex-col gap-3">
+                <button class="btn btn-primary w-full" onclick="app.resumeSession()">LANJUTKAN TEST</button>
+                <button class="btn btn-danger w-full" onclick="app.clearSession()">MULAI ULANG</button>
+                <button class="btn btn-secondary w-full" onclick="app.closeModal('modal-resume')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Modal -->
+    <div id="modal-reset" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h2 class="mb-4">Ulangi Diagnostic?</h2>
+            <p class="text-secondary mb-6">Yakin ingin menghapus semua data riwayat (termasuk hasil ini) dan mengulang tes dari awal?</p>
+            <div class="flex gap-4 justify-center">
+                <button class="btn btn-secondary" onclick="app.closeModal('modal-reset')">BATAL</button>
+                <button class="btn btn-danger" onclick="app.executeReset()">YA, HAPUS & ULANGI</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Notifikasi</div>
+
+    <!-- ==========================================
+         JAVASCRIPT LOGIC
+         ========================================== -->
+    <script>
+        /**
+         * TKA BAHASA INDONESIA SMP - DIAGNOSTIC TEST
+         */
+
+        /* --- 1. DATA (SOURCE OF TRUTH) --- */
+
+        const STIMULI = [
+            {
+                id: "S01",
+                title: "STIMULUS 1 — KEBUN DI ATAS GEDUNG",
+                textType: "Nonfiksi",
+                content: "SMP Harapan memiliki lahan yang terbatas. Untuk menambah ruang hijau, sekolah memanfaatkan atap gedung perpustakaan sebagai kebun kecil. Sebagian tanaman ditanam dengan sistem hidroponik, yaitu teknik menanam tanpa tanah dengan memanfaatkan air yang telah diberi nutrisi.\n\nPada tahap awal, siswa menanam selada, pakcoy, dan kangkung. Air dalam instalasi hidroponik dialirkan kembali sehingga dapat digunakan berulang kali. Menurut tim pengelola, cara tersebut membantu mengurangi penggunaan air dibanding penyiraman tanaman secara konvensional.\n\nKebun itu tidak hanya digunakan untuk menghasilkan sayuran. Guru IPA memanfaatkannya untuk mengamati pertumbuhan tanaman, sedangkan guru Matematika menggunakan data tinggi tanaman sebagai bahan pembelajaran statistika. Sebagian hasil panen juga dijual dalam kegiatan bazar sekolah. Dana yang terkumpul digunakan untuk membeli bibit baru.\n\nSetelah berjalan selama enam bulan, sekolah berencana memperluas kebun ke bagian atap yang masih kosong. Namun, pihak sekolah tetap harus memastikan kekuatan struktur gedung dan ketersediaan air sebelum melakukan perluasan."
+            },
+            {
+                id: "S02",
+                title: "STIMULUS 2 — LAMPU DI UJUNG GANG",
+                textType: "Fiksi",
+                content: "Hujan baru saja berhenti ketika Arga keluar dari tempat les. Jalan di depan bangunan itu masih mengilap. Ia mempercepat langkah karena jam di ponselnya menunjukkan hampir pukul sembilan malam.\n\nKetika memasuki gang menuju rumah, Arga melihat sebuah sepeda tergeletak di dekat tiang lampu. Di sampingnya, Pak Rudi, penjaga keamanan kompleks, sedang berjongkok sambil memegang rantai sepeda yang terlepas.\n\n“Pak, perlu bantuan?” tanya Arga.\n\nPak Rudi menggeleng kecil. “Sepertinya rantainya macet. Kamu pulang saja, sudah malam.”\n\nArga menatap rumahnya yang hanya berjarak beberapa puluh meter. Ia lalu meletakkan tasnya di teras warung yang sudah tutup dan kembali menghampiri Pak Rudi. Tangannya menjadi hitam oleh oli ketika ia membantu memasang rantai.\n\nSepuluh menit kemudian, sepeda itu dapat digunakan kembali.\n\n“Terima kasih. Padahal kamu bisa langsung pulang,” kata Pak Rudi.\n\nArga tersenyum. “Rumah saya tidak akan ke mana-mana, Pak.”\n\nIa mengambil tasnya dan berjalan pulang. Lampu-lampu di gang memantul di genangan air, terasa lebih hangat daripada beberapa menit sebelumnya."
+            },
+            {
+                id: "S03",
+                title: "STIMULUS 3 — MANGROVE DAN GARIS PANTAI",
+                textType: "Antarteks",
+                content: "TEKS A\n\nWarga Desa Pantai Baru menanam sekitar 4.000 bibit mangrove sepanjang dua tahun terakhir. Penanaman dilakukan pada beberapa bagian pantai yang sebelumnya mengalami abrasi.\n\nSelain menanam bibit, warga memasang pagar sederhana agar tanaman muda tidak mudah rusak akibat sampah besar dan aktivitas perahu. Kelompok pemuda desa juga melakukan pemeriksaan setiap bulan untuk mengganti bibit yang mati.\n\nMenurut catatan kelompok tersebut, pada lokasi yang tanaman mangrovenya tumbuh rapat, tanah berlumpur di sekitar akar lebih banyak bertahan ketika ombak datang.\n\n\nTEKS B\n\nMangrove memiliki sistem akar yang dapat memperlambat aliran air dan menahan sebagian sedimen. Karena itu, vegetasi mangrove sering dimanfaatkan sebagai salah satu bentuk perlindungan alami di kawasan pesisir.\n\nNamun, penanaman mangrove tidak dapat dilakukan sembarangan. Jenis tanaman, kondisi pasang surut, karakter tanah, dan aktivitas manusia di lokasi penanaman perlu diperhatikan agar program rehabilitasi dapat berhasil."
+            },
+            {
+                id: "S04",
+                title: "STIMULUS 4 — PAYUNG MERAH DI HALTE",
+                textType: "Fiksi",
+                content: "Mira berdiri sendirian di halte ketika hujan mulai turun lebih deras. Ia sudah dua kali melihat jam dinding toko di seberang jalan. Bus yang ditunggunya belum juga datang.\n\nDi ujung bangku halte terletak sebuah payung merah. Mira menoleh ke kanan dan kiri, tetapi tidak melihat siapa pun mencarinya.\n\nBeberapa menit kemudian, seorang perempuan tua berlari kecil dari arah minimarket. Rambutnya basah dan napasnya tersengal.\n\n“Maaf, Nak. Apakah tadi kamu melihat payung merah di sini?”\n\nMira mengangkat payung itu.\n\nWajah perempuan tersebut seketika terang seperti lampu yang baru dinyalakan.\n\n“Saya kira sudah hilang. Itu payung pemberian anak saya.”\n\nMira menyerahkannya.\n\nPada saat yang sama, bus Mira datang. Pintu bus hampir tertutup ketika ia berlari menaikinya. Dari balik jendela, Mira melihat perempuan itu mengangkat payung merah sambil melambaikan tangan.\n\nEntah mengapa, hujan yang sejak tadi membuat Mira kesal kini tampak seperti tirai tipis yang membuat kota terlihat lebih lembut."
+            },
+            {
+                id: "S05",
+                title: "STIMULUS 5 — JEJAK DIGITAL",
+                textType: "Antarteks",
+                content: "TEKS A\n\nSetiap aktivitas di internet dapat meninggalkan jejak digital. Unggahan media sosial, komentar, pencarian, dan data yang diberikan kepada sebuah layanan dapat tersimpan dalam berbagai bentuk.\n\nSebagian jejak digital dibuat secara sadar, misalnya ketika seseorang mengunggah foto. Sebagian lain tercipta melalui penggunaan layanan, misalnya catatan waktu akses atau perangkat yang digunakan.\n\nKarena itu, pengguna internet perlu mempertimbangkan informasi apa yang layak dibagikan. Pengaturan privasi dapat membantu, tetapi tidak menjamin bahwa informasi yang telah disebarkan akan selalu dapat ditarik kembali.\n\n\nTEKS B — PESAN KAMPANYE SEKOLAH\n\n“Berpikir sebelum mengunggah.\n\nTanyakan pada diri sendiri:\n\nApakah informasi ini perlu dibagikan?\n\nApakah saya memiliki izin jika foto menampilkan orang lain?\n\nApakah saya bersedia jika unggahan ini dilihat kembali beberapa tahun mendatang?”"
+            },
+            {
+                id: "S06",
+                title: "STIMULUS 6 — PENTAS YANG HAMPIR BATAL",
+                textType: "Fiksi",
+                content: "Sore sebelum pentas kelas dimulai, listrik di aula sekolah tiba-tiba padam. Suara latihan musik terhenti dan ruangan menjadi gaduh.\n\n“Kita tidak mungkin tampil tanpa pengeras suara,” kata Dimas.\n\nNara melihat cahaya matahari yang masih masuk melalui jendela tinggi. Ia lalu memandang dua gitar akustik yang tergeletak di sudut panggung.\n\n“Bagaimana kalau kita ubah konsepnya?” katanya. “Kita tampil tanpa pengeras suara. Penonton kita minta duduk lebih dekat.”\n\nBeberapa anggota kelompok ragu. Namun, setelah mencoba satu lagu, mereka sadar suara gitar dan vokal masih dapat terdengar cukup jelas.\n\nKetika pentas dimulai, para penonton duduk membentuk setengah lingkaran di depan panggung. Tanpa lampu panggung dan pengeras suara, pertunjukan itu justru terasa lebih dekat.\n\nKetika lagu terakhir selesai, tepuk tangan memenuhi aula seperti hujan yang jatuh serempak di atap seng.\n\nDimas menatap Nara sambil tertawa kecil. “Ternyata gagal memakai rencana pertama bukan berarti semuanya gagal.”"
+            },
+            {
+                id: "S07",
+                title: "STIMULUS 7 — MENGURANGI PLASTIK SEKALI PAKAI",
+                textType: "Antarteks",
+                content: "TEKS A\n\nKantin SMP Bintang mulai menerapkan program pengurangan plastik sekali pakai. Penjual minuman tidak lagi menyediakan sedotan plastik secara otomatis. Siswa juga dianjurkan membawa botol minum dan wadah makanan sendiri.\n\nPada bulan pertama, pengelola mencatat penggunaan sekitar 3.200 gelas plastik. Setelah tiga bulan program berjalan, jumlahnya turun menjadi sekitar 1.900 gelas per bulan.\n\nPengelola mengakui bahwa program tersebut belum menghilangkan seluruh sampah plastik. Beberapa makanan masih membutuhkan kemasan tertentu. Karena itu, evaluasi dilakukan secara bertahap.\n\n\nTEKS B\n\nMengurangi barang sekali pakai dapat dilakukan melalui beberapa langkah: menolak barang yang tidak diperlukan, menggunakan kembali wadah yang masih layak, dan memilih alternatif yang dapat digunakan berkali-kali.\n\nPerubahan kebiasaan biasanya lebih mudah bertahan jika tersedia pilihan yang praktis. Karena itu, program pengurangan sampah perlu mempertimbangkan kebutuhan pengguna, bukan hanya membuat larangan."
+            },
+            {
+                id: "S08",
+                title: "STIMULUS 8 — KOTAK RESEP NENEK",
+                textType: "Fiksi",
+                content: "Saat membersihkan lemari dapur, Sinta menemukan sebuah kotak kayu kecil yang permukaannya sudah kusam. Di dalamnya terdapat puluhan kartu resep yang ditulis tangan oleh neneknya.\n\nPada salah satu kartu tertulis: “Kue jahe untuk sore hujan.”\n\nSinta tersenyum. Ia teringat masa kecil ketika aroma jahe dan gula merah sering memenuhi rumah pada akhir pekan.\n\nTulisan nenek pada kartu itu sedikit miring, seperti barisan semut yang berjalan tergesa-gesa.\n\nSinta memutuskan mencoba resep tersebut. Adonan pertamanya terlalu lembek. Kue yang keluar dari oven pun tidak serapi yang ia ingat.\n\nIa hampir menyerah, tetapi kemudian membaca catatan kecil di bagian bawah kartu:\n\n“Kalau bentuknya tidak sempurna, jangan khawatir. Yang penting rumah menjadi hangat.”\n\nSinta tertawa pelan.\n\nKetika aroma jahe mulai memenuhi dapur, ia menaruh kembali kartu itu ke dalam kotaknya dengan hati-hati."
+            },
+            {
+                id: "S09",
+                title: "STIMULUS 9 — PERPUSTAKAAN KELILING LISTRIK",
+                textType: "Antarteks",
+                content: "TEKS A\n\nSebuah perpustakaan daerah mulai mengoperasikan mobil perpustakaan keliling bertenaga listrik. Mobil tersebut mengunjungi enam lokasi secara bergiliran, terutama sekolah dan ruang publik yang jauh dari gedung perpustakaan utama.\n\nMobil membawa sekitar 600 buku serta beberapa perangkat untuk mengakses koleksi digital. Ketika berhenti, panel di sisi kendaraan dapat dibuka menjadi rak tambahan.\n\nPengelola memilih kendaraan listrik untuk mengurangi penggunaan bahan bakar selama perjalanan rutin. Namun, jadwal perjalanan tetap harus mempertimbangkan jarak tempuh kendaraan dan lokasi pengisian baterai.\n\n\nTEKS B\n\nKendaraan listrik tidak menghasilkan emisi gas buang dari knalpot saat digunakan. Meski demikian, dampak lingkungan keseluruhan tetap dipengaruhi oleh berbagai hal, termasuk sumber listrik yang digunakan untuk mengisi baterai, proses produksi kendaraan, serta usia pakainya.\n\nKarena itu, penilaian terhadap dampak lingkungan kendaraan sebaiknya tidak hanya melihat satu tahap penggunaan."
+            },
+            {
+                id: "S10",
+                title: "STIMULUS 10 — KABUT DI JALUR TIMUR",
+                textType: "Fiksi",
+                content: "Raka dan ayahnya berjalan di jalur pendakian ketika kabut mulai turun. Pohon-pohon yang beberapa menit sebelumnya terlihat jelas perlahan menghilang di balik warna putih keabu-abuan.\n\nAyah Raka berhenti.\n\n“Kita tunggu sebentar,” katanya.\n\n“Bukankah pos berikutnya sudah dekat?” tanya Raka.\n\n“Mungkin dekat, tetapi tanda jalurnya mulai sulit terlihat.”\n\nMereka duduk di bawah sebuah pohon sambil membuka peta jalur. Angin mendorong kabut melewati lereng seperti tirai besar yang digeser perlahan.\n\nBeberapa pendaki lain tiba dan ikut berhenti.\n\nSetelah sekitar dua puluh menit, kabut mulai menipis. Sebuah papan penunjuk yang sebelumnya tidak terlihat muncul sekitar lima puluh meter di depan.\n\nRaka berdiri.\n\n“Ternyata menunggu sebentar lebih cepat daripada tersesat lama,” katanya.\n\nAyahnya tersenyum. Mereka kembali berjalan setelah memastikan arah pada peta dan papan penunjuk."
+            },
+            {
+                id: "S11",
+                title: "STIMULUS 11 — JAM MASUK SEKOLAH",
+                textType: "Antarteks",
+                content: "TEKS A\n\nOSIS SMP Cakrawala melakukan survei sederhana terhadap 240 siswa mengenai perubahan jam masuk sekolah.\n\nSebanyak 146 siswa memilih jam masuk 07.30, sedangkan 94 siswa memilih jam masuk 07.00.\n\nAlasan yang paling sering diberikan kelompok pertama adalah mereka memiliki waktu persiapan lebih banyak sebelum berangkat. Sebagian siswa yang memilih pukul 07.00 mengatakan bahwa pulang lebih awal membuat mereka memiliki lebih banyak waktu untuk kegiatan sore.\n\nOSIS menyampaikan bahwa survei tersebut hanya menggambarkan pendapat siswa yang mengisi formulir dan belum menjadi keputusan sekolah.\n\n\nTEKS B\n\nWakil kepala sekolah menjelaskan bahwa perubahan jam masuk tidak dapat ditentukan hanya dari satu pertimbangan. Sekolah juga perlu melihat jadwal transportasi, kegiatan ekstrakurikuler, waktu belajar, kesiapan guru, dan kebutuhan keluarga siswa.\n\nMenurutnya, hasil survei siswa dapat menjadi salah satu bahan masukan, tetapi keputusan akhir harus mempertimbangkan dampak terhadap seluruh kegiatan sekolah."
+            },
+            {
+                id: "S12",
+                title: "STIMULUS 12 — DARI SISA MAKANAN MENJADI MANFAAT",
+                textType: "Antarteks",
+                content: "TEKS A\n\nKantin SMP Mandiri mulai mencatat makanan yang tidak terjual setiap hari. Pencatatan dilakukan untuk mengetahui jenis dan jumlah makanan yang paling sering tersisa.\n\nMakanan yang masih aman dan belum disajikan kepada pembeli dipisahkan dari sisa makanan di piring. Dalam beberapa kegiatan sekolah, makanan surplus yang masih layak kemudian dialihkan untuk konsumsi panitia atau kegiatan lain pada hari yang sama.\n\nSetelah dua bulan, pengelola juga menyesuaikan jumlah produksi beberapa menu yang sering tersisa. Tujuannya bukan sekadar mengurangi sampah, tetapi juga menggunakan bahan makanan secara lebih efisien.\n\n\nTEKS B — POSTER KANTIN\n\nAMBIL SECUKUPNYA\n\nHabiskan yang kamu ambil.\n\nJika masih lapar, kamu dapat mengambil tambahan.\n\nMengurangi sisa makanan dimulai dari pilihan sederhana."
+            }
+        ];
+
+        const QUESTION_BANK = [
+            // --- S01 ---
+            { id: 1, stimulusId: "S01", domain: "Pemahaman Tekstual", competencyId: 1, competency: "Mengidentifikasi Penggunaan Istilah", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Nonfiksi", targetDiagnosis: "Memahami arti istilah bidang tertentu berdasarkan definisi langsung dalam teks.", question: "Istilah “hidroponik” pada teks digunakan untuk menyebut ...", options: { A: "teknik membuat pupuk dari sampah organik", B: "teknik menanam tanpa tanah menggunakan air bernutrisi", C: "kegiatan menjual hasil pertanian di sekolah", D: "cara menyiram tanaman dengan air hujan" }, answer: "B" },
+            { id: 2, stimulusId: "S01", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Nonfiksi", targetDiagnosis: "Menemukan informasi eksplisit mengenai penggunaan hasil kegiatan.", question: "Berdasarkan teks, dana hasil penjualan sayuran digunakan untuk ...", options: { A: "memperbaiki atap perpustakaan", B: "membeli alat statistika", C: "membeli bibit baru", D: "membayar penggunaan air" }, answer: "C" },
+            { id: 3, stimulusId: "S01", domain: "Pemahaman Tekstual", competencyId: 4, competency: "Menyusun Kerangka / Bagan Teks", cognitiveLevel: "Application", difficulty: "Medium", textType: "Nonfiksi", targetDiagnosis: "Mengurutkan gagasan utama teks menjadi kerangka yang logis.", question: "Kerangka yang PALING tepat untuk menggambarkan isi teks adalah ...", options: { A: "keterbatasan lahan → kebun atap → pemanfaatan untuk belajar dan bazar → rencana perluasan", B: "bazar sekolah → kerusakan gedung → penanaman sayur → penghentian kebun", C: "pembelajaran statistika → pembangunan perpustakaan → penjualan bibit → penutupan kebun", D: "penggunaan air → kekurangan guru → pembangunan kebun → pemindahan perpustakaan" }, answer: "A" },
+            { id: 4, stimulusId: "S01", domain: "Pemahaman Inferensial", competencyId: 5, competency: "Menyimpulkan Ide Pokok, Tokoh & Nilai", cognitiveLevel: "Application", difficulty: "Medium", textType: "Nonfiksi", targetDiagnosis: "Menyimpulkan ide pokok dari beberapa informasi pendukung.", question: "Ide pokok teks tersebut adalah ...", options: { A: "sekolah mengganti seluruh pembelajaran kelas dengan kegiatan berkebun", B: "kebun atap dimanfaatkan sebagai solusi ruang hijau sekaligus sarana pembelajaran", C: "hidroponik merupakan satu-satunya cara menanam yang cocok digunakan sekolah", D: "hasil penjualan sayuran menjadi sumber pendapatan utama sekolah" }, answer: "B" },
+            { id: 5, stimulusId: "S01", domain: "Evaluasi dan Apresiasi", competencyId: 9, competency: "Relevansi Peristiwa dengan Kehidupan", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Nonfiksi", targetDiagnosis: "Menghubungkan gagasan teks dengan kondisi nyata yang relevan.", question: "Gagasan dalam teks paling relevan diterapkan oleh sekolah yang ...", options: { A: "memiliki lahan terbatas tetapi ingin membuat kegiatan penghijauan dan pembelajaran", B: "ingin menghapus kegiatan pembelajaran di dalam kelas", C: "tidak memiliki sumber air sama sekali", D: "hanya ingin memperoleh keuntungan dari penjualan sayuran" }, answer: "A" },
+            
+            // --- S02 ---
+            { id: 6, stimulusId: "S02", domain: "Pemahaman Tekstual", competencyId: 2, competency: "Mengidentifikasi Objek & Latar Teks", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Fiksi", targetDiagnosis: "Mengidentifikasi latar waktu dan tempat dari petunjuk tekstual.", question: "Latar waktu dan tempat yang PALING tepat berdasarkan teks adalah ...", options: { A: "pagi hari di halaman sekolah", B: "malam hari di sebuah gang perumahan", C: "sore hari di bengkel sepeda", D: "siang hari di pasar" }, answer: "B" },
+            { id: 7, stimulusId: "S02", domain: "Pemahaman Inferensial", competencyId: 5, competency: "Menyimpulkan Ide Pokok, Tokoh & Nilai", cognitiveLevel: "Application", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menyimpulkan nilai karakter berdasarkan tindakan tokoh.", question: "Nilai yang paling kuat ditunjukkan oleh tindakan Arga adalah ...", options: { A: "keberanian menghadapi bahaya", B: "kepedulian membantu orang lain", C: "keinginan mendapatkan hadiah", D: "persaingan dengan orang dewasa" }, answer: "B" },
+            { id: 8, stimulusId: "S02", domain: "Pemahaman Inferensial", competencyId: 6, competency: "Kelogisan Hubungan Antarperistiwa", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menentukan hubungan sebab-akibat antarperistiwa.", question: "Hubungan peristiwa dalam teks yang paling logis adalah ...", options: { A: "karena rantai sepeda Pak Rudi terlepas, Arga memutuskan membantu memperbaikinya", B: "karena Arga terlambat les, Pak Rudi menjatuhkan sepedanya", C: "karena warung sudah tutup, Arga membeli rantai sepeda baru", D: "karena hujan berhenti, Pak Rudi meminta Arga segera pergi les" }, answer: "A" },
+            { id: 9, stimulusId: "S02", domain: "Pemahaman Inferensial", competencyId: 7, competency: "Memprediksi Peristiwa dalam Teks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Memprediksi kelanjutan cerita berdasarkan karakter dan peristiwa.", question: "Jika cerita dilanjutkan secara logis, peristiwa yang PALING mungkin terjadi adalah ...", options: { A: "Arga meminta Pak Rudi mengganti seluruh biaya lesnya", B: "Pak Rudi mengingat bantuan Arga dan hubungan mereka menjadi lebih akrab", C: "Arga memutuskan tidak pernah menggunakan gang itu lagi", D: "Pak Rudi membuang sepeda setelah berhasil diperbaiki" }, answer: "B" },
+            { id: 10, stimulusId: "S02", domain: "Evaluasi dan Apresiasi", competencyId: 11, competency: "Respons Emosional Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menentukan respons emosional berdasarkan suasana akhir cerita.", question: "Respons emosional yang paling didukung oleh bagian akhir cerita adalah ...", options: { A: "rasa hangat karena tindakan kecil Arga memberi makna pada malam itu", B: "kemarahan karena Arga pulang terlambat", C: "ketakutan karena lampu gang menyala", D: "kekecewaan karena sepeda dapat diperbaiki" }, answer: "A" },
+            
+            // --- S03 ---
+            { id: 11, stimulusId: "S03", domain: "Pemahaman Tekstual", competencyId: 1, competency: "Mengidentifikasi Penggunaan Istilah", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menafsirkan istilah berdasarkan konteks pembahasan pesisir.", question: "Makna istilah “abrasi” berdasarkan konteks Teks A adalah ...", options: { A: "pengikisan daratan pantai akibat proses alam seperti gelombang", B: "penambahan pasir secara sengaja", C: "pembangunan permukiman di pantai", D: "penanaman tumbuhan di daerah pegunungan" }, answer: "A" },
+            { id: 12, stimulusId: "S03", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menemukan kegiatan yang dinyatakan eksplisit.", question: "Kegiatan yang dilakukan kelompok pemuda setiap bulan adalah ...", options: { A: "menghitung jumlah wisatawan", B: "mengganti bibit mangrove yang mati", C: "memindahkan seluruh perahu nelayan", D: "mengeruk tanah berlumpur" }, answer: "B" },
+            { id: 13, stimulusId: "S03", domain: "Pemahaman Tekstual", competencyId: 4, competency: "Menyusun Kerangka / Bagan Teks", cognitiveLevel: "Application", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menyusun struktur gagasan teks eksplanatif.", question: "Kerangka isi Teks B yang paling tepat adalah ...", options: { A: "fungsi akar mangrove → manfaat bagi pesisir → syarat keberhasilan penanaman", B: "jenis perahu → jumlah wisatawan → pembangunan jalan", C: "kerusakan sekolah → program kebersihan → pembangunan taman", D: "sejarah mangrove → harga bibit → kegiatan perdagangan" }, answer: "A" },
+            { id: 14, stimulusId: "S03", domain: "Pemahaman Inferensial", competencyId: 6, competency: "Kelogisan Hubungan Antarperistiwa", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menjelaskan fungsi tindakan berdasarkan hubungan sebab-akibat.", question: "Mengapa pemasangan pagar sederhana pada Teks A dapat mendukung program penanaman?", options: { A: "karena pagar mempercepat pasang laut", B: "karena pagar dapat mengurangi risiko bibit muda rusak", C: "karena pagar menggantikan fungsi akar mangrove", D: "karena pagar menyebabkan semua sedimen hilang" }, answer: "B" },
+            { id: 15, stimulusId: "S03", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Hard", textType: "Antarteks", targetDiagnosis: "Mengintegrasikan informasi yang konsisten dari dua teks.", question: "Pernyataan yang menunjukkan kesesuaian informasi antara Teks A dan Teks B adalah ...", options: { A: "Teks A membuktikan bahwa mangrove dapat tumbuh di semua jenis pantai.", B: "Kedua teks menunjukkan bahwa mangrove dapat membantu kawasan pesisir, tetapi keberhasilan penanaman membutuhkan pengelolaan.", C: "Teks B menyatakan bahwa pemasangan pagar selalu wajib dilakukan.", D: "Kedua teks menyatakan bahwa mangrove hanya berguna untuk kegiatan pariwisata." }, answer: "B" },
+            
+            // --- S04 ---
+            { id: 16, stimulusId: "S04", domain: "Pemahaman Tekstual", competencyId: 2, competency: "Mengidentifikasi Objek & Latar Teks", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Fiksi", targetDiagnosis: "Mengidentifikasi objek sentral yang menggerakkan alur cerita.", question: "Objek yang menjadi pusat rangkaian peristiwa dalam cerita adalah ...", options: { A: "jam dinding", B: "payung merah", C: "pintu bus", D: "minimarket" }, answer: "B" },
+            { id: 17, stimulusId: "S04", domain: "Pemahaman Inferensial", competencyId: 8, competency: "Bahasa Kias & Citraan Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menafsirkan perbandingan atau simile berdasarkan konteks emosi.", question: "Ungkapan “wajah perempuan tersebut seketika terang seperti lampu yang baru dinyalakan” menunjukkan ...", options: { A: "perempuan itu benar-benar berubah menjadi lampu", B: "perempuan itu merasa lega dan gembira", C: "halte kehilangan penerangan", D: "Mira menjadi takut terhadap perempuan tersebut" }, answer: "B" },
+            { id: 18, stimulusId: "S04", domain: "Pemahaman Inferensial", competencyId: 5, competency: "Menyimpulkan Ide Pokok, Tokoh & Nilai", cognitiveLevel: "Application", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menyimpulkan karakter tokoh dari pilihan tindakannya.", question: "Karakter Mira paling tepat disimpulkan sebagai seseorang yang ...", options: { A: "peduli dan jujur", B: "mudah menyerah", C: "suka mengambil barang milik orang lain", D: "tidak peduli terhadap keadaan sekitar" }, answer: "A" },
+            { id: 19, stimulusId: "S04", domain: "Pemahaman Inferensial", competencyId: 7, competency: "Memprediksi Peristiwa dalam Teks", cognitiveLevel: "Reasoning", difficulty: "Hard", textType: "Fiksi", targetDiagnosis: "Menilai perubahan alur jika keputusan tokoh diubah.", question: "Jika Mira memilih membawa pulang payung tersebut, perubahan yang paling mungkin terjadi pada cerita adalah ...", options: { A: "konflik moral cerita menjadi lebih kuat karena Mira mengetahui pemilik payung tetapi tidak mengembalikannya", B: "bus akan berubah menjadi kereta", C: "hujan pasti langsung berhenti", D: "perempuan tua tidak pernah datang ke halte" }, answer: "A" },
+            { id: 20, stimulusId: "S04", domain: "Evaluasi dan Apresiasi", competencyId: 11, competency: "Respons Emosional Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menyimpulkan perubahan emosi tokoh berdasarkan akhir cerita.", question: "Perubahan perasaan Mira pada akhir cerita paling tepat digambarkan sebagai ...", options: { A: "kesal menjadi lebih hangat dan positif setelah membantu orang lain", B: "senang menjadi marah karena bus datang", C: "takut menjadi semakin takut karena hujan", D: "kecewa menjadi iri terhadap pemilik payung" }, answer: "A" },
+            
+            // --- S05 ---
+            { id: 21, stimulusId: "S05", domain: "Pemahaman Tekstual", competencyId: 1, competency: "Mengidentifikasi Penggunaan Istilah", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Memahami konsep jejak digital dari definisi dan contoh.", question: "Istilah “jejak digital” dalam teks merujuk pada ...", options: { A: "perangkat elektronik yang rusak", B: "catatan atau data yang muncul dari aktivitas seseorang di internet", C: "gambar telapak kaki yang dibuat menggunakan komputer", D: "alamat toko yang menjual perangkat digital" }, answer: "B" },
+            { id: 22, stimulusId: "S05", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Membedakan contoh yang dinyatakan langsung dalam teks.", question: "Menurut Teks A, salah satu contoh jejak digital yang dibuat secara sadar adalah ...", options: { A: "mengunggah foto", B: "perubahan cuaca", C: "kerusakan jaringan", D: "ukuran layar perangkat" }, answer: "A" },
+            { id: 23, stimulusId: "S05", domain: "Pemahaman Tekstual", competencyId: 4, competency: "Menyusun Kerangka / Bagan Teks", cognitiveLevel: "Application", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Mengorganisasi pengertian, contoh, dan rekomendasi dalam kerangka.", question: "Kerangka Teks A yang paling tepat adalah ...", options: { A: "pengertian jejak digital → contoh terbentuknya → pentingnya berhati-hati dalam membagikan informasi", B: "sejarah komputer → harga internet → jenis telepon genggam", C: "cara membuat media sosial → permainan daring → penjualan perangkat", D: "jenis kamera → cara mencetak foto → perawatan komputer" }, answer: "A" },
+            { id: 24, stimulusId: "S05", domain: "Evaluasi dan Apresiasi", competencyId: 9, competency: "Relevansi Peristiwa dengan Kehidupan", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menerapkan prinsip keamanan informasi dalam kehidupan digital.", question: "Tindakan yang paling sesuai dengan pesan kedua teks adalah ...", options: { A: "mengunggah foto teman tanpa bertanya karena akun bersifat pribadi", B: "mempertimbangkan dampak sebelum membagikan informasi secara daring", C: "menyebarkan semua informasi selama unggahan dapat dihapus", D: "menggunakan satu kata sandi untuk semua layanan" }, answer: "B" },
+            { id: 25, stimulusId: "S05", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menentukan hubungan fungsi antara teks informatif dan teks persuasif.", question: "Hubungan Teks A dan Teks B paling tepat dijelaskan sebagai ...", options: { A: "Teks A menjelaskan konsep dan risiko jejak digital, sedangkan Teks B memberikan panduan praktis sebelum mengunggah.", B: "Kedua teks membahas cara memperbaiki perangkat.", C: "Teks B membantah seluruh isi Teks A.", D: "Teks A membahas fotografi, sedangkan Teks B membahas olahraga." }, answer: "A" },
+
+            // --- S06 ---
+            { id: 26, stimulusId: "S06", domain: "Pemahaman Tekstual", competencyId: 2, competency: "Mengidentifikasi Objek & Latar Teks", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Fiksi", targetDiagnosis: "Menentukan latar utama berdasarkan rangkaian peristiwa.", question: "Latar utama cerita adalah ...", options: { A: "aula sekolah menjelang sebuah pertunjukan", B: "lapangan olahraga pada pagi hari", C: "rumah Nara saat malam", D: "terminal bus saat hujan" }, answer: "A" },
+            { id: 27, stimulusId: "S06", domain: "Pemahaman Inferensial", competencyId: 6, competency: "Kelogisan Hubungan Antarperistiwa", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menilai hubungan masalah dengan solusi yang dipilih tokoh.", question: "Hubungan yang paling logis antara listrik padam dan perubahan konsep pertunjukan adalah ...", options: { A: "listrik padam membuat kelompok mencari cara tampil tanpa peralatan elektronik", B: "listrik padam menyebabkan seluruh penonton pulang sebelum datang", C: "listrik padam membuat gitar akustik tidak dapat digunakan", D: "listrik padam membuat jumlah anggota kelompok bertambah" }, answer: "A" },
+            { id: 28, stimulusId: "S06", domain: "Pemahaman Inferensial", competencyId: 8, competency: "Bahasa Kias & Citraan Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menafsirkan fungsi simile dalam membangun citraan bunyi.", question: "Kalimat “tepuk tangan memenuhi aula seperti hujan yang jatuh serempak di atap seng” terutama digunakan untuk ...", options: { A: "menggambarkan kuat dan ramainya tepuk tangan", B: "menyatakan bahwa atap aula bocor", C: "menjelaskan bahwa hujan benar-benar turun di dalam aula", D: "menunjukkan bahwa penonton merasa marah" }, answer: "A" },
+            { id: 29, stimulusId: "S06", domain: "Pemahaman Inferensial", competencyId: 7, competency: "Memprediksi Peristiwa dalam Teks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menggunakan pengalaman tokoh sebagai dasar memprediksi tindakan.", question: "Jika terjadi masalah teknis serupa pada pertunjukan berikutnya, tindakan yang paling mungkin dilakukan kelompok berdasarkan pengalaman tersebut adalah ...", options: { A: "langsung membatalkan seluruh pertunjukan", B: "mencari alternatif yang memungkinkan pertunjukan tetap berjalan", C: "tidak melakukan persiapan apa pun", D: "menolak menggunakan alat musik akustik" }, answer: "B" },
+            { id: 30, stimulusId: "S06", domain: "Evaluasi dan Apresiasi", competencyId: 11, competency: "Respons Emosional Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menentukan emosi yang didukung resolusi konflik.", question: "Respons emosional yang paling didukung oleh akhir cerita adalah ...", options: { A: "lega dan puas karena kelompok berhasil beradaptasi", B: "kecewa karena pertunjukan berlangsung", C: "takut karena penonton bertepuk tangan", D: "marah karena gitar dapat dimainkan" }, answer: "A" },
+            
+            // --- S07 ---
+            { id: 31, stimulusId: "S07", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menemukan data kuantitatif yang dinyatakan langsung.", question: "Setelah tiga bulan program berjalan, penggunaan gelas plastik per bulan menjadi sekitar ...", options: { A: "1.300 gelas", B: "1.900 gelas", C: "3.200 gelas", D: "5.100 gelas" }, answer: "B" },
+            { id: 32, stimulusId: "S07", domain: "Pemahaman Inferensial", competencyId: 5, competency: "Menyimpulkan Ide Pokok, Tokoh & Nilai", cognitiveLevel: "Application", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menemukan gagasan bersama dari dua teks.", question: "Gagasan utama yang sama-sama terdapat dalam kedua teks adalah ...", options: { A: "pengurangan barang sekali pakai memerlukan perubahan kebiasaan", B: "semua plastik harus langsung dilarang tanpa pengecualian", C: "kantin sekolah harus ditutup", D: "wadah yang dapat digunakan kembali lebih mahal dalam semua keadaan" }, answer: "A" },
+            { id: 33, stimulusId: "S07", domain: "Evaluasi dan Apresiasi", competencyId: 9, competency: "Relevansi Peristiwa dengan Kehidupan", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menerapkan rekomendasi teks pada perilaku sehari-hari.", question: "Penerapan yang paling relevan bagi siswa berdasarkan kedua teks adalah ...", options: { A: "membawa botol minum yang dapat digunakan berulang kali", B: "meminta sedotan plastik tambahan setiap membeli minuman", C: "membuang wadah yang masih dapat digunakan", D: "menggunakan lebih banyak kemasan sekali pakai" }, answer: "A" },
+            { id: 34, stimulusId: "S07", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menentukan informasi yang konsisten pada dua sumber.", question: "Pernyataan yang sesuai dengan KEDUA teks adalah ...", options: { A: "perubahan perilaku dapat menjadi bagian dari upaya mengurangi sampah sekali pakai", B: "program hanya akan berhasil jika semua kemasan langsung dilarang", C: "tidak ada satu pun plastik yang digunakan lagi setelah program", D: "siswa tidak memiliki peran dalam program pengurangan sampah" }, answer: "A" },
+            { id: 35, stimulusId: "S07", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Hard", textType: "Antarteks", targetDiagnosis: "Mengevaluasi kesimpulan yang terlalu luas dibanding bukti teks.", question: "Seorang siswa menyimpulkan:\n\n“Program kantin sudah menghilangkan penggunaan plastik sepenuhnya.”\n\nPenilaian yang paling tepat terhadap kesimpulan tersebut adalah ...", options: { A: "akurat karena penggunaan gelas menurun", B: "tidak akurat karena Teks A menyatakan masih ada beberapa kemasan plastik yang digunakan", C: "akurat karena semua siswa membawa wadah sendiri", D: "tidak dapat dinilai karena teks tidak memberikan informasi apa pun" }, answer: "B" },
+            
+            // --- S08 ---
+            { id: 36, stimulusId: "S08", domain: "Pemahaman Inferensial", competencyId: 8, competency: "Bahasa Kias & Citraan Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Memahami makna perbandingan figuratif dalam deskripsi tulisan.", question: "Ungkapan “tulisan nenek ... seperti barisan semut yang berjalan tergesa-gesa” digunakan untuk menggambarkan ...", options: { A: "bentuk tulisan yang kecil dan miring", B: "adanya semut di atas kartu", C: "nenek sedang berlari", D: "kartu resep yang bergerak sendiri" }, answer: "A" },
+            { id: 37, stimulusId: "S08", domain: "Pemahaman Inferensial", competencyId: 5, competency: "Menyimpulkan Ide Pokok, Tokoh & Nilai", cognitiveLevel: "Application", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menyimpulkan nilai cerita berdasarkan benda, kenangan, dan tindakan.", question: "Nilai yang paling kuat dalam cerita adalah ...", options: { A: "kenangan dan hubungan keluarga dapat tersimpan melalui benda sederhana", B: "makanan harus selalu memiliki bentuk sempurna", C: "resep lama tidak dapat digunakan kembali", D: "kegagalan pertama harus membuat seseorang berhenti mencoba" }, answer: "A" },
+            { id: 38, stimulusId: "S08", domain: "Pemahaman Tekstual", competencyId: 2, competency: "Mengidentifikasi Objek & Latar Teks", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Fiksi", targetDiagnosis: "Mengidentifikasi latar dominan melalui objek dan aktivitas.", question: "Latar yang paling dominan dalam cerita adalah ...", options: { A: "dapur rumah", B: "lapangan sekolah", C: "terminal", D: "rumah sakit" }, answer: "A" },
+            { id: 39, stimulusId: "S08", domain: "Evaluasi dan Apresiasi", competencyId: 11, competency: "Respons Emosional Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Mengaitkan elemen cerita dengan respons emosional yang didukung teks.", question: "Respons emosional yang paling tepat terhadap bagian ketika Sinta membaca catatan nenek adalah ...", options: { A: "hangat dan terharu karena pesan sederhana menghidupkan kembali kenangan tentang nenek", B: "takut karena tulisan di kartu bergerak", C: "marah karena resep ditulis tangan", D: "bosan karena kue berada di oven" }, answer: "A" },
+            { id: 40, stimulusId: "S08", domain: "Evaluasi dan Apresiasi", competencyId: 9, competency: "Relevansi Peristiwa dengan Kehidupan", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menilai relevansi nilai emosional benda dan tradisi keluarga.", question: "Peristiwa dalam cerita relevan dengan kehidupan sehari-hari karena ...", options: { A: "benda atau kebiasaan keluarga dapat memunculkan kenangan dan memiliki nilai emosional", B: "setiap keluarga pasti memiliki kotak resep yang sama", C: "semua orang harus membuat kue jahe setiap akhir pekan", D: "resep lama selalu menghasilkan makanan yang lebih baik" }, answer: "A" },
+            
+            // --- S09 ---
+            { id: 41, stimulusId: "S09", domain: "Pemahaman Tekstual", competencyId: 1, competency: "Mengidentifikasi Penggunaan Istilah", cognitiveLevel: "Understanding", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Memahami istilah teknis lingkungan melalui konteks.", question: "Istilah “emisi gas buang” pada Teks B merujuk pada ...", options: { A: "gas yang dilepaskan kendaraan melalui proses pembakaran atau knalpot", B: "suara yang muncul dari perpustakaan", C: "energi yang tersimpan di dalam buku", D: "jumlah penumpang kendaraan" }, answer: "A" },
+            { id: 42, stimulusId: "S09", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menemukan informasi numerik eksplisit.", question: "Menurut Teks A, mobil perpustakaan membawa sekitar ...", options: { A: "60 buku", B: "160 buku", C: "600 buku", D: "6.000 buku" }, answer: "C" },
+            { id: 43, stimulusId: "S09", domain: "Pemahaman Tekstual", competencyId: 4, competency: "Menyusun Kerangka / Bagan Teks", cognitiveLevel: "Application", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menyusun urutan gagasan teks deskriptif-informatif.", question: "Kerangka isi Teks A yang paling tepat adalah ...", options: { A: "pengoperasian mobil perpustakaan → fasilitas yang dibawa → alasan penggunaan kendaraan listrik → keterbatasan operasional", B: "sejarah sekolah → penjualan kendaraan → pembangunan terminal", C: "jenis buku → harga baterai → penutupan perpustakaan", D: "lokasi pengisian → permainan digital → jadwal pelajaran" }, answer: "A" },
+            { id: 44, stimulusId: "S09", domain: "Pemahaman Inferensial", competencyId: 6, competency: "Kelogisan Hubungan Antarperistiwa", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menghubungkan keterbatasan teknis dengan keputusan operasional.", question: "Mengapa lokasi pengisian baterai perlu dipertimbangkan dalam menentukan jadwal?", options: { A: "karena kendaraan memiliki jarak tempuh yang terbatas sebelum perlu diisi kembali", B: "karena buku hanya dapat dibaca ketika baterai penuh", C: "karena seluruh sekolah berada di lokasi pengisian", D: "karena kendaraan listrik tidak dapat bergerak di jalan umum" }, answer: "A" },
+            { id: 45, stimulusId: "S09", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Hard", textType: "Antarteks", targetDiagnosis: "Menghindari kesimpulan absolut ketika dua teks memberikan konteks yang lebih kompleks.", question: "Penilaian yang paling tepat berdasarkan kedua teks adalah ...", options: { A: "penggunaan kendaraan listrik pasti tidak memiliki dampak lingkungan", B: "kendaraan listrik dapat mengurangi gas buang pada saat penggunaan, tetapi penilaian dampak keseluruhan perlu mempertimbangkan faktor lain", C: "Teks B membuktikan bahwa mobil perpustakaan harus dihentikan", D: "kedua teks menyatakan kendaraan listrik tidak membutuhkan energi" }, answer: "B" },
+            
+            // --- S10 ---
+            { id: 46, stimulusId: "S10", domain: "Pemahaman Tekstual", competencyId: 2, competency: "Mengidentifikasi Objek & Latar Teks", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Fiksi", targetDiagnosis: "Mengidentifikasi latar dari kosakata dan aktivitas tokoh.", question: "Latar tempat cerita adalah ...", options: { A: "jalur pendakian di daerah pegunungan", B: "ruang kelas", C: "pusat perbelanjaan", D: "stasiun kereta" }, answer: "A" },
+            { id: 47, stimulusId: "S10", domain: "Pemahaman Inferensial", competencyId: 6, competency: "Kelogisan Hubungan Antarperistiwa", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menjelaskan logika keputusan tokoh berdasarkan kondisi lingkungan.", question: "Keputusan ayah Raka berhenti berjalan logis karena ...", options: { A: "kabut membuat tanda jalur sulit terlihat sehingga melanjutkan perjalanan meningkatkan risiko salah arah", B: "semua pendaki diwajibkan tidur di bawah pohon", C: "Raka ingin kembali ke sekolah", D: "papan penunjuk sudah terlihat dengan sangat jelas sejak awal" }, answer: "A" },
+            { id: 48, stimulusId: "S10", domain: "Pemahaman Inferensial", competencyId: 7, competency: "Memprediksi Peristiwa dalam Teks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Memprediksi tindakan berdasarkan pola pengambilan keputusan tokoh.", question: "Jika kabut kembali menjadi sangat tebal setelah mereka berjalan, tindakan yang paling sesuai dengan pola keputusan sebelumnya adalah ...", options: { A: "mempercepat langkah tanpa melihat jalur", B: "berhenti kembali dan memastikan arah sebelum melanjutkan", C: "meninggalkan peta", D: "berjalan ke arah mana saja" }, answer: "B" },
+            { id: 49, stimulusId: "S10", domain: "Pemahaman Inferensial", competencyId: 8, competency: "Bahasa Kias & Citraan Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Mengidentifikasi citraan visual pada bahasa perbandingan.", question: "Ungkapan “kabut ... seperti tirai besar yang digeser perlahan” menimbulkan citraan ...", options: { A: "visual mengenai kabut yang bergerak menutupi dan membuka pandangan", B: "rasa makanan", C: "aroma bunga", D: "suara alat musik" }, answer: "A" },
+            { id: 50, stimulusId: "S10", domain: "Evaluasi dan Apresiasi", competencyId: 11, competency: "Respons Emosional Teks Fiksi", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Fiksi", targetDiagnosis: "Menentukan respons emosional berdasarkan resolusi peristiwa.", question: "Perasaan yang paling mungkin dirasakan pembaca pada akhir cerita adalah ...", options: { A: "lega karena tokoh memilih keputusan aman dan menemukan jalur kembali", B: "marah karena kabut menghilang", C: "kecewa karena papan penunjuk ditemukan", D: "takut karena semua tokoh tersesat selamanya" }, answer: "A" },
+            
+            // --- S11 ---
+            { id: 51, stimulusId: "S11", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Memahami fungsi informasi yang berbeda tetapi saling melengkapi.", question: "Hubungan kedua teks paling tepat adalah ...", options: { A: "Teks A memberikan data pendapat siswa, sedangkan Teks B menjelaskan bahwa keputusan memerlukan pertimbangan yang lebih luas.", B: "Teks A dan Teks B membahas dua sekolah yang tidak berhubungan.", C: "Teks B menyatakan hasil survei harus diabaikan seluruhnya.", D: "Teks A telah menetapkan jam masuk baru secara resmi." }, answer: "A" },
+            { id: 52, stimulusId: "S11", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menemukan data numerik langsung dari teks.", question: "Jumlah siswa yang memilih jam masuk pukul 07.30 adalah ...", options: { A: "94 siswa", B: "120 siswa", C: "146 siswa", D: "240 siswa" }, answer: "C" },
+            { id: 53, stimulusId: "S11", domain: "Pemahaman Inferensial", competencyId: 5, competency: "Menyimpulkan Ide Pokok, Tokoh & Nilai", cognitiveLevel: "Application", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menggabungkan informasi dua teks menjadi kesimpulan umum.", question: "Kesimpulan utama dari kedua teks adalah ...", options: { A: "pilihan siswa merupakan satu-satunya dasar perubahan jadwal", B: "perubahan jam masuk melibatkan pilihan siswa sekaligus berbagai pertimbangan operasional sekolah", C: "sekolah pasti akan memilih pukul 07.30", D: "kegiatan ekstrakurikuler harus dihapus" }, answer: "B" },
+            { id: 54, stimulusId: "S11", domain: "Evaluasi dan Apresiasi", competencyId: 9, competency: "Relevansi Peristiwa dengan Kehidupan", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menerapkan prinsip pengambilan keputusan berbasis berbagai informasi.", question: "Sikap yang paling relevan jika sekolah akan membuat kebijakan serupa adalah ...", options: { A: "mempertimbangkan data dari beberapa pihak dan dampak kebijakan sebelum mengambil keputusan", B: "mengambil keputusan hanya berdasarkan satu pendapat", C: "mengabaikan kebutuhan siswa dan guru", D: "membuat keputusan tanpa mengumpulkan informasi" }, answer: "A" },
+            { id: 55, stimulusId: "S11", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Hard", textType: "Antarteks", targetDiagnosis: "Mengevaluasi generalisasi atau kesimpulan yang melebihi bukti.", question: "Seorang siswa mengatakan:\n\n“Karena 146 dari 240 responden memilih pukul 07.30, berarti sekolah wajib menetapkan pukul 07.30.”\n\nPenilaian yang paling tepat adalah ...", options: { A: "tepat, karena suara terbanyak selalu otomatis menjadi kebijakan", B: "kurang tepat, karena survei merupakan salah satu masukan dan Teks B menyebutkan faktor lain yang perlu dipertimbangkan", C: "tepat, karena Teks B tidak membahas jadwal", D: "tidak dapat dinilai karena jumlah responden tidak disebutkan" }, answer: "B" },
+
+            // --- S12 ---
+            { id: 56, stimulusId: "S12", domain: "Pemahaman Tekstual", competencyId: 1, competency: "Mengidentifikasi Penggunaan Istilah", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menentukan arti istilah berdasarkan konteks penggunaan.", question: "Istilah “surplus” dalam konteks Teks A berarti ...", options: { A: "jumlah yang tersisa atau melebihi kebutuhan", B: "makanan yang selalu rusak", C: "peralatan memasak", D: "biaya untuk membeli meja" }, answer: "A" },
+            { id: 57, stimulusId: "S12", domain: "Pemahaman Tekstual", competencyId: 4, competency: "Menyusun Kerangka / Bagan Teks", cognitiveLevel: "Application", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Mengorganisasi tahapan tindakan dan tujuan dalam teks.", question: "Kerangka isi Teks A yang paling tepat adalah ...", options: { A: "pencatatan makanan tersisa → pemisahan makanan → penyesuaian produksi → penggunaan bahan lebih efisien", B: "pembangunan kantin → penjualan meja → kegiatan olahraga", C: "pembelian makanan → penutupan sekolah → penggantian guru", D: "pengumpulan poster → pembuangan seluruh makanan → peningkatan produksi" }, answer: "A" },
+            { id: 58, stimulusId: "S12", domain: "Evaluasi dan Apresiasi", competencyId: 10, competency: "Kesesuaian & Keakuratan Antarteks", cognitiveLevel: "Reasoning", difficulty: "Medium", textType: "Antarteks", targetDiagnosis: "Menentukan hubungan pesan antara teks informatif dan persuasif.", question: "Hubungan Teks A dengan Teks B adalah ...", options: { A: "Teks A membahas pengelolaan sisa makanan dari sisi kantin, sedangkan Teks B mendorong siswa mengambil makanan sesuai kebutuhan.", B: "Kedua teks meminta siswa mengambil makanan sebanyak mungkin.", C: "Teks B membantah tujuan Teks A.", D: "Kedua teks membahas cara menjual peralatan dapur." }, answer: "A" },
+            { id: 59, stimulusId: "S12", domain: "Evaluasi dan Apresiasi", competencyId: 9, competency: "Relevansi Peristiwa dengan Kehidupan", cognitiveLevel: "Reasoning", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Mengubah gagasan teks menjadi tindakan praktis sehari-hari.", question: "Penerapan yang paling relevan bagi siswa berdasarkan kedua teks adalah ...", options: { A: "mengambil makanan secukupnya dan menambah jika masih membutuhkan", B: "mengambil sebanyak mungkin agar tidak perlu kembali", C: "membuang makanan yang tidak disukai", D: "meminta kantin selalu memproduksi makanan lebih banyak" }, answer: "A" },
+            { id: 60, stimulusId: "S12", domain: "Pemahaman Tekstual", competencyId: 3, competency: "Mengidentifikasi Informasi Tersurat", cognitiveLevel: "Understanding", difficulty: "Easy", textType: "Antarteks", targetDiagnosis: "Menemukan tindak lanjut yang disebut secara eksplisit.", question: "Berdasarkan Teks A, salah satu tindakan pengelola setelah melakukan pencatatan selama dua bulan adalah ...", options: { A: "menutup kantin", B: "menghentikan seluruh penjualan makanan", C: "menyesuaikan jumlah produksi beberapa menu", D: "meningkatkan semua produksi tanpa melihat data" }, answer: "C" }
+        ];
+
+        /* --- 2. STATE & CONFIGURATION --- */
+        const STORAGE_KEY = 'tka_bindo_diag_state';
+        const TEST_DURATION = 75 * 60 * 1000;
+        const TOTAL_QUESTIONS = 60;
+
+        let state = {
+            status: 'not_started',
+            student: { name: '', class: '', target: '', selfAssess: '' },
+            answers: {}, 
+            bookmarks: {},
+            questionTimes: {}, // For responseTime tracking (informational)
+            currentIdx: 0,
+            startTime: null,
+            endTime: null,
+            dateCompleted: null
+        };
+
+        let timerInterval;
+        let questionEntryTime = 0;
+
+        /* --- 3. APPLICATION LOGIC --- */
+        const app = {
+            init() {
+                this.validateQuestionBank();
+                this.checkExistingSession();
+                this.setupKeyboardShortcuts();
+            },
+
+            validateQuestionBank() {
+                if (STIMULI.length !== 12) console.error("Validation Error: Expected 12 stimuli.");
+                if (QUESTION_BANK.length !== 60) console.error("Validation Error: Expected 60 questions.");
+                
+                let checkIds = new Set();
+                QUESTION_BANK.forEach((q, idx) => {
+                    if (q.id !== idx + 1) console.error(`ID Mismatch at index ${idx}`);
+                    if (checkIds.has(q.id)) console.error(`Duplicate ID: ${q.id}`);
+                    checkIds.add(q.id);
+                    if (!q.stimulusId || !STIMULI.find(s => s.id === q.stimulusId)) console.error(`Invalid stimulusId on Q${q.id}`);
+                    if (!q.answer || !q.domain || !q.competencyId || !q.cognitiveLevel || !q.difficulty || !q.textType || !q.targetDiagnosis) {
+                        console.error(`Missing metadata on Q${q.id}`);
+                    }
+                });
+                console.log("Validation passed.");
+            },
+
+            navigate(viewId) {
+                document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+                document.getElementById(`view-${viewId}`).classList.remove('hidden');
+                window.scrollTo(0, 0);
+            },
+
+            showToast(msg) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            },
+
+            saveState() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            },
+
+            loadState() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    try { state = JSON.parse(saved); return true; } 
+                    catch (e) { console.error("Failed to parse local storage", e); }
+                }
+                return false;
+            },
+
+            checkExistingSession() {
+                if (this.loadState()) {
+                    if (state.status === 'in_progress') {
+                        document.getElementById('landing-resume-btn').classList.remove('hidden');
+                        document.getElementById('modal-resume').classList.remove('hidden');
+                    } else if (state.status === 'completed') {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn btn-outline w-full mt-2';
+                        btn.textContent = 'Lihat Hasil Terakhir';
+                        btn.onclick = () => this.renderResultDashboard();
+                        document.getElementById('landing-resume-btn').appendChild(btn);
+                        document.getElementById('landing-resume-btn').classList.remove('hidden');
+                    }
+                }
+            },
+
+            resumeSession() {
+                this.closeModal('modal-resume');
+                if (Date.now() > state.endTime) this.executeSubmit(true);
+                else this.startTest(true);
+            },
+
+            clearSession() {
+                localStorage.removeItem(STORAGE_KEY);
+                state = { status: 'not_started', student: {}, answers: {}, bookmarks: {}, questionTimes: {}, currentIdx: 0, startTime: null, endTime: null };
+                this.closeModal('modal-resume');
+                this.navigate('identity');
+            },
+
+            closeModal(id) { document.getElementById(id).classList.add('hidden'); },
+
+            submitIdentity(e) {
+                e.preventDefault();
+                state.student.name = document.getElementById('student-name').value;
+                state.student.class = document.getElementById('student-class').value;
+                state.student.target = document.getElementById('student-target').value;
+                state.student.selfAssess = document.querySelector('input[name="self-assessment"]:checked')?.value || '3';
+                this.saveState();
+                this.navigate('instructions');
+            },
+
+            /* --- Test Engine --- */
+            startTest(isResume = false) {
+                if (!isResume) {
+                    state.status = 'in_progress';
+                    state.startTime = Date.now();
+                    state.endTime = state.startTime + TEST_DURATION;
+                    state.answers = {};
+                    state.bookmarks = {};
+                    state.questionTimes = {};
+                    state.currentIdx = 0;
+                    this.saveState();
+                }
+                this.navigate('test');
+                this.buildNavigator();
+                this.renderQuestion(state.currentIdx);
+                this.startTimer();
+            },
+
+            buildNavigator() {
+                const grid = document.getElementById('nav-grid');
+                grid.innerHTML = '';
+                for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'nav-btn';
+                    btn.textContent = i + 1;
+                    btn.id = `nav-btn-${i}`;
+                    btn.onclick = () => this.jumpToQuestion(i);
+                    grid.appendChild(btn);
+                }
+                this.updateNavigatorStatus();
+            },
+
+            updateNavigatorStatus() {
+                let answered = 0;
+                for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                    const btn = document.getElementById(`nav-btn-${i}`);
+                    if (!btn) continue;
+                    const qId = QUESTION_BANK[i].id;
+                    btn.className = 'nav-btn';
+                    if (state.answers[qId]) { btn.classList.add('answered'); answered++; }
+                    if (state.bookmarks[qId]) btn.classList.add('bookmarked');
+                    if (i === state.currentIdx) btn.classList.add('current');
+                }
+                document.getElementById('progress-text').textContent = `${answered}/${TOTAL_QUESTIONS}`;
+                document.getElementById('progress-fill').style.width = `${(answered/TOTAL_QUESTIONS)*100}%`;
+                
+                const btnNext = document.getElementById('btn-next');
+                const btnFinish = document.getElementById('btn-finish');
+                if (state.currentIdx === TOTAL_QUESTIONS - 1) {
+                    btnNext.classList.add('hidden'); btnFinish.classList.remove('hidden');
+                } else {
+                    btnNext.classList.remove('hidden'); btnFinish.classList.add('hidden');
+                }
+            },
+
+            toggleNavigator() {
+                document.getElementById('navigator-drawer').classList.toggle('show');
+            },
+            
+            toggleStimulusMobile() {
+                const wrapper = document.getElementById('stimulus-panel-wrapper');
+                const btn = document.getElementById('btn-toggle-stimulus');
+                wrapper.classList.toggle('collapsed');
+                if(wrapper.classList.contains('collapsed')) {
+                    btn.textContent = 'Tampilkan Teks';
+                } else {
+                    btn.textContent = 'Sembunyikan Teks';
+                }
+            },
+
+            renderQuestion(idx) {
+                // Save time spent on previous question before moving
+                this.recordTimeSpent();
+                questionEntryTime = Date.now();
+
+                const q = QUESTION_BANK[idx];
+                const s = STIMULI.find(x => x.id === q.stimulusId);
+                
+                document.getElementById('header-q-num').textContent = idx + 1;
+                
+                // Only update stimulus DOM if it changed
+                const currentStimulusTitle = document.getElementById('s-title').textContent;
+                if (currentStimulusTitle !== s.title) {
+                    document.getElementById('s-title').textContent = s.title;
+                    document.getElementById('s-text').textContent = s.content;
+                    document.getElementById('s-type').textContent = s.textType;
+                    // Reset scroll for stimulus
+                    document.getElementById('s-content').scrollTop = 0;
+                }
+
+                document.getElementById('q-domain').textContent = `${q.domain} • K${q.competencyId}`;
+                
+                const bmBtn = document.getElementById('bookmark-btn');
+                if (state.bookmarks[q.id]) {
+                    bmBtn.innerHTML = '⚑ Ditandai'; bmBtn.classList.replace('btn-outline', 'btn-primary');
+                } else {
+                    bmBtn.innerHTML = '⚑ Tinjau Kembali'; bmBtn.classList.replace('btn-primary', 'btn-outline');
+                }
+
+                document.getElementById('q-text').innerHTML = q.question;
+                
+                const optsContainer = document.getElementById('q-options');
+                optsContainer.innerHTML = '';
+                ['A', 'B', 'C', 'D'].forEach(letter => {
+                    const label = document.createElement('label');
+                    label.className = `option-label ${state.answers[q.id] === letter ? 'selected' : ''}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio'; input.name = `q-${q.id}`; input.value = letter; input.className = 'option-input';
+                    if (state.answers[q.id] === letter) input.checked = true;
+                    input.onchange = () => this.selectOption(q.id, letter, label);
+                    label.innerHTML = `<div class="option-letter">${letter}</div><div>${q.options[letter]}</div>`;
+                    label.prepend(input);
+                    optsContainer.appendChild(label);
+                });
+                
+                // Hide navigator on mobile if open
+                document.getElementById('navigator-drawer').classList.remove('show');
+            },
+
+            selectOption(qId, letter, labelEl) {
+                state.answers[qId] = letter;
+                this.saveState();
+                document.querySelectorAll('.option-label').forEach(el => el.classList.remove('selected'));
+                labelEl.classList.add('selected');
+                this.updateNavigatorStatus();
+            },
+
+            toggleBookmark() {
+                const qId = QUESTION_BANK[state.currentIdx].id;
+                if (state.bookmarks[qId]) delete state.bookmarks[qId];
+                else state.bookmarks[qId] = true;
+                this.saveState();
+                this.renderQuestion(state.currentIdx);
+                this.updateNavigatorStatus();
+            },
+
+            recordTimeSpent() {
+                if (questionEntryTime > 0) {
+                    const qId = QUESTION_BANK[state.currentIdx].id;
+                    const timeSpent = Date.now() - questionEntryTime;
+                    if (!state.questionTimes[qId]) state.questionTimes[qId] = 0;
+                    state.questionTimes[qId] += timeSpent;
+                }
+            },
+
+            prevQuestion() { if (state.currentIdx > 0) this.jumpToQuestion(state.currentIdx - 1); },
+            nextQuestion() { if (state.currentIdx < TOTAL_QUESTIONS - 1) this.jumpToQuestion(state.currentIdx + 1); },
+            jumpToQuestion(idx) {
+                state.currentIdx = idx;
+                this.renderQuestion(idx);
+                this.updateNavigatorStatus();
+            },
+
+            /* --- Timer --- */
+            startTimer() {
+                clearInterval(timerInterval);
+                this.updateTimerDisplay();
+                timerInterval = setInterval(() => this.updateTimerDisplay(), 1000);
+            },
+
+            updateTimerDisplay() {
+                if (state.status !== 'in_progress') return;
+                const now = Date.now();
+                const remaining = Math.max(0, state.endTime - now);
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    this.executeSubmit(true);
+                    return;
+                }
+
+                const m = Math.floor(remaining / 60000);
+                const s = Math.floor((remaining % 60000) / 1000);
+                const disp = document.getElementById('timer-display');
+                disp.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                
+                if (remaining < 300000) disp.className = 'timer-display timer-danger';
+                else if (remaining < 600000) disp.className = 'timer-display timer-warning';
+                else disp.className = 'timer-display';
+            },
+
+            /* --- Submit & Analytics --- */
+            confirmSubmit() {
+                this.recordTimeSpent(); // record last viewed
+                const answered = Object.keys(state.answers).length;
+                const empty = TOTAL_QUESTIONS - answered;
+                const marked = Object.keys(state.bookmarks).length;
+                
+                document.getElementById('modal-answered').textContent = answered;
+                document.getElementById('modal-unanswered').textContent = empty;
+                document.getElementById('modal-marked').textContent = marked;
+                
+                if (empty > 0) document.getElementById('modal-warning').classList.remove('hidden');
+                else document.getElementById('modal-warning').classList.add('hidden');
+                
+                document.getElementById('modal-submit').classList.remove('hidden');
+            },
+
+            executeSubmit(isForced = false) {
+                clearInterval(timerInterval);
+                this.closeModal('modal-submit');
+                state.status = 'completed';
+                state.dateCompleted = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                this.saveState();
+                
+                if (isForced) this.showToast("Waktu habis! Test telah otomatis disubmit.");
+                this.renderResultDashboard();
+            },
+
+            analyzeResults() {
+                let correct = 0, wrong = 0, empty = 0;
+                let domains = { "Pemahaman Tekstual": {c:0, t:0}, "Pemahaman Inferensial": {c:0, t:0}, "Evaluasi dan Apresiasi": {c:0, t:0} };
+                let textTypes = { "Fiksi": {c:0, t:0}, "Nonfiksi": {c:0, t:0}, "Antarteks": {c:0, t:0} };
+                let comps = {}; // Competencies 1 to 11
+                let errors = {};
+
+                QUESTION_BANK.forEach(q => {
+                    domains[q.domain].t++;
+                    textTypes[q.textType].t++;
+                    
+                    if (!comps[q.competencyId]) {
+                        comps[q.competencyId] = { id: q.competencyId, name: q.competency, domain: q.domain, c: 0, t: 0, errs: [], isReasoningErr: 0 };
+                    }
+                    comps[q.competencyId].t++;
+
+                    const ans = state.answers[q.id];
+                    if (!ans) {
+                        empty++;
+                    } else if (ans === q.answer) {
+                        correct++;
+                        domains[q.domain].c++;
+                        textTypes[q.textType].c++;
+                        comps[q.competencyId].c++;
+                    } else {
+                        wrong++;
+                        comps[q.competencyId].errs.push(q.targetDiagnosis);
+                        errors[q.targetDiagnosis] = (errors[q.targetDiagnosis] || 0) + 1;
+                        if (q.cognitiveLevel === "Reasoning") comps[q.competencyId].isReasoningErr++;
+                    }
+                });
+
+                const compArray = Object.values(comps).map(c => {
+                    const score = Math.round((c.c / c.t) * 100);
+                    let status = score >= 80 ? 'Strong' : score >= 65 ? 'Proficient' : score >= 45 ? 'Developing' : 'Gap';
+                    let evidence = c.t >= 7 ? 'Lebih Kuat' : c.t >= 5 ? 'Cukup' : 'Terbatas';
+                    return { ...c, score, status, evidence };
+                });
+
+                return {
+                    correct, wrong, empty,
+                    overallScore: Math.round((correct / TOTAL_QUESTIONS) * 100),
+                    timeSpent: Math.min(75, Math.round(((state.endTime || Date.now()) - state.startTime) / 60000)),
+                    domains, textTypes, compArray, errors
+                };
+            },
+
+            renderResultDashboard() {
+                this.navigate('result');
+                const res = this.analyzeResults();
+                
+                document.getElementById('res-name').textContent = state.student.name || 'Siswa';
+                document.getElementById('res-class').textContent = state.student.class || '-';
+                document.getElementById('res-date').textContent = state.dateCompleted || '-';
+                
+                document.getElementById('res-score').textContent = res.overallScore;
+                document.getElementById('res-correct').textContent = res.correct;
+                document.getElementById('res-wrong').textContent = res.wrong;
+                document.getElementById('res-empty').textContent = res.empty;
+                document.getElementById('res-time').textContent = res.timeSpent;
+
+                // Self Assessment
+                const assessMap = { "1": "Sangat perlu diperbaiki", "2": "Perlu diperbaiki", "3": "Sedang", "4": "Baik", "5": "Sangat baik" };
+                document.getElementById('res-self').textContent = assessMap[state.student.selfAssess] || "-";
+                
+                let actualCat = res.overallScore >= 80 ? "Sangat Baik" : res.overallScore >= 65 ? "Baik" : res.overallScore >= 45 ? "Sedang/Developing" : "Perlu Perbaikan (Gap)";
+                document.getElementById('res-actual').textContent = actualCat;
+                
+                let interpStr = "";
+                const numSelf = parseInt(state.student.selfAssess);
+                const actualScoreBase = res.overallScore / 20; 
+                if (numSelf > actualScoreBase + 1) interpStr = "Persepsi awal lebih tinggi dibanding performa diagnostic saat ini. Gunakan peta kompetensi sebagai dasar menentukan prioritas belajar.";
+                else if (numSelf < actualScoreBase - 1) interpStr = "Hasil diagnostic menunjukkan kemampuan yang lebih baik daripada perkiraan awal pada beberapa area membaca.";
+                else interpStr = "Persepsi awal relatif sejalan dengan performa diagnostic.";
+                document.getElementById('res-assess-interp').textContent = interpStr;
+
+                // Domains (Reading Skill Profile)
+                let dHtml = '';
+                const domOrder = ["Pemahaman Tekstual", "Pemahaman Inferensial", "Evaluasi dan Apresiasi"];
+                domOrder.forEach(d => {
+                    const data = res.domains[d];
+                    const pct = Math.round((data.c / data.t) * 100);
+                    let color = pct >= 65 ? 'var(--status-strong)' : pct >= 45 ? 'var(--status-developing)' : 'var(--status-gap)';
+                    dHtml += `<div class="progress-stat"><div class="progress-stat-header"><span>${d}</span><span class="font-bold">${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:${color}"></div></div></div>`;
+                });
+                document.getElementById('res-domains').innerHTML = dHtml;
+
+                // Reading Skill Interpretation
+                const pt = Math.round((res.domains["Pemahaman Tekstual"].c / res.domains["Pemahaman Tekstual"].t) * 100);
+                const pi = Math.round((res.domains["Pemahaman Inferensial"].c / res.domains["Pemahaman Inferensial"].t) * 100);
+                const pe = Math.round((res.domains["Evaluasi dan Apresiasi"].c / res.domains["Evaluasi dan Apresiasi"].t) * 100);
+                
+                let skillInterp = "Profil membaca relatif seimbang pada pemahaman eksplisit, inferensi, dan evaluasi teks.";
+                if (pt > pi + 20) skillInterp = "Informasi eksplisit relatif dapat ditemukan dengan baik, tetapi kemampuan menarik kesimpulan dari petunjuk tidak langsung masih perlu diperkuat.";
+                else if (pi > pe + 20 && pe < 60) skillInterp = "Kemampuan memahami makna tersirat relatif baik, tetapi penilaian terhadap relevansi dan keakuratan informasi antarteks masih perlu dikembangkan.";
+                else if (pt < 50 && pi < 50 && pe < 50) skillInterp = "Seluruh area keterampilan membaca membutuhkan penguatan fondasi secara komprehensif.";
+                document.getElementById('res-skill-interp').textContent = skillInterp;
+
+                // Text Types
+                let tHtml = '';
+                ["Fiksi", "Nonfiksi", "Antarteks"].forEach(t => {
+                    const data = res.textTypes[t];
+                    const pct = Math.round((data.c / data.t) * 100);
+                    tHtml += `<div class="progress-stat"><div class="progress-stat-header"><span>Teks ${t}</span><span class="font-bold">${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:var(--accent-secondary)"></div></div></div>`;
+                });
+                document.getElementById('res-text-types').innerHTML = tHtml;
+
+                // Heatmap (11 Competencies)
+                let hmHtml = '';
+                res.compArray.forEach(c => {
+                    let cls = `border-${c.status.toLowerCase()}`;
+                    let txt = `text-${c.status.toLowerCase()}`;
+                    hmHtml += `<div class="comp-card ${cls} tooltip" data-tooltip="Evidence: ${c.evidence} (${c.t} soal)">
+                        <div class="text-secondary text-sm font-bold mb-1">K${c.id}</div>
+                        <div class="font-semibold mb-3" style="font-size:0.9rem; line-height:1.2;">${c.name}</div>
+                        <div class="flex justify-between items-end mt-auto">
+                            <span class="font-bold ${txt}" style="font-size:1.25rem">${c.score}%</span>
+                            <span class="text-muted text-sm">${c.c}/${c.t} benar</span>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('heatmap-container').innerHTML = hmHtml;
+
+                // Strengths
+                const sUl = document.getElementById('res-strengths');
+                let strengths = [...res.compArray].filter(c => c.score >= 80).sort((a,b) => b.score - a.score || b.t - a.t).slice(0, 5);
+                if (strengths.length === 0) sUl.innerHTML = '<li class="text-muted" style="list-style:none">Belum ada kompetensi di kategori Strong.</li>';
+                else sUl.innerHTML = strengths.map(s => `<li><span class="font-semibold" style="color:var(--text-primary)">${s.name}</span> — ${s.score}%</li>`).join('');
+
+                // Priorities
+                const pContainer = document.getElementById('res-priorities');
+                let priorities = [...res.compArray].filter(c => c.score < 80).sort((a,b) => {
+                    if (a.score !== b.score) return a.score - b.score;
+                    if (a.errs.length !== b.errs.length) return b.errs.length - a.errs.length;
+                    if (a.isReasoningErr !== b.isReasoningErr) return b.isReasoningErr - a.isReasoningErr;
+                    return a.id - b.id;
+                }).slice(0, 5);
+
+                if (priorities.length === 0) pContainer.innerHTML = '<div class="text-center text-muted">Bagus sekali! Seluruh kompetensi berada di tingkat Strong.</div>';
+                else {
+                    pContainer.innerHTML = priorities.map((p, i) => {
+                        let hint = p.errs.length ? [...new Set(p.errs)].map(e=>`• ${e}`).join('<br>') : '• Latihan membaca cermat';
+                        return `<div class="priority-item">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="status-badge bg-gap">PRIORITAS #${i+1}</span>
+                                <span class="font-bold text-gap" style="font-size:1.2rem">${p.score}%</span>
+                            </div>
+                            <h3 style="margin-bottom:0.25rem">${p.name}</h3>
+                            <div class="text-secondary text-sm mb-3">Domain: ${p.domain} | ${p.c}/${p.t} benar</div>
+                            <div class="bg-main p-3" style="border-radius:4px; font-size:0.9rem">
+                                <div class="text-secondary text-sm uppercase mb-1">Indikasi area yang perlu ditinjau:</div>
+                                <div style="color:var(--text-primary)">${hint}</div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+
+                // Error Analysis Grouping
+                const errUl = document.getElementById('res-errors');
+                let sortedErrors = Object.entries(res.errors).sort((a,b) => b[1] - a[1]).slice(0, 8);
+                if (sortedErrors.length === 0) errUl.innerHTML = '<li class="text-muted" style="list-style:none">Tidak ada pola kesalahan signifikan.</li>';
+                else errUl.innerHTML = sortedErrors.map(([err, count]) => `<li><span style="color:var(--text-primary)">${err}</span> <span class="text-muted">(${count} indikator)</span></li>`).join('');
+            },
+
+            /* --- Review Engine --- */
+            renderReview() {
+                const list = document.getElementById('review-list');
+                list.innerHTML = '';
+                
+                let counts = { correct: 0, incorrect: 0, unanswered: 0, bookmarked: 0 };
+
+                QUESTION_BANK.forEach((q, idx) => {
+                    const ans = state.answers[q.id];
+                    const isCorrect = ans === q.answer;
+                    const isBookmarked = state.bookmarks[q.id];
+                    
+                    let statClass = !ans ? 'unanswered' : isCorrect ? 'correct' : 'incorrect';
+                    let statText = !ans ? 'KOSONG' : isCorrect ? 'BENAR' : 'SALAH';
+                    
+                    if (ans) { isCorrect ? counts.correct++ : counts.incorrect++; } else counts.unanswered++;
+                    if (isBookmarked) counts.bookmarked++;
+
+                    let optHtml = '';
+                    ['A', 'B', 'C', 'D'].forEach(l => {
+                        let cls = 'review-opt';
+                        if (l === q.answer) cls += ' is-correct';
+                        else if (l === ans && !isCorrect) cls += ' is-wrong';
+                        
+                        let label = l === ans ? `<strong>[Jawabanmu]</strong> ${q.options[l]}` : q.options[l];
+                        optHtml += `<div class="${cls}"><span class="font-bold mr-2">${l}.</span> ${label}</div>`;
+                    });
+
+                    let explanation = `Jawaban yang tepat adalah <strong>${q.answer}</strong>. Kesalahan pada soal ini mengindikasikan perlunya peninjauan pada: ${q.targetDiagnosis}.`;
+                    if (isCorrect) explanation = `Jawaban <strong>${q.answer}</strong> tepat. Target: ${q.targetDiagnosis}.`;
+
+                    // We add a tiny snippet of the stimulus title for context
+                    const s = STIMULI.find(x => x.id === q.stimulusId);
+
+                    const card = document.createElement('div');
+                    card.className = `review-card ${statClass}`;
+                    card.dataset.status = statClass;
+                    card.dataset.marked = isBookmarked ? 'true' : 'false';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="pill-badge" style="margin:0">${q.domain} • K${q.competencyId}</span>
+                            <div class="flex items-center gap-2">
+                                ${isBookmarked ? '<span style="color:var(--warning)">⚑</span>' : ''}
+                                <span class="font-bold text-${statClass === 'correct' ? 'strong' : statClass === 'incorrect' ? 'gap' : 'muted'}">${statText}</span>
+                            </div>
+                        </div>
+                        <div class="text-secondary text-sm mb-4 font-semibold">Soal ${idx + 1} | ${s.title}</div>
+                        <div class="question-text">${q.question}</div>
+                        <div class="flex flex-col gap-2 mb-4">${optHtml}</div>
+                        <div class="explanation-box">${explanation}</div>
+                    `;
+                    list.appendChild(card);
+                });
+
+                document.getElementById('count-correct').textContent = counts.correct;
+                document.getElementById('count-wrong').textContent = counts.incorrect;
+                document.getElementById('count-empty').textContent = counts.unanswered;
+                document.getElementById('count-marked').textContent = counts.bookmarked;
+
+                document.querySelectorAll('.active-filter').forEach(b => b.classList.remove('active-filter', 'btn-primary'));
+                document.querySelector('[data-filter="all"]').classList.add('active-filter');
+
+                document.querySelectorAll('#review-filters button').forEach(btn => {
+                    btn.onclick = (e) => {
+                        document.querySelectorAll('#review-filters button').forEach(b => {
+                            b.classList.remove('active-filter');
+                            b.style.background = ''; b.style.borderColor = ''; b.style.color = '';
+                        });
+                        e.currentTarget.classList.add('active-filter');
+                        e.currentTarget.style.background = 'rgba(139,92,246,0.1)';
+                        e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                        e.currentTarget.style.color = 'white';
+
+                        const filter = e.currentTarget.dataset.filter;
+                        document.querySelectorAll('.review-card').forEach(card => {
+                            if (filter === 'all') card.style.display = 'block';
+                            else if (filter === 'bookmarked') card.style.display = card.dataset.marked === 'true' ? 'block' : 'none';
+                            else card.style.display = card.dataset.status === filter ? 'block' : 'none';
+                        });
+                    };
+                });
+            },
+
+            copySummary() {
+                const res = this.analyzeResults();
+                let text = `TKA BAHASA INDONESIA SMP — DIAGNOSTIC\n\n`;
+                text += `Nama: ${state.student.name || '-'}\n`;
+                text += `Skor: ${res.overallScore}/100\n\n`;
+                
+                text += `Domain:\n`;
+                text += `Pemahaman Tekstual: ${Math.round((res.domains["Pemahaman Tekstual"].c / res.domains["Pemahaman Tekstual"].t) * 100)}%\n`;
+                text += `Pemahaman Inferensial: ${Math.round((res.domains["Pemahaman Inferensial"].c / res.domains["Pemahaman Inferensial"].t) * 100)}%\n`;
+                text += `Evaluasi & Apresiasi: ${Math.round((res.domains["Evaluasi dan Apresiasi"].c / res.domains["Evaluasi dan Apresiasi"].t) * 100)}%\n\n`;
+                
+                text += `Jenis Teks:\n`;
+                text += `Fiksi: ${Math.round((res.textTypes["Fiksi"].c / res.textTypes["Fiksi"].t) * 100)}%\n`;
+                text += `Nonfiksi: ${Math.round((res.textTypes["Nonfiksi"].c / res.textTypes["Nonfiksi"].t) * 100)}%\n`;
+                text += `Antarteks: ${Math.round((res.textTypes["Antarteks"].c / res.textTypes["Antarteks"].t) * 100)}%\n\n`;
+
+                text += `Prioritas:\n`;
+                let priorities = [...res.compArray].filter(c => c.score < 80).sort((a,b) => a.score - b.score || b.errs.length - a.errs.length).slice(0, 5);
+                priorities.forEach((p, i) => { text += `${i+1}. ${p.name} — ${p.score}%\n`; });
+
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    this.showToast('Ringkasan berhasil disalin ke clipboard!');
+                } catch (err) {
+                    console.error('Oops, unable to copy', err);
+                    this.showToast('Gagal menyalin ringkasan.');
+                }
+                document.body.removeChild(textarea);
+            },
+
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    if (state.status !== 'in_progress' || document.getElementById('view-test').classList.contains('hidden')) return;
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    switch(e.key) {
+                        case 'ArrowLeft': this.prevQuestion(); break;
+                        case 'ArrowRight': this.nextQuestion(); break;
+                        case '1': case 'a': case 'A': { const opt = document.querySelector('input[value="A"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case '2': case 'b': case 'B': { const opt = document.querySelector('input[value="B"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case '3': case 'c': case 'C': { const opt = document.querySelector('input[value="C"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case '4': case 'd': case 'D': { const opt = document.querySelector('input[value="D"]'); if(opt) { opt.checked = true; opt.onchange(); } break; }
+                        case 'f': case 'F': this.toggleBookmark(); break;
+                    }
+                });
+            },
+
+            resetTest() {
+                document.getElementById('modal-reset').classList.remove('hidden');
+            },
+
+            executeReset() {
+                this.closeModal('modal-reset');
+                localStorage.removeItem(STORAGE_KEY);
+                state = { status: 'not_started', student: { name: '', class: '', target: '', selfAssess: '' }, answers: {}, bookmarks: {}, questionTimes: {}, currentIdx: 0, startTime: null, endTime: null, dateCompleted: null };
+                clearInterval(timerInterval);
+                document.getElementById('identity-form').reset();
+                const btnRes = document.getElementById('landing-resume-btn');
+                btnRes.classList.add('hidden');
+                btnRes.innerHTML = '<button class="btn btn-outline" onclick="app.checkExistingSession()">Lanjutkan Sesi Sebelumnya</button>';
+                this.navigate('landing');
+                this.showToast('Data berhasil dihapus. Silakan mulai ulang.');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+            const originalNav = app.navigate.bind(app);
+            app.navigate = function(vid) {
+                if (vid === 'review') this.renderReview();
+                originalNav(vid);
+            };
+        });
+    </script>
+</body>
+</html>

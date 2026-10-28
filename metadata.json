@@ -1,0 +1,6 @@
+{
+  "name": "Edufillah Learning App",
+  "description": "Edufillah Learning App - Persiapan TKA SMP Platform Latihan Soal Interaktif TKA SMP",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

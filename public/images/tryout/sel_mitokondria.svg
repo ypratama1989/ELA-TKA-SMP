@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#2E235C"/>
+    </linearGradient>
+
+    <!-- Cell Body Gradient -->
+    <radialGradient id="cellBody" cx="45%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#C7D2FE" stop-opacity="0.3"/>
+      <stop offset="70%" stop-color="#818CF8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#4F46E5" stop-opacity="0.4"/>
+    </radialGradient>
+
+    <!-- Nucleus Gradient -->
+    <radialGradient id="nucGrad" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#F43F5E"/>
+      <stop offset="70%" stop-color="#BE123C"/>
+      <stop offset="100%" stop-color="#881337"/>
+    </radialGradient>
+
+    <!-- Mitochondria Outer Gradient -->
+    <linearGradient id="mitoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+
+    <!-- Cristae Gradient -->
+    <linearGradient id="cristaeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="100%" stop-color="#FDE047"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="600" height="360" rx="16" fill="url(#bgGrad)"/>
+  
+  <!-- Outer Cell Membrane (Citoplasma/Sel) -->
+  <path d="M 90,180 C 80,90 190,40 310,45 C 430,50 520,100 510,200 C 500,290 400,320 280,315 C 160,310 100,260 90,180 Z" 
+        fill="url(#cellBody)" stroke="#06B6D4" stroke-width="3" stroke-dasharray="6,4"/>
+
+  <!-- Nucleus (Inti Sel) -->
+  <circle cx="210" cy="180" r="48" fill="url(#nucGrad)" stroke="#FDA4AF" stroke-width="2.5"/>
+  <circle cx="205" cy="175" r="18" fill="#4C0519" opacity="0.7"/> <!-- Nukleolus -->
+
+  <!-- Endoplasmic Reticulum (RE) folds -->
+  <path d="M 220,120 Q 250,110 270,130 T 290,150" fill="none" stroke="#A78BFA" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 235,105 Q 275,95 300,120 T 325,145" fill="none" stroke="#A78BFA" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 215,240 Q 255,250 280,230 T 310,210" fill="none" stroke="#A78BFA" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Ribosomes (dots) -->
+  <circle cx="260" cy="115" r="3" fill="#FDE047"/>
+  <circle cx="290" cy="130" r="3" fill="#FDE047"/>
+  <circle cx="310" cy="140" r="3" fill="#FDE047"/>
+  <circle cx="270" cy="245" r="3" fill="#FDE047"/>
+  <circle cx="295" cy="225" r="3" fill="#FDE047"/>
+  <circle cx="160" cy="110" r="3" fill="#FDE047"/>
+  <circle cx="140" cy="230" r="3" fill="#FDE047"/>
+  <circle cx="360" cy="260" r="3" fill="#FDE047"/>
+
+  <!-- MITOCHONDRIA 1 (Highlighted / Powerhouse of Cell) -->
+  <g transform="translate(360, 150) rotate(-15)">
+    <!-- Outer Bean/Sausage Shape -->
+    <rect x="-45" y="-24" width="90" height="48" rx="24" fill="url(#mitoGrad)" stroke="#FED7AA" stroke-width="2.5"/>
+    <!-- Inner Cristae (Folds) -->
+    <path d="M -30,-12 C -24,0 -20,12 -28,12 
+             M -15,-18 C -10,-2 -8,16 -16,18
+             M 2,-18 C 8,-2 10,16 0,18
+             M 18,-16 C 24,0 26,12 16,14
+             M 32,-10 C 35,0 34,8 28,10" 
+          fill="none" stroke="url(#cristaeGrad)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- MITOCHONDRIA 2 (Smaller) -->
+  <g transform="translate(150, 95) rotate(40)">
+    <rect x="-30" y="-16" width="60" height="32" rx="16" fill="url(#mitoGrad)" stroke="#FED7AA" stroke-width="2"/>
+    <path d="M -18,-8 C -14,0 -12,8 -17,8 
+             M -5,-12 C 0,-2 2,10 -3,11
+             M 10,-10 C 14,0 15,8 8,9" 
+          fill="none" stroke="url(#cristaeGrad)" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- LABELS & CALLOUTS -->
+  <!-- Callout 1: Mitokondria -->
+  <g>
+    <line x1="390" y1="130" x2="440" y2="90" stroke="#F97316" stroke-width="2.5"/>
+    <circle cx="390" cy="130" r="4" fill="#F97316"/>
+    <rect x="440" y="70" width="135" height="36" rx="8" fill="#F97316" stroke="#FFFFFF" stroke-width="1.5"/>
+    <text x="507" y="93" fill="#FFFFFF" font-size="13" font-weight="900" font-family="sans-serif" text-anchor="middle">MITOKONDRIA</text>
+  </g>
+
+  <!-- Callout 2: Nukleus -->
+  <g>
+    <line x1="180" y1="160" x2="110" y2="120" stroke="#FDA4AF" stroke-width="2"/>
+    <circle cx="180" cy="160" r="4" fill="#FDA4AF"/>
+    <rect x="30" y="105" width="95" height="30" rx="6" fill="#881337" stroke="#FDA4AF" stroke-width="1.2"/>
+    <text x="77" y="125" fill="#FFFFFF" font-size="12" font-weight="800" font-family="sans-serif" text-anchor="middle">Nukleus</text>
+  </g>
+
+  <!-- Callout 3: Ribosom -->
+  <g>
+    <line x1="290" y1="130" x2="310" y2="70" stroke="#FDE047" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <rect x="270" y="45" width="80" height="24" rx="6" fill="#1E293B" stroke="#FDE047" stroke-width="1"/>
+    <text x="310" y="61" fill="#FDE047" font-size="11" font-weight="700" font-family="sans-serif" text-anchor="middle">Ribosom</text>
+  </g>
+
+  <!-- Title Badge -->
+  <g transform="translate(20, 20)">
+    <rect width="210" height="28" rx="8" fill="#4A3B8C" stroke="#06B6D4" stroke-width="1.5"/>
+    <text x="105" y="18" fill="#FFFFFF" font-size="12" font-weight="800" font-family="sans-serif" text-anchor="middle">
+      STRUKTUR ORGANEL SEL
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; /* scroll-behavior: auto; */ }
+        
+        .radio-custom:checked + div {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .radio-custom:checked + div .dot {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        /* Base64 Image CSS Fallback (Meskipun tidak ada di soal ini, ditambahkan untuk jaga-jaga) */
+        img[src^="data:image"] {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 hidden sm:block">Tes Matematika Dasar</h1>
+            <div class="w-20"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-2">Uji Kemampuanmu!</h2>
+            <p class="text-slate-600">Jawablah pertanyaan-pertanyaan di bawah ini. Anda dapat langsung menekan tombol "Periksa Jawaban" di akhir halaman meskipun belum mengisi semuanya.</p>
+        </div>
+
+        <form id="quiz-form" onsubmit="event.preventDefault();">
+            <div id="quiz-container" class="space-y-6">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="mt-10 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 text-center">
+                
+                <button id="btn-submit" type="button" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:scale-105">
+                    Periksa Jawaban
+                </button>
+
+                <div id="score-container" class="hidden mt-4">
+                    <h3 class="text-xl font-medium text-slate-500 mb-2">Nilai Akhir Anda:</h3>
+                    <div class="text-6xl font-black text-indigo-700 mb-4" id="final-score">100</div>
+                    <div id="score-message" class="text-lg font-medium mb-8"></div>
+                    
+                    <button id="btn-reset" type="button" class="w-full sm:w-auto px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2 -mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12">
+        <div class="text-center px-4">
+            <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                q: "Faktorisasi prima dari bilangan 60 adalah ...",
+                options: ["2 &times; 3 &times; 5", "2 &times; 2 &times; 3 &times; 5", "2 &times; 3 &times; 3 &times; 5", "2 &times; 2 &times; 2 &times; 5"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 2 &times; 2 &times; 3 &times; 5</b><br><br><b>Langkah Penyelesaian:</b><br>Mari kita buat pohon faktor dengan selalu membaginya dengan bilangan prima terkecil (2, 3, 5, dst):<br>&bull; 60 &divide; 2 = 30<br>&bull; 30 &divide; 2 = 15<br>&bull; 15 tidak bisa dibagi 2. Coba dibagi 3 &rarr; 15 &divide; 3 = 5.<br>&bull; Karena 5 sudah bilangan prima, proses berhenti.<br>Kumpulkan semua pembaginya: 2, 2, 3, dan 5. <br>Jadi, faktorisasi primanya = 2 &times; 2 &times; 3 &times; 5 (atau 2<sup>2</sup> &times; 3 &times; 5)."
+            },
+            {
+                q: "Bilangan prima adalah bilangan yang hanya memiliki dua faktor, yaitu ...",
+                options: ["0 dan bilangan itu sendiri", "1 dan bilangan genap", "1 dan bilangan itu sendiri", "Bilangan ganjil dan genap"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 1 dan bilangan itu sendiri</b><br><br><b>Konsep Dasar:</b><br>Bilangan prima adalah bilangan asli (lebih besar dari 1) yang sangat unik karena <b>tidak bisa dibagi habis oleh angka lain</b> selain angka 1 dan dirinya sendiri.<br>Contoh: 2, 3, 5, 7, 11.<br><i>Catatan: Angka 1 bukan bilangan prima karena ia hanya memiliki satu faktor (yaitu 1).</i>"
+            },
+            {
+                q: "Hasil dari operasi hitung -12 + 7 &times; (-3) adalah ...",
+                options: ["15", "-15", "33", "-33"],
+                ans: 3,
+                exp: "<b>Jawaban Benar: -33</b><br><br><b>Langkah Penyelesaian:</b><br>Ingat aturan <b>KABATAKU</b> (Kali, Bagi, Tambah, Kurang). Perkalian WAJIB dikerjakan terlebih dahulu sebelum penjumlahan!<br>1. Kerjakan perkalian: 7 &times; (-3) = -21.<br>2. Masukkan ke soal awal: -12 + (-21).<br>3. Punya hutang 12, lalu berhutang lagi 21. Total hutang menjadi -33.<br>Hasil akhirnya adalah <b>-33</b>."
+            },
+            {
+                q: "Estimasi atau perkiraan hasil yang paling mendekati dari perkalian 49 &times; 21 adalah ...",
+                options: ["800", "1.000", "1.200", "1.500"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 1.000</b><br><br><b>Langkah Penyelesaian (Taksiran):</b><br>Untuk mengestimasi, kita bulatkan angkanya ke puluhan terdekat agar mudah dihitung di kepala:<br>&bull; 49 dibulatkan ke atas menjadi <b>50</b> (karena angka satuannya 9 &ge; 5).<br>&bull; 21 dibulatkan ke bawah menjadi <b>20</b> (karena angka satuannya 1 &lt; 5).<br>Sekarang kalikan: 50 &times; 20 = <b>1.000</b>."
+            },
+            {
+                q: "Perbandingan atau rasio antara dua besaran dapat dinyatakan dalam bentuk paling sederhana. Rasio dari 45 menit terhadap 2 jam adalah ...",
+                options: ["3 : 8", "3 : 4", "9 : 20", "5 : 12"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: 3 : 8</b><br><br><b>Langkah Penyelesaian:</b><br>Syarat utama membuat perbandingan: <b>Satuannya wajib sama!</b><br>1. Ubah 2 jam menjadi menit: 2 &times; 60 = 120 menit.<br>2. Tulis perbandingannya: 45 : 120.<br>3. Sederhanakan! Keduanya bisa dibagi dengan angka 15.<br>&bull; 45 &divide; 15 = 3<br>&bull; 120 &divide; 15 = 8<br>Maka, bentuk paling sederhananya adalah <b>3 : 8</b>."
+            },
+            {
+                q: "Skala pada peta tertulis 1 : 500.000. Arti dari skala tersebut adalah ...",
+                options: ["Setiap 1 cm pada peta mewakili 500 cm jarak sebenarnya", "Setiap 1 cm pada peta mewakili 5.000 m jarak sebenarnya", "Setiap 1 cm pada peta mewakili 5 km jarak sebenarnya", "Setiap 1 cm pada peta mewakili 50 km jarak sebenarnya"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Setiap 1 cm pada peta mewakili 5 km jarak sebenarnya</b><br><br><b>Langkah Penyelesaian:</b><br>Skala peta selalu menggunakan satuan <i>Centimeter (cm)</i>. <br>1 : 500.000 artinya 1 cm di peta = 500.000 cm di dunia nyata.<br>Mari kita ubah 500.000 cm ke Kilometer (km):<br>&bull; Dari cm ke km itu naik 5 tangga, artinya dibagi 100.000 (coret 5 angka nol).<br>&bull; 500.000 cm = <b>5 km</b>.<br>Jadi, 1 cm mewakili 5 km jarak sebenarnya."
+            },
+            {
+                q: "Faktor Persekutuan Terbesar (FPB) dari bilangan 24 dan 36 adalah ...",
+                options: ["6", "12", "18", "24"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 12</b><br><br><b>Langkah Penyelesaian:</b><br>FPB adalah angka terbesar yang bisa membagi habis kedua bilangan tersebut.<br>&bull; Faktor (pembagi) 24: 1, 2, 3, 4, 6, 8, <b>12</b>, 24.<br>&bull; Faktor (pembagi) 36: 1, 2, 3, 4, 6, 9, <b>12</b>, 18, 36.<br>Angka kembar paling besar yang ada di kedua daftar tersebut adalah <b>12</b>."
+            },
+            {
+                q: "Kelipatan Persekutuan Terkecil (KPK) dari bilangan 12 dan 15 adalah ...",
+                options: ["30", "45", "60", "90"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 60</b><br><br><b>Langkah Penyelesaian:</b><br>KPK adalah titik temu pertama (terkecil) dari kelipatan dua bilangan.<br>&bull; Lompatan kelipatan 12: 12, 24, 36, 48, <b>60</b>, 72, ...<br>&bull; Lompatan kelipatan 15: 15, 30, 45, <b>60</b>, 75, ...<br>Angka kembar yang pertama kali muncul adalah <b>60</b>."
+            },
+            {
+                q: "Sifat asosiatif pada operasi penjumlahan ditunjukkan oleh persamaan ...",
+                options: ["a + b = b + a", "a &times; (b + c) = (a &times; b) + (a &times; c)", "(a + b) + c = a + (b + c)", "a + 0 = a"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: (a + b) + c = a + (b + c)</b><br><br><b>Konsep Dasar:</b><br>&bull; <b>Asosiatif (Pengelompokan):</b> Ditandai dengan pindahnya tanda kurung. Hasil penjumlahan akan sama saja meski yang dikelompokkan berbeda. <i>Contoh: (1+2)+3 = 1+(2+3)</i>.<br>&bull; <i>Opsi A:</i> Sifat Komutatif (Pertukaran).<br>&bull; <i>Opsi B:</i> Sifat Distributif (Penyebaran).<br>&bull; <i>Opsi D:</i> Sifat Identitas."
+            },
+            {
+                q: "Di antara kejadian berikut, yang merupakan contoh perbandingan senilai adalah ...",
+                options: ["Jumlah pekerja dengan waktu penyelesaian pembangunan jembatan", "Kecepatan mobil dengan waktu tempuh untuk jarak tertentu", "Jumlah buku yang dibeli dengan total harga yang harus dibayar", "Jumlah hewan ternak dengan waktu habisnya persediaan makanan"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Jumlah buku yang dibeli dengan total harga yang harus dibayar</b><br><br><b>Konsep Dasar:</b><br><b>Perbandingan Senilai</b> artinya searah: Jika hal yang satu BERTAMBAH BANYAK, hal yang lain juga akan ikut BERTAMBAH BESAR.<br>&bull; Logikanya: Semakin banyak buku yang kamu beli, otomatis uang yang harus kamu bayar juga semakin banyak.<br><i>Opsi A, B, dan D adalah perbandingan Berbalik Nilai (contoh: makin ngebut mobilnya, waktu sampainya justru makin sedikit/cepat).</i>"
+            },
+            {
+                q: "Di antara kejadian berikut, yang merupakan contoh perbandingan berbalik nilai adalah ...",
+                options: ["Banyaknya bensin yang dibutuhkan dengan jarak yang ditempuh kendaraan", "Jumlah tabungan dengan lama waktu menabung jika setoran tetap", "Banyaknya pekerja dengan waktu yang dibutuhkan untuk menyelesaikan pekerjaan", "Jumlah barang sejenis yang dibeli dengan jumlah uang yang dibayarkan"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Banyaknya pekerja dengan waktu yang dibutuhkan untuk menyelesaikan pekerjaan</b><br><br><b>Konsep Dasar:</b><br><b>Perbandingan Berbalik Nilai</b> artinya berlawanan: Jika satu hal NAIK/BERTAMBAH, hal pasangannya justru TURUN/BERKURANG.<br>&bull; Logikanya: Semakin banyak tukang (pekerja) yang ikut membangun rumah, waktu selesainya justru semakin cepat (sedikit waktu). Keduanya berlawanan arah."
+            },
+            {
+                q: "Bentuk sederhana dari perbandingan 75 : 105 adalah ...",
+                options: ["3 : 5", "5 : 7", "15 : 21", "25 : 35"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 5 : 7</b><br><br><b>Langkah Penyelesaian:</b><br>Untuk menyederhanakan, kita bagi kedua sisi dengan FPB-nya, yaitu 15.<br>Atau bagilah secara bertahap:<br>1. Sama-sama diakhiri angka 5, pasti bisa dibagi 5.<br>&nbsp;&nbsp;&nbsp;75 &divide; 5 = 15<br>&nbsp;&nbsp;&nbsp;105 &divide; 5 = 21<br>&nbsp;&nbsp;&nbsp;Rasio sementara: 15 : 21.<br>2. Coba bagi lagi dengan 3.<br>&nbsp;&nbsp;&nbsp;15 &divide; 3 = 5<br>&nbsp;&nbsp;&nbsp;21 &divide; 3 = 7<br>Rasio paling sederhana adalah <b>5 : 7</b>."
+            },
+            {
+                q: "Sifat distributif perkalian terhadap penjumlahan dinyatakan dengan rumus ...",
+                options: ["a &times; (b + c) = (a &times; b) + (a &times; c)", "a &times; (b - c) = (a &times; b) - (a &times; c)", "a + (b + c) = (a + b) + c", "a &times; b = b &times; a"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: a &times; (b + c) = (a &times; b) + (a &times; c)</b><br><br><b>Konsep Dasar:</b><br>Distributif artinya <i>menyebarkan</i>. Angka yang berada di luar kurung disebarkan dan dikalikan satu per satu ke setiap angka di dalam kurung (sering disebut hukum capit kepiting/air mancur).<br>Oleh karena soal meminta distributif terhadap <b>penjumlahan</b>, maka tanda penghubungnya adalah tanda tambah (+)."
+            },
+            {
+                q: "Estimasi hasil penjumlahan dari 12,4 + 8,7 dengan cara membulatkan ke satuan terdekat adalah ...",
+                options: ["20", "21", "22", "23"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 21</b><br><br><b>Langkah Penyelesaian:</b><br>Bulatkan angka desimalnya sebelum dijumlahkan:<br>&bull; <b>12,4</b> (angka di belakang koma adalah 4, kurang dari 5) &rarr; dibulatkan tetap ke bawah menjadi <b>12</b>.<br>&bull; <b>8,7</b> (angka di belakang koma adalah 7, lebih dari 5) &rarr; dibulatkan naik ke atas menjadi <b>9</b>.<br>Total penjumlahannya: 12 + 9 = <b>21</b>."
+            },
+            {
+                q: "Nilai dari bilangan berpangkat 2<sup>5</sup> adalah ...",
+                options: ["10", "25", "32", "64"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 32</b><br><br><b>Konsep Dasar:</b><br>Hati-hati, 2<sup>5</sup> <b>BUKAN</b> 2 &times; 5 = 10!<br>Berpangkat artinya mengalikan bilangan itu sendiri secara berulang sesuai jumlah pangkatnya.<br>2<sup>5</sup> = 2 &times; 2 &times; 2 &times; 2 &times; 2.<br>&bull; 2 &times; 2 = 4<br>&bull; 4 &times; 2 = 8<br>&bull; 8 &times; 2 = 16<br>&bull; 16 &times; 2 = <b>32</b>."
+            },
+            {
+                q: "Bilangan berikut yang merupakan kelipatan persekutuan dari 3 dan 4 adalah ...",
+                options: ["6", "8", "12", "15"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 12</b><br><br><b>Langkah Penyelesaian:</b><br>Kita cari angka yang ada di hasil perkalian 3 sekaligus ada di hasil perkalian 4.<br>&bull; Kelipatan 3: 3, 6, 9, <b>12</b>, 15, 18, ...<br>&bull; Kelipatan 4: 4, 8, <b>12</b>, 16, 20, ...<br>Angka 12 muncul di kedua barisan tersebut, sehingga 12 adalah kelipatan persekutuannya."
+            },
+            {
+                q: "Jika skala pada peta adalah 1 : 250.000, maka jarak 4 cm pada peta mewakili jarak sebenarnya sebesar ...",
+                options: ["1 km", "10 km", "100 km", "1.000 km"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 10 km</b><br><br><b>Langkah Penyelesaian:</b><br>Rumus: Jarak Sebenarnya = Jarak Peta &times; Skala<br>1. Kalikan terlebih dahulu: 4 &times; 250.000 = 1.000.000 cm.<br>2. Ubah satuan cm menjadi kilometer (km). Ingat, dari cm ke km coret 5 angka nol!<br>3. 1.000.000 cm &rarr; coret 5 nol &rarr; <b>10 km</b>."
+            },
+            {
+                q: "Manakah di antara bilangan berikut yang merupakan bilangan bulat negatif?",
+                options: ["0", "1/2", "-5", "-0,75"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: -5</b><br><br><b>Konsep Dasar:</b><br>Ciri-ciri Bilangan Bulat Negatif:<br>1. Memiliki tanda minus (-).<br>2. Harus <b>bulat</b>, artinya tidak boleh berbentuk pecahan biasa (seperti 1/2) atau pecahan desimal (seperti -0,75).<br>Oleh karena itu, -5 adalah satu-satunya jawaban yang memenuhi syarat (negatif dan utuh/bulat)."
+            },
+            {
+                q: "Hasil dari operasi pembagian dan pengurangan 150 &divide; (-5) - 10 adalah ...",
+                options: ["-40", "-20", "20", "40"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: -40</b><br><br><b>Langkah Penyelesaian:</b><br>Sesuai aturan hierarki KABATAKU, dahulukan operasi pembagian sebelum pengurangan!<br>1. Pembagian: 150 &divide; (-5) = -30 (Positif dibagi negatif hasilnya negatif).<br>2. Pengurangan: Masukkan kembali ke soal menjadi -30 - 10.<br>3. Kamu hutang 30, lalu ngutang lagi 10. Hutangmu bertambah jadi -40.<br>Hasil akhir: <b>-40</b>."
+            },
+            {
+                q: "Semua faktor dari bilangan 18 adalah ...",
+                options: ["1, 2, 3, 6, 9, 18", "2, 3, 6, 9", "1, 2, 3, 8, 18", "2, 3, 9, 18"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: 1, 2, 3, 6, 9, 18</b><br><br><b>Langkah Penyelesaian:</b><br>Faktor adalah angka-angka yang dapat membagi bilangan 18 sampai habis tak bersisa. Coba cari pasangan perkalian yang menghasilkan 18:<br>&bull; 1 &times; 18 = 18<br>&bull; 2 &times; 9 = 18<br>&bull; 3 &times; 6 = 18<br>Jika diurutkan dari yang terkecil, semua faktornya adalah 1, 2, 3, 6, 9, dan 18."
+            },
+            {
+                q: "Pada perbandingan senilai, jika nilai salah satu variabel bertambah, maka variabel yang lain akan ...",
+                options: ["Berkurang", "Tetap", "Bertambah", "Menjadi nol"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Bertambah</b><br><br><b>Konsep Dasar:</b><br>Ingat kata kuncinya: <b>Senilai = Searah</b>.<br>Jika satu sisi naik (bertambah), sisi lainnya PASTI akan ikut naik (bertambah). Begitu pula jika satu sisi turun, yang lain ikut turun.<br>Contoh: Semakin jauh jarak yang ditempuh motor, semakin banyak bensin yang dibutuhkan."
+            },
+            {
+                q: "Pada perbandingan berbalik nilai, jika nilai salah satu variabel bertambah, maka variabel yang lain akan ...",
+                options: ["Berkurang", "Bertambah", "Tetap", "Menjadi dua kali lipat"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Berkurang</b><br><br><b>Konsep Dasar:</b><br>Ingat kata kuncinya: <b>Berbalik Nilai = Berlawanan Arah</b>.<br>Jika satu sisi naik (bertambah besar), maka sisi pasangannya akan merespon dengan turun (berkurang).<br>Contoh: Semakin banyak orang yang memakan kue, maka porsi yang didapatkan setiap orang akan semakin kecil/berkurang."
+            },
+            {
+                q: "Bentuk desimal dari pecahan biasa 3/5 adalah ...",
+                options: ["0,3", "0,5", "0,6", "0,8"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 0,6</b><br><br><b>Langkah Penyelesaian:</b><br>Trik termudah mengubah pecahan ke desimal adalah mengubah penyebutnya (angka di bawah) menjadi 10, 100, atau 1.000.<br>1. Agar angka 5 menjadi 10, kita harus kalikan dengan 2.<br>2. Karena yang bawah dikali 2, yang atas juga wajib dikali 2 (biar adil).<br>&bull; Atas: 3 &times; 2 = 6<br>&bull; Bawah: 5 &times; 2 = 10<br>3. Menjadi pecahan 6/10. Karena per 10 (nolnya satu), berarti ada satu angka di belakang koma.<br>Hasilnya adalah <b>0,6</b>."
+            },
+            {
+                q: "Estimasi hasil pembagian dari 81,2 &divide; 8,9 dengan pembulatan ke satuan terdekat adalah ...",
+                options: ["8", "9", "10", "11"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 9</b><br><br><b>Langkah Penyelesaian:</b><br>Karena ini estimasi (perkiraan), bulatkan angkanya sebelum membagi!<br>&bull; <b>81,2</b> (angka di belakang koma 2 &lt; 5) &rarr; dibulatkan ke bawah jadi <b>81</b>.<br>&bull; <b>8,9</b> (angka di belakang koma 9 &ge; 5) &rarr; dibulatkan ke atas jadi <b>9</b>.<br>Selanjutnya lakukan pembagian: 81 &divide; 9 = <b>9</b>."
+            },
+            {
+                q: "Bilangan prima yang terletak di antara angka 10 dan 20 adalah ...",
+                options: ["11, 13, 15, 17, 19", "11, 13, 17, 19", "11, 15, 17, 19", "13, 17, 19"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 11, 13, 17, 19</b><br><br><b>Langkah Penyelesaian:</b><br>Mari kita periksa angka ganjil di rentang 10 sampai 20:<br>&bull; 11 &rarr; Hanya bisa dibagi 1 dan 11. (Prima &check;)<br>&bull; 13 &rarr; Hanya bisa dibagi 1 dan 13. (Prima &check;)<br>&bull; <b>15</b> &rarr; Bisa dibagi 3 dan 5. (Bukan Prima &cross;)<br>&bull; 17 &rarr; Hanya bisa dibagi 1 dan 17. (Prima &check;)<br>&bull; 19 &rarr; Hanya bisa dibagi 1 dan 19. (Prima &check;)<br>Maka, jawabannya adalah 11, 13, 17, dan 19."
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitBtn = document.getElementById('btn-submit');
+        const resetBtn = document.getElementById('btn-reset');
+        const form = document.getElementById('quiz-form');
+        const scoreContainer = document.getElementById('score-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessageEl = document.getElementById('score-message');
+
+        function initQuiz() {
+            quizContainer.innerHTML = '';
+            quizData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 transition-all';
+                qDiv.id = `question-box-${index}`;
+
+                let optionsHTML = '';
+                item.options.forEach((opt, optIndex) => {
+                    const letters = ['A', 'B', 'C', 'D'];
+                    optionsHTML += `
+                        <label class="relative flex items-center cursor-pointer group">
+                            <input type="radio" name="q${index}" value="${optIndex}" class="radio-custom sr-only peer" />
+                            <div class="w-full flex items-center p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-200 bg-slate-50 hover:bg-slate-100 transition-all peer-focus-visible:ring-2 ring-indigo-500">
+                                <div class="w-6 h-6 flex-shrink-0 rounded-full border-2 border-slate-300 mr-4 flex items-center justify-center bg-white transition-colors">
+                                    <div class="dot w-2 h-2 rounded-full transition-colors"></div>
+                                </div>
+                                <span class="font-semibold text-slate-500 mr-3">${letters[optIndex]}.</span>
+                                <span class="text-slate-700 font-medium">${opt}</span>
+                            </div>
+                        </label>
+                    `;
+                });
+
+                qDiv.innerHTML = `
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+                            ${index + 1}
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-800 leading-snug">${item.q}</h3>
+                    </div>
+                    <div class="space-y-3 pl-0 md:pl-12">
+                        ${optionsHTML}
+                    </div>
+                    <div id="explanation-${index}" class="hidden mt-6 pl-0 md:pl-12">
+                        <div class="p-5 rounded-xl text-sm md:text-base border-l-4"></div>
+                    </div>
+                `;
+                quizContainer.appendChild(qDiv);
+            });
+        }
+
+        submitBtn.addEventListener('click', () => {
+            let correctCount = 0;
+
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const expDiv = document.getElementById(`explanation-${index}`);
+                const expBox = expDiv.querySelector('div');
+                const qBox = document.getElementById(`question-box-${index}`);
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+
+                // Disable all inputs after check
+                inputs.forEach(input => input.disabled = true);
+
+                let isCorrect = false;
+                if (selectedOption) {
+                    if (parseInt(selectedOption.value) === item.ans) {
+                        isCorrect = true;
+                        correctCount++;
+                    }
+                }
+
+                // Tampilkan Kotak Pembahasan
+                expDiv.classList.remove('hidden');
+                
+                if (isCorrect) {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-green-50 border-green-500 text-green-900 leading-relaxed';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-green-700 font-bold mb-3 text-lg">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Tepat Sekali!
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-green-300', 'bg-green-50/30');
+                } else {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-red-50 border-red-500 text-red-900 leading-relaxed';
+                    let headerText = selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Anda Belum Menjawab';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-red-700 font-bold mb-3 text-lg">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            ${headerText}
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-red-300', 'bg-red-50/30');
+                }
+            });
+
+            // Kalkulasi skor dengan skala 100
+            const finalScore = Math.round((correctCount / quizData.length) * 100);
+            finalScoreEl.textContent = finalScore;
+
+            if (finalScore === 100) {
+                scoreMessageEl.innerHTML = "Luar biasa! Kamu menguasai seluruh materi ini dengan sempurna! 🌟<br>Pertahankan prestasimu!";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-green-600";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerHTML = "Kerja bagus! Sedikit lagi menuju nilai sempurna.🔥<br>Cek pembahasan di atas untuk materi yang terlewat.";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-indigo-600";
+            } else if (finalScore >= 60) {
+                scoreMessageEl.innerHTML = "Lumayan! Pelajari lagi konsep dasar dan pembahasannya ya agar lebih paham. 💪";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-yellow-600";
+            } else {
+                scoreMessageEl.innerHTML = "Jangan menyerah! Ayo baca lagi pembahasannya secara perlahan dan coba ulangi kuisnya. Buktikan kamu bisa! 🚀";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-red-500";
+            }
+
+            // Update UI State
+            submitBtn.classList.add('hidden');
+            scoreContainer.classList.remove('hidden');
+            
+            // Auto scroll to results
+            setTimeout(() => {
+                document.getElementById('score-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            
+            // Clean up UI modifications
+            quizData.forEach((item, index) => {
+                const expDiv = document.getElementById(`explanation-${index}`);
+                expDiv.classList.add('hidden');
+                
+                const qBox = document.getElementById(`question-box-${index}`);
+                qBox.classList.remove('border-green-300', 'bg-green-50/30', 'border-red-300', 'bg-red-50/30');
+
+                // Enable inputs again
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+                inputs.forEach(input => input.disabled = false);
+            });
+
+            // Reset UI states
+            scoreContainer.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Scroll up instantly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

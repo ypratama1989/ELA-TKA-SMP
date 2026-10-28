@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Relasi dan Fungsi</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        /* Styling kustom untuk animasi halus */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Menyembunyikan radio button asli agar bisa dikustomisasi */
+        input[type="radio"] {
+            display: none;
+        }
+        /* Styling untuk opsi jawaban (label) */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+        }
+        .option-label:hover {
+            background-color: #f8fafc; /* slate-50 */
+            border-color: #cbd5e1; /* slate-300 */
+        }
+        /* Styling saat opsi dipilih */
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        /* Custom radio circle */
+        .radio-circle {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.625rem;
+            height: 0.625rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 transition font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-gray-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-20"></div> <!-- Spacer untuk menyeimbangkan layout -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-3">Evaluasi: Relasi & Fungsi</h2>
+            <p class="text-gray-600">Kerjakan soal-soal di bawah ini. Anda dapat memeriksa jawaban kapan saja tanpa harus mengisi semua soal terlebih dahulu.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Soal-soal akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="mt-12 bg-white p-6 rounded-2xl shadow-sm border border-gray-200 text-center sticky bottom-4 z-40">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-lg">
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-6 fade-in">
+                    <div class="text-2xl font-bold text-gray-700 mb-2">Nilai Akhir Anda:</div>
+                    <div id="scoreDisplay" class="text-6xl font-extrabold text-blue-600 mb-6">0</div>
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+// Database soal dengan format entitas HTML untuk simbol matematika
+        const quizData = [
+            {
+                question: "Diberikan beberapa himpunan pasangan berurutan berikut:<br>(i) {(1, a), (2, a), (3, a), (4, a)}<br>(ii) {(1, a), (1, b), (1, c), (1, d)}<br>(iii) {(1, a), (2, b), (3, c), (4, d)}<br>(iv) {(1, a), (2, b), (2, c), (3, d)}<br><br>Himpunan pasangan berurutan yang merupakan fungsi (pemetaan) adalah...",
+                options: [
+                    "A. (i) dan (ii)",
+                    "B. (i) dan (iii)",
+                    "C. (ii) dan (iv)",
+                    "D. (iii) dan (iv)"
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "<strong>Ingat Aturan Fungsi:</strong> Dalam fungsi, himpunan yang di depan (domain) <strong>TIDAK BOLEH SELINGKUH</strong> (tidak boleh bercabang/muncul lebih dari sekali).<br><br>Mari kita cek yang depan saja (angka):<br>• (i) Domainnya: 1, 2, 3, 4 (Semua muncul sekali. <strong>Fungsi</strong> &check;)<br>• (ii) Domainnya: 1, 1, 1, 1 (Angka 1 muncul 4 kali. Bukan fungsi &cross;)<br>• (iii) Domainnya: 1, 2, 3, 4 (Semua muncul sekali. <strong>Fungsi</strong> &check;)<br>• (iv) Domainnya: 1, 2, 2, 3 (Angka 2 muncul dua kali. Bukan fungsi &cross;)<br><br>Jadi yang benar adalah <strong>(i) dan (iii)</strong>."
+            },
+            {
+                question: "Diketahui himpunan P = {1, 2, 3} dan Q = {a, b}. Diagram panah menunjukkan relasi dari P ke Q dengan memasangkan setiap anggota P ke \"a\". Domain, kodomain, dan range dari fungsi tersebut berturut-turut adalah...",
+                options: [
+                    "A. Domain = {1, 2, 3}, Kodomain = {a, b}, Range = {a}",
+                    "B. Domain = {a, b}, Kodomain = {1, 2, 3}, Range = {a}",
+                    "C. Domain = {1, 2, 3}, Kodomain = {a}, Range = {a, b}",
+                    "D. Domain = {a}, Kodomain = {a, b}, Range = {1, 2, 3}"
+                ],
+                correctAnswer: 0, // Index A
+                explanation: "Mari kita kenali istilahnya:<br>1. <strong>Domain (Daerah Asal):</strong> Semua anggota himpunan yang pertama (sebelah kiri). Di sini adalah himpunan P = {1, 2, 3}.<br>2. <strong>Kodomain (Daerah Kawan):</strong> Semua anggota himpunan yang kedua (sebelah kanan). Di sini adalah himpunan Q = {a, b}.<br>3. <strong>Range (Daerah Hasil):</strong> Anggota himpunan kedua (Q) yang <em>kena panah</em> atau punya pasangan. Karena semua anggota P dipasangkan ke \"a\", maka yang kena panah cuma \"a\". Jadi Range = {a}.<br><br>Jawaban yang paling pas adalah opsi A."
+            },
+            {
+                question: "Suatu fungsi didefinisikan dengan rumus f(x) = -3x + 7. Nilai dari f(-4) adalah...",
+                options: [
+                    "A. -19",
+                    "B. -5",
+                    "C. 11",
+                    "D. 19"
+                ],
+                correctAnswer: 3, // Index D
+                explanation: "Cara mengerjakannya sangat mudah! Arti dari <strong>f(-4)</strong> adalah kita mengganti setiap huruf <strong>x</strong> pada rumus dengan angka <strong>-4</strong>.<br><br>Langkah-langkah:<br>1. Rumus awal: f(x) = -3x + 7<br>2. Ganti x dengan (-4): f(-4) = -3 &times; (-4) + 7<br>3. Hitung perkalian dulu (negatif &times; negatif = positif): f(-4) = 12 + 7<br>4. Hasil akhir: f(-4) = <strong>19</strong>."
+            },
+            {
+                question: "Fungsi g ditentukan oleh rumus g(x) = 2x - 5. Jika domain dari fungsi g adalah D = {x | -1 &le; x &le; 3, x bilangan bulat}, maka range (daerah hasil) dari fungsi g adalah...",
+                options: [
+                    "A. {-7, -5, -3, -1, 1}",
+                    "B. {-7, -5, -3, -1}",
+                    "C. {-5, -3, -1, 1}",
+                    "D. {-7, -5, -3, 1}"
+                ],
+                correctAnswer: 0, // Index A
+                explanation: "Pertama, mari kita daftar dulu anggota domain (x) berdasarkan syarat -1 &le; x &le; 3 (dari -1 sampai 3).<br>Anggota Domain x = {-1, 0, 1, 2, 3}.<br><br>Sekarang masukkan satu-satu nilai x tersebut ke rumus <strong>g(x) = 2x - 5</strong>:<br>• Jika x = -1 &rarr; g(-1) = 2(-1) - 5 = -2 - 5 = <strong>-7</strong><br>• Jika x = 0 &rarr; g(0) = 2(0) - 5 = 0 - 5 = <strong>-5</strong><br>• Jika x = 1 &rarr; g(1) = 2(1) - 5 = 2 - 5 = <strong>-3</strong><br>• Jika x = 2 &rarr; g(2) = 2(2) - 5 = 4 - 5 = <strong>-1</strong><br>• Jika x = 3 &rarr; g(3) = 2(3) - 5 = 6 - 5 = <strong>1</strong><br><br>Kumpulan semua hasilnya adalah daerah hasil (Range) = {-7, -5, -3, -1, 1}."
+            },
+            {
+                question: "Diketahui fungsi linear f(x) = ax + b. Jika f(2) = 7 dan f(-1) = 1, maka rumus fungsi f(x) adalah...",
+                options: [
+                    "A. f(x) = 2x + 3",
+                    "B. f(x) = 3x + 1",
+                    "C. f(x) = 2x - 3",
+                    "D. f(x) = 3x - 1"
+                ],
+                correctAnswer: 0, // Index A
+                explanation: "Ini soal eliminasi! Mari kita buat dua persamaan dari f(x) = ax + b.<br><br>1. Dari <strong>f(2) = 7</strong> (ganti x dengan 2): 2a + b = 7<br>2. Dari <strong>f(-1) = 1</strong> (ganti x dengan -1): -a + b = 1<br><br>Kurangi persamaan atas dengan yang bawah untuk menghilangkan 'b':<br>(2a + b) - (-a + b) = 7 - 1<br>2a - (-a) = 6<br>3a = 6 &rarr; <strong>a = 2</strong><br><br>Sekarang cari 'b' dengan memasukkan a = 2 ke persamaan kedua:<br>-a + b = 1 &rarr; -(2) + b = 1 &rarr; b = 1 + 2 &rarr; <strong>b = 3</strong><br><br>Masukkan a = 2 dan b = 3 kembali ke rumus f(x) = ax + b, hasilnya: <strong>f(x) = 2x + 3</strong>."
+            },
+            {
+                question: "Perhatikan grafik fungsi linear yang melalui titik (0, 4) dan (2, 0) pada bidang Kartesius. Persamaan fungsi dari grafik tersebut adalah...",
+                options: [
+                    "A. f(x) = 2x + 4",
+                    "B. f(x) = -2x + 4",
+                    "C. f(x) = 2x - 4",
+                    "D. f(x) = -2x - 4"
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "Untuk mencari persamaan garis, kita butuh gradien (m) atau kemiringan.<br>Rumus gradien: m = (y<sub>2</sub> - y<sub>1</sub>) / (x<sub>2</sub> - x<sub>1</sub>).<br>Gunakan titik (0, 4) sebagai (x<sub>1</sub>, y<sub>1</sub>) dan (2, 0) sebagai (x<sub>2</sub>, y<sub>2</sub>).<br><br>m = (0 - 4) / (2 - 0) = -4 / 2 = <strong>-2</strong>. (Gradien negatif, grafiknya turun).<br><br>Garis tersebut memotong sumbu-y di titik (0, 4), yang berarti nilai konstantanya (huruf 'b' pada f(x) = mx + b) adalah 4.<br>Jadi persamaannya: f(x) = mx + b &rarr; <strong>f(x) = -2x + 4</strong>."
+            },
+            {
+                question: "Sebuah perusahaan taksi menetapkan tarif awal (buka pintu) sebesar Rp10.000,00 dan tarif per kilometer sebesar Rp4.500,00. Jika f(x) menyatakan tarif taksi untuk perjalanan sejauh x kilometer, model fungsi yang paling tepat menggambarkan situasi tersebut adalah...",
+                options: [
+                    "A. f(x) = 10.000x + 4.500",
+                    "B. f(x) = 4.500x + 10.000",
+                    "C. f(x) = 14.500x",
+                    "D. f(x) = 4.500x - 10.000"
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "Mari kita ubah cerita ini ke dalam bahasa matematika.<br>Tarif taksi terdiri dari dua hal:<br>1. <strong>Biaya tetap:</strong> Tarif awal yang dibayar sekali saat naik (tidak peduli jarak). Ini menjadi konstanta = 10.000.<br>2. <strong>Biaya berubah:</strong> Rp4.500 dikalikan jarak (x km). Ini menjadi variabel = 4.500x.<br><br>Jadi, total biaya f(x) adalah biaya per kilometer ditambah biaya awal:<br><strong>f(x) = 4.500x + 10.000</strong>."
+            },
+            {
+                question: "Seorang siswa menganalisis empat buah diagram panah yang menunjukkan relasi antara himpunan A dan B:<br>Pernyataan 1: \"Setiap fungsi pasti merupakan relasi.\"<br>Pernyataan 2: \"Setiap relasi pasti merupakan fungsi.\"<br>Pernyataan 3: \"Range dari suatu fungsi selalu merupakan himpunan bagian dari kodomain.\"<br>Pernyataan 4: \"Domain fungsi tidak boleh memiliki lebih dari satu pasangan di kodomain, tetapi boleh tidak memiliki pasangan.\"<br><br>Evaluasi dari keempat pernyataan di atas yang bernilai BENAR adalah...",
+                options: [
+                    "A. Pernyataan 1 dan 2",
+                    "B. Pernyataan 1 dan 3",
+                    "C. Pernyataan 2 dan 4",
+                    "D. Pernyataan 3 dan 4"
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "Mari kita bedah satu-satu:<br>• <strong>Pernyataan 1 (Benar):</strong> Fungsi itu ibarat tingkat lanjut dari relasi. Jadi, semua fungsi pasti bermula dari sebuah relasi.<br>• <strong>Pernyataan 2 (Salah):</strong> Relasi itu bebas (boleh bercabang, boleh jomblo). Fungsi punya aturan ketat (domain harus punya pasangan tepat satu). Jadi tidak semua relasi itu fungsi.<br>• <strong>Pernyataan 3 (Benar):</strong> Range adalah anggota kodomain yang terpilih. Tentu saja, karena terpilih dari kodomain, ia adalah bagian (subset) dari kodomain itu sendiri.<br>• <strong>Pernyataan 4 (Salah):</strong> Domain fungsi TIDAK BOLEH jomblo (tidak memiliki pasangan). Syarat fungsi adalah <em>semua</em> domain harus dipasangkan.<br><br>Jadi yang benar adalah 1 dan 3."
+            },
+            {
+                question: "Diketahui himpunan A = {x | 1 < x &le; 5, x bilangan prima} dan B = {x | x adalah faktor dari 6}. Banyaknya pemetaan yang mungkin dari himpunan A ke himpunan B adalah...",
+                options: [
+                    "A. 8",
+                    "B. 16",
+                    "C. 64",
+                    "D. 81"
+                ],
+                correctAnswer: 2, // Index C
+                explanation: "Langkah pertama, daftarkan anggota kedua himpunan dan hitung jumlah anggotanya (n).<br>1. Himpunan A: Bilangan prima antara 1 dan 5 (termasuk 5).<br>A = {2, 3, 5} &rarr; Jumlah anggota n(A) = 3.<br><br>2. Himpunan B: Faktor dari angka 6 (angka yang bisa membagi habis 6).<br>B = {1, 2, 3, 6} &rarr; Jumlah anggota n(B) = 4.<br><br>Rumus untuk mencari banyak pemetaan dari A ke B adalah <strong>n(B) pangkat n(A)</strong>.<br>(Banyaknya Kanan dipangkatkan Banyaknya Kiri)<br>Pemetaan = 4<sup>3</sup> = 4 &times; 4 &times; 4 = <strong>64</strong>."
+            },
+            {
+                question: "Diketahui fungsi f(x) = 4x - 3. Nilai dari f(a + 2) - f(a) adalah...",
+                options: [
+                    "A. 5",
+                    "B. 8",
+                    "C. 4a + 5",
+                    "D. 8a - 6"
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "Mari kita kerjakan pelan-pelan. Kita cari nilai f(a+2) dan f(a) dulu.<br><br>1. Ganti x dengan (a + 2):<br>f(a + 2) = 4(a + 2) - 3 = (4 &times; a) + (4 &times; 2) - 3 = 4a + 8 - 3 = <strong>4a + 5</strong>.<br><br>2. Ganti x dengan (a):<br>f(a) = 4(a) - 3 = <strong>4a - 3</strong>.<br><br>Sekarang kurangkan keduanya sesuai soal: [f(a + 2)] - [f(a)]<br>= (4a + 5) - (4a - 3)<br>= 4a + 5 - 4a + 3 (Hati-hati tanda minus ketemu minus jadi plus)<br>= (4a - 4a) + (5 + 3)<br>= 0 + 8 = <strong>8</strong>."
+            },
+            {
+                question: "Daerah hasil (range) dari fungsi f(x) = x<sup>2</sup> - 2x - 3 dengan domain D = {x | -1 &le; x &le; 3, x bilangan real} adalah...",
+                options: [
+                    "A. {y | -4 &le; y &le; 0, y bilangan real}",
+                    "B. {y | -4 &le; y &le; 5, y bilangan real}",
+                    "C. {y | -3 &le; y &le; 0, y bilangan real}",
+                    "D. {y | -3 &le; y &le; 5, y bilangan real}"
+                ],
+                correctAnswer: 0, // Index A (Telah dikoreksi)
+                explanation: "<em>Catatan: Kunci jawaban asli dari data diperbaiki ke logika matematika yang benar.</em><br><br>Fungsi f(x) = x<sup>2</sup> - 2x - 3 adalah parabola yang membuka ke atas (seperti bentuk mangkuk 'U'). Untuk mencari range (batas bawah dan atas grafik), kita harus mengecek 3 nilai:<br><br>1. <strong>Titik puncak (paling bawah):</strong> Terjadi saat x = -b / (2a) = -(-2) / (2&times;1) = 2/2 = 1. Karena x=1 ada di dalam rentang -1 sampai 3, kita hitung f(1).<br>f(1) = 1<sup>2</sup> - 2(1) - 3 = 1 - 2 - 3 = <strong>-4</strong> (Ini nilai minimum).<br><br>2. <strong>Ujung kiri domain (x = -1):</strong><br>f(-1) = (-1)<sup>2</sup> - 2(-1) - 3 = 1 + 2 - 3 = <strong>0</strong>.<br><br>3. <strong>Ujung kanan domain (x = 3):</strong><br>f(3) = 3<sup>2</sup> - 2(3) - 3 = 9 - 6 - 3 = <strong>0</strong>.<br><br>Dari perhitungan di atas, nilai paling kecil (terendah) adalah -4, dan nilai paling besar (tertinggi) adalah 0. Maka Range-nya adalah dari -4 sampai 0, atau ditulis <strong>-4 &le; y &le; 0</strong>."
+            },
+            {
+                question: "Fungsi h didefinisikan sebagai h(x) = 5 - 2x. Jika h(p) = -7, maka nilai p adalah...",
+                options: [
+                    "A. -6",
+                    "B. -1",
+                    "C. 6",
+                    "D. 12"
+                ],
+                correctAnswer: 2, // Index C
+                explanation: "Soal ini seperti tebak-tebakan kebalik! Biasanya kita memasukkan nilai x untuk cari hasil, sekarang hasilnya sudah tahu (-7), kita disuruh mencari x (atau p dalam soal ini).<br><br>1. Tulis rumusnya dengan p: h(p) = 5 - 2p<br>2. Kita tahu h(p) nilainya -7, jadi: 5 - 2p = -7<br>3. Pindahkan angka 5 ke sebelah kanan (jadi minus): -2p = -7 - 5<br>4. Hitung sebelah kanan: -2p = -12<br>5. Bagi keduanya dengan -2: p = -12 &divide; -2 (Negatif bagi negatif jadi positif)<br><strong>p = 6</strong>."
+            },
+            {
+                question: "Seorang siswa menyatakan bahwa fungsi f(x) = 5 / (x - 3) memiliki domain seluruh bilangan real karena setiap nilai x yang dimasukkan akan menghasilkan nilai f(x). Evaluasilah pernyataan siswa tersebut!",
+                options: [
+                    "A. Pernyataan benar, karena fungsi pecahan selalu memiliki domain seluruh bilangan real.",
+                    "B. Pernyataan salah, karena untuk x = 3, penyebut menjadi 0 sehingga nilai f(3) tidak terdefinisi. Domain seharusnya x tidak sama dengan 3.",
+                    "C. Pernyataan salah, karena domain seharusnya hanya bilangan bulat positif saja.",
+                    "D. Pernyataan benar, karena nilai x = 3 menghasilkan f(3) = 0."
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "Di dunia matematika, ada satu dosa besar yang tidak boleh dilanggar: <strong>Membagi angka dengan NOL</strong> (hasilnya tidak terdefinisi/error kalkulator!).<br><br>Pada bentuk pecahan f(x) = 5 / (x - 3), bagian bawahnya (penyebut) adalah (x - 3). Bagian ini <strong>tidak boleh sama dengan 0</strong>.<br><br>Kapan dia jadi 0? Yaitu saat x = 3 (karena 3 - 3 = 0).<br>Jika siswa tadi memasukkan angka 3, jadinya f(3) = 5 / 0 (Error!).<br><br>Jadi, pernyataan siswa itu SALAH. Seharusnya bilangannya bisa apa saja, <em>kecuali</em> angka 3."
+            },
+            {
+                question: "Himpunan pasangan berurutan yang menunjukkan korespondensi satu-satu adalah...",
+                options: [
+                    "A. {(1, p), (2, q), (3, p), (4, r)}",
+                    "B. {(1, p), (2, q), (3, r), (4, s)}",
+                    "C. {(1, p), (2, p), (3, p), (4, p)}",
+                    "D. {(1, p), (2, q), (3, r), (3, s)}"
+                ],
+                correctAnswer: 1, // Index B
+                explanation: "Syarat <strong>korespondensi satu-satu (pasangan sempurna)</strong> sangat ketat:<br>1. Domain (angka sebelah kiri) tidak boleh ada yang berulang.<br>2. Kodomain (huruf sebelah kanan) juga <strong>TIDAK BOLEH ADA YANG BERULANG</strong>.<br><br>Mari kita analisis:<br>• A: Huruf 'p' berulang dipakai oleh 1 dan 3. (Bukan)<br>• <strong>B: Angka kiri (1,2,3,4) beda semua. Huruf kanan (p,q,r,s) beda semua. (Benar!)</strong><br>• C: Huruf 'p' diborong semua. (Bukan)<br>• D: Angka '3' berulang (bercabang ke r dan s). (Bukan)"
+            },
+            {
+                question: "Suatu tangki air berisi 500 liter air. Air dialirkan keluar dengan debit konstan 5 liter per menit. Jika V(t) menyatakan volume air tersisa di dalam tangki setelah t menit, maka rumus fungsi V(t) dan domain logis untuk t agar tangki tidak kosong (negatif) adalah...",
+                options: [
+                    "A. V(t) = 500 - 5t dengan domain 0 &le; t &le; 100",
+                    "B. V(t) = 500 + 5t dengan domain t &ge; 0",
+                    "C. V(t) = 5t - 500 dengan domain t &ge; 100",
+                    "D. V(t) = 500 - 5t dengan domain t &ge; 0"
+                ],
+                correctAnswer: 0, // Index A
+                explanation: "Kita terjemahkan dari bahasa Indonesia ke Matematika:<br>Volume awal = 500.<br>Berkurang (bocor) 5 liter setiap menit (t).<br>Rumus sisa air: <strong>V(t) = 500 - 5t</strong>.<br><br>Sekarang mencari domain (waktu t yang logis).<br>1. Waktu tidak mungkin mundur, jadi t &ge; 0 (minimal 0 menit).<br>2. Air dalam tangki tidak mungkin minus. Artinya V(t) &ge; 0.<br>500 - 5t &ge; 0<br>500 &ge; 5t<br>100 &ge; t (Waktu maksimal adalah 100 menit, saat itu tangki persis habis).<br><br>Gabungkan syarat waktu: Dari 0 menit sampai 100 menit (<strong>0 &le; t &le; 100</strong>)."
+            },
+            {
+                question: "Dua penyedia jasa internet menawarkan paket bulanan:<br>- Provider Alfa: Biaya langganan tetap Rp50.000,00 ditambah Rp2.000,00 per GB data yang digunakan.<br>- Provider Beta: Tanpa biaya langganan tetap, tetapi biaya per GB data yang digunakan adalah Rp4.500,00.<br><br>Evaluasilah pada penggunaan kuota berapa GB kedua provider tersebut akan mengenakan total biaya bulanan yang sama!",
+                options: [
+                    "A. 10 GB",
+                    "B. 15 GB",
+                    "C. 20 GB",
+                    "D. 25 GB"
+                ],
+                correctAnswer: 2, // Index C
+                explanation: "Kita buat dulu rumus biayanya. Misal x adalah jumlah kuota (GB).<br>• Rumus biaya Alfa: f(x) = 50.000 + 2.000x<br>• Rumus biaya Beta: g(x) = 0 + 4.500x (karena tidak ada biaya tetap)<br><br>Soal meminta mencari kapan biaya mereka SAMA. Jadi:<br>Biaya Alfa = Biaya Beta<br>50.000 + 2.000x = 4.500x<br><br>Pindahkan yang ada huruf 'x' ke satu sisi (kanan agar positif):<br>50.000 = 4.500x - 2.000x<br>50.000 = 2.500x<br>x = 50.000 &divide; 2.500<br><strong>x = 20</strong>.<br><br>Jadi, saat memakai 20 GB, kedua provider akan menagih biaya yang sama (Rp90.000)."
+            },
+            {
+                question: "Diketahui fungsi f(x) = px + q. Jika grafik fungsi tersebut sejajar dengan garis y = 3x - 5 dan memotong sumbu-y di titik (0, 4), maka rumus fungsi f(x) adalah...",
+                options: [
+                    "A. f(x) = 3x + 4",
+                    "B. f(x) = -3x + 4",
+                    "C. f(x) = 3x - 4",
+                    "D. f(x) = 4x + 3"
+                ],
+                correctAnswer: 0, // Index A
+                explanation: "Fungsi linear f(x) = px + q itu sama bentuknya dengan y = mx + c. 'p' adalah gradien (kemiringan), dan 'q' adalah titik potong dengan sumbu-y.<br><br>1. <strong>Kata kunci \"Sejajar\":</strong> Dua garis yang sejajar pasti kemiringannya sama. Garis referensinya y = 3x - 5 memiliki kemiringan 3 (angka depan x). Maka, nilai gradien p untuk fungsi f(x) juga harus = <strong>3</strong>.<br><br>2. <strong>Kata kunci \"Memotong sumbu-y di (0, 4)\":</strong> Artinya saat x=0, y=4. Ini langsung memberi tahu kita bahwa nilai q (konstanta belakang) adalah <strong>4</strong>.<br><br>Gabungkan p=3 dan q=4 ke dalam rumus awal: f(x) = px + q menjadi <strong>f(x) = 3x + 4</strong>."
+            },
+            {
+                question: "Perhatikan diagram panah berikut:<br>Himpunan A = {2, 3, 4}<br>Himpunan B = {4, 6, 8, 10}<br>Relasi dari A ke B adalah \"setengah dari\".<br>Siswa A menyimpulkan relasi ini adalah fungsi, sedangkan Siswa B menyimpulkan relasi ini bukan fungsi karena ada anggota B (yaitu 10) yang tidak memiliki pasangan di A.<br><br>Evaluasilah kesimpulan kedua siswa tersebut!",
+                options: [
+                    "A. Siswa A benar karena setiap anggota A memiliki tepat satu pasangan di B. Siswa B salah dalam memahami syarat fungsi.",
+                    "B. Siswa B benar karena semua anggota di kodomain (B) harus memiliki pasangan agar disebut fungsi.",
+                    "C. Kedua siswa salah karena relasi \"setengah dari\" dari A ke B tidak dapat digambarkan.",
+                    "D. Siswa A salah karena angka 4 di himpunan A berpasangan dengan 8, yang berarti bukan \"setengah dari\"."
+                ],
+                correctAnswer: 0, // Index A
+                explanation: "Mari kita buktikan relasi \"Setengah dari\" dari A ke B:<br>• 2 adalah setengah dari 4. Pasangan: (2 &rarr; 4)<br>• 3 adalah setengah dari 6. Pasangan: (3 &rarr; 6)<br>• 4 adalah setengah dari 8. Pasangan: (4 &rarr; 8)<br><br>Coba perhatikan anggota himpunan A (kiri). Angka 2, 3, dan 4 semua punya pasangan dan <strong>tidak ada yang pasangannya dua (tidak bercabang)</strong>. Berarti ini adalah <strong>FUNGSI</strong>.<br><br>Lalu bagaimana dengan angka 10 di himpunan B yang jomblo? Tidak masalah! Syarat fungsi HANYA mengikat himpunan asal (domain/kiri). Himpunan tujuan (kodomain/kanan) bebas meskipun ada sisa. Kesimpulan: Siswa A yang benar memahaminya."
+            },
+            {
+                question: "Jika f(x) = 2x<sup>2</sup> - 3x + 1, maka nilai dari f(3) - f(1) adalah...",
+                options: [
+                    "A. 10",
+                    "B. 9",
+                    "C. 8",
+                    "D. 7"
+                ],
+                correctAnswer: 0, // Index A (Telah dikoreksi)
+                explanation: "<em>Catatan: Kunci jawaban asli diperbaiki. Berdasarkan hitungan, hasilnya adalah 10 (Opsi A).</em><br><br>Kita hitung bagiannya satu per satu dengan hati-hati.<br><br>1. Cari nilai f(3) (Ganti x dengan 3):<br>f(3) = 2(3)<sup>2</sup> - 3(3) + 1<br>f(3) = 2(9) - 9 + 1<br>f(3) = 18 - 9 + 1 = <strong>10</strong>.<br><br>2. Cari nilai f(1) (Ganti x dengan 1):<br>f(1) = 2(1)<sup>2</sup> - 3(1) + 1<br>f(1) = 2(1) - 3 + 1<br>f(1) = 2 - 3 + 1 = <strong>0</strong>.<br><br>Langkah terakhir, kurangkan hasil keduanya sesuai soal: f(3) - f(1)<br>= 10 - 0 = <strong>10</strong>."
+            },
+            {
+                question: "Dua buah grafik digambarkan pada bidang koordinat:<br>Grafik I: Berupa garis lurus vertikal x = 3.<br>Grafik II: Berupa garis lurus horizontal y = 3.<br>Evaluasilah apakah kedua grafik tersebut merepresentasikan suatu fungsi y terhadap x!",
+                options: [
+                    "A. Kedua grafik merupakan fungsi karena keduanya berupa garis lurus.",
+                    "B. Hanya Grafik I yang merupakan fungsi karena setiap nilai x memiliki pasangan.",
+                    "C. Hanya Grafik II yang merupakan fungsi karena untuk satu nilai x hanya memiliki tepat satu nilai y (memenuhi uji garis vertikal).",
+                    "D. Kedua grafik bukan merupakan fungsi."
+                ],
+                correctAnswer: 2, // Index C
+                explanation: "Cara paling mudah menguji grafik fungsi pada bidang kartesius adalah dengan <strong>Uji Garis Vertikal (Uji Penggaris Tegak)</strong>. Bayangkan meletakkan penggaris tegak lalu geser dari kiri ke kanan. Jika penggaris itu memotong grafik di LEBIH DARI SATU titik secara bersamaan, maka itu <strong>Bukan Fungsi</strong>.<br><br>• <strong>Grafik I (x = 3):</strong> Ini adalah garis vertikal (berdiri tegak) di angka 3 pada sumbu x. Nilai x=3 memiliki jutaan nilai y (bercabang sangat banyak). Jika diuji pakai penggaris tegak, ya berhimpit! Memotong tak hingga titik. <strong>Bukan Fungsi</strong>.<br>• <strong>Grafik II (y = 3):</strong> Ini adalah garis mendatar pada ketinggian 3. Jika kita geser penggaris tegak dari kiri ke kanan, penggaris selalu memotong garis ini di <strong>tepat satu titik</strong> di mana saja posisinya. <strong>Ini Fungsi (Fungsi Konstan)</strong>.<br><br>Oleh karena itu, hanya Grafik II yang merupakan fungsi."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; // Kosongkan kontainer
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6 relative overflow-hidden group">
+                        <!-- Pita nomor indikator -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl opacity-80"></div>
+                        
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2rem] h-8 rounded-lg bg-blue-100 text-blue-700 font-bold mr-3 text-sm md:text-base">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-xl font-medium text-gray-800 leading-relaxed pt-0.5">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3 ml-0 md:ml-11">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-gray-700 text-base md:text-lg select-none">
+                                        <div class="radio-circle"></div>
+                                        <span>${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Area Pembahasan (Hidden default) -->
+                        <div id="explanation_${index}" class="hidden mt-6 ml-0 md:ml-11 p-5 rounded-xl border fade-in text-sm md:text-base">
+                            <!-- Konten diisi oleh JS saat cek jawaban -->
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        // Panggil fungsi render saat halaman dimuat
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            let answered = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Bekukan semua input radio agar tidak bisa diubah setelah periksa
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                
+                // Menentukan UI pembahasan berdasarkan jawaban benar/salah/kosong
+                let isCorrect = false;
+                let statusText = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    answered++;
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusText = "JAWABAN BENAR";
+                        bgClass = "bg-green-50";
+                        borderClass = "border-green-400";
+                        textClass = "text-green-800";
+                    } else {
+                        statusText = "JAWABAN SALAH";
+                        bgClass = "bg-red-50";
+                        borderClass = "border-red-400";
+                        textClass = "text-red-800";
+                        
+                        // Highlight opsi yang benar pada labelnya
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5"; // emerald-50
+                        correctLabel.style.borderColor = "#10b981"; // emerald-500
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        // Tambah indikator centang pada teksnya secara dinamis
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2">(&check; Jawaban Tepat)</span>`;
+                    }
+                } else {
+                    // Jika tidak dijawab
+                    statusText = "TIDAK DIJAWAB";
+                    bgClass = "bg-orange-50";
+                    borderClass = "border-orange-400";
+                    textClass = "text-orange-800";
+                    
+                    // Highlight opsi yang benar
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-green-600 font-bold ml-2">(&check; Jawaban Tepat)</span>`;
+                }
+
+                // Injeksi konten HTML ke div penjelasan dan tampilkan
+                explanationDiv.innerHTML = `
+                    <div class="font-bold mb-2 pb-2 border-b ${borderClass} flex items-center">
+                        ${isCorrect ? `<svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                                   : `<svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`}
+                        ${statusText}
+                    </div>
+                    <div class="leading-relaxed mt-2 text-gray-700">
+                        ${q.explanation}
+                    </div>
+                `;
+                explanationDiv.className = `mt-6 ml-0 md:ml-11 p-5 rounded-xl border ${bgClass} ${borderClass} ${textClass} fade-in text-sm md:text-base block`;
+            });
+
+            // Tampilkan Skor Akhir (Dibulatkan)
+            scoreDisplay.innerText = Math.round(score);
+            
+            // Ubah warna text skor berdasarkan nilai
+            scoreDisplay.className = "text-6xl font-extrabold mb-6 transition-colors duration-500 ";
+            if(score >= 80) scoreDisplay.className += "text-green-600";
+            else if(score >= 60) scoreDisplay.className += "text-blue-600";
+            else if(score >= 40) scoreDisplay.className += "text-orange-500";
+            else scoreDisplay.className += "text-red-600";
+
+            // Atur visibilitas tombol
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Scroll otomatis perlahan ke bagian skor agar user langsung lihat hasilnya
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            // Reset form input
+            quizForm.reset();
+            
+            // Karena kita manipulasi inline style DOM pada label, cara termudah dan terbersih
+            // untuk reset UI secara utuh adalah dengan me-render ulang DOM soalnya.
+            renderQuiz();
+
+            // Sembunyikan area skor dan tampilkan kembali tombol cek
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+
+            // Scroll ke puncak form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

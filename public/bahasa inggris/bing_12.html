@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Bahasa Inggris</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .reading-text {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0ea5e9;
+        }
+        .explanation {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #2563eb;
+        }
+        .custom-radio {
+            accent-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header & Back Button -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-xl font-bold text-blue-700 hidden sm:block">Latihan Soal Reading</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+            
+            <div class="text-center mb-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Uji Pemahaman Bahasa Inggris</h2>
+                <p class="text-gray-500">Kerjakan soal-soal di bawah ini berdasarkan teks yang disediakan. Kamu bisa langsung memeriksa jawabanmu!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <!-- TEXT 1 -->
+                <div class="reading-text p-5 rounded-r-lg mb-6 text-sm sm:text-base whitespace-pre-line text-gray-700">
+                    <span class="font-bold text-blue-800 block mb-2"><i class="fa-solid fa-book-open mr-2"></i>Read the text below to answer questions 1 to 4.</span>
+                    <strong>ANNOUNCEMENT</strong>
+                    To: All Students of SMP Harapan Bangsa
+                    To celebrate our school’s 25th Anniversary, the Student Council (OSIS) is organizing "Creative Recycling Art Exhibition."
+                    
+                    Date: Monday – Wednesday, October 23 – 25, 2023
+                    Time: 09:00 AM – 03:00 PM daily
+                    Venue: School Main Hall
+                    
+                    Rules for Participants:
+                    1. All art pieces must be made from at least 70% recycled or waste materials.
+                    2. Each class must submit at least one collaborative art piece.
+                    3. Submissions must be registered and delivered to the OSIS room by Friday, October 20, 2023, at 02:00 PM.
+                    
+                    The three most creative and meaningful artworks will win cash prizes and certificates from the Principal. For registration forms and further details, please contact Sarah (Class IX-A).
+                    
+                    *Let’s turn trash into treasure!*
+                </div>
+
+                <!-- Soal 1 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">1. What is the main purpose of the announcement?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. To invite students to attend the school's anniversary party.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. To inform students about a creative recycling art exhibition.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. To explain how to recycle waste materials into valuable art.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. To announce the winners of the art competition.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Yuk, perhatikan kalimat pertama pengumuman ini! Tertulis *"the Student Council (OSIS) is organizing Creative Recycling Art Exhibition"*. Ini berarti tujuan utamanya adalah memberi tahu (to inform) seluruh siswa tentang adanya pameran seni daur ulang, bukan sekadar mengundang ke pesta ulang tahun atau mengumumkan pemenang.
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="question-block mb-8" data-answer="C">
+                    <p class="font-semibold text-lg mb-3">2. What must a class do to participate in the exhibition?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Submit individual artworks from every student in the class.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Register their artwork on Monday, October 23, 2023.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Create a joint artwork made mostly of recycled materials.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Contact the Principal directly to get the registration form.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Coba lihat Aturan (Rules) nomor 1 dan 2. Aturan nomor 1 meminta karya dibuat minimal 70% dari barang bekas (*mostly recycled*). Aturan nomor 2 mewajibkan karya dibuat secara kolaboratif/bersama-sama (*joint artwork*), bukan per individu. Oleh karena itu, opsi C adalah gabungan dari syarat nomor 1 dan 2 yang paling tepat!
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">3. Why did the organizer set the submission deadline on October 20, three days before the exhibition starts?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. To give the judges more time to choose the winners before the event.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. To allow the committee enough time to organize and set up the exhibition hall.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. To prevent students from changing their minds about participating.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. To make sure the materials do not rot or get damaged before the event.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Bayangkan jika kamu menjadi panitia. Jika semua karya seni masuk tepat pada hari H pameran, pasti akan sangat berantakan, kan? Panitia membutuhkan waktu (jeda 3 hari) secara logis untuk mendaftar, mengelompokkan, dan menata karya-karya tersebut di Aula Utama (*School Main Hall*) agar pameran terlihat rapi saat dibuka.
+                    </div>
+                </div>
+
+                <!-- Soal 4 -->
+                <div class="question-block mb-12" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">4. Evaluate the following scenario: Class IX-B submits an incredibly beautiful sculpture made of 50% plastic bottles and 50% brand-new clay on October 20 at 01:00 PM. Based on the rules, what is the most likely decision the committee will make?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Accept the submission because it was submitted before the deadline.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Reject the submission because it does not meet the recycled material percentage requirement.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Accept the submission but reduce their final score by 20%.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Reject the submission because clay is not a collaborative material.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Mari kita lakukan perhitungan matematika sederhana! Aturan nomor 1 meminta syarat *minimal 70%* bahan daur ulang. Karya Kelas IX-B hanya mengandung 50% bahan daur ulang (botol plastik), sedangkan sisanya bahan baru. Karena 50% lebih kecil dari 70%, karya ini melanggar syarat utama, sehingga panitia harus menolaknya walaupun bentuknya sangat indah.
+                    </div>
+                </div>
+
+                <!-- TEXT 2 -->
+                <div class="reading-text p-5 rounded-r-lg mb-6 text-sm sm:text-base whitespace-pre-line text-gray-700">
+                    <span class="font-bold text-blue-800 block mb-2"><i class="fa-solid fa-pills mr-2"></i>Read the text below to answer questions 5 to 8.</span>
+                    ==================================================
+                    <strong>NUTRIPLEX KIDS</strong>
+                    Multivitamin Syrup
+                    ==================================================
+                    Supplement Facts:
+                    Serving Size: 5 ml (1 teaspoon)
+                    Servings Per Bottle: 24
+                    Amount Per Serving:
+                    - Vitamin A: 1500 IU
+                    - Vitamin C: 60 mg
+                    - Vitamin D3: 400 IU
+                    - Zinc: 5 mg
+                    
+                    Indications:
+                    Helps support healthy growth, bone development, and immune system function in children.
+                    
+                    Directions for Use:
+                    - Children 1 - 3 years: 1/2 teaspoon once daily.
+                    - Children 4 - 12 years: 1 teaspoon once daily.
+                    - Under 1 year: Consult a physician.
+                    
+                    Storage:
+                    Store in a cool, dry place below 30&deg;C. Keep away from direct sunlight. Keep out of reach of children.
+                    ==================================================
+                </div>
+
+                <!-- Soal 5 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">5. What is the primary benefit of consuming Nutriplex Kids?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. To cure severe bacterial infections in children.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. To support children's growth and immune system.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. To replace daily meals for children under 1 year.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. To reduce body temperature during a high fever.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Untuk mencari manfaat atau fungsi obat/vitamin, selalu cari bagian "Indications" (Indikasi). Di sana tertulis jelas: *"Helps support healthy growth, bone development, and immune system..."* yang artinya membantu mendukung pertumbuhan dan sistem kekebalan tubuh anak. Ingat, ini adalah vitamin pendukung, bukan obat untuk menyembuhkan infeksi atau demam!
+                    </div>
+                </div>
+
+                <!-- Soal 6 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">6. If a mother has a 2-year-old child and a 5-year-old child, how much syrup will she use in total each day for both children?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. 5 ml</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. 7.5 ml</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. 10 ml</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. 15 ml</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Ayo kita hitung bersama dengan teliti! <br>
+                        1. Anak usia 2 tahun (masuk kelompok 1-3 tahun) dosisnya &frac12; sendok teh. Karena 1 sendok teh = 5 ml, maka &frac12; sendok teh = 2,5 ml.<br>
+                        2. Anak usia 5 tahun (masuk kelompok 4-12 tahun) dosisnya 1 sendok teh = 5 ml.<br>
+                        Jumlahkan keduanya: 2,5 ml + 5 ml = <strong>7,5 ml</strong>. Mudah kan?
+                    </div>
+                </div>
+
+                <!-- Soal 7 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">7. Why is there a specific warning "Under 1 year: Consult a physician"?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Because infants under 1 year do not need vitamins at all.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. To prevent parents from giving incorrect dosages to vulnerable infants.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Because the syrup contains toxic substances for babies.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. To make sure the product is only sold to medical professionals.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Bayi di bawah usia 1 tahun (infant) memiliki tubuh dan organ pencernaan yang masih sangat rentan (vulnerable). Produsen obat memberikan peringatan ini agar orang tua tidak sembarangan menebak dosis. Jika salah dosis, bisa membahayakan bayi. Oleh karena itu, harus berkonsultasi dulu dengan dokter (physician).
+                    </div>
+                </div>
+
+                <!-- Soal 8 -->
+                <div class="question-block mb-12" data-answer="C">
+                    <p class="font-semibold text-lg mb-3">8. A father kept a bottle of Nutriplex Kids on a sunny windowsill for two weeks. The syrup changed color and became cloudy. What is the most responsible evaluation of this situation?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. The syrup is still safe to consume because the expiration date has not passed.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. The syrup should be shaken well so the color returns to normal.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. The syrup should be discarded because improper storage has likely degraded its quality.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. The syrup can be given to children but only at half the recommended dosage.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Di bagian "Storage" tertera aturan penting: *"Keep away from direct sunlight"* (Jauhkan dari paparan sinar matahari langsung). Ayah tersebut menyimpannya di ambang jendela yang terkena sinar matahari selama 2 minggu, menyebabkan warna berubah dan keruh. Ini adalah tanda reaksi kimia bahwa struktur vitamin telah rusak (degraded). Sangat berbahaya jika dikonsumsi, sehingga tindakan yang benar adalah membuangnya (discarded).
+                    </div>
+                </div>
+
+                <!-- TEXT 3 -->
+                <div class="reading-text p-5 rounded-r-lg mb-6 text-sm sm:text-base whitespace-pre-line text-gray-700">
+                    <span class="font-bold text-blue-800 block mb-2"><i class="fa-solid fa-message mr-2"></i>Read the text below to answer questions 9 to 12.</span>
+                    To: Rian
+                    
+                    Hey Rian, I’m really sorry, but I have to reschedule our study group session today. My mother suddenly had to go to the clinic because her blood pressure went up, and I need to accompany her.
+                    
+                    Can we meet tomorrow (Thursday) at the same time (04:00 PM) at my house instead? Let me know if you are free. Thanks for understanding!
+                    
+                    - Dani
+                </div>
+
+                <!-- Soal 9 -->
+                <div class="question-block mb-8" data-answer="C">
+                    <p class="font-semibold text-lg mb-3">9. Why did Dani send the message to Rian?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. To ask Rian to accompany his mother to the clinic.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. To cancel the study group session permanently.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. To propose a new time and place for their study group.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. To invite Rian to visit his mother at the clinic.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Kata kunci di paragraf pertama adalah *"reschedule"* yang artinya menjadwalkan ulang. Dani tidak membatalkan secara permanen, melainkan di paragraf kedua ia mengusulkan waktu baru (Besok, Kamis jam 4 sore) dan tempat baru (di rumahnya). Jadi ia memproposalkan jadwal yang baru.
+                    </div>
+                </div>
+
+                <!-- Soal 10 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">10. What is Rian expected to do immediately after receiving the message?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Go to Dani's house at 04:00 PM today.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Reply to Dani to confirm if he can make it tomorrow.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Visit Dani's mother at the clinic.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Postpone his own doctor's appointment.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Perhatikan kalimat terakhir Dani: *"Let me know if you are free."* (Beri tahu aku ya kalau kamu ada waktu kosong). Kalimat ini adalah sebuah instruksi langsung kepada Rian untuk membalas pesan dan mengonfirmasi apakah ia bisa ikut belajar kelompok besok atau tidak.
+                    </div>
+                </div>
+
+                <!-- Soal 11 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">11. What can be inferred about Dani's character from the message?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. He is irresponsible because he cancels plans at the last minute.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. He is a caring son who prioritizes his family's health.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. He is lazy and uses his mother's condition as an excuse.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. He is disorganized and easily forgets his promises.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Kita bisa menyimpulkan sifat seseorang dari tindakannya. Dani rela membatalkan rencana belajarnya demi mengantar dan menemani ibunya yang sakit darah tinggi ke klinik. Ini menunjukkan bahwa Dani adalah anak yang peduli (*caring son*) dan memprioritaskan kesehatan keluarganya di atas segalanya.
+                    </div>
+                </div>
+
+                <!-- Soal 12 -->
+                <div class="question-block mb-12" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">12. Evaluate the urgency and tone of Dani's message. Which statement is the most accurate?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. The message is formal and demanding, showing that Dani does not value Rian's time.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. The message is highly urgent but polite, explaining a genuine emergency while offering a clear alternative.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. The message is casual and indifferent, indicating that the study group is not important to Dani.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. The message is panic-stricken and chaotic, showing that Dani cannot handle stressful situations.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Mari kita analisis nadanya. Pesan ini bersifat mendesak (urgent) karena masalah kesehatan ibu yang tiba-tiba. Namun, gaya bahasa Dani tetap sangat sopan (*"I'm really sorry"*, *"Thanks for understanding"*). Selain itu, ia tidak lepas tangan, melainkan memberikan solusi/alternatif yang jelas (bertemu besok jam 4).
+                    </div>
+                </div>
+
+                <!-- TEXT 4 -->
+                <div class="reading-text p-5 rounded-r-lg mb-6 text-sm sm:text-base whitespace-pre-line text-gray-700">
+                    <span class="font-bold text-blue-800 block mb-2"><i class="fa-solid fa-faucet-drip mr-2"></i>Read the text below to answer questions 13 to 16.</span>
+                    <strong>PUBLIC ANNOUNCEMENT</strong>
+                    Temporary Water Supply Disruption
+                    
+                    Dear Residents of Green Valley Housing Complex,
+                    Please be informed that the Local Water Company (PDAM) will be conducting urgent pipe maintenance and upgrading works in our area.
+                    
+                    * Affected Area: All blocks in Green Valley Housing Complex.
+                    * Date & Time: Saturday, November 4, 2023, from 08:00 AM to 05:00 PM.
+                    
+                    Water supply will be completely shut off during these hours. We strongly advise all residents to store sufficient water for cooking, sanitation, and basic needs before the maintenance begins.
+                    
+                    The water supply is expected to resume gradually after 05:00 PM. However, the water may appear slightly discolored immediately after restoration. We recommend letting your taps run for 2–3 minutes until the water runs clear before using it.
+                    
+                    We apologize for any inconvenience caused. Thank you for your cooperation.
+                    Green Valley Management Office
+                </div>
+
+                <!-- Soal 13 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">13. What is the main objective of the announcement?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. To complain about the poor quality of the local water supply.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. To notify residents about a planned temporary water shutdown.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. To instruct residents on how to clean their water pipes.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. To announce a discount on the monthly water bill.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Judul pengumuman adalah *"Temporary Water Supply Disruption"* (Gangguan Pasokan Air Sementara). Isi teks memberitahukan (notify) kepada warga bahwa air akan dimatikan (shutdown) dari jam 08:00 AM sampai 05:00 PM. Bukan untuk komplain, mengajari membersihkan pipa, atau memberi diskon tagihan.
+                    </div>
+                </div>
+
+                <!-- Soal 14 -->
+                <div class="question-block mb-8" data-answer="C">
+                    <p class="font-semibold text-lg mb-3">14. What should residents do before 08:00 AM on Saturday, November 4?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Turn off all their household water taps tightly.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Call the PDAM office to cancel the maintenance.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Collect and store enough water for their daily needs.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Let their taps run for 2 to 3 minutes continuously.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Temukan kalimat *"We strongly advise all residents to store sufficient water..."*. Artinya manajemen sangat menyarankan warga untuk menampung atau menyimpan air yang cukup untuk keperluan memasak, mandi, dll, sebelum perbaikan dimulai jam 08:00 pagi.
+                    </div>
+                </div>
+
+                <!-- Soal 15 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">15. What is the cause of the temporary water disruption?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. A sudden natural disaster that damaged the main water pump.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Scheduled maintenance and upgrades of the water pipes.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Residents failing to pay their monthly water bills on time.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. A contamination issue in the central water reservoir.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Penyebabnya tertulis jelas di paragraf pertama: *"PDAM will be conducting urgent pipe maintenance and upgrading works..."* yang artinya pemeliharaan pipa dan pekerjaan peningkatan jaringan. Jadi, air dimatikan karena ada jadwal perbaikan (maintenance), bukan karena bencana atau warga telat bayar.
+                    </div>
+                </div>
+
+                <!-- Soal 16 -->
+                <div class="question-block mb-12" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">16. If a resident turns on their tap at 05:30 PM on Saturday and notices the water is slightly brownish, what is the most appropriate action they should take based on the text?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Immediately call the management office to report a broken pipe.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Keep the water running for a few minutes until it becomes clean.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Use the brownish water immediately for cooking to save water.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Wait until the next day before turning on the tap again.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Teks sudah mengantisipasi hal ini. Di paragraf kedua tertulis: *"the water may appear slightly discolored... We recommend letting your taps run for 2-3 minutes until the water runs clear"*. Artinya, jika airnya agak kecoklatan setelah menyala, biarkan keran mengalir beberapa menit sampai sisa kotoran di pipa terbuang dan air menjadi jernih kembali.
+                    </div>
+                </div>
+
+                <!-- TEXT 5 -->
+                <div class="reading-text p-5 rounded-r-lg mb-6 text-sm sm:text-base whitespace-pre-line text-gray-700">
+                    <span class="font-bold text-blue-800 block mb-2"><i class="fa-solid fa-spray-can mr-2"></i>Read the text below to answer questions 17 to 20.</span>
+                    ==================================================
+                    <strong>ECO-CLEAN</strong>
+                    All-Purpose Household Cleaner
+                    ==================================================
+                    Active Ingredients:
+                    - Natural Citrus Extract: 15%
+                    - Biodegradable Surfactants: 10%
+                    - Purified Water: 75%
+                    
+                    WARNINGS & PRECAUTIONS:
+                    - DO NOT swallow. If swallowed, drink plenty of water and seek medical advice immediately.
+                    - Avoid contact with eyes. In case of eye contact, flush thoroughly with clean water for 15 minutes.
+                    - Keep out of reach of children and pets.
+                    
+                    Directions for Use:
+                    1. Spray directly onto the surface from a distance of 20 cm.
+                    2. Wipe clean with a damp microfiber cloth.
+                    3. For tough grease, let the spray sit for 2 minutes before wiping.
+                    
+                    Manufactured by: Eco-Friendly Solutions Ltd.
+                    ================================================
+                </div>
+
+                <!-- Soal 17 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">17. What makes Eco-Clean different from typical chemical cleaners?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. It can be safely swallowed in small amounts.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. It uses natural citrus extract and biodegradable ingredients.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. It does not require any wiping after being sprayed.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. It is manufactured specifically for cleaning pets.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Coba lihat pada bagian *Active Ingredients* (Bahan Aktif). Produk ini menggunakan ekstrak jeruk nipis alami (*Natural Citrus Extract*) dan bahan yang ramah lingkungan/mudah terurai oleh alam (*Biodegradable*). Inilah yang membedakannya dari pembersih kimia biasa yang keras.
+                    </div>
+                </div>
+
+                <!-- Soal 18 -->
+                <div class="question-block mb-8" data-answer="C">
+                    <p class="font-semibold text-lg mb-3">18. What should you do if you want to clean a surface with very stubborn, thick grease?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Mix the cleaner with boiling water before spraying.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Spray the product and wipe it off immediately.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Spray the product and let it sit for two minutes before wiping.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Use a dry paper towel to scrub the surface before spraying.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Untuk menjawab cara penggunaan, kita lihat bagian *Directions for Use*. Pada nomor 3 tertulis *"For tough grease, let the spray sit for 2 minutes before wiping"*. Artinya untuk noda lemak yang membandel (stubborn/tough grease), kita harus menyemprotkannya lalu membiarkannya (let it sit) selama 2 menit agar cairannya bekerja menghancurkan lemak, barulah dilap.
+                    </div>
+                </div>
+
+                <!-- Soal 19 -->
+                <div class="question-block mb-8" data-answer="C">
+                    <p class="font-semibold text-lg mb-3">19. Why does the label state "Keep out of reach of children and pets"?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. Because children and pets might accidentally use up the product.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. Because the product is highly flammable when exposed to air.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. Because the product can cause harm if swallowed or if it contacts eyes.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. Because the bottle is fragile and breaks easily.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br>
+                        <strong>Pembahasan:</strong> Peringatan ini selalu ada di produk pembersih. Anak-anak kecil dan hewan peliharaan belum mengerti bahaya, sehingga mereka mungkin saja tidak sengaja meminumnya atau mengucek mata setelah memegangnya. Karena ada peringatan *"DO NOT swallow"* dan *"Avoid contact with eyes"*, produk ini sangat berbahaya jika masuk ke dalam tubuh atau mata (cause harm).
+                    </div>
+                </div>
+
+                <!-- Soal 20 -->
+                <div class="question-block mb-8" data-answer="B">
+                    <p class="font-semibold text-lg mb-3">20. A user accidentally gets some Eco-Clean spray in their eyes. They immediately rub their eyes with a dry towel and go to sleep. Evaluate this action based on the precautions on the label.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio w-5 h-5">
+                            <span class="ml-3">A. The action is correct because rubbing eyes helps remove the chemical.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio w-5 h-5">
+                            <span class="ml-3">B. The action is incorrect because they should have flushed their eyes with water for 15 minutes.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio w-5 h-5">
+                            <span class="ml-3">C. The action is correct because sleeping allows the eyes to heal naturally.</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio w-5 h-5">
+                            <span class="ml-3">D. The action is incorrect because they should have swallowed water immediately.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-3 p-4 rounded-lg border-l-4"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br>
+                        <strong>Pembahasan:</strong> Perhatikan bagian Peringatan (Warnings): *"In case of eye contact, flush thoroughly with clean water for 15 minutes"*. Artinya jika terkena mata, kita HARUS membilasnya dengan air mengalir selama 15 menit agar bahan kimianya luntur. Menggosok dengan handuk dan langsung tidur adalah tindakan yang salah (incorrect) dan sangat berbahaya karena cairan kimia akan merusak mata saat tertidur!
+                    </div>
+                </div>
+
+                <!-- Hasil Skor (Hidden Default) -->
+                <div id="score-container" class="hidden my-8 p-6 bg-blue-50 rounded-2xl border border-blue-200 text-center animate-[fadeIn_0.5s_ease-in-out]">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Skor Akhir Kamu:</h3>
+                    <div id="score-display" class="text-6xl font-bold text-blue-600 mb-2">0</div>
+                    <p id="score-message" class="text-gray-600"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+                    <button type="button" id="check-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition transform hover:-translate-y-0.5 w-full sm:w-auto">
+                        <i class="fa-solid fa-check-circle mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition transform hover:-translate-y-0.5 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-500 text-sm mt-auto">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // Total soal (20), bobot 5 poin per soal (total 100)
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach(q => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    explanationDiv.innerHTML = rationaleHTML; // Isi konten pembahasan
+
+                    radios.forEach(radio => {
+                        // Disable radio supaya tidak bisa diubah setelah dicek
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Tampilan Benar
+                                explanationDiv.className = 'explanation mt-3 p-4 rounded-lg border-l-4 bg-green-50 text-green-800 border-green-500 block';
+                            } else {
+                                // Tampilan Salah
+                                explanationDiv.className = 'explanation mt-3 p-4 rounded-lg border-l-4 bg-red-50 text-red-800 border-red-500 block';
+                            }
+                        }
+                    });
+
+                    // Jika tidak dijawab sama sekali, tampilkan warna merah
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-3 p-4 rounded-lg border-l-4 bg-red-50 text-red-800 border-red-500 block';
+                        explanationDiv.innerHTML = '<strong class="text-red-700">Kamu belum menjawab pertanyaan ini!</strong><br><br>' + rationaleHTML;
+                    }
+                });
+
+                // Hitung Skor (0 - 100)
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                scoreDisplay.textContent = finalScore;
+
+                // Pesan penyemangat berdasarkan skor
+                if (finalScore === 100) {
+                    scoreMessage.textContent = "Sempurna! Kamu memahami semua teks dengan sangat baik.";
+                } else if (finalScore >= 75) {
+                    scoreMessage.textContent = "Kerja bagus! Sedikit lagi menuju kesempurnaan.";
+                } else if (finalScore >= 50) {
+                    scoreMessage.textContent = "Cukup baik, tapi yuk baca teksnya lebih teliti lagi ya!";
+                } else {
+                    scoreMessage.textContent = "Jangan menyerah! Coba baca pembahasannya dan ulangi lagi.";
+                }
+
+                // Tampilkan hasil & atur tombol
+                scoreContainer.classList.remove('hidden');
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Scroll mulus ke bagian skor
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset form
+                form.reset();
+
+                // Kembalikan state soal
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; // Aktifkan kembali radio
+                    });
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.classList.remove('block');
+                    explanationDiv.classList.add('hidden');
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Sembunyikan hasil & atur tombol
+                scoreContainer.classList.add('hidden');
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Scroll kembali ke atas halaman
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

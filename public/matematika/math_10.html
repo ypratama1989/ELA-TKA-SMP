@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Operasi Bentuk Aljabar</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#8b5cf6', // Violet 500
+                        primaryHover: '#7c3aed', // Violet 600
+                        correct: '#10b981', // Emerald 500
+                        wrong: '#f43f5e', // Rose 500
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        /* Gaya wajib untuk gambar Base64 sesuai instruksi */
+        img[src^="data:image"] {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            display: block;
+        }
+
+        /* Styling Kustom Radio Button agar terlihat modern */
+        .option-label {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .option-input:checked + .option-content {
+            border-color: #8b5cf6;
+            background-color: #f5f3ff; /* Violet 50 */
+        }
+        
+        .option-input:checked + .option-content .radio-circle {
+            border-color: #8b5cf6;
+            background-color: #8b5cf6;
+        }
+
+        /* Titik putih di tengah radio button saat aktif */
+        .option-input:checked + .option-content .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        .status-correct {
+            border-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+            color: #065f46 !important;
+        }
+        .status-correct .radio-circle {
+            border-color: #10b981 !important;
+            background-color: #10b981 !important;
+        }
+
+        .status-wrong {
+            border-color: #f43f5e !important;
+            background-color: #ffe4e6 !important;
+            color: #9f1239 !important;
+        }
+        .status-wrong .radio-circle {
+            border-color: #f43f5e !important;
+            background-color: #f43f5e !important;
+        }
+
+        /* Animasi Kotak Pembahasan (Accordion Effect) */
+        .explanation-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
+            opacity: 0;
+        }
+        .explanation-box.show {
+            max-height: 1500px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative pb-20">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Tombol Kembali menggunakan Vanilla JS history -->
+                <button onclick="goBack()" class="flex items-center text-slate-500 hover:text-primary transition-colors focus:outline-none bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-lg">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="font-medium text-sm">Kembali</span>
+                </button>
+                <div class="font-bold text-lg text-primary truncate ml-4">
+                    Kuis Matematika
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Header Judul & Instruksi -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-10 mb-8 border-t-4 border-primary">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 text-center">Operasi Bentuk Aljabar</h1>
+            <p class="text-slate-600 text-center mb-6 text-sm sm:text-base leading-relaxed">
+                Uji pemahamanmu tentang aljabar! Kerjakan dengan teliti. Jika kamu tidak yakin, kamu bisa melewati soal (soal yang dilewati tidak mendapat nilai). 
+                Klik tombol <strong>"Periksa Jawaban"</strong> di bagian bawah untuk melihat skor dan pembahasan langkah demi langkah.
+            </p>
+        </div>
+
+        <form id="quiz-form" class="space-y-6">
+            <!-- Tempat merender soal via JavaScript -->
+            <div id="quiz-container" class="space-y-6"></div>
+
+            <!-- Panel Aksi (Tombol Periksa & Tampilan Skor) diletakkan di bagian bawah -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mt-8 sticky bottom-4 z-40 border border-slate-200">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white font-semibold rounded-xl shadow-md hover:bg-primaryHover hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-lg">
+                        Periksa Jawaban
+                    </button>
+                    
+                    <div id="score-display" class="hidden flex-col items-center sm:items-end w-full sm:w-auto">
+                        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Nilai Akhir Anda</span>
+                        <div class="text-6xl font-extrabold text-primary drop-shadow-sm" id="final-score">0</div>
+                    </div>
+                </div>
+
+                <!-- Tombol Reset -->
+                <div id="action-buttons" class="hidden mt-6 pt-6 border-t border-slate-100 flex justify-center">
+                    <button type="button" id="reset-btn" class="flex items-center px-6 py-3 bg-slate-800 text-white font-medium rounded-xl hover:bg-slate-700 transition-colors focus:outline-none shadow-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-900 text-slate-400 py-5 text-center text-sm">
+        <p class="font-medium tracking-wide">By <span class="text-white font-bold">EDUFILLAH</span>, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                question: "Pada bentuk aljabar 3x<sup>2</sup> - 5x + 8, yang merupakan koefisien dari variabel x adalah...",
+                options: [
+                    "3",
+                    "-5",
+                    "5",
+                    "8"
+                ],
+                correct: 1, 
+                explanation: `<strong>Jawaban Benar: -5</strong><br><br>
+                Mari kita bedah anatomi bentuk aljabar <code>3x<sup>2</sup> - 5x + 8</code>:
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm text-slate-700">
+                    <li><strong>Variabel:</strong> Huruf yang belum diketahui nilainya (yaitu <code>x<sup>2</sup></code> dan <code>x</code>).</li>
+                    <li><strong>Koefisien:</strong> Angka yang menempel tepat di depan variabel.</li>
+                    <li><strong>Konstanta:</strong> Angka yang berdiri sendiri tanpa huruf (yaitu <code>8</code>).</li>
+                </ul>
+                <br>Soal menanyakan koefisien dari variabel <strong>x</strong> (bukan x<sup>2</sup>). Angka yang menempel pada x adalah <strong>-5</strong>. (Ingat, tanda minus selalu ikut dengan angkanya!).`
+            },
+            {
+                id: 2,
+                question: "Sifat komutatif pada operasi penjumlahan bentuk aljabar ditunjukkan oleh persamaan...",
+                options: [
+                    "3x + 2y = 2y + 3x",
+                    "3x(2y) = (3x &times; 2)y",
+                    "3x(2y + 5) = 6xy + 15x",
+                    "3x + (2y + 5) = (3x + 2y) + 5"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 3x + 2y = 2y + 3x</strong><br><br>
+                Kata <strong>Komutatif</strong> berarti <em>pertukaran tempat</em>. Sifat ini menyatakan bahwa urutan bilangan yang dijumlahkan tidak akan merubah hasil akhirnya.
+                <br>Rumus dasarnya adalah: <code>A + B = B + A</code>
+                <br><br>Mari kita lihat pilihan A:
+                <br>Posisi <code>3x</code> ditukar tempat dengan <code>2y</code> menjadi <code>2y + 3x</code>. Inilah yang disebut sifat komutatif.`
+            },
+            {
+                id: 3,
+                question: "Bentuk aljabar 2a &times; (3b &times; 4c) dapat diubah menjadi (2a &times; 3b) &times; 4c. Sifat operasi aljabar yang digunakan pada perubahan tersebut adalah...",
+                options: [
+                    "Komutatif",
+                    "Asosiatif",
+                    "Distributif",
+                    "Identitas"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: Asosiatif</strong><br><br>
+                Perhatikan baik-baik letak tanda kurungnya!
+                <br>Pada awalnya, tanda kurung mengelompokkan <code>(3b &times; 4c)</code>. Lalu, tanda kurungnya berpindah mengelompokkan <code>(2a &times; 3b)</code>.
+                <br><br>Kata <strong>Asosiatif</strong> berarti <em>pengelompokan</em>. Sifat ini menyatakan bahwa mengubah kelompok/pasangan bilangan dalam perkalian (atau penjumlahan) tidak merubah hasil.
+                <br>Rumus dasarnya: <code>A &times; (B &times; C) = (A &times; B) &times; C</code>.`
+            },
+            {
+                id: 4,
+                question: "Hasil dari operasi perkalian distributif -3(2a - 4b) adalah...",
+                options: [
+                    "-6a - 12b",
+                    "-6a + 12b",
+                    "6a - 12b",
+                    "6a + 12b"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: -6a + 12b</strong><br><br>
+                Sifat Distributif sering disebut juga dengan "Kali Pelangi". Kita harus mengalikan angka yang di luar kurung (<code>-3</code>) dengan <strong>setiap</strong> suku di dalam kurung.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. <code>-3 &times; (2a) = -6a</code>
+                <br>2. <code>-3 &times; (-4b) = +12b</code> <em>(Ingat: Negatif dikali Negatif hasilnya Positif!)</em>
+                <br><br>Gabungkan hasilnya: <strong>-6a + 12b</strong>.`
+            },
+            {
+                id: 5,
+                question: "Bentuk paling sederhana dari 5x - 3y + 7 - 2x + 6y - 10 adalah...",
+                options: [
+                    "3x + 3y - 3",
+                    "3x - 3y - 3",
+                    "7x + 3y + 3",
+                    "3x + 3y + 3"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 3x + 3y - 3</strong><br><br>
+                Dalam aljabar, kita hanya bisa menjumlahkan atau mengurangkan suku-suku yang sejenis (ibarat hanya bisa menjumlahkan apel dengan apel, jeruk dengan jeruk).
+                <br><br><strong>Mari kita kelompokkan:</strong>
+                <br>&bull; Kelompok <code>x</code>: <code>5x - 2x = 3x</code>
+                <br>&bull; Kelompok <code>y</code>: <code>-3y + 6y = +3y</code>
+                <br>&bull; Kelompok Konstanta (angka): <code>7 - 10 = -3</code>
+                <br><br>Rangkai kembali hasil akhirnya: <strong>3x + 3y - 3</strong>.`
+            },
+            {
+                id: 6,
+                question: "Hasil penjumlahan dari bentuk aljabar 4x<sup>2</sup> - 3x + 2 dan -2x<sup>2</sup> + 5x - 7 adalah...",
+                options: [
+                    "2x<sup>2</sup> + 2x - 5",
+                    "2x<sup>2</sup> - 2x - 5",
+                    "6x<sup>2</sup> + 8x - 9",
+                    "2x<sup>2</sup> + 2x + 5"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 2x<sup>2</sup> + 2x - 5</strong><br><br>
+                Cara termudah menjumlahkan bentuk aljabar yang panjang adalah dengan menyusunnya ke bawah berdasarkan suku sejenis:
+                <br><br>
+                <code style="display:block; padding: 10px; background: white; border-radius: 4px;">
+                &nbsp;&nbsp;4x<sup>2</sup> - 3x + 2<br>
+                &nbsp;-2x<sup>2</sup> + 5x - 7<br>
+                --------------- +<br>
+                &nbsp;&nbsp;2x<sup>2</sup> + 2x - 5
+                </code>
+                <br>Penjelasan rinci:
+                <br>&bull; <code>4x<sup>2</sup> + (-2x<sup>2</sup>) = 2x<sup>2</sup></code>
+                <br>&bull; <code>-3x + 5x = +2x</code>
+                <br>&bull; <code>2 + (-7) = -5</code>`
+            },
+            {
+                id: 7,
+                question: "Hasil pengurangan bentuk aljabar 3x - 5y dari 8x + 2y adalah...",
+                options: [
+                    "5x + 7y",
+                    "5x - 3y",
+                    "-5x - 7y",
+                    "11x - 3y"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 5x + 7y</strong><br><br>
+                <strong>Hati-hati dengan kata "DARI"!</strong>
+                <br>Pernyataan "Kurangkan A <em>dari</em> B" secara matematis ditulis sebagai <strong>B - A</strong>. (Yang disebut di belakang ditaruh di depan).
+                <br><br>Maka penulisannya adalah:
+                <br><code>(8x + 2y) - (3x - 5y)</code>
+                <br><br>Langkah penyelesaian:
+                <br>1. Buka kurung belakang dengan mengalikan tanda minus:
+                <br>&nbsp;&nbsp;&nbsp;<code>8x + 2y - 3x + 5y</code> <em>(Perhatikan: minus bertemu -5y menjadi +5y)</em>
+                <br>2. Kelompokkan suku sejenis:
+                <br>&nbsp;&nbsp;&nbsp;<code>(8x - 3x) + (2y + 5y)</code>
+                <br>3. Hasil akhir: <strong>5x + 7y</strong>.`
+            },
+            {
+                id: 8,
+                question: "Seorang siswa menyederhanakan bentuk aljabar 2(3x - 4) - 3(x - 2). Langkah penyelesaiannya adalah sebagai berikut:<br><br>Langkah 1: 6x - 8 - 3x - 6<br>Langkah 2: 6x - 3x - 8 - 6<br>Langkah 3: 3x - 14<br><br>Analisis yang tepat mengenai pekerjaan siswa tersebut adalah...",
+                options: [
+                    "Pekerjaan siswa sudah benar di setiap langkah.",
+                    "Kesalahan terletak pada Langkah 1, seharusnya hasil kalinya adalah 6x - 8 - 3x + 6.",
+                    "Kesalahan terletak pada Langkah 2, seharusnya sifat komutatif tidak boleh digunakan.",
+                    "Kesalahan terletak pada Langkah 3, seharusnya hasil akhirnya adalah 3x + 14."
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B</strong><br><br>
+                Mari kita periksa pekerjaannya dengan melakukan kali pelangi (distributif):
+                <br><br>Bagian pertama: <code>2 &times; (3x - 4) = 6x - 8</code> (Benar)
+                <br>Bagian kedua: <code>-3 &times; (x - 2)</code>
+                <br>&bull; <code>-3 &times; x = -3x</code>
+                <br>&bull; <code>-3 &times; (-2) = <strong>+6</strong></code> <em>(Di sinilah siswa keliru, ia menulis -6)</em>
+                <br><br>Jadi, Langkah 1 yang benar seharusnya adalah <code>6x - 8 - 3x <strong>+ 6</strong></code>.`
+            },
+            {
+                id: 9,
+                question: "Di antara bentuk aljabar berikut, yang senilai dengan 6x<sup>2</sup> - 9x adalah...",
+                options: [
+                    "3x(2x - 3)",
+                    "3(2x<sup>2</sup> - 9x)",
+                    "3x(2x - 9)",
+                    "2x(3x - 3)"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 3x(2x - 3)</strong><br><br>
+                Soal ini meminta kita melakukan <strong>Pemfaktoran</strong> (kebalikan dari perkalian distributif). Kita mencari Faktor Persekutuan Terbesar (FPB) dari kedua suku tersebut.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Cari FPB dari angka koefisien 6 dan 9, yaitu <strong>3</strong>.
+                <br>2. Cari FPB dari variabel x<sup>2</sup> dan x, yaitu <strong>x</strong> (ambil pangkat terkecil).
+                <br>3. Jadi, FPB totalnya adalah <strong>3x</strong>. Kita keluarkan 3x dari kurung.
+                <br><br>4. Bagi masing-masing suku awal dengan 3x:
+                <br>&nbsp;&nbsp;&bull; <code>(6x<sup>2</sup>) &divide; (3x) = 2x</code>
+                <br>&nbsp;&nbsp;&bull; <code>(-9x) &divide; (3x) = -3</code>
+                <br><br>Susun kembali: <strong>3x(2x - 3)</strong>.`
+            },
+            {
+                id: 10,
+                question: "Hasil perkalian dari (2x - 3)(x + 4) adalah...",
+                options: [
+                    "2x<sup>2</sup> + 5x - 12",
+                    "2x<sup>2</sup> - 5x - 12",
+                    "2x<sup>2</sup> + 11x - 12",
+                    "2x<sup>2</sup> - 11x - 12"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 2x<sup>2</sup> + 5x - 12</strong><br><br>
+                Gunakan sifat distributif ganda, atau sering dikenal dengan metode FOIL (First, Outer, Inner, Last) atau "kali pelangi ganda".
+                <br><br><strong>Langkah perkalian:</strong>
+                <br>&bull; Depan &times; Depan: <code>2x &times; x = 2x<sup>2</sup></code>
+                <br>&bull; Depan &times; Belakang: <code>2x &times; 4 = +8x</code>
+                <br>&bull; Belakang &times; Depan: <code>-3 &times; x = -3x</code>
+                <br>&bull; Belakang &times; Belakang: <code>-3 &times; 4 = -12</code>
+                <br><br>Satukan semuanya: <code>2x<sup>2</sup> + 8x - 3x - 12</code>
+                <br>Sederhanakan suku tengahnya (8x - 3x = 5x), sehingga hasil akhirnya adalah <strong>2x<sup>2</sup> + 5x - 12</strong>.`
+            },
+            {
+                id: 11,
+                question: "Jika luas sebuah persegi panjang dinyatakan dengan bentuk aljabar 2x<sup>2</sup> + 7x + 3 dan lebarnya adalah (x + 3), maka panjang persegi panjang tersebut adalah...",
+                options: [
+                    "2x - 1",
+                    "2x + 1",
+                    "x + 1",
+                    "x - 1"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 2x + 1</strong><br><br>
+                Ingat rumus Luas Persegi Panjang: <code>Luas = Panjang &times; Lebar</code>.
+                <br>Oleh karena itu, <code>Panjang = Luas &divide; Lebar</code>.
+                <br><br>Kita diminta membagi <code>(2x<sup>2</sup> + 7x + 3)</code> dengan <code>(x + 3)</code>.
+                <br>Artinya, <code>(x + 3) &times; (...) = 2x<sup>2</sup> + 7x + 3</code>.
+                <br><br>Gunakan logika perkalian distributif:
+                <br>1. Agar menghasilkan suku depan <code>2x<sup>2</sup></code>, maka <code>x</code> harus dikali dengan <strong>2x</strong>.
+                <br>2. Agar menghasilkan konstanta belakang <code>+3</code>, maka angka <code>+3</code> harus dikali dengan angka <strong>+1</strong>.
+                <br>3. Jadi tebakan kuat kita panjangnya adalah <strong>(2x + 1)</strong>.
+                <br><br><em>Cek ulang:</em> <code>(x + 3)(2x + 1) = 2x<sup>2</sup> + x + 6x + 3 = 2x<sup>2</sup> + 7x + 3</code>. (Terbukti Benar!).`
+            },
+            {
+                id: 12,
+                question: "Jika diketahui nilai a = -2 dan b = 3, maka nilai dari bentuk aljabar 2a<sup>2</sup> - 3ab adalah...",
+                options: [
+                    "-10",
+                    "10",
+                    "26",
+                    "-26"
+                ],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: 26</strong><br><br>
+                Soal ini disebut <strong>Substitusi Aljabar</strong>. Kita cukup mengganti huruf dengan angka yang diberikan.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Ganti 'a' dengan (-2) dan 'b' dengan (3):
+                <br>&nbsp;&nbsp;&nbsp;<code>2(-2)<sup>2</sup> - 3(-2)(3)</code>
+                <br>2. Selesaikan pangkat terlebih dahulu. Bilangan negatif jika dikuadratkan hasilnya positif:
+                <br>&nbsp;&nbsp;&nbsp;<code>(-2)<sup>2</sup> = 4</code>
+                <br>&nbsp;&nbsp;&nbsp;Maka: <code>2(4) - 3(-2)(3)</code>
+                <br>3. Lakukan perkalian:
+                <br>&nbsp;&nbsp;&nbsp;<code>8 - (-18)</code>
+                <br>4. Ingat, pengurangan bertemu angka negatif berubah jadi penjumlahan:
+                <br>&nbsp;&nbsp;&nbsp;<code>8 + 18 = 26</code>.`
+            },
+            {
+                id: 13,
+                question: "Perhatikan empat pernyataan tentang sifat operasi aljabar berikut:<br>(1) a - b = b - a<br>(2) (a - b) - c = a - (b - c)<br>(3) a(b - c) = ab - ac<br>(4) a + (b + c) = (a + b) + c<br><br>Pernyataan yang selalu bernilai benar untuk setiap bilangan bulat a, b, dan c adalah...",
+                options: [
+                    "(1) dan (2)",
+                    "(2) dan (3)",
+                    "(3) dan (4)",
+                    "(1) dan (4)"
+                ],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: C ((3) dan (4))</strong><br><br>
+                Mari kita evaluasi satu per satu:
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li><strong>(1) Salah:</strong> Pengurangan BUKAN komutatif. (Contoh: 5 - 2 hasilnya 3, tapi 2 - 5 hasilnya -3).</li>
+                    <li><strong>(2) Salah:</strong> Pengurangan BUKAN asosiatif. Pengelompokan akan mengubah hasil.</li>
+                    <li><strong>(3) Benar:</strong> Ini adalah sifat distributif perkalian terhadap pengurangan yang sah.</li>
+                    <li><strong>(4) Benar:</strong> Ini adalah sifat asosiatif pada penjumlahan, yang selalu berlaku.</li>
+                </ul>`
+            },
+            {
+                id: 14,
+                question: "Harga sebuah buku tulis adalah x rupiah, sedangkan harga sebuah pulpen adalah y rupiah. Rian membeli 5 buku tulis dan 3 pulpen. Ia membayar dengan selembar uang Rp 100.000. Bentuk aljabar yang menyatakan uang kembalian Rian adalah...",
+                options: [
+                    "100.000 - 5x - 3y",
+                    "100.000 - (5x - 3y)",
+                    "5x + 3y - 100.000",
+                    "100.000 - 5x + 3y"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 100.000 - 5x - 3y</strong><br><br>
+                Ini adalah pemodelan matematika sehari-hari.
+                <br><br><strong>Langkah Berpikir:</strong>
+                <br>1. Total harga belanjaan Rian adalah harga 5 buku (5x) ditambah harga 3 pulpen (3y).
+                <br>&nbsp;&nbsp;&nbsp;Total Belanja = <code>(5x + 3y)</code>
+                <br>2. Uang kembalian didapat dari Uang yang Diberikan dikurangi Total Belanja.
+                <br>&nbsp;&nbsp;&nbsp;Kembalian = <code>100.000 - (5x + 3y)</code>
+                <br>3. Buka kurungnya (kalikan tanda minus ke dalam):
+                <br>&nbsp;&nbsp;&nbsp;Kembalian = <strong>100.000 - 5x - 3y</strong>.`
+            },
+            {
+                id: 15,
+                question: "Hasil pembagian dari bentuk aljabar (12x<sup>3</sup> &times; y<sup>2</sup>) &divide; (3x &times; y<sup>2</sup>) adalah...",
+                options: [
+                    "4x<sup>2</sup>",
+                    "4x<sup>2</sup> &times; y",
+                    "4x<sup>3</sup>",
+                    "4x"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 4x<sup>2</sup></strong><br><br>
+                Pembagian bentuk aljabar dilakukan dengan membagi koefisien dengan koefisien, dan variabel sejenis dengan variabel sejenis (menggunakan sifat pangkat: bilangan berpangkat dibagi, pangkatnya dikurangkan).
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Bagi angkanya: <code>12 &divide; 3 = 4</code>
+                <br>2. Bagi variabel x: <code>x<sup>3</sup> &divide; x<sup>1</sup> = x<sup>(3-1)</sup> = x<sup>2</sup></code>
+                <br>3. Bagi variabel y: <code>y<sup>2</sup> &divide; y<sup>2</sup> = y<sup>(2-2)</sup> = y<sup>0</sup> = 1</code> (habis/dicoret)
+                <br><br>Gabungkan hasilnya: <code>4 &times; x<sup>2</sup> &times; 1</code> = <strong>4x<sup>2</sup></strong>.`
+            },
+            {
+                id: 16,
+                question: "Evaluasilah pembuktian identitas aljabar berikut:<br>(a + b)<sup>2</sup> - (a - b)<sup>2</sup> = 4ab<br><br>Sifat utama yang digunakan untuk menjabarkan masing-masing suku di ruas kiri sebelum disederhanakan adalah...",
+                options: [
+                    "Sifat Asosiatif",
+                    "Sifat Komutatif",
+                    "Sifat Distributif perkalian terhadap penjumlahan/pengurangan",
+                    "Sifat Identitas Penjumlahan"
+                ],
+                correct: 2,
+                explanation: `<strong>Jawaban Benar: C</strong><br><br>
+                Mari kita telaah bentuk <code>(a + b)<sup>2</sup></code>.
+                <br>Bentuk ini tidak langsung menjadi rumus secara ajaib. Asalnya adalah:
+                <br><code>(a + b)(a + b)</code>
+                <br><br>Untuk mengubahnya menjadi <code>a<sup>2</sup> + 2ab + b<sup>2</sup></code>, kita harus mengalikan <em>a</em> ke <em>(a+b)</em> dan <em>b</em> ke <em>(a+b)</em>. Proses kali silang / kali pelangi inilah yang secara fundamental merupakan penerapan dari <strong>Sifat Distributif</strong>.`
+            },
+            {
+                id: 17,
+                question: "Sebuah taman berbentuk persegi panjang memiliki ukuran panjang (3x + 2) meter dan lebar (2x - 1) meter. Keliling taman tersebut dalam variabel x adalah...",
+                options: [
+                    "5x + 1 meter",
+                    "10x + 2 meter",
+                    "6x<sup>2</sup> + x - 2 meter",
+                    "10x + 1 meter"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 10x + 2 meter</strong><br><br>
+                Ingat kembali rumus Keliling Persegi Panjang: <code>K = 2 &times; (Panjang + Lebar)</code>.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>1. Masukkan nilai ke rumus:
+                <br>&nbsp;&nbsp;&nbsp;<code>K = 2 &times; [ (3x + 2) + (2x - 1) ]</code>
+                <br>2. Sederhanakan yang ada di dalam kurung (jumlahkan suku sejenis):
+                <br>&nbsp;&nbsp;&nbsp;<code>K = 2 &times; [ (3x + 2x) + (2 - 1) ]</code>
+                <br>&nbsp;&nbsp;&nbsp;<code>K = 2 &times; [ 5x + 1 ]</code>
+                <br>3. Kalikan (distribusikan) angka 2 ke dalam kurung:
+                <br>&nbsp;&nbsp;&nbsp;<code>K = 10x + 2</code>.`
+            },
+            {
+                id: 18,
+                question: "Bentuk sederhana dari pecahan aljabar (6x<sup>2</sup> - 8x) &divide; 2x adalah...",
+                options: [
+                    "3x - 8",
+                    "3x - 4",
+                    "3x<sup>2</sup> - 4",
+                    "6x - 4"
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: 3x - 4</strong><br><br>
+                Saat membagi polinom (banyak suku) dengan monomial (satu suku), pastikan <strong>setiap suku di bagian atas dibagi dengan suku di bawah secara adil</strong>.
+                <br><br><strong>Langkah penyelesaian:</strong>
+                <br>Bentuk tersebut bisa dipecah menjadi dua pecahan terpisah:
+                <br><code>(6x<sup>2</sup> &divide; 2x) - (8x &divide; 2x)</code>
+                <br><br>Lalu hitung masing-masing:
+                <br>&bull; Bagian kiri: <code>6 &divide; 2 = 3</code>, dan <code>x<sup>2</sup> &divide; x = x</code> &rarr; <strong>3x</strong>
+                <br>&bull; Bagian kanan: <code>8 &divide; 2 = 4</code>, dan <code>x &divide; x = habis</code> &rarr; <strong>4</strong>
+                <br><br>Gabungkan kembali: <strong>3x - 4</strong>.`
+            },
+            {
+                id: 19,
+                question: "Dua orang siswa, Andi dan Budi, menyederhanakan bentuk aljabar (x + 3)<sup>2</sup>.<br><br>Andi menjawab: x<sup>2</sup> + 9<br>Budi menjawab: x<sup>2</sup> + 6x + 9<br><br>Evaluasi yang paling tepat terhadap jawaban kedua siswa tersebut adalah...",
+                options: [
+                    "Jawaban Andi benar karena kuadrat dari x adalah x<sup>2</sup> dan kuadrat dari 3 adalah 9.",
+                    "Jawaban Budi benar karena (x + 3)<sup>2</sup> sama dengan (x + 3)(x + 3) yang jika dijabarkan menghasilkan x<sup>2</sup> + 6x + 9.",
+                    "Kedua jawaban salah karena hasil yang benar adalah x<sup>2</sup> + 3x + 9.",
+                    "Kedua jawaban benar karena keduanya menggunakan metode penyederhanaan yang sah."
+                ],
+                correct: 1,
+                explanation: `<strong>Jawaban Benar: B</strong><br><br>
+                Kesalahan yang dilakukan Andi adalah <em>miskonsepsi</em> paling umum dalam aljabar. Kuadrat dari suatu binomial TIDAK SAMA dengan menjumlahkan kuadrat dari masing-masing bilangannya secara langsung. <code>(A + B)<sup>2</sup> &ne; A<sup>2</sup> + B<sup>2</sup></code>.
+                <br><br>Jawaban Budi adalah yang benar karena definisi kuadrat adalah <strong>mengalikan bilangan dengan dirinya sendiri secara utuh</strong>:
+                <br><code>(x + 3)(x + 3) = x(x) + x(3) + 3(x) + 3(3)</code>
+                <br><code>= x<sup>2</sup> + 3x + 3x + 9</code>
+                <br><code>= x<sup>2</sup> + 6x + 9</code>.`
+            },
+            {
+                id: 20,
+                question: "Diketahui bentuk aljabar P = 3(x - 2y) dan Q = -2(2x - y). Nilai dari 2P - Q setelah disederhanakan adalah...",
+                options: [
+                    "10x - 14y",
+                    "10x - 10y",
+                    "2x - 14y",
+                    "2x - 10y"
+                ],
+                correct: 0,
+                explanation: `<strong>Jawaban Benar: 10x - 14y</strong><br><br>
+                Mari kita kerjakan secara bertahap.
+                <br><strong>Langkah 1: Sederhanakan nilai P dan Q (kali pelangi)</strong>
+                <br>&bull; <code>P = 3(x - 2y) = 3x - 6y</code>
+                <br>&bull; <code>Q = -2(2x - y) = -4x + 2y</code>
+                <br><br><strong>Langkah 2: Masukkan ke soal (2P - Q)</strong>
+                <br><code>2 &times; (3x - 6y) - (-4x + 2y)</code>
+                <br><br><strong>Langkah 3: Buka kurungnya</strong>
+                <br><code>(6x - 12y) + 4x - 2y</code> <em>(Perhatikan: minus di depan kurung Q merubah tanda suku di dalamnya)</em>
+                <br><br><strong>Langkah 4: Gabungkan suku sejenis</strong>
+                <br>&bull; Kelompok x: <code>6x + 4x = 10x</code>
+                <br>&bull; Kelompok y: <code>-12y - 2y = -14y</code>
+                <br><br>Hasil Akhir: <strong>10x - 14y</strong>.`
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const quizForm = document.getElementById('quiz-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScoreEl = document.getElementById('final-score');
+        const actionButtons = document.getElementById('action-buttons');
+
+        function renderQuiz() {
+            quizData.forEach((item, index) => {
+                const questionNum = index + 1;
+                
+                // Card Kontainer Soal
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-7 transition-all hover:shadow-md';
+                cardDiv.id = `card-${item.id}`;
+
+                // Header Soal (Nomor dan Pertanyaan)
+                const questionHeader = document.createElement('div');
+                questionHeader.className = 'flex items-start gap-4 mb-5';
+                questionHeader.innerHTML = `
+                    <div class="flex-shrink-0 bg-violet-50 text-primary font-bold text-lg w-10 h-10 rounded-full flex items-center justify-center border border-violet-100 mt-1">
+                        ${questionNum}
+                    </div>
+                    <div class="text-slate-800 font-medium leading-relaxed w-full text-base sm:text-lg pt-1">
+                        ${item.question}
+                    </div>
+                `;
+                cardDiv.appendChild(questionHeader);
+
+                // Opsi Jawaban (Grid layout)
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pl-0 sm:pl-14';
+
+                item.options.forEach((opt, optIndex) => {
+                    const optionLabel = document.createElement('label');
+                    optionLabel.className = 'option-label relative flex items-center w-full';
+                    
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question-${item.id}`;
+                    optionInput.value = optIndex;
+                    optionInput.className = 'option-input opacity-0 absolute w-full h-full cursor-pointer z-10'; // Sembunyikan radio asli
+
+                    const optionContent = document.createElement('div');
+                    optionContent.className = 'option-content flex items-center w-full p-4 border border-slate-200 rounded-xl hover:bg-slate-50';
+                    
+                    // Lingkaran kustom pengganti radio button bawaan browser
+                    const radioCircleDiv = `<div class="radio-circle flex-shrink-0 w-5 h-5 border-2 border-slate-300 rounded-full mr-3 relative transition-colors"></div>`;
+                    
+                    // Abjad Opsi (A, B, C, D)
+                    const letter = String.fromCharCode(65 + optIndex);
+                    
+                    optionContent.innerHTML = radioCircleDiv + `<span class="text-sm sm:text-base text-slate-700 font-medium"><span class="font-bold text-slate-400 mr-2">${letter}.</span> ${opt}</span>`;
+
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(optionContent);
+                    optionsGrid.appendChild(optionLabel);
+                });
+                cardDiv.appendChild(optionsGrid);
+
+                const explanationDiv = document.createElement('div');
+                explanationDiv.id = `explanation-${item.id}`;
+                explanationDiv.className = 'explanation-box bg-slate-50 border-l-4 border-slate-400 rounded-r-lg mt-0 sm:ml-14 text-sm sm:text-base text-slate-700 leading-relaxed shadow-inner';
+                explanationDiv.innerHTML = `<div class="p-5">${item.explanation}</div>`;
+                cardDiv.appendChild(explanationDiv);
+
+                quizContainer.appendChild(cardDiv);
+            });
+        }
+
+        // Eksekusi fungsi render
+        renderQuiz();
+
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah reload halaman
+
+            let correctCount = 0;
+            const totalQuestions = quizData.length;
+
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                let selectedValue = null;
+                
+                // Identifikasi jawaban yang dipilih
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        selectedValue = parseInt(radios[i].value);
+                        break;
+                    }
+                }
+
+                // Ambil elemen div opsi (untuk merubah warna background/border)
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                
+                // Hapus style lama jika disubmit ulang
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                // SELALU warnai jawaban yang BENAR dengan hijau (meskipun user tidak menjawab)
+                optionLabels[item.correct].classList.add('status-correct');
+
+                if (selectedValue === item.correct) {
+                    correctCount++; // Jika jawaban user benar, tambah skor
+                } else if (selectedValue !== null) {
+                    // Jika dijawab salah, warnai pilihan user tersebut dengan merah
+                    optionLabels[selectedValue].classList.add('status-wrong');
+                }
+
+                // Tampilkan Kotak Pembahasan
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.add('show');
+                
+                // Set warna garis border samping pada kotak pembahasan
+                if (selectedValue === item.correct) {
+                    explanationBox.classList.remove('border-slate-400', 'border-wrong');
+                    explanationBox.classList.add('border-correct');
+                } else {
+                    explanationBox.classList.remove('border-slate-400', 'border-correct');
+                    explanationBox.classList.add('border-wrong');
+                }
+
+                // Kunci pilihan radio button (Disable)
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = true;
+                }
+            });
+
+            const score = Math.round((correctCount / totalQuestions) * 100);
+            try {
+                finalScoreEl.setAttribute('data-final-score', score);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: score,
+                        passed: score >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            // Tampilkan panel skor
+            scoreDisplay.classList.remove('hidden');
+            scoreDisplay.classList.add('flex');
+            
+            // Pewarnaan teks skor berdasarkan hasil capaian
+            if(score >= 80) {
+                finalScoreEl.className = 'text-6xl font-extrabold text-correct drop-shadow-sm';
+            } else if(score >= 60) {
+                finalScoreEl.className = 'text-6xl font-extrabold text-amber-500 drop-shadow-sm';
+            } else {
+                finalScoreEl.className = 'text-6xl font-extrabold text-wrong drop-shadow-sm';
+            }
+
+            // Jalankan animasi perhitungan skor
+            let currentScore = 0;
+            finalScoreEl.innerText = 0;
+            const animateScore = setInterval(() => {
+                if (currentScore < score) {
+                    currentScore++;
+                    finalScoreEl.innerText = currentScore;
+                } else {
+                    clearInterval(animateScore);
+                    finalScoreEl.innerText = score;
+                }
+            }, 15);
+
+            // Sembunyikan tombol Submit, Munculkan tombol Ulangi
+            submitBtn.classList.add('hidden');
+            actionButtons.classList.remove('hidden');
+            
+            // Pindahkan fokus layar (scroll) ke bawah perlahan agar user melihat nilainya
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', function() {
+            // Reset input form
+            quizForm.reset();
+
+            // Kembalikan form ke bentuk semula (buka kunci, hapus warna, tutup pembahasan)
+            quizData.forEach((item) => {
+                const radios = document.getElementsByName(`question-${item.id}`);
+                for (let i = 0; i < radios.length; i++) {
+                    radios[i].disabled = false;
+                }
+
+                const optionLabels = document.querySelectorAll(`input[name="question-${item.id}"] ~ .option-content`);
+                optionLabels.forEach(label => {
+                    label.classList.remove('status-correct', 'status-wrong');
+                });
+
+                const explanationBox = document.getElementById(`explanation-${item.id}`);
+                explanationBox.classList.remove('show');
+                explanationBox.classList.remove('border-correct', 'border-wrong');
+                explanationBox.classList.add('border-slate-400');
+            });
+
+            // Sembunyikan skor dan tombol reset, lalu munculkan lagi tombol Submit
+            scoreDisplay.classList.add('hidden');
+            scoreDisplay.classList.remove('flex');
+            actionButtons.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Gulir kembali ke bagian paling atas (mulai awal kuis)
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+    
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'CLOSE_MODAL' }, '*');
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+</script>
+</body>
+</html>

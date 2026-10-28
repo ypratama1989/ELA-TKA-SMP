@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: English Tenses - EDUFILLAH</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="/tailwindcss.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="/fontawesome.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .custom-radio {
+            accent-color: #3b82f6;
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #1d4ed8; 
+        }
+        
+        .option-label:hover {
+            background-color: #eff6ff;
+        }
+
+        .explanation {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-slate-600 hover:text-blue-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-lg sm:text-xl font-bold text-blue-700 hidden sm:block">Latihan Soal English Tenses</h1>
+            <div class="w-20 sm:hidden"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow py-8 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">Uji Penguasaan Tenses</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Kerjakan 20 soal grammar di bawah ini. Fokus pada perbedaan <i>Present Perfect</i>, <i>Simple Past</i>, dan <i>Simple Present</i>. Selamat mengerjakan!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <!-- Soal 1 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">1. Riana: "Where is your mother, Dani?"<br>Dani: "She is not here. She ... to the traditional market to buy some vegetables."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio">
+                            <span class="ml-3">A. goes</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio">
+                            <span class="ml-3">B. has gone</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio">
+                            <span class="ml-3">C. is going</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio">
+                            <span class="ml-3">D. has been</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (has gone)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Ada perbedaan penting antara <em>"has gone"</em> dan <em>"has been"</em>.<br>
+                        - <strong>has gone</strong> = sudah pergi dan <em>belum kembali</em> (masih berada di sana).<br>
+                        - <strong>has been</strong> = sudah pernah pergi dan <em>sudah kembali</em> ke sini.<br>
+                        Karena Dani bilang <em>"She is not here"</em> (Ibu tidak ada di sini), berarti ibunya masih berada di pasar dan belum pulang. Jadi, jawaban yang paling tepat adalah <em>has gone</em>!
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">2. Mr. Rahman is a dedicated teacher. He ... English at SMP Harapan Bangsa since 2015.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio">
+                            <span class="ml-3">A. teaches</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio">
+                            <span class="ml-3">B. is teaching</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio">
+                            <span class="ml-3">C. has taught</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio">
+                            <span class="ml-3">D. has been taught</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (has taught)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Coba perhatikan kata <strong>"since 2015"</strong> (sejak 2015). Ini adalah kata kunci untuk <em>Present Perfect Tense</em>, yaitu tenses yang digunakan untuk kejadian yang dimulai di masa lalu dan <strong>masih berlanjut</strong> hingga sekarang.<br>
+                        Rumusnya: <strong>Subjek + have/has + Verb 3</strong>.<br>
+                        Karena subjeknya <em>He</em> (Pak Rahman), kita gunakan <em>has</em>. Kata kerja ke-3 (V3) dari <em>teach</em> adalah <em>taught</em>. Opsi D salah karena itu adalah bentuk pasif (telah diajar), padahal Pak Rahman adalah yang mengajar (aktif).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">3. Look at the messy room! The children ... their toys on the floor, and they are still playing there now.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio">
+                            <span class="ml-3">A. have scattered</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio">
+                            <span class="ml-3">B. scatter</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio">
+                            <span class="ml-3">C. are scattering</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio">
+                            <span class="ml-3">D. scattered</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (have scattered)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Kalimat ini menunjukkan adanya akibat atau <strong>hasil yang terlihat sekarang</strong>, yaitu ruangan yang berantakan (<em>"Look at the messy room!"</em>). Tindakan anak-anak menghamburkan mainan sudah terjadi, tapi efeknya masih terasa saat ini.<br>
+                        Ini adalah ciri khas penggunaan <em>Present Perfect Tense</em> (Subjek + have/has + Verb 3).<br>
+                        Subjek "The children" itu jamak (banyak anak), jadi kita pakai <em>have</em> + V3 (<em>scattered</em>).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">4. Diana: "Would you like some cupcakes? I made them this morning."<br>Sita: "No, thank you. I ... my lunch, so I am still very full."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio">
+                            <span class="ml-3">A. just have</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio">
+                            <span class="ml-3">B. have just had</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio">
+                            <span class="ml-3">C. am having</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio">
+                            <span class="ml-3">D. just had</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (have just had)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Sita menolak cupcake karena ia masih kenyang saat ini ("I am still very full"). Kenapa dia kenyang? Karena dia <strong>baru saja</strong> makan siang.<br>
+                        Untuk menyatakan sesuatu yang "baru saja" selesai dilakukan dan efeknya terasa sekarang, kita gunakan <em>Present Perfect Tense</em> dengan tambahan kata <strong>just</strong> di tengahnya.<br>
+                        Rumusnya: <strong>S + have/has + just + Verb 3</strong>.<br>
+                        Kata kerja untuk makan siang adalah <em>"have lunch"</em>. Verb 3 dari <em>have</em> adalah <em>had</em>. Maka susunannya menjadi: I + <strong>have + just + had</strong> + my lunch.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">5. Read the following sentences!<br>
+                    (1) My sister has lived in Bandung for five years.<br>
+                    (2) My sister lives in Bandung for five years.<br>
+                    (3) My sister is living in Bandung since five years.<br>
+                    (4) My sister has been in Bandung since five years ago.<br><br>
+                    Which of the sentences above are grammatically correct to express an action that started in the past and is still true now?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio">
+                            <span class="ml-3">A. (1) and (2)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio">
+                            <span class="ml-3">B. (2) and (3)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio">
+                            <span class="ml-3">C. (1) and (4)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio">
+                            <span class="ml-3">D. (3) and (4)</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (1 dan 4)</strong><br><br>
+                        <strong>Mari kita bedah satu per satu:</strong><br>
+                        Untuk menyatakan aksi dari masa lalu yang masih berlanjut sampai sekarang, kita wajib menggunakan <strong>Present Perfect Tense</strong>.<br>
+                        - Kalimat (1) "<strong>has lived</strong> ... <strong>for</strong> five years" -> BENAR! (menggunakan <em>for</em> untuk durasi waktu).<br>
+                        - Kalimat (2) "lives ... for" -> SALAH. Simple Present ("lives") tidak boleh dipasangkan dengan "for" untuk durasi masa lalu.<br>
+                        - Kalimat (3) "is living ... since" -> SALAH. Present Continuous ("is living") tidak lazim menggunakan "since".<br>
+                        - Kalimat (4) "<strong>has been</strong> ... <strong>since</strong> five years ago" -> BENAR! (menggunakan <em>since</em> untuk titik awal waktu di masa lalu).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">6. We ... each other for a long time, but we still keep in touch through social media.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio">
+                            <span class="ml-3">A. don't see</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio">
+                            <span class="ml-3">B. haven't seen</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio">
+                            <span class="ml-3">C. aren't seeing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio">
+                            <span class="ml-3">D. didn't see</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (haven't seen)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Ada kata penunjuk waktu <strong>"for a long time"</strong> (selama waktu yang lama). Ini menandakan suatu rentang waktu dari masa lalu hingga detik ini.<br>
+                        Oleh karena itu, tenses yang paling tepat adalah <em>Present Perfect Tense</em> bentuk negatif, yang berarti "belum pernah" atau "tidak melakukan hal tersebut sejak dulu hingga sekarang".<br>
+                        Rumusnya: <strong>S + have/has + not + V3</strong>. Untuk subjek <em>We</em>, gunakan <strong>have not (haven't)</strong> dan V3 dari see adalah <strong>seen</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">7. Evaluate these two statements:<br>
+                    <em>Statement 1:</em> "I have lost my key."<br>
+                    <em>Statement 2:</em> "I lost my key."<br><br>
+                    What is the difference in meaning between the two statements?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio">
+                            <span class="ml-3">A. Statement 1 means the key is still lost now; Statement 2 means the key might have been found.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio">
+                            <span class="ml-3">B. Statement 1 means the key was lost a long time ago; Statement 2 means it just happened.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio">
+                            <span class="ml-3">C. Statement 1 shows a temporary habit; Statement 2 shows a permanent state.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio">
+                            <span class="ml-3">D. There is no difference in meaning; both are used for the exact same situation.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Ini perbedaan penting antara Present Perfect dan Simple Past!</strong><br>
+                        - <em>"I have lost my key"</em> (Present Perfect) menekankan pada <strong>efeknya di masa sekarang</strong>. Artinya, kuncinya masih hilang sampai detik ini dan dia belum menemukannya.<br>
+                        - <em>"I lost my key"</em> (Simple Past) hanya menceritakan <strong>kejadian di masa lalu</strong> tanpa peduli efek sekarang. Artinya, mungkin saja kuncinya kemarin hilang tapi hari ini sudah ketemu.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">8. My father ... his car twice a week, but he ... it yet this week because of the heavy rain.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio">
+                            <span class="ml-3">A. washes / hasn't washed</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio">
+                            <span class="ml-3">B. is washing / doesn't wash</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio">
+                            <span class="ml-3">C. has washed / didn't wash</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio">
+                            <span class="ml-3">D. wash / isn't washing</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (washes / hasn't washed)</strong><br><br>
+                        <strong>Mari kita bedah per bagian:</strong><br>
+                        - <strong>Bagian 1:</strong> Ada kata <em>"twice a week"</em> (dua kali seminggu). Ini menunjukkan rutinitas atau kebiasaan, sehingga kita harus menggunakan <strong>Simple Present Tense</strong>. Karena subjeknya <em>My father</em> (He), maka kata kerja ditambah -es menjadi <strong>washes</strong>.<br>
+                        - <strong>Bagian 2:</strong> Ada kata <em>"yet"</em> (belum) di akhir klausa. Ini adalah ciri khas <strong>Present Perfect Tense negatif</strong>, yang artinya tindakan tersebut belum dilakukan sampai saat ini. Rumusnya: <em>He + has + not + V3</em> menjadi <strong>hasn't washed</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">9. Analyze the conversation below!<br>
+                    Teacher: "Why is the classroom so clean today?"<br>
+                    Class Captain: "We ... the floor and wiped all the windows, Sir. That's why it looks fresh."<br><br>
+                    The most appropriate verb phrase to complete the dialogue is ....</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio">
+                            <span class="ml-3">A. sweep</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio">
+                            <span class="ml-3">B. are sweeping</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio">
+                            <span class="ml-3">C. have swept</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio">
+                            <span class="ml-3">D. have been swept</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (have swept)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Guru bertanya kenapa kelasnya bersih <strong>hari ini</strong> (sekarang). Ketua kelas menjawab bahwa mereka telah membersihkannya. Kegiatan menyapunya (sweep) terjadi di waktu lampau, tapi <strong>hasilnya terlihat nyata sekarang</strong> (kelasnya bersih).<br>
+                        Ini adalah fungsi utama <em>Present Perfect Tense</em>. <br>
+                        Rumus: Subjek (We) + <strong>have + Verb 3 (swept)</strong>. Opsi D salah karena bermakna pasif ("kami telah disapu").
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">10. Every morning, Sarah ... her bicycle to school. However, today she has to walk because she ... a flat tire.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio">
+                            <span class="ml-3">A. rides / has</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio">
+                            <span class="ml-3">B. is riding / has had</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio">
+                            <span class="ml-3">C. rides / has had</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio">
+                            <span class="ml-3">D. has ridden / has</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (rides / has)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        - <strong>Bagian 1:</strong> Kata kunci <em>"Every morning"</em> (Setiap pagi) menunjukkan kebiasaan. Jadi kita gunakan <em>Simple Present Tense</em>. Subjek Sarah (She) berpasangan dengan verb+s, yaitu <strong>rides</strong>.<br>
+                        - <strong>Bagian 2:</strong> "...because she ... a flat tire." (karena dia memiliki ban kempes). Kata "memiliki/mengalami" ban kempes merujuk pada <strong>kondisi/keadaan saat ini</strong>, bukan sebuah aktivitas yang telah selesai. Oleh karena itu, kita cukup menggunakan Simple Present yaitu <strong>has</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">11. I ... Mr. Anwar since I was a child. He is our kindest neighbor.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio">
+                            <span class="ml-3">A. know</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio">
+                            <span class="ml-3">B. am knowing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio">
+                            <span class="ml-3">C. have known</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio">
+                            <span class="ml-3">D. have been knowing</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (have known)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Konteksnya: Saya mengenal Pak Anwar sejak masih kecil sampai sekarang. Ada kata "since", berarti kita pakai kelompok <em>Perfect Tense</em>.<br>
+                        Mengapa tidak pakai "have been knowing" (D)? Karena kata <em>"know"</em> (mengenal/mengetahui) adalah <em>Stative Verb</em> (kata kerja yang menunjukkan keadaan, bukan aksi fisik). Stative verb <strong>sangat jarang dan dihindari</strong> untuk dipakai dalam bentuk -ing (Continuous).<br>
+                        Oleh karena itu, bentuk yang paling tepat dan baku adalah <strong>Present Perfect biasa: have known</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">12. Read the dialogue below!<br>
+                    Arif: "Can you help me with this math homework?"<br>
+                    Budi: "I'm sorry, I can't. I ... my homework yet, so I must finish mine first."<br><br>
+                    Based on the context, which tense is the most appropriate to fill the blank and why?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio">
+                            <span class="ml-3">A. Present Simple, because it shows a daily routine.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio">
+                            <span class="ml-3">B. Present Perfect, because it connects a past action (not finishing) to the present condition (cannot help).</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio">
+                            <span class="ml-3">C. Present Continuous, because the action of not finishing is happening right now.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio">
+                            <span class="ml-3">D. Past Simple, because the homework was given yesterday.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Mari kita bedah logikanya:</strong><br>
+                        Budi bilang dia tidak bisa membantu Arif saat ini karena PR-nya sendiri "belum" (yet) selesai. Pekerjaan PR-nya sudah dimulai sejak tadi, tapi efeknya sampai detik ini belum kelar.<br>
+                        Menghubungkan kejadian di masa lalu dengan efek/kondisi di masa sekarang adalah fungsi sejati dari <strong>Present Perfect Tense</strong> (*I haven't finished my homework yet*).
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">13. "Roni has been to Bali three times."<br>What does this sentence imply about Roni?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio">
+                            <span class="ml-3">A. Roni is currently in Bali and has not returned yet.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio">
+                            <span class="ml-3">B. Roni has the experience of visiting Bali in the past, but he is not there now.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio">
+                            <span class="ml-3">C. Roni is planning to go to Bali three times in the future.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio">
+                            <span class="ml-3">D. Roni lives in Bali permanently now.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Penggunaan kata <strong>"has been to"</strong> dalam Present Perfect berfungsi untuk menceritakan <strong>pengalaman hidup</strong> (*life experience*). Artinya, seseorang pernah pergi ke suatu tempat dan saat ini <strong>sudah kembali/tidak berada di tempat tersebut</strong>.<br>
+                        Roni pernah punya pengalaman ke Bali sebanyak 3 kali, tapi sekarang dia sudah pulang dan ada di sini bersama kita. Jika dia masih di Bali, tenses yang dipakai adalah <em>"has gone to Bali"</em>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">14. Choose the correct sentence that correctly combines Present Simple and Present Perfect Tense!</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio">
+                            <span class="ml-3">A. I always eat breakfast, but today I haven't eaten anything because I am late.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio">
+                            <span class="ml-3">B. I have always eaten breakfast, but today I don't eat anything because I am late.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio">
+                            <span class="ml-3">C. I always eat breakfast, but today I don't eat anything because I have been late.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio">
+                            <span class="ml-3">D. I always eat breakfast, but today I haven't eaten anything because I have been late.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Mari kita cek tenses-nya:</strong><br>
+                        - Klausa pertama harus <em>Present Simple</em> karena ada kebiasaan ("always"). Maka yang benar adalah: <strong>"I always eat..."</strong>.<br>
+                        - Klausa kedua harus <em>Present Perfect</em> karena menyatakan suatu aksi (makan) yang "belum dilakukan" terhitung dari pagi sampai detik ini. Maka yang benar: <strong>"...I haven't eaten anything..."</strong>.<br>
+                        Opsi A adalah gabungan grammar yang paling pas dan logis!
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">15. Situation: <em>Santi started writing a novel three months ago. She is still writing it now.</em><br>Which sentence best evaluates and represents this situation?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio">
+                            <span class="ml-3">A. Santi writes a novel for three months.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio">
+                            <span class="ml-3">B. Santi has written a novel for three months.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio">
+                            <span class="ml-3">C. Santi is writing a novel since three months.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio">
+                            <span class="ml-3">D. Santi has been written a novel since three months.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (Santi has written a novel for three months)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Kejadiannya dimulai di masa lalu (3 bulan lalu) dan masih berlanjut sampai saat ini. Tenses yang tepat adalah <strong>Present Perfect</strong>.<br>
+                        Karena "three months" (tiga bulan) adalah <strong>durasi waktu</strong> (lama berlangsungnya), maka kita wajib menggunakan preposisi <strong>for</strong>.<br>
+                        Rumus yang benar: <em>Santi + has + V3 (written) + for three months</em>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">16. My uncle ... a new laptop, so he can work from home more comfortably now.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio">
+                            <span class="ml-3">A. buys</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio">
+                            <span class="ml-3">B. has bought</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio">
+                            <span class="ml-3">C. is buying</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio">
+                            <span class="ml-3">D. has been bought</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (has bought)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Paman membeli laptopnya di waktu lampau (kapan pun itu), tapi <strong>efeknya dirasakan sekarang</strong> yaitu dia bisa bekerja dengan nyaman. Menghubungkan kejadian lampau dengan efek/hasil sekarang adalah tugas dari <em>Present Perfect Tense</em>.<br>
+                        Subjek <em>My uncle</em> (He) memakai <em>has</em> + Verb 3 (bought). Opsi D salah karena itu kalimat pasif ("paman telah dibeli").
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">17. Analyze the error in this sentence:<br>
+                    <em>"They have played football in the yard since two hours."</em><br>
+                    The correct sentence should be ....</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio">
+                            <span class="ml-3">A. They play football in the yard since two hours.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio">
+                            <span class="ml-3">B. They have played football in the yard for two hours.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio">
+                            <span class="ml-3">C. They are playing football in the yard since two hours ago.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio">
+                            <span class="ml-3">D. They have played football in the yard since two hours ago.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (for two hours)</strong><br><br>
+                        <strong>Mari kita bedah kesalahannya:</strong><br>
+                        Kalimat asli menggunakan preposisi <em>"since"</em> yang diikuti dengan "two hours". Ini kurang tepat! <br>
+                        - <strong>Since</strong> (sejak) digunakan untuk titik awal waktu yang pasti (misal: <em>since 2 o'clock, since morning, since 2020</em>).<br>
+                        - <strong>For</strong> (selama) digunakan untuk durasi atau lamanya waktu berjalan (misal: <em>for two hours, for five days, for a year</em>).<br>
+                        Karena "two hours" (dua jam) adalah durasi/rentang waktu, preposisi yang wajib digunakan adalah <strong>for</strong>.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">18. "We ... in this small town since we ... from the university."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio">
+                            <span class="ml-3">A. have lived / graduated</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio">
+                            <span class="ml-3">B. live / have graduated</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio">
+                            <span class="ml-3">C. are living / graduated</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio">
+                            <span class="ml-3">D. have lived / have graduated</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (have lived / graduated)</strong><br><br>
+                        <strong>Mari kita bedah rumus kombinasi kalimat ini:</strong><br>
+                        Ketika menggunakan kata sambung <strong>since</strong> (sejak) di tengah kalimat, aturan tenses-nya sangat spesifik:<br>
+                        Klausa Utama (Present Perfect) + <strong>since</strong> + Anak Kalimat (Simple Past).<br>
+                        - Klausa utama: Kami <em>telah tinggal</em> (<strong>have lived</strong>) di kota ini...<br>
+                        - Anak kalimat: ...sejak kami <em>lulus</em> (<strong>graduated</strong> - V2 masa lampau) dari universitas.
+                    </div>
+                </div>
+
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">19. Teacher: "Have you submitted your English project?"<br>Student: "Yes, I have, Ma'am. I ... it on your desk five minutes ago."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio">
+                            <span class="ml-3">A. have put</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio">
+                            <span class="ml-3">B. put</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio">
+                            <span class="ml-3">C. am putting</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio">
+                            <span class="ml-3">D. puts</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (put)</strong><br><br>
+                        <strong>Hati-hati jebakan tenses!</strong><br>
+                        Meskipun guru bertanya menggunakan Present Perfect (*Have you...*), jawaban siswa kalimat kedua memiliki keterangan waktu spesifik yaitu <strong>"five minutes ago"</strong> (lima menit yang lalu).<br>
+                        Aturan mutlak dalam bahasa Inggris: Apabila ada penunjuk waktu masa lalu yang spesifik (seperti *ago, yesterday, last week*), kita WAJIB menggunakan <strong>Simple Past Tense (V2)</strong>, bukan Present Perfect.<br>
+                        Verb 2 dari kata kerja <em>put</em> adalah <strong>put</strong> (bentuknya tidak berubah).
+                    </div>
+                </div>
+
+                <div class="question-block mb-12" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">20. Which of the following questions is used to ask about the duration of someone's state or action up to the present moment?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio">
+                            <span class="ml-3">A. How long do you live in Jakarta?</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio">
+                            <span class="ml-3">B. How long are you living in Jakarta?</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio">
+                            <span class="ml-3">C. How long have you lived in Jakarta?</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio">
+                            <span class="ml-3">D. How long did you live in Jakarta?</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita bedah rumus pertanyaannya:</strong><br>
+                        Soal ini menanyakan "berapa lama" (durasi) suatu keadaan yang terjadi dari masa lalu "hingga saat ini" (*up to the present moment*). Seperti yang sudah kita pelajari, fungsi ini adalah milik <strong>Present Perfect Tense</strong>.<br>
+                        Rumus pertanyaannya (Interrogative): <em>How long + have/has + Subjek + Verb 3?</em><br>
+                        Jadi, kalimat yang tepat adalah: <strong>How long have you lived in Jakarta?</strong> (Sudah berapa lama kamu tinggal di Jakarta?).
+                    </div>
+                </div>
+
+                <!-- Hasil Skor (Sembunyi by default) -->
+                <div id="score-container" class="hidden mb-10 p-8 bg-indigo-50 rounded-2xl border border-indigo-200 text-center fade-in">
+                    <h3 class="text-xl sm:text-2xl font-semibold text-slate-700 mb-2">Skor Akhir Kamu:</h3>
+                    <div id="score-display" class="text-6xl sm:text-7xl font-extrabold text-blue-600 mb-4 drop-shadow-sm">0</div>
+                    <p id="score-message" class="text-lg text-slate-600 font-medium"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6">
+                    <button type="button" id="check-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-slate-700 hover:bg-slate-800 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="py-8 text-center text-slate-500 font-medium mt-auto w-full border-t border-slate-200 bg-slate-50">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // 20 soal dengan bobot 5 poin per soal (total max 100)
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach((q) => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    // Memasukkan konten pembahasan tersembunyi ke dalam kotak yang akan ditampilkan
+                    explanationDiv.innerHTML = rationaleHTML; 
+
+                    radios.forEach(radio => {
+                        // Kunci input agar tidak bisa diubah setelah periksa jawaban
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Gaya CSS saat Benar (Hijau)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-emerald-50 text-emerald-900 border-emerald-500 block shadow-sm';
+                            } else {
+                                // Gaya CSS saat Salah (Merah)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                            }
+                        }
+                    });
+
+                    // Logika jika tidak dijawab (otomatis Salah)
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                        explanationDiv.innerHTML = '<strong class="text-rose-700 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Kamu belum menjawab pertanyaan ini!</strong><hr class="border-rose-200 my-3">' + rationaleHTML;
+                    }
+                });
+
+                // Perhitungan Skor
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                
+                // Animasi Counter Angka Skor
+                let currentScore = 0;
+                const scoreInterval = setInterval(() => {
+                    if (currentScore >= finalScore) {
+                        clearInterval(scoreInterval);
+                        scoreDisplay.textContent = finalScore;
+                    } else {
+                        currentScore++;
+                        scoreDisplay.textContent = currentScore;
+                    }
+                }, 20); 
+
+                // Pesan Evaluasi
+                if (finalScore === 100) {
+                    scoreMessage.innerHTML = "🎉 Luar biasa! Pemahamanmu tentang Tenses sangat sempurna.";
+                } else if (finalScore >= 80) {
+                    scoreMessage.innerHTML = "🌟 Hebat! Kamu sudah sangat menguasai materi ini.";
+                } else if (finalScore >= 60) {
+                    scoreMessage.innerHTML = "👍 Cukup baik. Yuk, baca ulang pembahasannya agar lebih paham rumus-rumusnya.";
+                } else {
+                    scoreMessage.innerHTML = "💪 Jangan menyerah! Pelajari pelan-pelan langkah pembahasannya dan coba lagi ya.";
+                }
+
+                // Tampilkan container skor & tombol ulangi, sembunyikan tombol periksa
+                scoreContainer.classList.remove('hidden');
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Otomatis scroll perlahan ke bagian skor
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset form (radio buttons uncheck)
+                form.reset();
+
+                // Kembalikan ke state awal
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; // Buka kunci interaksi
+                    });
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.classList.remove('block');
+                    explanationDiv.classList.add('hidden');
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Sembunyikan skor & ubah tombol kembali seperti semula
+                scoreContainer.classList.add('hidden');
+                scoreDisplay.textContent = '0';
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Scroll mulus kembali ke ujung atas halaman
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

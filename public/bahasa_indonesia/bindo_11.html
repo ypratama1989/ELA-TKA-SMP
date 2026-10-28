@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Literasi Emosi & Evaluasi Teks - Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Customizing radio inputs for better UI/UX */
+        .option-label {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Smooth transition for explanation boxes */
+        .explanation-box {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2500px;
+            overflow: hidden;
+            opacity: 1;
+        }
+        .explanation-box.hidden-box {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-width: 0;
+            opacity: 0;
+        }
+        
+        /* Styling for story/context quotes to make them stand out */
+        .quote-box {
+            border-left: 4px solid #3b82f6; /* blue-500 */
+            background-color: #f0f9ff; /* sky-50 */
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.75rem 0.75rem 0;
+            color: #1e3a8a; /* blue-900 */
+            line-height: 1.7;
+            position: relative;
+            font-size: 0.95rem;
+        }
+        
+        /* Quote mark decorative element */
+        .quote-box::before {
+            content: '"';
+            font-size: 3rem;
+            color: #bae6fd; /* sky-200 */
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        .quote-title {
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 0.5rem;
+            font-style: normal;
+        }
+
+        .quote-text {
+            font-style: italic;
+        }
+
+        /* Responsive images for base64 logic */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 1rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative pb-24">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg font-medium text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-2xl font-bold text-slate-800 text-center flex-1 px-2">Kuis Analisis Emosi & Teks</h1>
+            <div class="w-24"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-10 mb-8 border border-slate-200">
+            <div class="mb-8 border-b pb-6 text-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Detektif Sastra: Bongkar Emosi Tokoh! 🔎</h2>
+                <p class="text-slate-600 text-[15px] md:text-lg leading-relaxed max-w-2xl mx-auto">
+                    Baca kutipan cerita dengan saksama. Temukan petunjuk tersembunyi untuk merasakan apa yang dirasakan tokoh dan pahami cara penulis menyampaikan pesannya. Kamu tidak perlu menjawab semua soal untuk memeriksa hasil. Selamat menganalisis!
+                </p>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Soal dirender lewat JS -->
+                </div>
+
+                <div class="mt-12 pt-10 border-t-2 border-dashed border-slate-300 flex flex-col items-center">
+                    <button type="button" id="btn-check" class="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1 hover:shadow-xl text-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Periksa Jawaban
+                    </button>
+
+                    <div id="result-area" class="hidden w-full mt-6 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-blue-200 text-center shadow-inner">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Skor Akhir Kamu</h3>
+                        <div class="text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm" id="final-score">0</div>
+                        <p class="text-slate-700 mb-8 font-medium text-lg px-4" id="score-message"></p>
+                        
+                        <button type="button" id="btn-retry" class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-bold rounded-xl transition-colors flex items-center justify-center mx-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="absolute bottom-0 w-full bg-slate-800 text-slate-300 py-6 text-center border-t border-slate-700">
+        <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                contextTitle: "Kutipan Teks 1 (Untuk soal nomor 1 dan 2)",
+                contextText: "Lampu minyak di sudut kamar bergoyang pelan ditiup angin malam yang menyusup dari celah dinding bambu. Ibu masih terjaga, jemarinya yang legam dan kasar terus menganyam bakul bambu tanpa henti. Di sudut lain, Ari menatap ibunya dengan dada yang sesak. Esok adalah hari terakhir pembayaran uang ujian, dan celengan tanah liatnya hanya berisi beberapa keping koin yang tak akan cukup.",
+                question: "Berdasarkan kutipan tersebut, respons emosional tokoh Ari terhadap kondisi ibunya adalah...",
+                options: [
+                    "Marah karena ibunya tidak mampu membayar uang ujian.",
+                    "Sedih dan merasa bersalah melihat perjuangan keras ibunya.",
+                    "Kecewa karena celengan tanah liatnya tidak terisi penuh.",
+                    "Pasrah dan tidak peduli lagi dengan ujian sekolah esok hari."
+                ],
+                answer: 1, // B
+                explanation: "Halo Sobat Cerdas! Bayangkan kamu berada di posisi Ari. Kamu melihat ibumu bekerja keras hingga larut malam dalam kondisi miskin, sementara besok kamu sangat butuh uang ujian. Di dalam teks disebutkan Ari menatap ibunya dengan <strong>'dada yang sesak'</strong>. Ini adalah petunjuk kuat bahwa Ari merasa <strong>sedih, prihatin, dan merasa bersalah</strong> karena belum bisa membantu meringankan beban ibunya. Ia tidak mungkin marah pada keadaan ibunya yang sudah berusaha keras. Jadi, jawaban <strong>B</strong> paling tepat!"
+            },
+            {
+                question: "Bagaimana pembaca mengevaluasi suasana emosional yang dibangun oleh penulis melalui latar tempat dan waktu pada kutipan tersebut?",
+                options: [
+                    "Latar malam hari dan dinding bambu memperkuat kesan kesunyian yang damai dan tenteram.",
+                    "Latar lampu minyak yang bergoyang dan celah dinding bambu mempertegas rasa cemas dan keprihatinan yang mendalam.",
+                    "Latar anyaman bakul bambu menggambarkan semangat wirausaha yang tinggi di tengah malam.",
+                    "Latar kamar yang sempit memicu rasa takut dan ngeri tokoh Ari terhadap kegelapan malam."
+                ],
+                answer: 1, // B
+                explanation: "Mari kita amati latarnya! Penulis menggunakan <em>'lampu minyak yang bergoyang'</em> (cahaya redup/tidak stabil) dan <em>'angin malam menyusup dari celah dinding bambu'</em> (kemiskinan/angin dingin). Latar visual dan atmosferik ini sengaja dipilih penulis untuk mendukung dan <strong>mempertegas suasana hati tokoh yang sedang cemas, bimbang, dan dalam kondisi keprihatinan (kemiskinan)</strong>. Latar ini tidak menggambarkan kedamaian atau kengerian akan hantu. Pilihan <strong>B</strong> adalah evaluasi paling akurat."
+            },
+            {
+                contextTitle: "Kutipan Teks 2 (Untuk soal nomor 3 dan 4)",
+                contextText: "Ketika peluit akhir pertandingan berbunyi, seluruh penonton di tribun selatan bersorak gemuruh. Namun, di bangku cadangan, Rian tertunduk lesu. Air matanya menetes pelan mengenai sepatunya yang mulai usang. Ini adalah pertandingan terakhirnya di musim ini, dan ia sama sekali tidak diberi kesempatan untuk turun ke lapangan oleh sang pelatih.",
+                question: "Respons emosional tokoh Rian terhadap keputusan pelatih dalam kutipan tersebut mencerminkan perasaan...",
+                options: [
+                    "Marah dan ingin segera membalas dendam kepada pelatihnya.",
+                    "Kecewa yang mendalam disertai rasa tidak berdaya karena diabaikan.",
+                    "Bahagia karena timnya berhasil memenangkan pertandingan terakhir.",
+                    "Bingung dan ragu-ragu apakah harus keluar dari klub sepak bola tersebut."
+                ],
+                answer: 1, // B
+                explanation: "Coba perhatikan bahasa tubuh Rian: <em>'tertunduk lesu'</em> dan <em>'air matanya menetes pelan'</em>. Tindakan ini merupakan ekspresi dari rasa <strong>kekecewaan yang mendalam</strong> karena ia tidak diberi kesempatan bermain pada laga terakhirnya. Rian menangis diam-diam, yang menunjukkan ia merasa <strong>tidak berdaya</strong> melawan keputusan pelatih, bukan malah mengamuk atau membalas dendam. Pilihan <strong>B</strong> sangat pas menggambarkan kondisinya."
+            },
+            {
+                question: "Evaluasi yang paling tepat mengenai efektivitas konflik batin tokoh Rian dalam memicu empati pembaca adalah...",
+                options: [
+                    "Kurang efektif karena Rian seharusnya langsung memprotes keputusan pelatih di depan penonton.",
+                    "Sangat efektif karena kontras antara sorak gemuruh penonton dan kesedihan sunyi Rian memperkuat rasa iba pembaca.",
+                    "Biasa saja karena peristiwa tidak dimainkan dalam pertandingan sepak bola adalah hal yang lumrah.",
+                    "Tidak efektif karena penulis tidak menjelaskan secara detail skor akhir pertandingan tersebut."
+                ],
+                answer: 1, // B
+                explanation: "Yuk, jadi detektif sastra sebentar! Penulis menggunakan trik yang disebut <strong>'teknik kontras' (juxtaposition)</strong>. Di satu sisi, penonton di tribun sangat ramai dan bahagia (sorak gemuruh). Di sisi lain, Rian sendirian, sepi, dan menangis tertunduk di bangku cadangan. Perbedaan mencolok ini <strong>sangat efektif</strong> menyoroti kesepian tokoh dan membuat kita (pembaca) semakin iba dan kasihan pada nasib Rian. Pilihan <strong>B</strong> adalah evaluasi yang paling jitu!"
+            },
+            {
+                contextTitle: "Kutipan Teks 3 (Untuk soal nomor 5 dan 6)",
+                contextText: "Surat dari ayah yang baru kubuka itu hanya berisi satu kalimat singkat: \"Pulanglah, Nak, kebun teh kita sudah berbunga lagi.\" Sederhana, namun entah mengapa dadaku terasa dihantam godam besar. Kenangan sepuluh tahun lalu saat ibu masih ada, memetik pucuk teh bersama ayah di bawah kabut pagi, mendadak menyeruak memenuhi seluruh rongga kepalaku.",
+                question: "Respons emosional tokoh \"Aku\" setelah membaca surat singkat dari ayahnya adalah...",
+                options: [
+                    "Terkejut dan marah karena ayahnya menyuruhnya pulang secara mendadak.",
+                    "Rindu yang teramat sangat bercampur kesedihan atas kenangan masa lalu bersama ibunya.",
+                    "Khawatir karena kebun teh milik ayahnya mengalami kerusakan akibat cuaca.",
+                    "Gembira karena ia akan segera mendapatkan keuntungan dari panen kebun teh."
+                ],
+                answer: 1, // B
+                explanation: "Isi surat ayahnya cuma sebaris kalimat. Namun, reaksi tokoh 'Aku' sungguh luar biasa: <em>'dadaku terasa dihantam godam'</em> dan ingatan masa lalu tentang ibunya yang sudah tiada langsung <em>'menyeruak'</em>. Ini adalah bukti nyata bahwa surat tersebut memicu rasa <strong>rindu yang sangat kuat sekaligus rasa sedih</strong> karena teringat masa lalu yang indah tapi tak bisa diulang lagi. Pilihan <strong>B</strong> menyimpulkan luapan emosi ini dengan sempurna."
+            },
+            {
+                question: "Bagaimana efektivitas penggunaan metafora \"dadaku terasa dihantam godam besar\" dalam menggambarkan respons emosional tokoh \"Aku\"?",
+                options: [
+                    "Kurang tepat karena terkesan berlebihan untuk sebuah surat yang isinya sangat sederhana.",
+                    "Sangat tepat karena berhasil mengonkretkan rasa sesak akibat luapan emosi rindu dan kenangan masa lalu yang datang tiba-tiba.",
+                    "Tidak efektif karena membuat pembaca berpikir bahwa tokoh tersebut sedang mengalami sakit fisik di dadanya.",
+                    "Tepat hanya untuk menggambarkan kemarahan tokoh terhadap permintaan ayahnya."
+                ],
+                answer: 1, // B
+                explanation: "Pernahkah kamu kangen berat atau sangat sedih sampai dadamu terasa sesak? Perasaan sedih/rindu itu sifatnya abstrak (tidak terlihat). Nah, penulis menggunakan <strong>majas metafora</strong> 'dihantam godam besar' untuk mengubah rasa abstrak tersebut seolah-olah menjadi rasa sakit fisik yang nyata. Tujuannya? Agar pembaca bisa <strong>merasakan seberapa besar goncangan emosi</strong> yang dialami tokoh. Jadi, penggunaan metafora ini dievaluasi <strong>sangat tepat (B)</strong>."
+            },
+            {
+                contextTitle: "Kutipan Teks 4 (Untuk soal nomor 7 dan 8)",
+                contextText: "Doni menatap layar komputernya dengan mata nanar. Desain grafis yang ia kerjakan selama tiga hari tiga malam tanpa tidur, tiba-tiba diklaim oleh rekan kerjanya sendiri, Bagas, dalam rapat pleno pagi ini. Bagas tersenyum lebar menerima pujian dari direktur, sementara Doni hanya bisa mengepalkan tangannya di bawah meja hingga buku-buku jarinya memutih.",
+                question: "Tindakan Doni \"mengepalkan tangannya di bawah meja hingga buku-buku jarinya memutih\" menunjukkan respons emosional berupa...",
+                options: [
+                    "Rasa takut yang amat sangat karena rahasianya terbongkar.",
+                    "Kemarahan yang luar biasa namun berusaha diredam dan disembunyikan.",
+                    "Rasa lelah yang mendalam akibat bekerja selama tiga hari tanpa tidur.",
+                    "Kegembiraan yang tertahan karena proyeknya akhirnya disetujui direktur."
+                ],
+                answer: 1, // B
+                explanation: "Mari baca bahasa tubuh tokohnya! Doni mengepalkan tangan kuat-kuat sampai buku jarinya pucat memutih, tapi ia menyembunyikannya <em>'di bawah meja'</em>. Ini adalah respons fisik klasik ketika seseorang menahan <strong>kemarahan yang teramat besar (emosi meledak-ledak) agar tidak tumpah</strong> di depan umum (dalam hal ini, rapat dengan direktur). Pilihan <strong>B</strong> membaca gestur ini dengan tepat."
+            },
+            {
+                question: "Jika kita mengevaluasi interaksi antartokoh dalam kutipan tersebut, bagaimana tindakan Bagas memengaruhi ketegangan emosional pembaca?",
+                options: [
+                    "Menurunkan ketegangan karena Bagas berhasil mencairkan suasana rapat yang kaku.",
+                    "Meningkatkan ketegangan dan rasa ketidakadilan karena adanya pengkhianatan di depan mata yang tidak bisa langsung dilawan.",
+                    "Membuat pembaca merasa lucu melihat kepolosan direktur yang mudah ditipu.",
+                    "Menimbulkan rasa simpati pembaca kepada Bagas yang berani mempresentasikan karya orang lain."
+                ],
+                answer: 1, // B
+                explanation: "Bayangkan kamu membaca adegan ini: Bagas mencuri hasil begadang Doni, mengaku-ngaku itu karyanya, lalu tersenyum lebar dipuji bos. Sebagai pembaca, kita pasti merasa geregetan, jengkel, dan merasakan ketidakadilan. Tindakan pengkhianatan terang-terangan yang tak bisa langsung dilawan ini <strong>secara drastis menaikkan ketegangan emosional (suspense) cerita</strong>. Pilihan <strong>B</strong> adalah efek psikologis yang dituju oleh penulis."
+            },
+            {
+                contextTitle: "Kutipan Teks 5 (Untuk soal nomor 9 dan 10)",
+                contextText: "Senja mulai tenggelam di ufuk barat, menyisakan semburat merah keemasan yang memantul di permukaan danau. Di tepi dermaga tua, Nek Salma masih setia menanti perahu suaminya. Meskipun penduduk kampung berkali-kali mengatakan bahwa badai tiga hari lalu telah menenggelamkan semua perahu nelayan, Nek Salma hanya tersenyum tipis dan berkata, \"Dia berjanji akan pulang sebelum malam.\"",
+                question: "Respons emosional Nek Salma terhadap kenyataan pahit yang disampaikan oleh penduduk kampung menunjukkan sikap...",
+                options: [
+                    "Penolakan emosional (denial) yang dibungkus dengan harapan dan keyakinan teguh.",
+                    "Kepasrahan total terhadap takdir buruk yang menimpa suaminya.",
+                    "Kemarahan kepada penduduk kampung yang dianggap menyebarkan berita bohong.",
+                    "Kebingungan karena ia mulai kehilangan ingatan akibat usia lanjut."
+                ],
+                answer: 0, // A
+                explanation: "Orang sekampung bilang perahu suami Nek Salma tenggelam badai. Logikanya, suami beliau meninggal. Tapi apa respons Nek Salma? Ia malah <em>'tersenyum tipis'</em> dan bersikeras suaminya berjanji akan pulang. Dalam ilmu psikologi, sikap ini disebut <strong>Penolakan Emosional (Denial)</strong>. Saking sedihnya dan tak siap kehilangan, ia menolak kenyataan pahit itu dan memilih berlindung pada harapan. Jawaban <strong>A</strong> sangat logis menganalisis hal ini."
+            },
+            {
+                question: "Evaluasi yang paling tepat mengenai dampak emosional dari kontras antara keindahan latar senja dengan ketragisan nasib Nek Salma bagi pembaca adalah...",
+                options: [
+                    "Mengaburkan fokus cerita sehingga pembaca tidak memahami kesedihan Nek Salma.",
+                    "Memperkuat rasa pilu dan keharuan pembaca karena keindahan alam berbanding terbalik dengan kepedihan situasi tokoh.",
+                    "Menghilangkan rasa simpati pembaca karena latar senja membuat cerita terasa terlalu romantis.",
+                    "Membuat pembaca merasa gembira karena senja selalu identik dengan akhir yang bahagia."
+                ],
+                answer: 1, // B
+                explanation: "Lagi-lagi teknik kontras (perbandingan berbalik)! Latar senja dan semburat merah keemasan di danau itu sangat indah secara estetik. Namun, kisah Nek Salma yang kehilangan suami di situ sangatlah tragis. <strong>Keindahan alam yang tidak peduli pada kesedihan tokoh ini menciptakan ironi dramatis</strong>. Dampaknya? Pembaca jadi merasa makin pilu, haru, dan kasihan melihat nasib Nek Salma (Pilihan <strong>B</strong>)."
+            },
+            {
+                contextTitle: "Kutipan Teks 6 (Untuk soal nomor 11 dan 12)",
+                contextText: "Rara memandang gaun pengantin yang tergantung di lemari. Gaun itu indah, putih bersih dengan payet yang berkilauan. Namun, setiap kali melihatnya, dada Rara terasa dihimpit batu besar. Pernikahan ini bukanlah impiannya, melainkan sebuah transaksi bisnis keluarga yang harus ia jalani demi menyelamatkan perusahaan ayahnya yang hampir bangkrut.",
+                question: "Unsur benda berupa \"gaun pengantin\" dalam kutipan tersebut memicu respons emosional tokoh Rara yang berupa...",
+                options: [
+                    "Kebanggaan karena akan mengenakan gaun yang sangat mewah dan mahal.",
+                    "Tekanan batin dan kesedihan karena gaun tersebut menjadi simbol hilangnya kebebasan memilih.",
+                    "Ketakutan jika gaun tersebut tidak muat saat ia kenakan di hari pernikahan.",
+                    "Rasa syukur karena ia bisa membantu perekonomian keluarganya secara langsung."
+                ],
+                answer: 1, // B
+                explanation: "Secara umum, gaun pengantin adalah simbol kebahagiaan. Tapi bagi Rara, tiap melihat gaun itu dadanya <em>'dihimpit batu besar'</em> (tertekan). Kenapa? Karena pernikahan itu adalah 'transaksi bisnis' paksaan, bukan keinginannya. Gaun itu berubah menjadi objek yang memicu <strong>tekanan batin dan simbol terampasnya kebebasan/masa depannya</strong> (Pilihan <strong>B</strong>)."
+            },
+            {
+                question: "Bagaimana pembaca mengevaluasi konflik moral yang dihadapi Rara dalam memengaruhi respons emosionalnya terhadap keluarganya?",
+                options: [
+                    "Rara merasa benci sepenuhnya kepada ayahnya tanpa ada rasa hormat sedikit pun.",
+                    "Rara mengalami dilema emosional antara rasa berbakti kepada orang tua dan keinginan mempertahankan kebahagiaan pribadinya.",
+                    "Rara merasa acuh tak acuh karena ia tahu perusahaan ayahnya pasti akan bangkrut juga.",
+                    "Rara merasa sangat bahagia karena pengorbanannya dinilai sebagai tindakan heroik yang tanpa pamrih."
+                ],
+                answer: 1, // B
+                explanation: "Rara terjebak di persimpangan jalan yang sulit. Di satu sisi ia harus <strong>berbakti menyelamatkan ayahnya</strong> dari kebangkrutan. Di sisi lain, ia harus mengorbankan <strong>kebahagiaan pribadinya</strong>. Pertarungan batin antara dua pilihan berat ini disebut <strong>dilema emosional/moral</strong>. Penilaian pada pilihan <strong>B</strong> menangkap kompleksitas perasaan Rara dengan akurat."
+            },
+            {
+                contextTitle: "Kutipan Teks 7 (Untuk soal nomor 13 dan 14)",
+                contextText: "Kucing liar berkaki pincang itu mengeong lirih di depan pintu rumah Pak Jaya. Pak Jaya, yang terkenal kaku dan dingin di lingkungan RT, menatap kucing itu sejenak. Tanpa sepatah kata pun, ia masuk ke dalam rumah dan kembali membawa sepotong ikan goreng hangat, lalu meletakkannya dengan lembut di depan kucing tersebut sambil mengusap kepalanya perlahan.",
+                question: "Perubahan respons emosional pembaca terhadap karakter Pak Jaya setelah membaca kutipan tersebut adalah...",
+                options: [
+                    "Dari rasa benci menjadi semakin benci karena Pak Jaya membuang-buang makanan.",
+                    "Dari antipati atau menilai dingin menjadi simpati dan tersentuh oleh kelembutan tersembunyinya.",
+                    "Dari rasa kagum menjadi kecewa karena Pak Jaya ternyata memelihara kucing liar.",
+                    "Tetap biasa saja karena tindakan memberi makan hewan adalah hal yang lumrah dilakukan siapa saja."
+                ],
+                answer: 1, // B
+                explanation: "Di awal teks, penulis memberi tahu kita bahwa Pak Jaya dicitrakan <em>'kaku dan dingin'</em>, membuat pembaca mungkin merasa segan atau antipati. Namun, tiba-tiba ia memberi makan dan mengelus kucing pincang. Plot *twist* kecil ini bertujuan meruntuhkan kesan buruk tersebut, <strong>mengubah persepsi pembaca menjadi simpati (tersentuh)</strong> karena melihat sisi lembut kemanusiaan Pak Jaya (Pilihan <strong>B</strong>)."
+            },
+            {
+                question: "Respons emosional yang paling dominan ingin dibangun penulis pada diri pembaca melalui tindakan Pak Jaya mengusap kepala kucing secara perlahan adalah...",
+                options: [
+                    "Ketegangan, karena takut kucing tersebut akan mencakar tangan Pak Jaya.",
+                    "Kehangatan dan keharuan, karena melihat sisi humanis dari tokoh yang semula dicitrakan tidak peduli.",
+                    "Kesedihan, karena kucing tersebut tetap tidak mau memakan ikan yang diberikan.",
+                    "Kebingungan, karena tindakan tersebut tidak selaras dengan watak asli Pak Jaya."
+                ],
+                answer: 1, // B
+                explanation: "Mengapa penulis menyertakan detail <em>'mengusap kepalanya perlahan'</em>? Bukankah meletakkan ikan saja sudah cukup? Nah, sentuhan lembut itu adalah gestur afeksi (kasih sayang). Penulis sengaja memanipulasi detail tindakan fisik ini untuk <strong>memancing rasa hangat dan haru di hati pembaca</strong>. Kita diajak menyadari bahwa orang yang tampak kaku dari luar, ternyata punya hati yang baik (Pilihan <strong>B</strong>)."
+            },
+            {
+                contextTitle: "Kutipan Teks 8 (Untuk soal nomor 15 dan 16)",
+                contextText: "Gerimis mulai turun membasahi bumi. Di pemakaman yang sepi itu, hanya ada Tio yang berdiri tegak menatap gundukan tanah yang masih basah. Ia tidak menangis. Matanya kering, namun tatapannya kosong menembus nisan kayu di depannya. Kehilangan sahabat terbaiknya secara tiba-tiba membuat seluruh dunianya seolah berhenti berputar.",
+                question: "Respons emosional tokoh Tio yang digambarkan dengan \"tidak menangis\" dan \"tatapan kosong\" menunjukkan fase emosi...",
+                options: [
+                    "Kemarahan yang meluap-luap kepada takdir.",
+                    "Syok berat dan mati rasa akibat kesedihan yang teramat mendalam.",
+                    "Penerimaan yang ikhlas dan ketegaran jiwa yang luar biasa.",
+                    "Ketidakpedulian terhadap kematian sahabatnya."
+                ],
+                answer: 1, // B
+                explanation: "Orang yang sedang berduka tidak selalu harus menangis histeris. Ketika duka atau rasa kehilangannya terlalu besar dan tiba-tiba, otak terkadang <strong>mengalami fase syok atau mati rasa (*numbness*) sementara</strong>. Tokoh belum bisa memproses kesedihannya, sehingga badannya bereaksi dengan tatapan kosong dan air mata yang kering. Jawaban <strong>B</strong> adalah penjelasan psikologis yang paling tepat."
+            },
+            {
+                question: "Evaluasi keefektifan penggambaran emosi tokoh Tio melalui detail fisik \"matanya kering, namun tatapannya kosong\" dibandingkan jika penulis menuliskan langsung \"Tio sangat sedih\" adalah...",
+                options: [
+                    "Lebih efektif menuliskan \"Tio sangat sedih\" karena langsung dipahami pembaca tanpa perlu berpikir tafsiran lain.",
+                    "Lebih efektif menggunakan detail fisik karena menerapkan prinsip <em>show, don't tell</em> yang membuat kepedihan tokoh terasa lebih nyata dan mendalam bagi pembaca.",
+                    "Kurang efektif karena pembaca bisa salah paham dan mengira Tio adalah tokoh yang kejam dan tidak punya perasaan.",
+                    "Sama saja karena kedua cara tersebut menghasilkan respons emosional yang identik pada diri pembaca."
+                ],
+                answer: 1, // B
+                explanation: "Dalam dunia tulis-menulis ada hukum emas: <strong>'Show, Don't Tell' (Tunjukkan, Jangan Sekadar Beri Tahu)</strong>. Kalau penulis cuma menulis 'Tio sangat sedih', itu membosankan. Tapi dengan menggambarkan tindakan fisiknya (*matanya kosong menembus nisan*), penulis membiarkan imajinasi pembaca bekerja menyimpulkan sendiri betapa hancurnya perasaan Tio. Teknik ini jauh lebih mendalam dan efektif (Pilihan <strong>B</strong>)."
+            },
+            {
+                contextTitle: "Kutipan Teks 9 (Untuk soal nomor 17 dan 18)",
+                contextText: "Ketika pintu gerbang sekolah ditutup rapat oleh satpam, jantung Andi berdegup kencang bagai genderang perang. Ini adalah kali ketiga ia terlambat minggu ini. Bayangan wajah Pak Harto, guru piket yang terkenal disiplin dan tanpa ampun, langsung menari-nari di benaknya, membuat keringat dingin mulai bercucuran di dahinya.",
+                question: "Respons emosional tokoh Andi saat melihat pintu gerbang ditutup adalah...",
+                options: [
+                    "Panik dan ketakutan membayangkan konsekuensi hukuman yang akan diterimanya.",
+                    "Marah kepada satpam sekolah yang menutup pintu gerbang terlalu cepat.",
+                    "Pasrah dan berniat untuk langsung pulang kembali ke rumahnya.",
+                    "Tenang karena ia sudah menyiapkan alasan yang logis untuk Pak Harto."
+                ],
+                answer: 0, // A
+                explanation: "Mari analisis reaksi biologis Andi: jantung deg-degan kencang dan keringat dingin bercucuran saat membayangkan wajah guru disiplin. Ini adalah tanda-tanda otentik dari seseorang yang sedang dilanda <strong>kepanikan dan ketakutan ekstrem</strong> karena tahu ia akan kena masalah besar. Pilihan <strong>A</strong> dengan mudah membaca petunjuk fisik tersebut."
+            },
+            {
+                question: "Bagaimana pembaca mengevaluasi penggunaan majas asosiasi/hiperbola \"jantung Andi berdegup kencang bagai genderang perang\" dalam menggambarkan intensitas emosi tokoh?",
+                options: [
+                    "Tidak tepat karena pertempuran fisik tidak sebanding dengan masalah terlambat sekolah.",
+                    "Sangat berhasil karena memberikan gambaran konkret mengenai kepanikan ekstrem yang dirasakan tokoh secara dramatis.",
+                    "Kurang berhasil karena membuat cerita terkesan fiktif dan sulit dipercaya oleh pembaca remaja.",
+                    "Tepat hanya jika Andi adalah seorang tentara yang sedang berada di medan perang yang sesungguhnya."
+                ],
+                answer: 1, // B
+                explanation: "Majas hiperbola (melebih-lebihkan sesuatu) sengaja dipakai di sini. Detak jantung orang panik memang bisa sangat cepat dan berdebar keras. Dengan menyamakannya seperti suara 'genderang perang', penulis <strong>berhasil membuat rasa panik itu terdengar bising dan terasa dramatis</strong> di telinga imajinasi pembaca. Evaluasi pada pilihan <strong>B</strong> adalah yang paling tepat menilai gaya bahasa ini."
+            },
+            {
+                contextTitle: "Kutipan Teks 10 (Untuk soal nomor 19 dan 20)",
+                contextText: "Setelah bertahun-tahun hidup dalam dendam, hari ini Laras berdiri tepat di depan orang yang telah menghancurkan karier bermusiknya. Namun, melihat kondisi mantan sahabatnya yang kini duduk di kursi roda dengan tatapan sayu dan tak berdaya, amarah yang selama ini berkobar di dada Laras mendadak padam, digantikan oleh rasa hampa yang teramat sangat.",
+                question: "Perubahan respons emosional tokoh Laras dari dendam menjadi hampa dipicu oleh unsur...",
+                options: [
+                    "Dialog yang diucapkan oleh mantan sahabatnya yang meminta maaf secara tulus.",
+                    "Latar tempat pertemuan yang bising sehingga merusak konsentrasi marahnya.",
+                    "Kondisi fisik dan ketidakberdayaan lawan (mantan sahabatnya) yang memicu rasa iba.",
+                    "Kehadiran orang ketiga yang melerai pertikaian di antara mereka berdua."
+                ],
+                answer: 2, // C
+                explanation: "Apa yang membuat api kemarahan Laras tiba-tiba padam? Teks menyatakan: <em>'melihat kondisi mantan sahabatnya yang kini duduk di kursi roda dengan tatapan sayu dan tak berdaya'</em>. Visual kondisi fisik lawannya yang sudah hancur inilah pemicu utamanya. Realitas yang menyedihkan ini membangkitkan sisi kemanusiaan Laras (iba) sehingga dendamnya luntur seketika (Pilihan <strong>C</strong>)."
+            },
+            {
+                question: "Evaluasi moral terhadap perubahan emosi Laras menunjukkan bahwa...",
+                options: [
+                    "Laras adalah tokoh yang lemah karena mudah kehilangan prinsip hidupnya untuk membalas dendam.",
+                    "Dendam sering kali kehilangan maknanya ketika dihadapkan pada kenyataan bahwa musuh kita sudah hancur oleh takdirnya sendiri.",
+                    "Laras merasa kecewa karena ia tidak sempat menyiksa musuhnya secara langsung dengan tangannya sendiri.",
+                    "Keputusan Laras membuktikan bahwa melupakan masa lalu adalah tindakan yang sia-sia dan merugikan diri sendiri."
+                ],
+                answer: 1, // B
+                explanation: "Pesan moral (hikmah) apa yang bisa dipetik dari akhir kisah ini? Penulis ingin menyampaikan bahwa ambisi membalas dendam yang dipupuk lama sering kali <strong>berujung pada kehampaan (tidak ada kepuasan)</strong>. Apalagi jika kita melihat musuh kita ternyata sudah dihukum oleh takdir/keadaannya sendiri. Menghancurkan orang yang sudah tak berdaya tidak akan mengembalikan apa yang hilang. Pilihan <strong>B</strong> merupakan evaluasi moral yang paling bijak dan mendalam."
+            }
+        ];
+
+        function processContent(text) {
+            // Regex to find [GAMBAR: data:image/...] pattern and replace with img tag
+            let processed = text.replace(/\[GAMBAR:\s*(data:image\/[^;]+;base64,[^\]]+)\]/gi, 
+                '<img src="$1" alt="Gambar Soal" style="max-width:100%; border-radius:8px;" class="img-responsive shadow-sm border border-slate-200">');
+            return processed;
+        }
+
+        const container = document.getElementById('questions-container');
+
+        quizData.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            // Check if context text needs to be added before the question
+            let contextHTML = '';
+            if (q.contextText) {
+                contextHTML = `
+                    <div class="quote-box">
+                        <div class="quote-title">${q.contextTitle}</div>
+                        <div class="quote-text">${processContent(q.contextText)}</div>
+                    </div>
+                `;
+            }
+
+            questionDiv.className = 'bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 relative group';
+            questionDiv.id = `question-block-${index}`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            let optionsHTML = '';
+            
+            q.options.forEach((opt, i) => {
+                const optId = `q${index}_opt${i}`;
+                optionsHTML += `
+                    <div class="relative mt-3 md:mt-4">
+                        <input type="radio" name="q${index}" id="${optId}" value="${i}" class="option-input peer sr-only">
+                        <label for="${optId}" class="option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors">
+                                ${labels[i]}
+                            </span>
+                            <span class="text-slate-700 font-medium pt-1 text-[15px] md:text-base leading-snug">${processContent(opt)}</span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                ${contextHTML}
+                <div class="flex flex-col md:flex-row items-start mb-6">
+                    <span class="flex-shrink-0 bg-blue-600 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl font-bold shadow-md mb-4 md:mb-0 md:mr-5 text-lg md:text-xl">${index + 1}</span>
+                    <div class="text-slate-800 text-base md:text-lg font-medium leading-relaxed w-full">
+                        ${processContent(q.question)}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2 ml-0 md:ml-16">
+                    ${optionsHTML}
+                </div>
+                <!-- Hidden Explanation Box -->
+                <div id="explanation-${index}" class="explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm">
+                    <div class="p-6 md:p-8">
+                        <h4 class="font-bold text-lg md:text-xl mb-4 flex items-center tracking-tight" id="status-title-${index}"></h4>
+                        <div class="text-[15px] md:text-base text-slate-700 leading-relaxed bg-white/80 p-5 rounded-xl border border-slate-100 shadow-sm" id="explanation-text-${index}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(questionDiv);
+        });
+
+        const form = document.getElementById('quiz-form');
+        const btnCheck = document.getElementById('btn-check');
+        const btnRetry = document.getElementById('btn-retry');
+        const resultArea = document.getElementById('result-area');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+
+        btnCheck.addEventListener('click', () => {
+            let correctAnswersCount = 0;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const statusTitle = document.getElementById(`status-title-${index}`);
+                const explanationText = document.getElementById(`explanation-text-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+
+                explanationBox.classList.remove('hidden-box');
+
+                // Disable radios and highlight the correct answer key unconditionally
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = true;
+                    const label = radio.nextElementSibling;
+                    const val = parseInt(radio.value);
+                    const spanLetter = label.querySelector('span');
+                    
+                    if (val === q.answer) {
+                        label.classList.remove('bg-white', 'border-slate-200', 'hover:bg-slate-50', 'hover:border-blue-300');
+                        label.classList.add('bg-green-50', 'border-green-500', 'ring-1', 'ring-green-400');
+                        spanLetter.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        spanLetter.classList.add('bg-green-500', 'text-white', 'border-green-600', 'shadow-green-200');
+                    }
+                });
+
+                const labels = ['A', 'B', 'C', 'D'];
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.answer) {
+                        // User is correct
+                        correctAnswersCount++;
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-green-50/70 border-l-[6px] md:border-l-[8px] border-green-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-green-600 bg-green-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-800">Tepat Sekali, Analisismu Tajam!</span>`;
+                        qBlock.classList.add('ring-2', 'ring-green-100', 'bg-green-50/10');
+                    } else {
+                        // User is incorrect
+                        explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-red-50/70 border-l-[6px] md:border-l-[8px] border-red-500 rounded-r-2xl shadow-sm';
+                        statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-red-600 bg-red-100 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> <span class="text-red-800">Kurang Tepat! Kunci yang benar: ${labels[q.answer]}</span>`;
+                        qBlock.classList.add('ring-2', 'ring-red-100', 'bg-red-50/10');
+                        
+                        // Style the wrong choice picked by the user
+                        const wrongLabel = selectedOption.nextElementSibling;
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        const wrongSpan = wrongLabel.querySelector('span');
+                        wrongSpan.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                        wrongSpan.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    }
+                } else {
+                    // User skipped the question
+                    explanationBox.className = 'explanation-box mt-6 ml-0 md:ml-16 bg-amber-50/70 border-l-[6px] md:border-l-[8px] border-amber-400 rounded-r-2xl shadow-sm';
+                    statusTitle.innerHTML = `<svg class="w-7 h-7 md:w-8 md:h-8 mr-3 text-amber-600 bg-amber-100 rounded-full p-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> <span class="text-amber-800">Soal Dilewati! Kunci yang benar: ${labels[q.answer]}</span>`;
+                    qBlock.classList.add('ring-2', 'ring-amber-100', 'bg-amber-50/20');
+                }
+
+                explanationText.innerHTML = processContent(q.explanation);
+            });
+
+            // Calculate and display score with animation
+            const finalScore = Math.round((correctAnswersCount / quizData.length) * 100);
+            let currentScore = 0;
+            finalScoreEl.innerText = '0';
+            const duration = 1500; 
+            const stepTime = Math.abs(Math.floor(duration / (finalScore || 1)));
+            
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            if (finalScore > 0) {
+                const timer = setInterval(() => {
+                    currentScore += 1;
+                    finalScoreEl.innerText = currentScore;
+                    if (currentScore >= finalScore) clearInterval(timer);
+                }, stepTime);
+            }
+
+            // Dynamic encouraging messages based on score
+            if (finalScore === 100) {
+                scoreMessage.innerHTML = "Sempurna! 🎉 Nalar logis dan daya analisismu luar biasa tajam!";
+                scoreMessage.className = "text-green-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-green-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 75) {
+                scoreMessage.innerHTML = "Kerja Hebat! 👏 Pemahamanmu dalam mengevaluasi teks sudah sangat baik.";
+                scoreMessage.className = "text-blue-600 mb-8 font-bold text-xl px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-blue-600 mb-4 tracking-tighter drop-shadow-sm";
+            } else if (finalScore >= 50) {
+                scoreMessage.innerHTML = "Cukup Baik! Yuk, baca bagian pembahasan agar logikamu makin terasah. 📚";
+                scoreMessage.className = "text-amber-600 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-amber-500 mb-4 tracking-tighter drop-shadow-sm";
+            } else {
+                scoreMessage.innerHTML = "Jangan menyerah! Ayo cermati cara berpikir di bagian pembahasan dan coba lagi! 🚀";
+                scoreMessage.className = "text-red-500 mb-8 font-bold text-lg px-4";
+                finalScoreEl.className = "text-7xl font-extrabold text-red-500 mb-4 tracking-tighter drop-shadow-sm";
+            }
+
+            // Auto-scroll to results
+            setTimeout(() => {
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            form.reset();
+
+            quizData.forEach((q, index) => {
+                const explanationBox = document.getElementById(`explanation-${index}`);
+                const qBlock = document.getElementById(`question-block-${index}`);
+                
+                // Hide explanation and reset container rings
+                explanationBox.className = 'explanation-box hidden-box ml-0 md:ml-16 bg-white rounded-xl shadow-sm';
+                qBlock.classList.remove('ring-2', 'ring-green-100', 'bg-green-50/10', 'ring-red-100', 'bg-red-50/10', 'ring-amber-100', 'bg-amber-50/20');
+                
+                // Reset radios state and custom styling
+                const allRadios = document.querySelectorAll(`input[name="q${index}"]`);
+                allRadios.forEach(radio => {
+                    radio.disabled = false;
+                    const label = radio.nextElementSibling;
+                    const spanLetter = label.querySelector('span');
+                    
+                    label.className = 'option-label flex items-start p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-300 peer-focus:ring-2 peer-focus:ring-blue-500 transition-colors';
+                    spanLetter.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold mr-4 text-sm shadow-sm border border-slate-200 transition-colors';
+                });
+            });
+
+            // Toggle visibility
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            // Scroll back to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

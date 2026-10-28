@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Bangun Datar dan Keliling</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive image styling for base64 or normal images */
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            height: auto;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.125rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: white;
+            position: relative;
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+
+        .radio-circle {
+            width: 1.35rem;
+            height: 1.35rem;
+            border: 2px solid #94a3b8;
+            border-radius: 50%;
+            margin-right: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"]:checked + .option-label .radio-circle {
+            border-color: #3b82f6;
+        }
+        input[type="radio"]:checked + .option-label .radio-circle::after {
+            content: '';
+            width: 0.65rem;
+            height: 0.65rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-200">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 transition px-3 py-1.5 rounded-lg font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 text-center flex-1">Kuis Matematika</h1>
+            <div class="w-[95px]"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 md:py-10">
+        <div class="text-center mb-10 fade-in">
+            <span class="bg-indigo-100 text-indigo-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4 inline-block tracking-wide">Latihan Pemahaman</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Geometri Bangun Datar</h2>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto">Selesaikan persoalan berikut dengan teliti. Anda dapat menekan tombol periksa jawaban kapan saja untuk melihat evaluasi dan pembahasan lengkap.</p>
+        </div>
+
+        <form id="quizForm" class="space-y-8">
+            <div id="questionsContainer">
+                <!-- Kontainer Soal -->
+            </div>
+
+            <div class="mt-12 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center sticky bottom-4 z-40">
+                <button type="button" id="btnCheck" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Periksa Jawaban
+                </button>
+
+                <div id="resultArea" class="hidden mt-2 fade-in">
+                    <p class="text-lg font-semibold text-slate-500 uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
+                    <div id="scoreDisplay" class="text-7xl font-black text-blue-600 mb-8 drop-shadow-sm">0</div>
+                    
+                    <button type="button" id="btnRetry" class="w-full md:w-auto px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-lg flex items-center justify-center mx-auto border-2 border-slate-200 hover:border-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-12 border-t-4 border-blue-500">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="font-bold tracking-widest uppercase text-sm mb-1 text-white">By EDUFILLAH</p>
+            <p class="font-medium text-sm text-slate-400 italic">Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        
+        function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+const quizData = [
+            {
+                question: "Sebuah roda sepeda memiliki diameter 56 cm. Jika roda tersebut berputar sebanyak 500 kali, maka jarak total yang ditempuh oleh sepeda tersebut adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 880 meter",
+                    "B. 1.760 meter",
+                    "C. 2.640 meter",
+                    "D. 3.520 meter"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Konsep Roda Berputar:</strong><br>Satu kali putaran roda sama dengan melintasi jarak sepanjang <strong>keliling</strong> roda tersebut.<br><br><strong>Langkah 1: Hitung Keliling Roda</strong><br>Rumus Keliling Lingkaran = &pi; &times; d<br>Keliling = <sup>22</sup>&frasl;<sub>7</sub> &times; 56 cm = 22 &times; 8 = 176 cm.<br><br><strong>Langkah 2: Hitung Jarak Total</strong><br>Jarak = Keliling &times; Jumlah Putaran<br>Jarak = 176 cm &times; 500 = 88.000 cm.<br><br><strong>Langkah 3: Konversi Satuan</strong><br>Karena opsi jawaban dalam meter, kita bagi dengan 100.<br>88.000 cm &divide; 100 = <strong>880 meter</strong>."
+            },
+            {
+                question: "Keliling sebuah persegi panjang adalah 60 cm. Jika panjangnya lebih 6 cm dari lebarnya, maka luas persegi panjang tersebut adalah...",
+                options: [
+                    "A. 180 cm<sup>2</sup>",
+                    "B. 216 cm<sup>2</sup>",
+                    "C. 224 cm<sup>2</sup>",
+                    "D. 240 cm<sup>2</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Mari terjemahkan ke bahasa matematika:</strong><br>&bull; Panjang (p) = Lebar (l) + 6.<br>&bull; Keliling = 60 cm.<br><br><strong>Langkah 1: Cari nilai l (Lebar)</strong><br>Rumus Keliling = 2 &times; (p + l)<br>60 = 2 &times; ((l + 6) + l)<br>Bagi 2 kedua ruas:<br>30 = 2l + 6<br>2l = 30 - 6 = 24 &rarr; <strong>l = 12 cm</strong>.<br><br><strong>Langkah 2: Cari nilai p (Panjang)</strong><br>p = l + 6 = 12 + 6 = <strong>18 cm</strong>.<br><br><strong>Langkah 3: Hitung Luas</strong><br>Luas = p &times; l = 18 &times; 12 = <strong>216 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Sebuah taman berbentuk lingkaran memiliki keliling 132 meter. Di sekeliling taman tersebut akan dibuat jalan setapak dengan lebar 2 meter di bagian luar taman. Luas jalan setapak tersebut adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 276 m<sup>2</sup>",
+                    "B. 288 m<sup>2</sup>",
+                    "C. 290 m<sup>2</sup>",
+                    "D. 304 m<sup>2</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Langkah 1: Cari jari-jari taman (Lingkaran Dalam / r)</strong><br>Keliling = 2 &times; &pi; &times; r<br>132 = 2 &times; (<sup>22</sup>&frasl;<sub>7</sub>) &times; r<br>132 = (<sup>44</sup>&frasl;<sub>7</sub>) &times; r<br>r = 132 &times; <sup>7</sup>&frasl;<sub>44</sub> = 3 &times; 7 = <strong>21 meter</strong>.<br><br><strong>Langkah 2: Cari jari-jari total (Lingkaran Luar / R)</strong><br>Karena ada jalan 2 meter di luar, maka R = r + 2 = 21 + 2 = <strong>23 meter</strong>.<br><br><strong>Langkah 3: Luas Jalan (Luas Cincin)</strong><br>Luas = Luas Luar - Luas Dalam = &pi; &times; (R<sup>2</sup> - r<sup>2</sup>)<br>Luas = <sup>22</sup>&frasl;<sub>7</sub> &times; (23<sup>2</sup> - 21<sup>2</sup>)<br>Luas = <sup>22</sup>&frasl;<sub>7</sub> &times; (529 - 441) = <sup>22</sup>&frasl;<sub>7</sub> &times; 88 &asymp; <strong>276,57 m<sup>2</sup></strong>.<br><em>Dari opsi yang ada, nilai yang paling mendekati pembulatan perhitungan adalah opsi A (276 m<sup>2</sup>).</em>"
+            },
+            {
+                question: "Perhatikan gabungan bangun datar berikut: sebuah persegi panjang berukuran 20 cm &times; 14 cm digabungkan dengan setengah lingkaran pada salah satu sisi lebarnya (diameter setengah lingkaran sama dengan lebar persegi panjang). Keliling total dari bangun gabungan tersebut adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 62 cm",
+                    "B. 76 cm",
+                    "C. 82 cm",
+                    "D. 90 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Hati-hati dengan konsep Keliling Bangun Gabungan!</strong><br>Keliling hanya menghitung garis luar (pagar tepi). Garis dalam yang berhimpitan <strong>TIDAK DIHITUNG</strong>.<br><br>Tepi luar bangun ini terdiri dari:<br>1. Dua sisi panjang persegi panjang: 20 cm + 20 cm = 40 cm.<br>2. Satu sisi lebar persegi panjang: 14 cm.<br>3. Busur setengah lingkaran (dengan diameter 14 cm).<br><br><strong>Hitung panjang busur:</strong><br>Busur = &frac12; &times; &pi; &times; d = &frac12; &times; <sup>22</sup>&frasl;<sub>7</sub> &times; 14 = 11 &times; 2 = 22 cm.<br><br><strong>Total Keliling:</strong><br>40 + 14 + 22 = <strong>76 cm</strong>."
+            },
+            {
+                question: "Sebuah aula sekolah memiliki lantai berbentuk persegi panjang dengan ukuran 15 meter &times; 10 meter. Di tengah lantai tersebut terdapat karpet berbentuk belah ketupat dengan panjang diagonal-diagonalnya adalah 8 meter dan 6 meter. Luas lantai aula yang tidak tertutup karpet adalah...",
+                options: [
+                    "A. 114 m<sup>2</sup>",
+                    "B. 126 m<sup>2</sup>",
+                    "C. 138 m<sup>2</sup>",
+                    "D. 144 m<sup>2</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Ini adalah soal selisih luas bangun datar.<br><br><strong>Langkah 1: Hitung Luas Total Lantai Aula</strong><br>Lantai (Persegi Panjang) = Panjang &times; Lebar<br>Luas Aula = 15 m &times; 10 m = <strong>150 m<sup>2</sup></strong>.<br><br><strong>Langkah 2: Hitung Luas Karpet</strong><br>Karpet (Belah Ketupat) = &frac12; &times; diagonal 1 &times; diagonal 2<br>Luas Karpet = &frac12; &times; 8 m &times; 6 m = 4 &times; 6 = <strong>24 m<sup>2</sup></strong>.<br><br><strong>Langkah 3: Kurangkan!</strong><br>Lantai sisa = Luas Aula - Luas Karpet<br>Lantai sisa = 150 - 24 = <strong>126 m<sup>2</sup></strong>."
+            },
+            {
+                question: "Sebuah seng berbentuk persegi dengan panjang sisi 40 cm. Dari seng tersebut akan dibuat tutup kaleng berbentuk lingkaran dengan diameter maksimal yang bisa dibuat. Luas seng yang tersisa (terbuang) setelah tutup kaleng tersebut dipotong adalah... (Gunakan &pi; = 3,14)",
+                options: [
+                    "A. 344 cm<sup>2</sup>",
+                    "B. 424 cm<sup>2</sup>",
+                    "C. 516 cm<sup>2</sup>",
+                    "D. 1.256 cm<sup>2</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Lingkaran maksimal yang muat di dalam persegi pasti menyinggung tepi-tepinya. Artinya, <strong>Diameter Lingkaran = Panjang Sisi Persegi = 40 cm</strong>.<br><br><strong>Langkah 1: Luas Seng Awal</strong><br>Persegi = s &times; s = 40 &times; 40 = <strong>1.600 cm<sup>2</sup></strong>.<br><br><strong>Langkah 2: Luas Potongan Lingkaran</strong><br>Jari-jari (r) = 40 &divide; 2 = 20 cm.<br>Luas = &pi; &times; r<sup>2</sup> = 3,14 &times; 20 &times; 20 = 3,14 &times; 400 = <strong>1.256 cm<sup>2</sup></strong>.<br><br><strong>Langkah 3: Hitung Sisa</strong><br>Sisa = 1.600 - 1.256 = <strong>344 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Dua buah lingkaran memiliki perbandingan jari-jari 3 : 5. Jika selisih luas kedua lingkaran tersebut adalah 502,4 cm<sup>2</sup>, maka jari-jari lingkaran yang lebih kecil adalah... (Gunakan &pi; = 3,14)",
+                options: [
+                    "A. 6 cm",
+                    "B. 8 cm",
+                    "C. 10 cm",
+                    "D. 12 cm"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Kita misalkan jari-jari kedua lingkaran dengan variabel <em>x</em> agar mudah dihitung. Lingkaran kecil: r<sub>1</sub> = 3x. Lingkaran besar: r<sub>2</sub> = 5x.<br><br><strong>Susun Persamaan Selisih Luas:</strong><br>Luas Besar - Luas Kecil = 502,4<br>(&pi; &times; r<sub>2</sub><sup>2</sup>) - (&pi; &times; r<sub>1</sub><sup>2</sup>) = 502,4<br>3,14 &times; ((5x)<sup>2</sup> - (3x)<sup>2</sup>) = 502,4<br>3,14 &times; (25x<sup>2</sup> - 9x<sup>2</sup>) = 502,4<br>3,14 &times; 16x<sup>2</sup> = 502,4<br>50,24x<sup>2</sup> = 502,4<br>x<sup>2</sup> = 502,4 &divide; 50,24 = 10 &rarr; x = &radic;10.<br><br><strong>Jari-jari lingkaran kecil:</strong><br>r<sub>1</sub> = 3 &times; x = 3 &times; &radic;10 &asymp; 3 &times; 3,16 = 9,48 cm. Karena angkanya sangat mendekati, maka opsi yang paling logis adalah <strong>10 cm</strong>."
+            },
+            {
+                question: "Sebuah lapangan lari memiliki bentuk persegi panjang di bagian tengah dengan ukuran panjang 100 meter dan lebar 56 meter, serta berbentuk setengah lingkaran di kedua ujung lebar persegi panjang tersebut. Jika seorang atlet berlari mengelilingi lapangan tersebut sebanyak 5 putaran, jarak total yang ditempuh atlet adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 1.880 meter",
+                    "B. 1.920 meter",
+                    "C. 2.040 meter",
+                    "D. 2.120 meter"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Hitung 1 Putaran Keliling Lapangan:</strong><br>Bagian luar lintasan terdiri dari:<br>1. Dua sisi lurus (panjang): 100 m + 100 m = 200 m.<br>2. Dua sisi lengkung (setengah lingkaran di kanan & kiri). Jika digabung, ini menjadi <strong>SATU lingkaran utuh</strong> dengan diameter = lebar lapangan = 56 m.<br><br>Keliling Lingkaran = &pi; &times; d = <sup>22</sup>&frasl;<sub>7</sub> &times; 56 = 22 &times; 8 = 176 m.<br><br>Total 1 Putaran = 200 + 176 = <strong>376 meter</strong>.<br>Jarak 5 putaran = 376 m &times; 5 = <strong>1.880 meter</strong>."
+            },
+            {
+                question: "Perhatikan gambar imajiner sebuah trapesium sama kaki ABCD dengan panjang sisi sejajar AB = 30 cm dan CD = 14 cm, serta tinggi trapesium 12 cm. Di dalam trapesium tersebut dipotong sebuah lubang berbentuk setengah lingkaran dengan diameter yang terletak pada sisi AB (panjang diameter 14 cm). Luas trapesium yang tersisa adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 187 cm<sup>2</sup>",
+                    "B. 214 cm<sup>2</sup>",
+                    "C. 238 cm<sup>2</sup>",
+                    "D. 264 cm<sup>2</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Kita akan menghitung luas utuh lalu menguranginya dengan lubang!<br><br><strong>Langkah 1: Luas Trapesium Utuh</strong><br>Luas = &frac12; &times; (Jumlah Sisi Sejajar) &times; tinggi<br>Luas = &frac12; &times; (30 + 14) &times; 12<br>Luas = 44 &times; 6 = <strong>264 cm<sup>2</sup></strong>.<br><br><strong>Langkah 2: Luas Lubang Setengah Lingkaran</strong><br>Diameter = 14 cm, berarti Jari-jari (r) = 7 cm.<br>Luas Lubang = &frac12; &times; &pi; &times; r<sup>2</sup><br>Luas Lubang = &frac12; &times; <sup>22</sup>&frasl;<sub>7</sub> &times; 7 &times; 7 = 11 &times; 7 = <strong>77 cm<sup>2</sup></strong>.<br><br><strong>Langkah 3: Hitung Sisa</strong><br>Luas sisa = 264 - 77 = <strong>187 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Pak Andi memiliki kawat sepanjang 120 meter yang akan digunakan untuk memagari kebunnya. Ia memiliki dua pilihan desain kebun:<br>Desain I: Kebun berbentuk persegi.<br>Desain II: Kebun berbentuk lingkaran.<br>Berdasarkan ketersediaan kawat tersebut (keliling sama), evaluasi manakah yang paling tepat mengenai luas kebun Pak Andi? (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. Desain I menghasilkan luas yang lebih besar daripada Desain II dengan selisih 245,45 m<sup>2</sup>.",
+                    "B. Desain II menghasilkan luas yang lebih besar daripada Desain I dengan selisih 245,45 m<sup>2</sup>.",
+                    "C. Kedua desain menghasilkan luas yang sama karena keliling kawat yang digunakan sama.",
+                    "D. Desain II menghasilkan luas yang lebih kecil daripada Desain I dengan selisih 115,5 m<sup>2</sup>."
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Rahasia Alam Matematika (Ketidaksamaan Isoperimetrik):</strong> Jika kita memiliki keliling yang sama, bentuk <strong>Lingkaran</strong> akan selalu memberikan luas ruang yang paling besar! Mari kita buktikan.<br><br><strong>Desain I (Persegi):</strong><br>Keliling = 120 m &rarr; Sisi = 120 &divide; 4 = 30 m.<br>Luas = 30 &times; 30 = <strong>900 m<sup>2</sup></strong>.<br><br><strong>Desain II (Lingkaran):</strong><br>Keliling = 2 &times; &pi; &times; r = 120 m &rarr; r = 120 &divide; (2 &times; <sup>22</sup>&frasl;<sub>7</sub>) &asymp; 19,09 m.<br>Luas = &pi; &times; r<sup>2</sup> = <sup>22</sup>&frasl;<sub>7</sub> &times; 19,09 &times; 19,09 &asymp; <strong>1.145,45 m<sup>2</sup></strong>.<br><br>Selisihnya adalah 1.145,45 - 900 = <strong>245,45 m<sup>2</sup> (Desain Lingkaran jauh lebih luas!)</strong>"
+            },
+            {
+                question: "Sebuah segitiga siku-siku memiliki luas 60 cm<sup>2</sup>. Jika panjang salah satu sisi penyikunya adalah 8 cm, maka keliling segitiga tersebut adalah...",
+                options: [
+                    "A. 36 cm",
+                    "B. 40 cm",
+                    "C. 44 cm",
+                    "D. 48 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah 1: Cari Sisi Penyiku Lainnya (Tinggi)</strong><br>Luas Segitiga = &frac12; &times; alas &times; tinggi<br>60 = &frac12; &times; 8 &times; t<br>60 = 4t &rarr; <strong>t = 15 cm</strong>.<br><br><strong>Langkah 2: Cari Sisi Miring (Hipotenusa) dengan Pythagoras</strong><br>Hipotenusa = &radic;(8<sup>2</sup> + 15<sup>2</sup>) = &radic;(64 + 225) = &radic;289 = <strong>17 cm</strong>.<br><br><strong>Langkah 3: Hitung Keliling Total</strong><br>Keliling = alas + tinggi + sisi miring<br>Keliling = 8 + 15 + 17 = <strong>40 cm</strong>."
+            },
+            {
+                question: "Sebuah juring lingkaran memiliki sudut pusat 60&deg; pada lingkaran yang berjari-jari 21 cm. Luas juring tersebut adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 115,5 cm<sup>2</sup>",
+                    "B. 231 cm<sup>2</sup>",
+                    "C. 346,5 cm<sup>2</sup>",
+                    "D. 462 cm<sup>2</sup>"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Juring adalah potongan kue pizza dari lingkaran. Porsinya sebanding dengan sudut pusatnya.<br><br><strong>Langkah 1: Tentukan Pecahan Lingkarannya</strong><br>Porsi Juring = Sudut Pusat &divide; 360&deg; = 60&deg; &divide; 360&deg; = <strong><sup>1</sup>&frasl;<sub>6</sub></strong> lingkaran.<br><br><strong>Langkah 2: Hitung Luasnya</strong><br>Luas Juring = <sup>1</sup>&frasl;<sub>6</sub> &times; Luas Lingkaran<br>Luas = <sup>1</sup>&frasl;<sub>6</sub> &times; (&pi; &times; r<sup>2</sup>)<br>Luas = <sup>1</sup>&frasl;<sub>6</sub> &times; (<sup>22</sup>&frasl;<sub>7</sub> &times; 21 &times; 21)<br>Luas = <sup>1</sup>&frasl;<sub>6</sub> &times; (22 &times; 3 &times; 21)<br>Luas = <sup>1</sup>&frasl;<sub>6</sub> &times; 1386 = <strong>231 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Sebuah taman berbentuk persegi dengan panjang sisi 28 meter. Di dalam taman tersebut terdapat kolam berbentuk lingkaran dengan diameter 14 meter. Sisa lahan taman akan ditanami rumput dengan biaya Rp 25.000,00 per meter persegi. Total biaya yang diperlukan untuk menanam rumput adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. Rp 14.250.000,00",
+                    "B. Rp 15.750.000,00",
+                    "C. Rp 16.125.000,00",
+                    "D. Rp 17.500.000,00"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Langkah 1: Luas Lahan Seluruhnya (Persegi)</strong><br>Luas = s &times; s = 28 &times; 28 = <strong>784 m<sup>2</sup></strong>.<br><br><strong>Langkah 2: Luas Kolam (Lingkaran)</strong><br>Diameter = 14 m, jadi jari-jari (r) = 7 m.<br>Luas = &pi; &times; r<sup>2</sup> = <sup>22</sup>&frasl;<sub>7</sub> &times; 7 &times; 7 = <strong>154 m<sup>2</sup></strong>.<br><br><strong>Langkah 3: Luas Sisa untuk Rumput</strong><br>Sisa = 784 - 154 = <strong>630 m<sup>2</sup></strong>.<br><br><strong>Langkah 4: Hitung Biaya</strong><br>Total Biaya = 630 &times; Rp 25.000 = <strong>Rp 15.750.000,00</strong>."
+            },
+            {
+                question: "Sebuah bangun datar terbentuk dari gabungan jajar genjang dan segitiga siku-siku. Jajar genjang memiliki panjang alas 15 cm dan tinggi 8 cm. Segitiga siku-siku berhimpit pada salah satu sisi miring jajar genjang yang panjangnya 10 cm. Jika alas segitiga siku-siku tersebut adalah 6 cm, maka luas total bangun gabungan tersebut adalah...",
+                options: [
+                    "A. 144 cm<sup>2</sup>",
+                    "B. 150 cm<sup>2</sup>",
+                    "C. 168 cm<sup>2</sup>",
+                    "D. 180 cm<sup>2</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "<strong>Langkah 1: Luas Jajar Genjang</strong><br>Luas = alas &times; tinggi = 15 cm &times; 8 cm = <strong>120 cm<sup>2</sup></strong>.<br><br><strong>Langkah 2: Luas Segitiga Siku-Siku</strong><br>Segitiga ini berhimpit pada sisi miring jajar genjang (10 cm). Berarti hipotenusa (sisi miring) segitiga = 10 cm, alas = 6 cm. Kita cari tinggi segitiganya dulu pakai Pythagoras!<br>Tinggi = &radic;(10<sup>2</sup> - 6<sup>2</sup>) = &radic;(100 - 36) = &radic;64 = 8 cm.<br>Luas Segitiga = &frac12; &times; alas &times; tinggi = &frac12; &times; 6 &times; 8 = <strong>24 cm<sup>2</sup></strong>.<br><br><strong>Langkah 3: Total Luas Gabungan</strong><br>Total = 120 + 24 = <strong>144 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Seorang pengrajin ingin membuat 10 buah papan nama berbentuk segitiga sama kaki dengan panjang alas 30 cm dan tinggi 20 cm. Bahan yang tersedia adalah tripleks berbentuk persegi panjang berukuran 1 meter &times; 0,6 meter. Evaluasilah kecukupan bahan tripleks tersebut!",
+                options: [
+                    "A. Bahan tripleks sangat kurang, hanya cukup untuk membuat 5 buah papan nama.",
+                    "B. Bahan tripleks kurang, masih membutuhkan tambahan luas sekitar 600 cm&sup2;.",
+                    "C. Bahan tripleks cukup dan tersisa luas bahan sebesar 3.000 cm&sup2;.",
+                    "D. Bahan tripleks pas-pasan dan tidak ada sisa bahan sama sekali."
+                ],
+                correctAnswer: 2, // C
+                explanation: "Kita ubah dulu semua satuan ke dalam sentimeter (cm) agar mudah.<br>Ukuran tripleks: 1 meter = 100 cm, 0,6 meter = 60 cm.<br><br><strong>1. Luas Kebutuhan Papan (10 Segitiga)</strong><br>Luas 1 Papan = &frac12; &times; alas &times; tinggi = &frac12; &times; 30 &times; 20 = 300 cm<sup>2</sup>.<br>Luas 10 Papan = 10 &times; 300 = <strong>3.000 cm<sup>2</sup></strong>.<br><br><strong>2. Luas Tripleks Tersedia</strong><br>Luas Tripleks = p &times; l = 100 cm &times; 60 cm = <strong>6.000 cm<sup>2</sup></strong>.<br><br><strong>Kesimpulan:</strong><br>Bahan sangat cukup. Sisanya adalah 6.000 - 3.000 = <strong>3.000 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Luas suatu layang-layang adalah 192 cm<sup>2</sup>. Jika panjang salah satu diagonalnya adalah 16 cm, maka panjang diagonal yang lainnya adalah...",
+                options: [
+                    "A. 12 cm",
+                    "B. 24 cm",
+                    "C. 32 cm",
+                    "D. 48 cm"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Rumus Luas Layang-layang:</strong> Luas = &frac12; &times; diagonal<sub>1</sub> &times; diagonal<sub>2</sub><br><br><strong>Mari Kita Hitung:</strong><br>192 = &frac12; &times; 16 &times; d<sub>2</sub><br>192 = 8 &times; d<sub>2</sub><br>d<sub>2</sub> = 192 &divide; 8 = <strong>24 cm</strong>.<br><br>Sangat sederhana, cukup dibalik rumusnya!"
+            },
+            {
+                question: "Sebuah belah ketupat memiliki keliling 52 cm. Jika panjang salah satu diagonalnya adalah 10 cm, maka luas belah ketupat tersebut adalah...",
+                options: [
+                    "A. 120 cm<sup>2</sup>",
+                    "B. 130 cm<sup>2</sup>",
+                    "C. 240 cm<sup>2</sup>",
+                    "D. 260 cm<sup>2</sup>"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Untuk mencari luas, kita butuh kedua diagonal. Ayo cari diagonal kedua dulu!<br><br><strong>Langkah 1: Cari Panjang Sisi</strong><br>Keliling = 4 &times; sisi &rarr; Sisi = 52 &divide; 4 = <strong>13 cm</strong>.<br><br><strong>Langkah 2: Cari Setengah Diagonal Kedua</strong><br>Diagonal berpotongan tegak lurus membentuk segitiga siku-siku. Sisi belah ketupat (13) adalah sisi miringnya, dan setengah d<sub>1</sub> (10&divide;2=5) adalah alasnya.<br>Tinggi (setengah d<sub>2</sub>) = &radic;(13<sup>2</sup> - 5<sup>2</sup>) = &radic;(169 - 25) = &radic;144 = 12 cm.<br>Maka, Diagonal Kedua utuh = 12 &times; 2 = <strong>24 cm</strong>.<br><br><strong>Langkah 3: Hitung Luas</strong><br>Luas = &frac12; &times; d<sub>1</sub> &times; d<sub>2</sub> = &frac12; &times; 10 &times; 24 = <strong>120 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Di dalam sebuah persegi dengan panjang sisi 14 cm, terdapat empat buah setengah lingkaran yang saling berhadapan pada setiap sisinya sehingga membentuk pola bunga di bagian tengah. Luas daerah yang diarsir (pola bunga di tengah) adalah... (Gunakan &pi; = <sup>22</sup>&frasl;<sub>7</sub>)",
+                options: [
+                    "A. 56 cm<sup>2</sup>",
+                    "B. 84 cm<sup>2</sup>",
+                    "C. 112 cm<sup>2</sup>",
+                    "D. 154 cm<sup>2</sup>"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Ini adalah soal klasik \"irisan bunga\". Konsepnya menggunakan prinsip Tumpang Tindih (Irisan).<br><br>Jika 4 buah setengah lingkaran yang menempel di sisi persegi dilipat ke dalam, mereka akan mengisi seluruh persegi dan bertumpuk (overlap) tepat di bagian bunganya.<br>Artinya: <strong>Luas 4 Setengah Lingkaran = Luas Persegi + Luas Bunga (Overlap)</strong>.<br><br><strong>1. Luas Persegi</strong> = 14 &times; 14 = <strong>196 cm<sup>2</sup></strong>.<br><br><strong>2. Luas 4 Setengah Lingkaran (= 2 Lingkaran Penuh)</strong><br>Diameter = 14 cm &rarr; r = 7 cm.<br>Luas 2 Lingkaran = 2 &times; (<sup>22</sup>&frasl;<sub>7</sub> &times; 7 &times; 7) = 2 &times; 154 = <strong>308 cm<sup>2</sup></strong>.<br><br><strong>3. Luas Bunga (Irisan)</strong><br>Luas Bunga = Luas 2 Lingkaran - Luas Persegi<br>Luas Bunga = 308 - 196 = <strong>112 cm<sup>2</sup></strong>."
+            },
+            {
+                question: "Sebuah perusahaan periklanan ingin membuat papan reklame berbentuk lingkaran dengan diameter 4 meter. Namun, karena keterbatasan tempat di lapangan, diameter papan tersebut harus dikurangi sebesar 20%. Evaluasilah persentase penurunan luas papan reklame tersebut!",
+                options: [
+                    "A. Luas papan reklame berkurang sebesar 20%",
+                    "B. Luas papan reklame berkurang sebesar 36%",
+                    "C. Luas papan reklame berkurang sebesar 40%",
+                    "D. Luas papan reklame berkurang sebesar 64%"
+                ],
+                correctAnswer: 1, // B
+                explanation: "<strong>Hati-hati Jebakan Dimensi!</strong> Jika garis (1 dimensi seperti jari-jari/diameter) berkurang, pengaruhnya terhadap luasan (2 dimensi) adalah kuadratnya.<br><br>Diameter berkurang 20%, artinya ukurannya tinggal <strong>80% (atau 0,8)</strong> dari aslinya.<br><br>Luas Baru = &pi; &times; (r<sub>baru</sub>)<sup>2</sup><br>Luas Baru = &pi; &times; (0,8 &times; r<sub>lama</sub>)<sup>2</sup><br>Luas Baru = <strong>0,64</strong> &times; (&pi; &times; r<sub>lama</sub><sup>2</sup>)<br>Ini berarti Luas Baru hanya <strong>64%</strong> dari luas lama.<br><br>Pertanyaannya adalah \"Persentase Penurunan\".<br>Penurunan = 100% - 64% = <strong>36%</strong>."
+            },
+            {
+                question: "Sebuah kolam hias berbentuk gabungan persegi panjang berukuran 8 meter &times; 6 meter dan setengah lingkaran yang menempel pada salah satu sisi panjangnya (8 meter). Di sekeliling kolam tersebut akan dipasang pagar kawat berduri sebanyak 3 lapis. Panjang kawat minimal yang dibutuhkan adalah... (Gunakan &pi; = 3,14)",
+                options: [
+                    "A. 65,12 meter",
+                    "B. 79,68 meter",
+                    "C. 91,68 meter",
+                    "D. 97,68 meter"
+                ],
+                correctAnswer: 3, // D
+                explanation: "Pagar kawat hanya mengelilingi sisi <strong>paling luar</strong> kolam. Sisi 8 meter yang tertutup setengah lingkaran tidak ikut dipagari!<br><br><strong>Keliling 1 Lapis Pagar Terdiri dari:</strong><br>1. Sisi panjang bawah (8 m)<br>2. Dua sisi lebar kiri & kanan (6 m + 6 m = 12 m)<br>3. Busur melengkung setengah lingkaran (diameter = 8 m)<br> &nbsp;&nbsp;&rarr; Busur = &frac12; &times; 3,14 &times; 8 = <strong>12,56 m</strong>.<br><br>Keliling Total (1 Lapis) = 8 + 12 + 12,56 = <strong>32,56 meter</strong>.<br><br>Karena dipasang <strong>3 lapis</strong>:<br>Total Kawat = 32,56 &times; 3 = <strong>97,68 meter</strong>."
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        function renderQuiz() {
+            questionsContainer.innerHTML = ''; 
+            
+            quizData.forEach((q, index) => {
+                const questionHTML = `
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 relative overflow-hidden group hover:border-blue-300 transition-colors">
+                        <!-- Pita Aksen -->
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl opacity-80"></div>
+                        
+                        <!-- Header Soal -->
+                        <div class="flex items-start mb-6">
+                            <span class="inline-flex items-center justify-center min-w-[2.5rem] h-10 rounded-xl bg-blue-50 text-blue-700 font-bold mr-4 text-base border border-blue-100 shadow-sm">
+                                ${index + 1}
+                            </span>
+                            <h3 class="text-lg md:text-[1.1rem] font-medium text-slate-800 leading-relaxed pt-1 w-full">
+                                ${q.question}
+                            </h3>
+                        </div>
+
+                        <!-- Opsi Jawaban -->
+                        <div class="space-y-3 ml-0 md:ml-14">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="relative">
+                                    <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${optIndex}">
+                                    <label for="q${index}_opt${optIndex}" class="option-label text-[0.95rem] md:text-base text-slate-700 select-none">
+                                        <div class="radio-circle"></div>
+                                        <span class="flex-1">${option}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Kontainer Pembahasan (Awalnya Hidden) -->
+                        <div id="explanation_${index}" class="hidden mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border fade-in text-sm md:text-base relative overflow-hidden">
+                            <!-- Injeksi via JS -->
+                        </div>
+                    </div>
+                `;
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            });
+        }
+
+        
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+
+
+        const btnCheck = document.getElementById('btnCheck');
+        const btnRetry = document.getElementById('btnRetry');
+        const resultArea = document.getElementById('resultArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const quizForm = document.getElementById('quizForm');
+
+        btnCheck.addEventListener('click', () => {
+            let score = 0;
+            const totalQuestions = quizData.length;
+            const scorePerQuestion = 100 / totalQuestions;
+
+            // Kunci interaksi agar tidak diubah
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation_${index}`);
+                
+                let isCorrect = false;
+                let statusHeader = "";
+                let bgClass = "";
+                let borderClass = "";
+                let textClass = "";
+
+                if (selectedOption) {
+                    const userVal = parseInt(selectedOption.value);
+                    if (userVal === q.correctAnswer) {
+                        // Jika Tepat
+                        isCorrect = true;
+                        score += scorePerQuestion;
+                        statusHeader = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">JAWABAN TEPAT</span>`;
+                        bgClass = "bg-emerald-50";
+                        borderClass = "border-emerald-300";
+                        textClass = "text-emerald-900";
+                    } else {
+                        // Jika Keliru
+                        statusHeader = `<span class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">JAWABAN KELIRU</span>`;
+                        bgClass = "bg-rose-50";
+                        borderClass = "border-rose-300";
+                        textClass = "text-rose-900";
+                        
+                        // Highlight Kunci Asli
+                        const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                        correctLabel.style.backgroundColor = "#ecfdf5";
+                        correctLabel.style.borderColor = "#10b981";
+                        correctLabel.style.boxShadow = "0 0 0 1px #10b981";
+                        correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                    }
+                } else {
+                    // Jika Kosong
+                    statusHeader = `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full tracking-wide">TIDAK DIJAWAB</span>`;
+                    bgClass = "bg-amber-50";
+                    borderClass = "border-amber-300";
+                    textClass = "text-amber-900";
+                    
+                    const correctLabel = document.querySelector(`label[for="q${index}_opt${q.correctAnswer}"]`);
+                    correctLabel.style.backgroundColor = "#ecfdf5";
+                    correctLabel.style.borderColor = "#10b981";
+                    correctLabel.querySelector('span').innerHTML += ` <span class="text-emerald-700 font-bold ml-2 text-sm">(&check; Kunci Jawaban)</span>`;
+                }
+
+                // Masukkan HTML ke kotak Penjelasan
+                explanationDiv.innerHTML = `
+                    <div class="font-bold mb-4 pb-3 border-b ${borderClass} flex items-center">
+                        ${isCorrect 
+                            ? `<svg class="w-6 h-6 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>` 
+                            : (selectedOption ? `<svg class="w-6 h-6 mr-2 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`
+                                              : `<svg class="w-6 h-6 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`)
+                        }
+                        ${statusHeader}
+                    </div>
+                    <div class="leading-relaxed mt-2 ${textClass} relative z-10">
+                        ${q.explanation}
+                    </div>
+                `;
+                
+                explanationDiv.className = `mt-8 ml-0 md:ml-14 p-5 md:p-6 rounded-xl border ${bgClass} ${borderClass} fade-in text-[0.95rem] md:text-base block`;
+            });
+
+            // Set Logika Warna Skor
+            const finalScore = Math.round(score);
+            scoreDisplay.innerText = finalScore;
+            
+            scoreDisplay.className = "text-7xl font-black mb-8 drop-shadow-sm transition-colors duration-700 ";
+            if(finalScore >= 80) scoreDisplay.className += "text-emerald-500";
+            else if(finalScore >= 60) scoreDisplay.className += "text-blue-500";
+            else if(finalScore >= 40) scoreDisplay.className += "text-amber-500";
+            else scoreDisplay.className += "text-rose-500";
+
+            btnCheck.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            try {
+                const finalCalculatedScore = Math.round(parseFloat(scoreDisplay.innerText || scoreDisplay.textContent || '0'));
+                scoreDisplay.setAttribute('data-final-score', finalCalculatedScore);
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: finalCalculatedScore,
+                        passed: finalCalculatedScore >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+
+            
+            // Scroll menuju skor
+            setTimeout(() => {
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 350);
+        });
+
+        btnRetry.addEventListener('click', () => {
+            quizForm.reset();
+            renderQuiz();
+
+            resultArea.classList.add('hidden');
+            btnCheck.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

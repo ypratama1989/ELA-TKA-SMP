@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Passive Voice - EDUFILLAH</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc; /* Lighter modern gray/blue */
+        }
+        
+        /* Custom Radio Button Styling */
+        .custom-radio {
+            accent-color: #0284c7;
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        /* Highlight checked option */
+        input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #0369a1; 
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Animation for explanations and score */
+        .explanation, .score-anim {
+            display: none;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Reading text box style */
+        .reading-text {
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0284c7; 
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="text-slate-600 hover:text-sky-600 transition flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </button>
+            <h1 class="text-lg sm:text-xl font-bold text-sky-700 hidden sm:block">Latihan Soal Passive Voice</h1>
+            <div class="w-20 sm:hidden"></div> <!-- Balancer for mobile view -->
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Uji Penguasaan Passive Voice</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Kerjakan 20 soal grammar di bawah ini. Cermati *tenses* (waktu kejadian) pada tiap soal. Klik tombol 'Periksa Jawaban' di bagian bawah jika kamu sudah selesai!</p>
+            </div>
+
+            <form id="quiz-form">
+                
+                <!-- Soal 1 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">1. The classroom ... by the students every afternoon to keep it clean and tidy.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="A" class="custom-radio">
+                            <span class="ml-3">A. cleans</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="B" class="custom-radio">
+                            <span class="ml-3">B. is cleaned</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="C" class="custom-radio">
+                            <span class="ml-3">C. is cleaning</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q1" value="D" class="custom-radio">
+                            <span class="ml-3">D. was cleaned</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (is cleaned)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Perhatikan petunjuk waktu <em>"every afternoon"</em> (setiap sore). Ini menunjukkan sebuah rutinitas atau kebiasaan, sehingga kita harus menggunakan <strong>Simple Present Tense</strong>.<br>
+                        Rumus kalimat pasif untuk Simple Present adalah: <strong>Subjek + is/am/are + Verb 3</strong>.<br>
+                        Karena subjeknya <em>"The classroom"</em> (Tunggal / It), maka <em>to be</em> yang tepat adalah <strong>is</strong>. Diikuti kata kerja bentuk ketiga (Verb 3) dari <em>clean</em> yaitu <strong>cleaned</strong>. Jadi jawabannya adalah <em>is cleaned</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">2. This historical novel ... by a famous Indonesian writer in 2018.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="A" class="custom-radio">
+                            <span class="ml-3">A. wrote</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="B" class="custom-radio">
+                            <span class="ml-3">B. is written</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="C" class="custom-radio">
+                            <span class="ml-3">C. was written</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q2" value="D" class="custom-radio">
+                            <span class="ml-3">D. has written</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (was written)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Coba lihat keterangan waktunya: <em>"in 2018"</em>. Ini menunjukkan kejadian tersebut sudah terjadi dan selesai di <strong>masa lampau (Simple Past Tense)</strong>.<br>
+                        Rumus kalimat pasif untuk masa lampau adalah: <strong>Subjek + was/were + Verb 3</strong>.<br>
+                        Subjek kalimatnya adalah <em>"This historical novel"</em> (Buku novel sejarah ini). Karena bukunya cuma satu (tunggal), kita gunakan <em>to be</em> masa lampau <strong>was</strong>. Verb 3 dari <em>write</em> adalah <strong>written</strong>.
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">3. "Where is my motorcycle?"<br>"Don't worry, it ... by the mechanic in the garage right now."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="A" class="custom-radio">
+                            <span class="ml-3">A. is repairing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="B" class="custom-radio">
+                            <span class="ml-3">B. is being repaired</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="C" class="custom-radio">
+                            <span class="ml-3">C. repaired</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q3" value="D" class="custom-radio">
+                            <span class="ml-3">D. was repaired</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (is being repaired)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Ada kata kunci <em>"right now"</em> (sekarang juga) yang berarti kejadian tersebut <strong>sedang berlangsung saat ini (Present Continuous Tense)</strong>.<br>
+                        Rumus pasif untuk sesuatu yang "sedang" dikerjakan adalah: <strong>Subjek + is/am/are + being + Verb 3</strong>.<br>
+                        Subjeknya <em>"it"</em> (menggantikan sepeda motor), jadi kita pakai <strong>is</strong>. Lalu tambahkan <strong>being</strong>, dan Verb 3 dari <em>repair</em> yaitu <strong>repaired</strong>. Motornya *sedang diperbaiki*.
+                    </div>
+                </div>
+
+                <!-- Soal 4 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">4. All the admission tickets for the school festival ... since yesterday morning.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="A" class="custom-radio">
+                            <span class="ml-3">A. have been sold</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="B" class="custom-radio">
+                            <span class="ml-3">B. has been sold</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="C" class="custom-radio">
+                            <span class="ml-3">C. were selling</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q4" value="D" class="custom-radio">
+                            <span class="ml-3">D. are sold</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (have been sold)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Kata kunci <em>"since yesterday morning"</em> (sejak kemarin pagi) menunjukkan suatu tindakan yang sudah selesai dilakukan dan efeknya masih terasa sampai sekarang. Ini adalah <strong>Present Perfect Tense</strong>.<br>
+                        Rumus pasifnya: <strong>Subjek + have/has + been + Verb 3</strong>.<br>
+                        Awas terjebak! Subjek utamanya adalah <em>"All the admission tickets"</em> (Semua tiket masuk). Karena ada huruf 's' di akhir kata tickets, berarti jumlahnya banyak (jamak/plural). Untuk subjek jamak, kita harus menggunakan <strong>have</strong> (bukan has). Jadi jawabannya: <em>have been sold</em> (telah terjual).
+                    </div>
+                </div>
+
+                <!-- Soal 5 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">5. The final examination results ... by the principal next Monday.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="A" class="custom-radio">
+                            <span class="ml-3">A. will announce</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="B" class="custom-radio">
+                            <span class="ml-3">B. will be announced</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="C" class="custom-radio">
+                            <span class="ml-3">C. is announced</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q5" value="D" class="custom-radio">
+                            <span class="ml-3">D. is going to announce</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (will be announced)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Keterangan waktu <em>"next Monday"</em> (Senin depan) menunjukkan kejadian yang belum terjadi alias akan datang <strong>(Future Tense)</strong>.<br>
+                        Rumus kalimat pasif Future Tense yang paling mudah: <strong>Subjek + will be + Verb 3</strong>.<br>
+                        Hasil ujian (results) "akan diumumkan", bukan "akan mengumumkan". Jadi kita butuh bentuk pasif. Bentuk pasif yang benar adalah <em>will be announced</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 6 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">6. Read the sentences below!<br>
+                    (1) The committee held a meeting yesterday.<br>
+                    (2) The old bridge was built in 1975.<br>
+                    (3) My mother is cooking delicious soup.<br>
+                    (4) Plastic waste should be recycled properly.<br><br>
+                    Which of the sentences above are written in the passive voice?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="A" class="custom-radio">
+                            <span class="ml-3">A. (1) and (2)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="B" class="custom-radio">
+                            <span class="ml-3">B. (2) and (3)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="C" class="custom-radio">
+                            <span class="ml-3">C. (2) and (4)</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q6" value="D" class="custom-radio">
+                            <span class="ml-3">D. (3) and (4)</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C (2 and 4)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Ciri utama kalimat pasif bahasa Inggris adalah adanya <strong>To Be (is, am, are, was, were, be, been, being) + Kata Kerja Bentuk Ke-3 (Verb 3)</strong>.<br>
+                        - Kalimat (1) "held" (aktif: mengadakan).<br>
+                        - Kalimat (2) "<strong>was built</strong>" (pasif: dibangun) -> <em>To be (was) + V3 (built)</em>.<br>
+                        - Kalimat (3) "is cooking" (aktif: sedang memasak).<br>
+                        - Kalimat (4) "<strong>should be recycled</strong>" (pasif: harus didaur ulang) -> <em>Modal (should) + be + V3 (recycled)</em>.<br>
+                        Jadi yang berbentuk pasif adalah kalimat nomor 2 dan 4.
+                    </div>
+                </div>
+
+                <!-- Soal 7 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">7. "Oh no! My bicycle is gone!"<br>"It ... from the school parking lot because you didn't lock it."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="A" class="custom-radio">
+                            <span class="ml-3">A. must steal</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="B" class="custom-radio">
+                            <span class="ml-3">B. was stolen</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="C" class="custom-radio">
+                            <span class="ml-3">C. is stealing</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q7" value="D" class="custom-radio">
+                            <span class="ml-3">D. has stolen</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (was stolen)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Konteks ceritanya adalah sepeda tersebut sudah hilang ("is gone"). Kejadian hilangnya pasti terjadi di <strong>masa lalu</strong> (sebelum percakapan ini terjadi).<br>
+                        Karena kita tidak tahu siapa pencurinya, menggunakan kalimat pasif sangat tepat: "Sepeda itu <em>dicuri</em>".<br>
+                        Rumus pasif masa lampau (Simple Past): <strong>Subjek + was/were + Verb 3</strong>.<br>
+                        Subjek "It" (sepeda) berpasangan dengan "was". Verb 3 dari *steal* (mencuri) adalah *stolen*. Jadi, jawabannya <em>was stolen</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 8 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">8. Evaluate the following sentences. Which of them is grammatically INCORRECT?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="A" class="custom-radio">
+                            <span class="ml-3">A. The legendary story of Malin Kundang is told by generations.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="B" class="custom-radio">
+                            <span class="ml-3">B. Many trees were cut down illegally in this forest last year.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="C" class="custom-radio">
+                            <span class="ml-3">C. The package has being delivered to your house just now.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q8" value="D" class="custom-radio">
+                            <span class="ml-3">D. English is spoken as a first language in Australia.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Soal ini memintamu mencari kalimat yang <strong>SALAH (INCORRECT)</strong> tata bahasanya.<br>
+                        Perhatikan Opsi C: "The package <em>has being delivered</em>...". Ini salah besar! <br>
+                        Setelah kata *has* atau *have* dalam kalimat pasif (Present Perfect), kita harus menggunakan <strong>been</strong>, bukan <em>being</em>. <br>
+                        Seharusnya: "The package has <strong>been</strong> delivered...".
+                    </div>
+                </div>
+
+                <!-- Soal 9 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">9. Active: "The chef prepares a delicious traditional meal for the guests."<br>What is the correct passive form of the sentence above?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="A" class="custom-radio">
+                            <span class="ml-3">A. A delicious traditional meal is prepared by the chef for the guests.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="B" class="custom-radio">
+                            <span class="ml-3">B. A delicious traditional meal was prepared by the chef for the guests.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="C" class="custom-radio">
+                            <span class="ml-3">C. A delicious traditional meal is being prepared by the chef for the guests.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q9" value="D" class="custom-radio">
+                            <span class="ml-3">D. A delicious traditional meal has been prepared by the chef for the guests.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Langkah-langkah mengubah kalimat aktif ke pasif:</strong><br>
+                        1. <strong>Tentukan Tenses:</strong> Kata kerjanya adalah <em>prepares</em> (ada akhiran -s). Ini berarti tensesnya adalah <strong>Simple Present Tense</strong>.<br>
+                        2. <strong>Tukar Posisi:</strong> Objek <em>"a delicious traditional meal"</em> pindah ke depan menjadi Subjek baru.<br>
+                        3. <strong>Terapkan Rumus:</strong> Simple Present Pasif (S + is/am/are + V3). Karena "meal" itu tunggal, pakai "is". Verb 3 dari prepare adalah "prepared".<br>
+                        4. <strong>Hasil akhir:</strong> <em>A delicious traditional meal + is prepared + by the chef...</em> Sesuai dengan opsi A!
+                    </div>
+                </div>
+
+                <!-- Soal 10 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">10. Active: "The students cleaned the laboratory after the experiment."<br>What is the correct passive form of the sentence above?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="A" class="custom-radio">
+                            <span class="ml-3">A. The laboratory is cleaned by the students after the experiment.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="B" class="custom-radio">
+                            <span class="ml-3">B. The laboratory was cleaned by the students after the experiment.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="C" class="custom-radio">
+                            <span class="ml-3">C. The laboratory was being cleaned by the students after the experiment.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q10" value="D" class="custom-radio">
+                            <span class="ml-3">D. The laboratory has been cleaned by the students after the experiment.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Mari ubah langkah demi langkah:</strong><br>
+                        1. <strong>Tentukan Tenses:</strong> Kata kerjanya adalah <em>cleaned</em> (Verb 2). Ini menandakan <strong>Simple Past Tense</strong>.<br>
+                        2. <strong>Pindahkan Objek:</strong> Objeknya adalah <em>"the laboratory"</em>. Jadikan dia subjek di awal kalimat pasif.<br>
+                        3. <strong>Terapkan Rumus:</strong> Simple Past Pasif (S + was/were + V3). Karena "laboratory" cuma satu (tunggal), gunakan "was". V3-nya tetap "cleaned".<br>
+                        4. <strong>Hasil akhir:</strong> <em>The laboratory + was cleaned + by the students...</em> Sama persis dengan opsi B!
+                    </div>
+                </div>
+
+                <!-- Soal 11 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">11. "Why is the main road closed today?"<br>"Because it ... for the annual Independence Day parade."</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="A" class="custom-radio">
+                            <span class="ml-3">A. is using</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="B" class="custom-radio">
+                            <span class="ml-3">B. is being used</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="C" class="custom-radio">
+                            <span class="ml-3">C. was used</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q11" value="D" class="custom-radio">
+                            <span class="ml-3">D. has used</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (is being used)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Orang pertama bertanya, "Kenapa jalan utama ditutup <em>hari ini</em>?". Jawaban logisnya adalah: "Karena jalan itu <strong>sedang digunakan</strong> (saat ini) untuk parade."<br>
+                        Kejadian yang "sedang berlangsung" disebut <strong>Present Continuous Tense</strong>. <br>
+                        Rumus pasifnya: <strong>Subjek + is/am/are + being + V3</strong>.<br>
+                        Jalan (it) -> <em>is + being + used</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 12 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">12. To prevent the spread of the virus, all health protocols ... strictly by everyone in the school.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="A" class="custom-radio">
+                            <span class="ml-3">A. must be followed</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="B" class="custom-radio">
+                            <span class="ml-3">B. must follow</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="C" class="custom-radio">
+                            <span class="ml-3">C. must being followed</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q12" value="D" class="custom-radio">
+                            <span class="ml-3">D. must be following</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (must be followed)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Kalimat ini bermakna: "Protokol kesehatan <em>harus dipatuhi</em>." Karena ada kata "harus" (must), ini disebut kalimat Modals (seperti <em>can, will, should, must</em>).<br>
+                        Rumus kalimat pasif untuk Modals sangat gampang: <strong>Modals + be + Verb 3</strong>.<br>
+                        Jadi langsung saja kita rangkai: <em>must + be + followed</em>. Hati-hati, jangan gunakan *being* atau akhiran *-ing* setelah *must* dalam konteks ini!
+                    </div>
+                </div>
+
+                <!-- Soal 13 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">13. In which of the following situations is using the passive voice more appropriate than the active voice?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="A" class="custom-radio">
+                            <span class="ml-3">A. When we want to emphasize the person who did the action.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="B" class="custom-radio">
+                            <span class="ml-3">B. When the doer of the action is obvious, unknown, or unimportant.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="C" class="custom-radio">
+                            <span class="ml-3">C. When we want to write a direct personal letter to a friend.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q13" value="D" class="custom-radio">
+                            <span class="ml-3">D. When we want to describe a sudden action in the past.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Fungsi Kalimat Pasif (Passive Voice):</strong><br>
+                        Kenapa sih kita harus pakai kalimat pasif? Kita menggunakan *Passive Voice* ketika <strong>pelaku dari suatu tindakan tidak penting, tidak diketahui (unknown), atau sudah terlalu jelas (obvious)</strong>. Fokus utama kalimat pasif ada pada "benda yang dikenai tindakan", bukan "siapa pelakunya".<br>
+                        Contoh: <em>"My wallet was stolen!"</em> (Dompetku dicuri). Fokusnya adalah dompet hilang, tidak peduli siapa yang mencuri karena kita memang tidak tahu (unknown).
+                    </div>
+                </div>
+
+                <!-- Soal 14 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">14. Active: "My father gave me a new laptop on my birthday."<br>Which of the following is a correct passive transformation of the sentence?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="A" class="custom-radio">
+                            <span class="ml-3">A. I was given a new laptop by my father on my birthday.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="B" class="custom-radio">
+                            <span class="ml-3">B. A new laptop is given to me by my father on my birthday.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="C" class="custom-radio">
+                            <span class="ml-3">C. I am given a new laptop by my father on my birthday.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q14" value="D" class="custom-radio">
+                            <span class="ml-3">D. My birthday was given a new laptop by my father.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Mari kita bedah kalimat dengan DUA objek:</strong><br>
+                        Kalimat di atas punya dua objek: "me" (aku) dan "a new laptop" (laptop baru). Kalau kita mau jadikan "me" sebagai subjek pasif, ia berubah menjadi "I" (Saya).<br>
+                        1. Tenses: <em>gave</em> (V2) -> <strong>Simple Past Tense</strong>.<br>
+                        2. Rumus: S + was/were + V3.<br>
+                        3. Perubahan: <em>I + was + given + a new laptop + by my father...</em> (Saya diberi laptop baru oleh ayahku...). Sangat masuk akal! Opsi C salah karena menggunakan <em>am</em> (Present).
+                    </div>
+                </div>
+
+                <!-- Soal 15 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">15. The school library project ... yet due to the lack of funding.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="A" class="custom-radio">
+                            <span class="ml-3">A. has not been completed</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="B" class="custom-radio">
+                            <span class="ml-3">B. is not completed</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="C" class="custom-radio">
+                            <span class="ml-3">C. was not completed</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q15" value="D" class="custom-radio">
+                            <span class="ml-3">D. has not completed</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A (has not been completed)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Lihat kata "<strong>yet</strong>" (belum). Dalam bahasa Inggris, "yet" adalah kata kunci untuk <strong>Present Perfect Tense Negatif</strong> (sesuatu yang belum terjadi sampai saat ini).<br>
+                        Rumus pasifnya: <strong>Subjek + has/have + not + been + V3</strong>.<br>
+                        Subjeknya <em>"The school library project"</em> itu tunggal (satu proyek), jadi pakai <em>has</em>. Kita tambahkan not + been + completed (V3). Artinya: Proyek perpustakaan sekolah <em>belum diselesaikan</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 16 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">16. The telephone ... by Alexander Graham Bell in 1876.</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="A" class="custom-radio">
+                            <span class="ml-3">A. is invented</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="B" class="custom-radio">
+                            <span class="ml-3">B. was invented</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="C" class="custom-radio">
+                            <span class="ml-3">C. has been invented</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q16" value="D" class="custom-radio">
+                            <span class="ml-3">D. invented</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B (was invented)</strong><br><br>
+                        <strong>Mari kita bedah:</strong><br>
+                        Tahun "1876" adalah kejadian bersejarah yang sudah lama berlalu <strong>(Simple Past Tense)</strong>.<br>
+                        Telepon "ditemukan", jadi kita butuh kalimat pasif. Rumusnya: <strong>Subjek + was/were + V3</strong>.<br>
+                        "The telephone" (tunggal) berpasangan dengan "was". Kata kerja penemuan (invent) diubah menjadi V3 yaitu "invented". Hasilnya: <em>was invented</em>.
+                    </div>
+                </div>
+
+                <!-- Soal 17 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">17. Read the short text below!<br><em>Last night, a heavy storm hit our village. It blew away several roofs of the houses and knocked down three big trees near the main street.</em><br><br>Which passive sentence correctly summarizes the event in the text?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="A" class="custom-radio">
+                            <span class="ml-3">A. Several roofs were blown away and three big trees were knocked down by a heavy storm last night.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="B" class="custom-radio">
+                            <span class="ml-3">B. Several roofs are blown away and three big trees are knocked down by a heavy storm last night.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="C" class="custom-radio">
+                            <span class="ml-3">C. Several roofs have been blown away and three big trees have been knocked down by a heavy storm last night.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q17" value="D" class="custom-radio">
+                            <span class="ml-3">D. Several roofs were blowing away and three big trees were knocking down by a heavy storm last night.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Langkah-langkah merangkum menjadi kalimat pasif:</strong><br>
+                        1. Kapan kejadiannya? <em>"Last night"</em> (Semalam). Artinya kita wajib pakai <strong>Simple Past Tense (was/were)</strong>.<br>
+                        2. Apa yang dikenai musibah? <em>Several roofs</em> (banyak atap) dan <em>three big trees</em> (3 pohon besar). Keduanya adalah jamak (plural/banyak).<br>
+                        3. Karena jamak, <em>to be</em> yang dipakai adalah <strong>were</strong>.<br>
+                        4. Rangkai: Several roofs <em>were blown</em> away AND three big trees <em>were knocked</em> down. Opsi A memenuhi semua syarat tersebut!
+                    </div>
+                </div>
+
+                <!-- Soal 18 -->
+                <div class="question-block mb-10" data-answer="B">
+                    <p class="font-semibold text-lg mb-4">18. Read the student's sentence below:<br><em>"The letters was sent by my sister yesterday morning."</em><br>Evaluate the sentence above. What makes it grammatically incorrect and how should it be fixed?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="A" class="custom-radio">
+                            <span class="ml-3">A. The word "sent" should be "send" because it happened in the past.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="B" class="custom-radio">
+                            <span class="ml-3">B. The auxiliary verb "was" should be "were" because the subject "The letters" is plural.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="C" class="custom-radio">
+                            <span class="ml-3">C. The word "by" should be "with" to show the agent of action.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q18" value="D" class="custom-radio">
+                            <span class="ml-3">D. The auxiliary verb "was" should be "is" because it is a general fact.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: B</strong><br><br>
+                        <strong>Kenapa kalimat murid itu salah?</strong><br>
+                        Coba perhatikan subjeknya: <em>"The letters"</em> (surat-surat). Ada huruf 's' di belakangnya, berarti suratnya lebih dari satu (Jamak/Plural).<br>
+                        Aturan dalam bahasa Inggris, subjek jamak <strong>TIDAK BOLEH</strong> dipasangkan dengan <em>was</em>. Pasangan <em>to be</em> masa lampau untuk benda lebih dari satu adalah <strong>were</strong>. Jadi kalimat yang benar: "The letters <em>were</em> sent..."
+                    </div>
+                </div>
+
+                <!-- Soal 19 -->
+                <div class="question-block mb-10" data-answer="A">
+                    <p class="font-semibold text-lg mb-4">19. Active: "They make these high-quality shoes in Cibaduyut, Bandung."<br>What is the correct passive voice of the sentence?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="A" class="custom-radio">
+                            <span class="ml-3">A. These high-quality shoes are made in Cibaduyut, Bandung.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="B" class="custom-radio">
+                            <span class="ml-3">B. These high-quality shoes were made in Cibaduyut, Bandung.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="C" class="custom-radio">
+                            <span class="ml-3">C. These high-quality shoes are being made in Cibaduyut, Bandung.</span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q19" value="D" class="custom-radio">
+                            <span class="ml-3">D. These high-quality shoes have been made in Cibaduyut, Bandung.</span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: A</strong><br><br>
+                        <strong>Mari kita ubah:</strong><br>
+                        1. Tenses kalimat aktif: "make" (Verb 1) -> <strong>Simple Present Tense</strong> (sebuah fakta/kegiatan rutin).<br>
+                        2. Objek yang dipindah ke depan: <em>"These high-quality shoes"</em> (Sepatu-sepatu berkualitas tinggi ini).<br>
+                        3. Karena sepatunya jamak (shoes), kita pakai <em>to be</em> <strong>are</strong>. Verb 3 dari *make* adalah *made*.<br>
+                        4. Rangkai: <em>These high-quality shoes + are + made + in Cibaduyut.</em> Pelaku "they" dihilangkan (di-omit) karena bersifat umum dan tidak penting disebutkan.
+                    </div>
+                </div>
+
+                <!-- Soal 20 -->
+                <div class="question-block mb-10" data-answer="C">
+                    <p class="font-semibold text-lg mb-4">20. Analyze the active-passive pairs below. Which pair is INCORRECT?</p>
+                    <div class="space-y-3">
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="A" class="custom-radio">
+                            <span class="ml-3">A. Active: <em>People speak English all over the world.</em><br>Passive: <em>English is spoken all over the world.</em></span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="B" class="custom-radio">
+                            <span class="ml-3">B. Active: <em>The government will build a new hospital.</em><br>Passive: <em>A new hospital will be built by the government.</em></span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="C" class="custom-radio">
+                            <span class="ml-3">C. Active: <em>Someone has stolen my wallet.</em><br>Passive: <em>My wallet has stolen by someone.</em></span>
+                        </label>
+                        <label class="option-label flex items-center p-4 border rounded-xl cursor-pointer transition">
+                            <input type="radio" name="q20" value="D" class="custom-radio">
+                            <span class="ml-3">D. Active: <em>They are painting the classroom walls.</em><br>Passive: <em>The classroom walls are being painted.</em></span>
+                        </label>
+                    </div>
+                    <div class="explanation mt-4 p-5 rounded-xl border-l-4 shadow-sm"></div>
+                    <div class="hidden-rationale hidden">
+                        <strong>Jawaban Benar: C</strong><br><br>
+                        <strong>Mari kita bedah kenapa pasangan C salah (INCORRECT):</strong><br>
+                        Kalimat aktifnya menggunakan <strong>Present Perfect Tense</strong> (*has stolen*).<br>
+                        Ingat, ciri khas kalimat pasif Present Perfect WAJIB memiliki kata <strong>been</strong> (S + has/have + been + V3).<br>
+                        Pada opsi C, kalimat pasifnya "My wallet <em>has stolen</em>...". Ini salah kaprah! Tanpa *been*, kalimat itu bermakna aktif yang aneh: "Dompetku <em>telah mencuri</em> seseorang".<br>
+                        Seharusnya: "My wallet has <strong>been</strong> stolen by someone".
+                    </div>
+                </div>
+
+                <!-- Hasil Skor (Hidden by Default) -->
+                <div id="score-container" class="score-anim my-10 p-8 bg-sky-50 rounded-2xl border-2 border-sky-200 text-center shadow-inner">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-2">Nilai Akhir Kamu:</h3>
+                    <div id="score-display" class="text-7xl font-extrabold text-sky-600 mb-4 drop-shadow-sm">0</div>
+                    <p id="score-message" class="text-lg text-slate-600 font-medium"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pb-6">
+                    <button type="button" id="check-btn" class="bg-sky-600 hover:bg-sky-700 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Periksa Jawaban
+                    </button>
+                    <button type="button" id="retry-btn" class="hidden bg-slate-700 hover:bg-slate-800 text-white text-lg font-semibold py-4 px-10 rounded-xl shadow-lg transition transform hover:-translate-y-1 w-full sm:w-auto">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Ulangi Tes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="py-8 text-center text-slate-500 font-medium mt-auto w-full bg-slate-50 border-t border-slate-200">
+        <p>By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const form = document.getElementById('quiz-form');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreMessage = document.getElementById('score-message');
+            const questions = document.querySelectorAll('.question-block');
+
+            // 20 Questions total, max score 100 (5 points each)
+            const pointsPerQuestion = 100 / questions.length;
+
+            checkBtn.addEventListener('click', () => {
+                let correctCount = 0;
+
+                questions.forEach((q) => {
+                    const correctAnswer = q.getAttribute('data-answer');
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    let answered = false;
+                    
+                    const explanationDiv = q.querySelector('.explanation');
+                    const rationaleHTML = q.querySelector('.hidden-rationale').innerHTML;
+                    
+                    // Injecting rationale into explanation div
+                    explanationDiv.innerHTML = rationaleHTML; 
+
+                    radios.forEach(radio => {
+                        // Lock inputs so they cannot be changed after checking
+                        radio.disabled = true;
+
+                        if (radio.checked) {
+                            answered = true;
+                            if (radio.value === correctAnswer) {
+                                correctCount++;
+                                // Tampilan Benar (Hijau)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-emerald-50 text-emerald-900 border-emerald-500 block shadow-sm';
+                            } else {
+                                // Tampilan Salah (Merah)
+                                explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                            }
+                        }
+                    });
+
+                    // Handle unanswered questions (mark as incorrect visually)
+                    if (!answered) {
+                        explanationDiv.className = 'explanation mt-4 p-5 rounded-xl border-l-4 bg-rose-50 text-rose-900 border-rose-500 block shadow-sm';
+                        explanationDiv.innerHTML = '<strong class="text-rose-700 flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Kamu belum menjawab pertanyaan ini!</strong><hr class="border-rose-200 my-3">' + rationaleHTML;
+                    }
+                });
+
+                // Score Calculation
+                const finalScore = Math.round(correctCount * pointsPerQuestion);
+                
+                // Score Counter Animation
+                let currentScore = 0;
+                const scoreInterval = setInterval(() => {
+                    if (currentScore >= finalScore) {
+                        clearInterval(scoreInterval);
+                        scoreDisplay.textContent = finalScore;
+                    } else {
+                        currentScore++;
+                        scoreDisplay.textContent = currentScore;
+                    }
+                }, 20); // Counter speed
+
+                // Set motivational message based on score
+                if (finalScore === 100) {
+                    scoreMessage.innerHTML = "🎉 Sempurna! Penguasaan Grammar (Passive Voice) kamu sangat luar biasa.";
+                } else if (finalScore >= 80) {
+                    scoreMessage.innerHTML = "🌟 Kerja yang sangat bagus! Sedikit lagi mencapai kesempurnaan.";
+                } else if (finalScore >= 60) {
+                    scoreMessage.innerHTML = "👍 Cukup baik, tapi pastikan kamu memahami tenses dengan lebih teliti ya!";
+                } else {
+                    scoreMessage.innerHTML = "💪 Jangan menyerah! Yuk baca pelan-pelan pembahasannya dan coba lagi.";
+                }
+
+                // Show Results & Toggle Buttons
+                scoreContainer.style.display = 'block';
+                checkBtn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+
+                // Smooth scroll down to score box
+                setTimeout(() => {
+                    scoreContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            retryBtn.addEventListener('click', () => {
+                // Reset form inputs (Vanilla JS)
+                form.reset();
+
+                // Revert to initial state
+                questions.forEach(q => {
+                    const radios = q.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false; // Unlock inputs
+                    });
+                    
+                    // Hide explanations
+                    const explanationDiv = q.querySelector('.explanation');
+                    explanationDiv.style.display = 'none';
+                    explanationDiv.innerHTML = ''; 
+                });
+
+                // Hide score & reset buttons
+                scoreContainer.style.display = 'none';
+                scoreDisplay.textContent = '0';
+                checkBtn.classList.remove('hidden');
+                retryBtn.classList.add('hidden');
+
+                // Smooth scroll to top of the page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

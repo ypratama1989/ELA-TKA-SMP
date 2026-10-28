@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sains: Gelombang, Bunyi & Optik</title>
+    <script src="/tailwindcss.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        /* Kustomisasi scrollbar untuk pre/code */
+        pre::-webkit-scrollbar { height: 8px; }
+        pre::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        pre::-webkit-scrollbar-track { background: #f1f5f9; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar / Header -->
+    <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
+            <button onclick="history.back()" class="p-2 bg-blue-700 hover:bg-blue-800 rounded-full transition duration-200" title="Kembali">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <div>
+                <h1 class="text-xl font-bold">Latihan Soal Sains</h1>
+                <p class="text-xs text-blue-200">Gelombang, Bunyi, dan Optik</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
+            <p class="text-sm text-gray-600">Pilihlah jawaban yang paling tepat. Anda dapat langsung menekan tombol <strong>Periksa Jawaban</strong> di bagian bawah tanpa harus mengisi semua soal.</p>
+        </div>
+
+        <form id="quizForm">
+            
+            <!-- SOAL 1 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="A" id="q1">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">1.</span>Sebuah bandul sederhana berayun dari titik A - B - C - B - A - B - C dalam waktu 1,5 sekon. Jika jarak A ke C adalah 10 cm, maka frekuensi dan amplitudo getaran bandul tersebut berturut-turut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q1" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 1,0 Hz dan 5 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q1" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 1,0 Hz dan 10 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q1" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 1,5 Hz dan 5 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q1" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 1,5 Hz dan 10 cm</label>
+                </div>
+                <!-- Penjelasan -->
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Konsep 1 Getaran:</strong> Satu getaran penuh adalah gerak bolak-balik dari titik awal kembali ke titik awal (A &rarr; B &rarr; C &rarr; B &rarr; A).</li>
+                            <li>Lintasan bandul: A - B - C - B - A (1 getaran) dilanjut B - C (&frac12; getaran). Total = <strong>1,5 getaran (n)</strong>.</li>
+                            <li>Waktu total <strong>(t) = 1,5 sekon</strong>.</li>
+                            <li><strong>Menghitung Frekuensi (f):</strong> <br> f = n &divide; t = 1,5 &divide; 1,5 = <strong>1,0 Hz</strong>.</li>
+                            <li><strong>Menghitung Amplitudo:</strong> Amplitudo adalah simpangan terjauh dari titik tengah (B). Jika jarak total ujung ke ujung (A ke C) adalah 10 cm, maka jarak ke titik tengah (Amplitudo) adalah 10 &divide; 2 = <strong>5 cm</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 2 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="A" id="q2">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">2.</span>Perhatikan grafik gelombang transversal berikut!</p>
+                <div class="mb-4 overflow-x-auto bg-gray-50 border p-3 rounded-lg">
+<pre class="text-sm font-mono text-gray-800">
+  Y (cm)
+   ^
+ 2 |    _--_        _--_
+   |   /    \      /    \
+ 0 |__/______\____/______\__> t (sekon)
+   |  \      /    \      /     0,8
+-2 |   \____/      \____/
+   v
+</pre>
+                </div>
+                <p class="font-semibold text-lg mb-4">Jika jarak dari puncak gelombang pertama ke puncak gelombang kedua adalah 40 cm, cepat rambat gelombang tersebut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q2" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 0,5 m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q2" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 1,0 m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q2" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 1,6 m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q2" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 2,0 m/s</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Langkah demi Langkah:</strong></p>
+                        <ol class="list-decimal pl-5">
+                            <li><strong>Mencari Periode (T):</strong> Berdasarkan grafik, terbentuk persis 2 gelombang penuh (2 bukit, 2 lembah) dalam waktu 0,8 sekon. <br> Waktu untuk 1 gelombang (Periode) = 0,8 s &divide; 2 = <strong>0,4 sekon</strong>.</li>
+                            <li><strong>Mencari Panjang Gelombang (&lambda;):</strong> Jarak antara dua puncak yang berdekatan persis sama dengan satu panjang gelombang. <br> &lambda; = 40 cm = <strong>0,4 meter</strong>. <em>(Ingat, ubah ke satuan Standar Internasional / SI)</em></li>
+                            <li><strong>Menghitung Kecepatan (v):</strong> <br> v = &lambda; &divide; T <br> v = 0,4 m &divide; 0,4 s = <strong>1,0 m/s</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 3 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="A" id="q3">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">3.</span>Gelombang longitudinal merambat pada seutas pegas (slinki) dengan frekuensi 5 Hz. Jika jarak antara dua rapatan yang berdekatan adalah 20 cm, maka cepat rambat gelombang longitudinal tersebut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q3" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 1,0 m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q3" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 2,0 m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q3" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 4,0 m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q3" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 10,0 m/s</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li>Pada gelombang longitudinal (seperti pada pegas/slinki), satu panjang gelombang (&lambda;) dihitung dari pusat rapatan ke rapatan berikutnya, atau renggangan ke renggangan berikutnya.</li>
+                            <li>Diketahui jarak dua rapatan berdekatan = 20 cm. Maka, <strong>&lambda; = 20 cm = 0,2 meter</strong>.</li>
+                            <li>Diketahui frekuensi <strong>(f) = 5 Hz</strong>.</li>
+                            <li>Cepat rambat (v) = &lambda; &times; f = 0,2 m &times; 5 Hz = <strong>1,0 m/s</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 4 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q4">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">4.</span>Dua buah ayunan sederhana, Ayunan X memiliki panjang tali L dan Ayunan Y memiliki panjang tali 4L. Jika kedua ayunan tersebut digetarkan di tempat yang sama, perbandingan periode ayunan X dan ayunan Y (T<sub>X</sub> : T<sub>Y</sub>) yang benar adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q4" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 1 : 4</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q4" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 1 : 2</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q4" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 2 : 1</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q4" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 4 : 1</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Konsep Ayunan:</strong></p>
+                        <p>Faktor utama yang memengaruhi lama ayunan (periode) adalah panjang talinya. Rumus resminya adalah <strong>T = 2&pi;&radic;(L/g)</strong>.</p>
+                        <p>Secara sederhana: Periode (T) berbanding lurus dengan <strong>akar kuadrat</strong> dari panjang tali (&radic;L). Jika gravitasinya sama, kita cukup membandingkan akarnya saja:</p>
+                        <ul class="list-disc pl-5">
+                            <li>Ayunan X tali = L &rarr; perbandingannya &radic;1 = 1</li>
+                            <li>Ayunan Y tali = 4L &rarr; perbandingannya &radic;4 = 2</li>
+                        </ul>
+                        <p>Maka perbandingan waktunya T<sub>X</sub> : T<sub>Y</sub> adalah <strong>1 : 2</strong>. Artinya, tali yang 4x lebih panjang hanya memakan waktu ayunan 2x lebih lama, bukan 4x.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 5 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="C" id="q5">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">5.</span>Gempa bumi bawah laut memicu terjadinya gelombang tsunami yang merambat menuju pantai. Karakteristik gelombang tsunami saat mendekati daratan yang dangkal adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q5" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Panjang gelombang bertambah besar dan kecepatan bertambah</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q5" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Panjang gelombang bertambah besar dan amplitudo mengecil</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q5" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Panjang gelombang mengecil dan amplitudo bertambah besar</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q5" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Frekuensi gelombang meningkat drastis dan kecepatan bertambah</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Penjelasan Proses Tsunami:</strong></p>
+                        <p>Bayangkan ombak raksasa merambat dari laut dalam ke laut dangkal dekat pantai.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Karena dasar laut menjadi dangkal, terjadi gesekan yang membuat <strong>kecepatan gelombang (v) menurun drastis</strong>.</li>
+                            <li>Frekuensi (f) dorongan gelombang selalu tetap karena berasal dari gempa.</li>
+                            <li>Karena kecepatan turun tapi dorongan tetap (v = &lambda; &times; f), maka jarak antar ombak <strong>(panjang gelombang / &lambda;) menyusut atau mengecil</strong>. Ombak depan melambat, ombak belakang terus menekan.</li>
+                            <li>Energi air yang sangat besar ini tidak punya tempat untuk pergi selain naik ke atas. Akibatnya, tinggi gelombang <strong>(amplitudo) bertambah menjadi sangat besar</strong> saat menyapu daratan.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 6 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q6">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">6.</span>Sebuah kapal pemancar mengirimkan sinyal bunyi ke dasar laut. Sinyal pantul diterima kembali oleh hidrofon di kapal setelah 2,4 sekon. Jika cepat rambat bunyi di dalam air laut adalah 1.500 m/s, kedalaman laut di tempat tersebut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q6" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 900 meter</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q6" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 1.800 meter</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q6" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 3.600 meter</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q6" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 7.200 meter</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Pembahasan Sonar Kelautan:</strong></p>
+                        <p>Kunci penting dari soal pemantulan (sonar/gema) adalah bunyi menempuh jarak <strong>dua kali lipat (pergi dan pulang)</strong>.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Rumus Kedalaman: Jarak (s) = (Kecepatan (v) &times; Waktu total (t)) &divide; 2</li>
+                            <li>Mengapa dibagi 2? Karena waktu 2,4 sekon adalah waktu bunyi menabrak dasar laut <em>lalu kembali lagi</em> ke atas. Waktu murninya menembus kedalaman hanya 1,2 sekon.</li>
+                            <li>Hitungan: s = (1.500 m/s &times; 2,4 s) &divide; 2 = 3.600 &divide; 2 = <strong>1.800 meter</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 7 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="D" id="q7">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">7.</span>Sebuah tabung resonansi yang berisi air ditiup di bagian ujung atasnya sehingga menghasilkan bunyi dengungan paling keras (resonansi pertama) saat tinggi kolom udara di atas air adalah 15 cm. Panjang gelombang bunyi yang dihasilkan oleh sumber bunyi tersebut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q7" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 15 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q7" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 30 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q7" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 45 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q7" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 60 cm</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Memahami Resonansi Tabung:</strong></p>
+                        <p>Pada percobaan tabung air (pipa organa ujung tertutup oleh air), resonansi atau bunyi terkuat pertama terjadi ketika panjang kolom udara (L) tepat seukuran <strong>seperempat (&frac14;) dari panjang gelombang bunyi</strong>.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Rumus Resonansi I: L = &frac14; &times; &lambda;</li>
+                            <li>Diketahui panjang tabung L = 15 cm.</li>
+                            <li>Maka: 15 = &frac14; &times; &lambda;</li>
+                            <li>Pindahkan &frac14; melewati sama dengan (menjadi kali 4): &lambda; = 15 &times; 4 = <strong>60 cm</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 8 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="A" id="q8">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">8.</span>Di bawah ini adalah tabel hasil pengujian ambang pendengaran empat orang siswa terhadap berbagai frekuensi bunyi:</p>
+                <div class="overflow-x-auto mb-4">
+                    <table class="min-w-full bg-white border text-sm">
+                        <thead class="bg-blue-50 text-gray-700">
+                            <tr>
+                                <th class="border py-2 px-3 text-left">Nama</th>
+                                <th class="border py-2 px-3 text-center">Frekuensi 15 Hz</th>
+                                <th class="border py-2 px-3 text-center">Frekuensi 1.000 Hz</th>
+                                <th class="border py-2 px-3 text-center">Frekuensi 18.000 Hz</th>
+                                <th class="border py-2 px-3 text-center">Frekuensi 25.000 Hz</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border py-2 px-3 font-semibold">Andi</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border py-2 px-3 font-semibold">Budi</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                            </tr>
+                            <tr>
+                                <td class="border py-2 px-3 font-semibold">Cici</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border py-2 px-3 font-semibold">Dodi</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                                <td class="border py-2 px-3 text-center text-red-600">Tidak</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                                <td class="border py-2 px-3 text-center text-green-600">Mendengar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="font-semibold text-lg mb-4">Berdasarkan data di atas, siswa yang memiliki rentang pendengaran normal sebagai manusia (audiosonik) adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q8" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Andi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q8" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Budi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q8" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Cici</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q8" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Dodi</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Klasifikasi Frekuensi Bunyi:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Infrasonik (&lt; 20 Hz):</strong> Terlalu rendah, hanya didengar hewan tertentu (contoh: 15 Hz).</li>
+                            <li><strong>Audiosonik (20 Hz - 20.000 Hz):</strong> Rentang normal pendengaran manusia. Manusia normal <strong>harus bisa</strong> mendengar di rentang ini (contoh: 1.000 Hz dan 18.000 Hz).</li>
+                            <li><strong>Ultrasonik (&gt; 20.000 Hz):</strong> Terlalu tinggi, hanya didengar kelelawar/lumba-lumba (contoh: 25.000 Hz).</li>
+                        </ul>
+                        <p>Dari tabel, hanya <strong>Andi</strong> yang perilakunya sesuai dengan manusia normal: tidak mendengar 15 Hz, mendengar 1.000 & 18.000 Hz, dan tidak mendengar 25.000 Hz.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 9 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="C" id="q9">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">9.</span>Pada suhu udara 20&deg;C, cepat rambat bunyi di udara adalah 340 m/s. Jika terjadi petir, seorang pengamat mendengar suara guntur 3 sekon setelah ia melihat kilatan cahaya petir. Jarak pengamat dari lokasi sambaran petir adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q9" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 113 meter</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q9" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 510 meter</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q9" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 1.020 meter</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q9" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 3.000 meter</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Fenomena Cahaya vs Bunyi:</strong></p>
+                        <p>Cahaya merambat luar biasa cepat (ratusan juta meter per sekon), sehingga kilatan petir sampai ke mata kita hampir seketika (waktu ~0 detik).</p>
+                        <p>Namun, suara guntur berjalan lebih lambat (hanya 340 m/s). Keterlambatan 3 detik ini murni karena waktu perjalanan suara guntur dari awan ke telinga kita.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Gunakan rumus gerak lurus sederhana: Jarak (s) = Kecepatan (v) &times; Waktu (t)</li>
+                            <li>s = 340 m/s &times; 3 sekon = <strong>1.020 meter</strong> (atau sekitar 1 kilometer).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 10 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q10">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">10.</span>Ketika kita memukul garpu tala dengan kekuatan yang berbeda, bunyi yang dihasilkan akan terdengar berbeda pula. Hal ini membuktikan bahwa kuat lemahnya bunyi dipengaruhi oleh....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q10" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Frekuensi getaran</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q10" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Amplitudo getaran</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q10" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Periode getaran</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q10" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Medium perambatan</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Konsep Sifat Bunyi:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Kuat-lemah (volume)</strong> bunyi bergantung pada <strong>Amplitudo</strong>. Bayangkan memetik senar gitar: dipetik pelan simpangannya kecil (amplitudo kecil) suaranya pelan; ditarik keras simpangannya besar (amplitudo besar) suaranya keras.</li>
+                            <li><strong>Tinggi-rendah (nada)</strong> bunyi bergantung pada <strong>Frekuensi</strong>. Senar tipis bergetar cepat (frekuensi tinggi) nada melengking; senar tebal bergetar lambat (frekuensi rendah) nada nge-bass.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 11 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q11">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">11.</span>Perhatikan beberapa fenomena berikut!</p>
+                <div class="mb-4 pl-4 border-l-4 border-blue-500">
+                    <ol class="list-decimal pl-4">
+                        <li>Dasar kolam air jernih tampak lebih dangkal dari sebenarnya.</li>
+                        <li>Terbentuknya bayangan tubuh kita di permukaan cermin rias.</li>
+                        <li>Terjadinya peristiwa fatamorgana di jalan aspal yang panas.</li>
+                        <li>Cahaya matahari menembus kaca jendela kamar.</li>
+                    </ol>
+                </div>
+                <p class="font-semibold text-lg mb-4">Fenomena yang menunjukkan sifat cahaya dapat dibiaskan ditunjukkan oleh nomor....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q11" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 1) dan 2)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q11" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 1) dan 3)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q11" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 2) dan 4)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q11" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 3) dan 4)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Mengidentifikasi Sifat Cahaya:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Pembiasan (Refraksi)</strong> adalah membeloknya arah rambat cahaya karena melewati dua zat/medium yang berbeda kerapatannya.</li>
+                            <li>(1) Kolam tampak dangkal: Cahaya dari dasar air berbelok saat keluar ke udara, menipu mata kita. <em>(Ini Pembiasan)</em></li>
+                            <li>(3) Fatamorgana: Cahaya membelok akibat perbedaan suhu (dan kerapatan) lapisan udara di dekat aspal panas. <em>(Ini Pembiasan)</em></li>
+                            <li>(2) Cermin rias adalah contoh <em>Pemantulan</em>.</li>
+                            <li>(4) Cahaya menembus kaca adalah contoh <em>Menembus benda bening</em>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 12 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q12">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">12.</span>Seberkas cahaya merambat dari udara masuk ke dalam medium kaca. Jika indeks bias mutlak kaca adalah 1,5 dan cepat rambat cahaya di udara adalah 3 &times; 10<sup>8</sup> m/s, maka cepat rambat cahaya di dalam kaca adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q12" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 1,5 &times; 10<sup>8</sup> m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q12" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 2,0 &times; 10<sup>8</sup> m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q12" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 4,5 &times; 10<sup>8</sup> m/s</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q12" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 5,0 &times; 10<sup>8</sup> m/s</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Konsep Indeks Bias:</strong></p>
+                        <p>Indeks bias (n) ibarat "angka perlambatan" suatu medium terhadap cahaya. Semakin pekat/rapat medium (seperti kaca), cahaya akan semakin melambat di dalamnya.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Rumus: Kecepatan di medium (v) = Kecepatan asli cahaya (c) &divide; Indeks bias (n)</li>
+                            <li>v = (3 &times; 10<sup>8</sup>) &divide; 1,5</li>
+                            <li>Trik hitung cepat: 3 dibagi 1,5 adalah 2. Maka hasilnya <strong>2,0 &times; 10<sup>8</sup> m/s</strong>. Cahaya memang bergerak lebih lambat di dalam kaca dibanding di udara bebas.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 13 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="A" id="q13">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">13.</span>Sebuah benda setinggi 4 cm diletakkan di depan cermin cekung pada jarak 15 cm. Jika fokus cermin cekung tersebut adalah 10 cm, maka jarak bayangan dan sifat bayangan yang terbentuk adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q13" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 30 cm, nyata, terbalik, diperbesar</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q13" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 30 cm, maya, tegak, diperbesar</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q13" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 6 cm, nyata, terbalik, diperkecil</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q13" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 6 cm, maya, tegak, diperkecil</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Strategi Pemecahan Optik Cermin Cekung:</strong></p>
+                        <p>Diketahui fokus (f) = 10 cm. Karena ini cermin cekung, nilai fokus <strong>positif (+10)</strong>. Jarak benda (s) = 15 cm.</p>
+                        <ol class="list-decimal pl-5">
+                            <li><strong>Menghitung Jarak Bayangan (s'):</strong><br>
+                                1/s' = 1/f - 1/s <br>
+                                1/s' = 1/10 - 1/15 (samakan penyebut jadi 30) <br>
+                                1/s' = 3/30 - 2/30 = 1/30 <br>
+                                <strong>s' = +30 cm</strong>.
+                            </li>
+                            <li><strong>Menentukan Sifat:</strong><br>
+                                Karena s' hasilnya positif, pasti sifatnya <strong>Nyata dan Terbalik</strong> (ditangkap layar di depan cermin).<br>
+                                Jarak bayangan (30) lebih besar dari jarak benda (15), berarti bayangan <strong>Diperbesar</strong> (2x lipat).
+                            </li>
+                            <li><strong>Trik Hafalan Ruang:</strong> Benda di 15cm berada antara F (10cm) dan R (20cm), ini adalah Ruang 2. Bayangan Ruang 2 jatuh di Ruang 3 (nyata, terbalik, diperbesar).</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 14 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q14">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">14.</span>Pengendara sepeda motor melihat bayangan mobil di belakangnya melalui kaca spion (cermin cembung) dengan jarak fokus 1 meter. Jika mobil tersebut berada pada jarak nyata 4 meter di belakang spion, maka bayangan mobil akan terbentuk pada jarak....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q14" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. 0,8 meter di depan spion (nyata)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q14" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. 0,8 meter di belakang spion (maya)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q14" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. 1,25 meter di depan spion (nyata)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q14" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. 1,25 meter di belakang spion (maya)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Catatan Penting Spion (Cermin Cembung):</strong></p>
+                        <p>Sifat mutlak bayangan cermin cembung (seperti spion) adalah <strong>selalu Maya, Tegak, Diperkecil</strong>, dan posisinya di <strong>dalam/di belakang cermin</strong>.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Karena cermin cembung, fokusnya bernilai negatif: <strong>f = -1 m</strong>. Jarak benda <strong>s = 4 m</strong>.</li>
+                            <li>1/s' = 1/f - 1/s</li>
+                            <li>1/s' = 1/(-1) - 1/4 = -1 - 0,25 = <strong>-1,25</strong> (ini sama dengan -5/4)</li>
+                            <li>s' = 1 / -1,25 = <strong>-0,8 meter</strong>.</li>
+                            <li>Tanda minus (-) pada s' menegaskan posisi bayangan bersifat maya atau berada di belakang permukaan cermin.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 15 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q15">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">15.</span>Seorang siswa melakukan eksperimen pembentukan bayangan menggunakan lensa cembung dan lilin. Ketika lilin diletakkan pada jarak 12 cm di depan lensa, terbentuk bayangan nyata dan terbalik pada layar yang diletakkan di belakang lensa pada jarak 24 cm. Jika lilin digeser menjauhi lensa sejauh 8 cm dari posisi semula, tindakan yang harus dilakukan agar bayangan tetap fokus di layar adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q15" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Menggeser layar mendekati lensa sejauh 9,3 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q15" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Menggeser layar mendekati lensa sejauh 10,7 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q15" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Menggeser layar menjauhi lensa sejauh 12 cm</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q15" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Menggeser layar menjauhi lensa sejauh 16 cm</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Langkah Analisis Lensa Kompleks:</strong></p>
+                        <p>Ini adalah soal dua tahap. Kita harus cari kemampuan asli lensanya (titik fokus) dulu.</p>
+                        <ol class="list-decimal pl-5">
+                            <li><strong>Tahap 1: Cari Fokus (f)</strong><br>
+                                Diketahui posisi awal: s = 12 cm, s' = 24 cm.<br>
+                                1/f = 1/s + 1/s' = 1/12 + 1/24 = 2/24 + 1/24 = 3/24.<br>
+                                Maka <strong>f = 24 &divide; 3 = 8 cm</strong>.
+                            </li>
+                            <li><strong>Tahap 2: Kondisi Baru</strong><br>
+                                Lilin (benda) digeser menjauh 8 cm. Posisi baru (s<sub>2</sub>) = 12 + 8 = <strong>20 cm</strong>.<br>
+                                Kita cari lokasi bayangan baru (s'<sub>2</sub>):<br>
+                                1/s'<sub>2</sub> = 1/f - 1/s<sub>2</sub> = 1/8 - 1/20 = 5/40 - 2/40 = 3/40.<br>
+                                Maka s'<sub>2</sub> = 40 &divide; 3 = <strong>13,33 cm</strong>.
+                            </li>
+                            <li><strong>Tahap 3: Posisi Layar</strong><br>
+                                Layar awalnya di posisi 24 cm, sekarang harus pindah ke 13,33 cm.<br>
+                                Pergeseran = 24 - 13,33 = <strong>10,67 cm (dibulatkan 10,7 cm) mendekati lensa</strong>.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 16 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q16">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">16.</span>Berkas sinar sejajar datang menuju sebuah lensa cekung. Sifat berkas sinar setelah melewati lensa tersebut adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q16" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Mengumpul di satu titik fokus aktif (konvergen)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q16" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Menyebar seolah-olah berasal dari titik fokus pasif (divergen)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q16" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Dipantulkan kembali sejajar arah datangnya sinar</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q16" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Diteruskan tanpa mengalami pembiasan sedikit pun</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Mengenal Sifat Lensa:</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>Lensa Cembung (Tebal tengah):</strong> Bersifat <em>Konvergen</em> atau mengumpulkan sinar di satu titik yang nyata.</li>
+                            <li><strong>Lensa Cekung (Tipis tengah):</strong> Bersifat <em>Divergen</em>. Artinya sinar yang menembusnya akan dibiaskan menyebar dan membias menjauh, seolah-olah pancaran cahayanya berasal dari titik fokus semu (pasif) di depan lensa. Inilah alasan mengapa penderita rabun jauh memakai lensa cekung agar bayangan menyebar dan tepat jatuh di retina.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 17 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="A" id="q17">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">17.</span>Pak Roni tidak dapat melihat benda-benda yang letaknya jauh dengan jelas (menderita miopi). Titik jauh (punctum remotum) mata Pak Roni adalah 2 meter. Kekuatan lensa kacamata yang harus digunakan Pak Roni agar dapat melihat normal kembali adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q17" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. -0,5 dioptri</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q17" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. -2,0 dioptri</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q17" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. +0,5 dioptri</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q17" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. +2,0 dioptri</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Resep Kacamata Minus (Miopi):</strong></p>
+                        <p>Rabun jauh atau miopi ditolong dengan kacamata berlensa negatif (lensa cekung).</p>
+                        <ul class="list-disc pl-5">
+                            <li>Rumus kekuatan lensa kacamata miopi sangat sederhana jika titik jauh (PR) diketahui dalam satuan <strong>meter</strong>: <br> <strong>P = -1 / PR</strong></li>
+                            <li>Masukkan angkanya: P = -1 / 2 meter = <strong>-0,5 dioptri</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 18 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q18">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">18.</span>Ibu Susi kesulitan membaca koran pada jarak baca normal (25 cm) karena menderita rabun dekat (hipermetropi). Titik dekat (punctum proximum) mata Ibu Susi adalah 50 cm. Kekuatan lensa kacamata yang harus digunakan Ibu Susi adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q18" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. +1,0 dioptri</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q18" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. +2,0 dioptri</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q18" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. +3,0 dioptri</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q18" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. +4,0 dioptri</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Resep Kacamata Plus (Hipermetropi):</strong></p>
+                        <p>Rabun dekat ditolong dengan kacamata positif (lensa cembung) untuk membantu mengumpulkan cahaya bacaan jarak dekat.</p>
+                        <ul class="list-disc pl-5">
+                            <li>Rumus kekuatan lensa kacamata baca (+):<br> <strong>P = 100/Sn - 100/PP</strong><br>
+                                (di mana Sn adalah jarak baca normal 25 cm, dan PP adalah titik dekat penderita dalam satuan cm).
+                            </li>
+                            <li>Hitungan: P = (100 / 25) - (100 / 50)</li>
+                            <li>P = 4 - 2 = <strong>+2,0 dioptri</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 19 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="B" id="q19">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">19.</span>Seorang peneliti mengamati preparat sel menggunakan mikroskop. Agar diperoleh bayangan yang sangat besar, maya, dan terbalik dari objek yang diamati, maka posisi preparat harus diletakkan di....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q19" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Tepat di titik fokus lensa objektif (F<sub>ob</sub>)</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q19" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Di antara titik fokus (F<sub>ob</sub>) dan pusat kelengkupan (2F<sub>ob</sub>) lensa objektif</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q19" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Di luar jarak dua kali fokus (>2F<sub>ob</sub>) lensa objektif</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q19" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Di antara lensa objektif dan titik fokus (F<sub>ob</sub>)</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Cara Kerja Lensa Mikroskop:</strong></p>
+                        <p>Mikroskop memiliki dua lensa cembung kuat: Objektif (dekat benda) dan Okuler (dekat mata).</p>
+                        <ul class="list-disc pl-5">
+                            <li>Tugas pertama diemban oleh <strong>Lensa Objektif</strong>: menangkap objek super kecil (preparat). Agar lensa cembung ini menghasilkan bayangan pertama yang besar dan bisa ditangkap (nyata, terbalik, diperbesar), benda harus diletakkan di <strong>Ruang II</strong>.</li>
+                            <li>Ruang II artinya jaraknya lebih jauh dari titik fokus (F), tetapi lebih dekat dari titik kelengkungan ganda (2F). Jadi jawabannya adalah <strong>di antara F<sub>ob</sub> dan 2F<sub>ob</sub></strong>.</li>
+                            <li><em>(Catatan tambahan: Bayangan nyata ini kemudian diintip oleh Lensa Okuler yang bekerja seperti lup, merubahnya menjadi maya dan jauh lebih besar lagi ke mata kita)</em>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAL 20 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100 question-item" data-answer="C" id="q20">
+                <p class="font-semibold text-lg mb-4"><span class="text-blue-600 mr-2">20.</span>Pelangi merupakan fenomena alam yang sangat indah yang terbentuk setelah hujan. Urutan proses optis yang dialami oleh cahaya matahari pada tetesan air hujan hingga membentuk pelangi yang indah adalah....</p>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q20" value="A" class="mr-3 w-4 h-4 text-blue-600"> A. Refleksi &rarr; Refraksi &rarr; Dispersi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q20" value="B" class="mr-3 w-4 h-4 text-blue-600"> B. Refraksi &rarr; Refleksi &rarr; Dispersi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q20" value="C" class="mr-3 w-4 h-4 text-blue-600"> C. Refraksi &rarr; Dispersi &rarr; Refleksi &rarr; Refraksi</label>
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="q20" value="D" class="mr-3 w-4 h-4 text-blue-600"> D. Dispersi &rarr; Refleksi &rarr; Refraksi &rarr; Absorpsi</label>
+                </div>
+                <div class="explanation hidden mt-4 p-4 rounded-lg border">
+                    <p class="status font-bold mb-2"></p>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p><strong>Mekanisme Pembentukan Pelangi:</strong></p>
+                        <p>Bayangkan rintik hujan melayang di udara bekerja seperti prisma kaca kecil bagi sinar matahari.</p>
+                        <ol class="list-decimal pl-5">
+                            <li><strong>Refraksi (Pembiasan):</strong> Cahaya matahari putih masuk ke dalam rintik air yang lebih rapat, sehingga membelok.</li>
+                            <li><strong>Dispersi (Penguraian warna):</strong> Saat membelok tadi, cahaya putih pecah menjadi warna mejikuhibiniu karena setiap warna membelok di sudut yang berbeda.</li>
+                            <li><strong>Refleksi (Pemantulan Internal):</strong> Cahaya warna-warni tersebut menabrak dinding belakang rintik air bagian dalam, lalu terpantul kembali ke arah depan.</li>
+                            <li><strong>Refraksi (Pembiasan keluar):</strong> Cahaya keluar dari rintik air ke udara, kembali membelok tajam menuju mata kita sebagai pelangi utuh.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Area -->
+            <div class="flex justify-center mb-10">
+                <button type="button" id="btnSubmit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-transform transform hover:scale-105 text-lg">
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Container (Hidden Default) -->
+        <div id="resultContainer" class="hidden bg-white rounded-xl shadow-lg border-2 border-blue-500 p-8 text-center mb-12 transform transition-all">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Evaluasi Selesai!</h2>
+            <p class="text-gray-600 mb-6">Berikut adalah skor perolehan Anda. Jangan lupa pelajari pembahasan di setiap soal di atas.</p>
+            
+            <div class="inline-block bg-blue-50 border-4 border-blue-200 rounded-full h-40 w-40 flex items-center justify-center mb-6 shadow-inner">
+                <span id="scoreDisplay" class="text-5xl font-black text-blue-600">0</span>
+            </div>
+            
+            <div class="flex justify-center">
+                <button type="button" id="btnReset" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition border border-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Ulangi Tes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-sm font-medium tracking-wide">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnReset = document.getElementById('btnReset');
+            const quizForm = document.getElementById('quizForm');
+            const resultContainer = document.getElementById('resultContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const questions = document.querySelectorAll('.question-item');
+            
+            const TOTAL_QUESTIONS = questions.length; // 20
+            const POINT_PER_QUESTION = 100 / TOTAL_QUESTIONS; // 5
+
+            // Mencegah refresh jika dienter
+            quizForm.addEventListener('submit', (e) => e.preventDefault());
+
+            btnSubmit.addEventListener('click', () => {
+                let currentScore = 0;
+
+                questions.forEach((q, index) => {
+                    const qId = q.id;
+                    const correctAnswer = q.getAttribute('data-answer');
+                    // Cari radio button yang dipilih (jika ada) di dalam container ini
+                    const selectedOption = q.querySelector(`input[name="${qId}"]:checked`);
+                    const explanationBox = q.querySelector('.explanation');
+                    const statusText = explanationBox.querySelector('.status');
+
+                    // Reset kelas warna sebelumnya (jika user klik submit berkali-kali)
+                    explanationBox.classList.remove('hidden', 'bg-green-50', 'border-green-400', 'bg-red-50', 'border-red-400', 'text-green-800', 'text-red-800');
+                    q.classList.remove('border-green-400', 'border-red-400', 'bg-green-50', 'bg-red-50');
+
+                    if (selectedOption) {
+                        const userAnswer = selectedOption.value;
+                        if (userAnswer === correctAnswer) {
+                            // Jawaban Benar
+                            currentScore += POINT_PER_QUESTION;
+                            explanationBox.classList.add('bg-green-50', 'border-green-400', 'text-green-800');
+                            q.classList.add('border-green-400'); // Beri batas warna pada container
+                            statusText.innerHTML = `✅ Hebat! Jawaban Anda Benar (Opsi ${userAnswer})`;
+                        } else {
+                            // Jawaban Salah
+                            explanationBox.classList.add('bg-red-50', 'border-red-400', 'text-red-800');
+                            q.classList.add('border-red-400');
+                            statusText.innerHTML = `❌ Jawaban Anda Salah (Menjawab: ${userAnswer}). Kunci: ${correctAnswer}`;
+                        }
+                    } else {
+                        // Tidak Dijawab
+                        explanationBox.classList.add('bg-red-50', 'border-red-400', 'text-red-800');
+                        q.classList.add('border-red-400');
+                        statusText.innerHTML = `⚠️ Anda tidak menjawab soal ini. Kunci: ${correctAnswer}`;
+                    }
+                    
+                    // Tampilkan kotak pembahasan
+                    explanationBox.style.display = 'block';
+                });
+
+                // Update UI Skor
+                scoreDisplay.innerText = Math.round(currentScore);
+                
+                // Sembunyikan tombol submit, munculkan hasil
+                btnSubmit.parentElement.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                
+                // Scroll perlahan ke area hasil skoring
+                setTimeout(() => {
+                    // scrollIntoView disabled to prevent screen jumping
+                }, 100);
+            });
+
+            btnReset.addEventListener('click', () => {
+                // Reset form radio button
+                quizForm.reset();
+
+                // Kembalikan tampilan UI seperti semula
+                questions.forEach(q => {
+                    const explanationBox = q.querySelector('.explanation');
+                    explanationBox.style.display = 'none';
+                    explanationBox.classList.add('hidden');
+                    explanationBox.classList.remove('bg-green-50', 'border-green-400', 'bg-red-50', 'border-red-400', 'text-green-800', 'text-red-800');
+                    q.classList.remove('border-green-400', 'border-red-400', 'bg-green-50', 'bg-red-50');
+                });
+
+                // Sembunyikan hasil, munculkan lagi tombol submit
+                resultContainer.classList.add('hidden');
+                btnSubmit.parentElement.classList.remove('hidden');
+
+                // Scroll ke atas halaman secara perlahan
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+<!-- ELA_IPA_BRIDGE_INJECTED -->
+<script>
+(function() {
+  function notifyParent(score) {
+    if (typeof score === 'number' && !isNaN(score)) {
+      try {
+        window.parent.postMessage({
+          type: 'IPA_QUIZ_SUBMITTED',
+          topicId: 'ipa_t11',
+          topicIndex: 11,
+          score: Math.round(score),
+          passed: Math.round(score) >= 85
+        }, '*');
+      } catch (e) {
+        console.warn('postMessage error:', e);
+      }
+    }
+  }
+
+  function checkAndNotify() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    for (const id of scoreElemIds) {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = (el.innerText || el.textContent || '').trim();
+        const num = parseFloat(text);
+        if (!isNaN(num) && text !== '') {
+          notifyParent(num);
+          return;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const scoreElemIds = ['final-score', 'score-display', 'scoreDisplay', 'score'];
+    scoreElemIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new MutationObserver(function() {
+          const text = (el.innerText || el.textContent || '').trim();
+          const num = parseFloat(text);
+          if (!isNaN(num) && text !== '') {
+            notifyParent(num);
+          }
+        });
+        observer.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button, [type="button"], [type="submit"]');
+      if (btn && (btn.id === 'btn-submit' || btn.id === 'btnSubmit' || btn.innerText.includes('Periksa') || btn.innerText.includes('Selesai'))) {
+        setTimeout(checkAndNotify, 200);
+        setTimeout(checkAndNotify, 600);
+        setTimeout(checkAndNotify, 1200);
+      }
+    });
+  });
+
+  // Listen for score query from parent
+  window.addEventListener('message', function(ev) {
+    if (ev.data && ev.data.type === 'GET_IPA_SCORE') {
+      checkAndNotify();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika - EDUFILLAH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2rem;
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .quiz-intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .quiz-intro p {
+            color: var(--text-muted);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .question-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .question-number {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 3rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: #C7D2FE;
+            background-color: #EEF2FF;
+        }
+
+        .option-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            margin-right: 12px;
+            margin-top: 2px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom {
+            border-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .radio-custom::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+        .option-label.correct .radio-custom { border-color: var(--success); }
+        .option-label.correct .radio-custom::after { background: var(--success); }
+        .option-label.correct .option-text { color: #065F46; }
+        
+        .option-label.wrong {
+            border-color: var(--danger);
+            background-color: var(--danger-bg);
+        }
+        .option-label.wrong .radio-custom { border-color: var(--danger); }
+        .option-label.wrong .radio-custom::after { background: var(--danger); }
+        .option-label.wrong .option-text { color: #991B1B; }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .exp-correct { background-color: var(--success-bg); border-left: 4px solid var(--success); }
+        .exp-correct h4 { color: #065F46; }
+        .exp-wrong { background-color: var(--danger-bg); border-left: 4px solid var(--danger); }
+        .exp-wrong h4 { color: #991B1B; }
+
+        .explanation-content {
+            color: #374151;
+            line-height: 1.7;
+        }
+
+        .action-container {
+            text-align: center;
+            margin: 2.5rem 0;
+        }
+
+        .btn {
+            padding: 0.8rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-outline {
+            background-color: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #EEF2FF;
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .score-title { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 1rem; font-weight: 500; }
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: #EEF2FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            border: 5px solid var(--primary);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+        }
+        .score-value { font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .options-container { margin-left: 0; margin-top: 1rem; }
+            .question-header { flex-direction: column; gap: 0.5rem; }
+            .header-title { margin-right: 0; font-size: 1.1rem; }
+            header { padding: 1rem; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="btn-back" onclick="goBack()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <div class="header-title">Skala & Perbandingan Matematika</div>
+    </header>
+
+    <main>
+        <div class="quiz-intro">
+            <h1>Uji Analisis Numerikmu!</h1>
+            <p>Pilih jawaban yang menurutmu paling tepat. Kamu bisa langsung memeriksa jawaban meski belum mengisi semua soal. Setiap soal bernilai 5 poin.</p>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-questions">
+                <!-- Soal akan dirender secara dinamis oleh JavaScript -->
+            </div>
+
+            <div class="action-container" id="submit-section">
+                <button type="button" class="btn btn-primary" onclick="checkAnswers()">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Periksa Jawaban
+                </button>
+            </div>
+        </form>
+
+        <div id="result-container">
+            <div class="score-title">Skor Pencapaian Akhir Anda</div>
+            <div class="score-circle">
+                <div class="score-value" id="final-score">0</div>
+            </div>
+            <p id="score-message" style="margin-bottom: 2rem; color: var(--text-main); font-size: 1.1rem; font-weight: 500;"></p>
+            <button type="button" class="btn btn-outline" onclick="resetQuiz()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Ulangi Tes
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        By EDUFILLAH, Unlock The Secret Of Curious Minds
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "Jarak antara kota P dan kota Q pada peta adalah 5 cm. Jika skala peta tersebut adalah 1 : 1.200.000, maka jarak sebenarnya antara kedua kota tersebut adalah...",
+                options: ["6 km", "60 km", "600 km", "6.000 km"],
+                correctAnswer: 1,
+                explanation: `<strong>Pengingat Konsep:</strong><br>Skala peta 1 : n berarti 1 cm pada peta mewakili n cm jarak sebenarnya.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Hitung jarak dalam cm:</strong> Jarak Sebenarnya = Jarak Peta &times; Nilai Skala.<br>Jarak = 5 cm &times; 1.200.000 = 6.000.000 cm.<br>2. <strong>Konversi ke Kilometer:</strong> Karena 1 km = 100.000 cm, maka bagilah hasil dengan 100.000.<br>6.000.000 cm &divide; 100.000 = <strong>60 km</strong>.`
+            },
+            {
+                question: "Sebuah denah rumah digambar dengan skala 1 : 150. Jika ukuran ruang tamu pada denah adalah 3 cm &times; 4 cm, maka luas sebenarnya dari ruang tamu tersebut adalah...",
+                options: ["18 meter persegi", "27 meter persegi", "36 meter persegi", "54 meter persegi"],
+                correctAnswer: 1,
+                explanation: `<strong>Peringatan!</strong> Jangan mengalikan luas denah dengan skala biasa. Anda harus mencari ukuran panjang dan lebar sebenarnya terlebih dahulu.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Panjang Sebenarnya:</strong> 3 cm &times; 150 = 450 cm = 4,5 meter.<br>2. <strong>Lebar Sebenarnya:</strong> 4 cm &times; 150 = 600 cm = 6 meter.<br>3. <strong>Hitung Luas:</strong> Luas = Panjang &times; Lebar = 4,5 m &times; 6 m = <strong>27 meter persegi</strong>.`
+            },
+            {
+                question: "Untuk membuat 12 loyang kue diperlukan 3 kg tepung terigu. Jika seorang pembuat kue ingin membuat 36 loyang kue yang sejenis, maka jumlah tepung terigu yang dibutuhkan adalah...",
+                options: ["6 kg", "9 kg", "12 kg", "15 kg"],
+                correctAnswer: 1,
+                explanation: `<strong>Konsep Perbandingan Senilai:</strong><br>Semakin banyak kue yang dibuat, semakin banyak pula tepung yang dibutuhkan.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Metode Rasio Langsung:</strong><br>Kebutuhan = (Jumlah yang diinginkan &divide; Jumlah awal) &times; Bahan awal<br>Kebutuhan = (36 loyang &divide; 12 loyang) &times; 3 kg<br>2. <strong>Hitung:</strong> 3 &times; 3 kg = <strong>9 kg</strong>.`
+            },
+            {
+                question: "Sebuah proyek pembangunan jembatan diperkirakan dapat selesai dalam waktu 40 hari jika dikerjakan oleh 15 orang pekerja. Setelah dikerjakan selama 10 hari, pekerjaan dihentikan selama 5 hari karena kendala cuaca. Agar proyek selesai tepat waktu, banyak pekerja tambahan yang diperlukan adalah...",
+                options: ["3 orang", "5 orang", "18 orang", "20 orang"],
+                correctAnswer: 0,
+                explanation: `<strong>Konsep Perbandingan Berbalik Nilai:</strong><br>Jika waktu pengerjaan berkurang, jumlah pekerja harus bertambah.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Beban Kerja Total:</strong> 40 hari &times; 15 orang = 600 satuan beban kerja.<br>2. <strong>Pekerjaan Selesai:</strong> 10 hari &times; 15 orang = 150 satuan beban kerja.<br>3. <strong>Sisa Beban Kerja:</strong> 600 - 150 = 450 satuan beban kerja.<br>4. <strong>Sisa Waktu Pengerjaan:</strong> Awalnya sisa 30 hari (40-10). Karena libur 5 hari, sisa waktu = 30 - 5 = 25 hari.<br>5. <strong>Pekerja yang Dibutuhkan:</strong> 450 beban &divide; 25 hari = 18 orang pekerja.<br>6. <strong>Tambahan Pekerja:</strong> Karena sudah ada 15 orang, tambahan = 18 - 15 = <strong>3 orang</strong>.<br><br><small style="color:var(--danger)"><em>*Catatan Edukasi: Kunci jawaban referensi asal salah menetapkan hasil (tertulis Opsi B). Jawaban yang benar secara matematis adalah 3 orang (Opsi A) dan telah dikoreksi sistem.</em></small>`
+            },
+            {
+                question: "Sebuah mobil menempuh jarak 120 km dalam waktu 1,5 jam dengan kecepatan konstan. Jika mobil tersebut melakukan perjalanan selama 4 jam dengan kecepatan yang sama, jarak yang ditempuh adalah...",
+                options: ["320 km", "360 km", "400 km", "480 km"],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>1. <strong>Cari Kecepatan Mobil (Konstan):</strong><br>Kecepatan = Jarak &divide; Waktu = 120 km &divide; 1,5 jam = 80 km/jam.<br>2. <strong>Hitung Jarak Baru:</strong><br>Jarak = Kecepatan &times; Waktu Baru<br>Jarak = 80 km/jam &times; 4 jam = <strong>320 km</strong>.`
+            },
+            {
+                question: "Sebuah bak mandi berbentuk balok dengan volume 240 liter dalam keadaan kosong diisi air melalui sebuah keran. Jika air mengalir dengan laju konstan 8 liter per menit, waktu yang diperlukan untuk mengisi bak mandi tersebut hingga penuh adalah...",
+                options: ["20 menit", "30 menit", "40 menit", "50 menit"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>Soal ini berkaitan dengan debit (laju aliran) air. Rumus dasar debit adalah:<br>Waktu = Volume Total &divide; Laju Aliran (Debit)<br><br><strong>Hitung:</strong><br>Waktu = 240 liter &divide; 8 liter/menit = <strong>30 menit</strong>.`
+            },
+            {
+                question: "Sebuah model miniatur gedung dibuat dengan skala 1 : 200. Jika volume gedung sebenarnya adalah 16.000 meter kubik, maka volume miniatur gedung tersebut adalah...",
+                options: ["2.000 cm<sup>3</sup>", "4.000 cm<sup>3</sup>", "8.000 cm<sup>3</sup>", "16.000 cm<sup>3</sup>"],
+                correctAnswer: 0,
+                explanation: `<strong>Konsep Skala Volume:</strong><br>Jika skala panjang (linier) adalah 1 : n, maka skala luasnya adalah 1 : n<sup>2</sup>, dan <strong>skala volumenya adalah 1 : n<sup>3</sup></strong>.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Skala Volume:</strong> Skala panjang = 1 : 200. Maka skala volume = 1 : (200)<sup>3</sup> = 1 : 8.000.000.<br>2. <strong>Ubah Satuan Volume Asli:</strong> Volume asli = 16.000 m<sup>3</sup>. (1 m<sup>3</sup> = 1.000.000 cm<sup>3</sup>).<br>16.000 &times; 1.000.000 = 16.000.000.000 cm<sup>3</sup>.<br>3. <strong>Hitung Volume Miniatur:</strong> 16.000.000.000 &divide; 8.000.000 = <strong>2.000 cm<sup>3</sup></strong>.<br><br><small style="color:var(--danger)"><em>*Catatan Edukasi: Kunci referensi awal salah mengarahkan hasil 2.000 ke Opsi B. Nilai 2.000 cm<sup>3</sup> berada pada Opsi A. Sistem telah memperbaikinya otomatis.</em></small>`
+            },
+            {
+                question: "Suatu peternakan memiliki persediaan makanan yang cukup untuk 150 ekor ayam selama 6 hari. Jika peternak tersebut membeli 30 ekor ayam lagi, maka persediaan makanan tersebut akan habis dalam waktu...",
+                options: ["3 hari", "4 hari", "5 hari", "7 hari"],
+                correctAnswer: 2,
+                explanation: `<strong>Konsep Perbandingan Berbalik Nilai:</strong><br>Semakin banyak jumlah ayam, makanan akan semakin cepat habis (waktu berkurang).<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Identifikasi Data:</strong> Ayam awal (A1) = 150 ekor, Waktu awal (W1) = 6 hari.<br>Ayam baru (A2) = 150 + 30 = 180 ekor.<br>2. <strong>Rumus:</strong> A1 &times; W1 = A2 &times; W2<br>150 &times; 6 = 180 &times; W2<br>900 = 180 &times; W2<br>W2 = 900 &divide; 180 = <strong>5 hari</strong>.`
+            },
+            {
+                question: "Perbandingan uang saku Andi, Budi, dan Candra adalah 3 : 4 : 5. Jika selisih uang saku Andi dan Candra adalah Rp 10.000,00, maka jumlah uang saku mereka bertiga adalah...",
+                options: ["Rp 50.000,00", "Rp 60.000,00", "Rp 75.000,00", "Rp 90.000,00"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian (Metode Rasio):</strong><br>1. <strong>Tentukan Nilai 1 Bagian Rasio:</strong><br>Rasio Andi = 3, Rasio Candra = 5.<br>Selisih rasio mereka = 5 - 3 = 2 bagian.<br>2 bagian rasio setara dengan Rp 10.000,00. Maka, 1 bagian rasio = Rp 10.000,00 &divide; 2 = Rp 5.000,00.<br>2. <strong>Hitung Jumlah Total:</strong><br>Total rasio bertiga = 3 + 4 + 5 = 12 bagian.<br>Jumlah uang = 12 &times; Rp 5.000,00 = <strong>Rp 60.000,00</strong>.`
+            },
+            {
+                question: "Sebuah kendaraan membutuhkan 5 liter bensin untuk menempuh jarak 60 km. Jika kendaraan tersebut menempuh jarak 150 km, volume bensin yang diperlukan adalah...",
+                options: ["10,5 liter", "12,0 liter", "12,5 liter", "15,0 liter"],
+                correctAnswer: 2,
+                explanation: `<strong>Konsep Perbandingan Senilai:</strong><br>Semakin jauh jarak, bensin yang diperlukan juga semakin banyak.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Cari Jarak per 1 Liter:</strong><br>60 km &divide; 5 liter = 12 km/liter.<br>2. <strong>Hitung Bensin untuk Jarak Baru:</strong><br>150 km &divide; 12 km/liter = <strong>12,5 liter</strong>.`
+            },
+            {
+                question: "Dua buah peta wilayah yang sama digambar dengan skala berbeda. Peta A menggunakan skala 1 : 50.000 dan Peta B menggunakan skala 1 : 150.000. Berdasarkan informasi tersebut, pernyataan berikut yang paling tepat dievaluasi sebagai kebenaran adalah...",
+                options: [
+                    "Jarak dua tempat pada Peta B lebih panjang daripada jarak pada Peta A.",
+                    "Luas wilayah pada Peta A tampak 3 kali lebih besar dibanding Peta B.",
+                    "Jarak 3 cm pada Peta A mewakili jarak sebenarnya yang sama dengan 1 cm pada Peta B.",
+                    "Peta B menyajikan detail wilayah yang lebih rinci dibandingkan Peta A."
+                ],
+                correctAnswer: 2,
+                explanation: `<strong>Analisis Logis:</strong><br>&bull; Peta A (1:50.000) adalah peta skala besar (gambar lebih detail). Peta B (1:150.000) adalah peta skala kecil.<br>&bull; <strong>Mari Uji Opsi C:</strong><br>Di Peta A: 3 cm mewakili jarak 3 &times; 50.000 = 150.000 cm.<br>Di Peta B: 1 cm mewakili jarak 1 &times; 150.000 = 150.000 cm.<br>Karena nilai di lapangannya sama (150.000 cm), maka pernyataan opsi C adalah <strong>BENAR</strong>.`
+            },
+            {
+                question: "Toko \"Murah Jaya\" menjual detergen dalam tiga ukuran kemasan berbeda:<br>&bull; Kemasan A: 400 gram seharga Rp 12.000,00<br>&bull; Kemasan B: 900 gram seharga Rp 26.100,00<br>&bull; Kemasan C: 1,5 kg seharga Rp 42.000,00<br>Berdasarkan analisis nilai ekonomis (harga per gram), urutan kemasan dari yang paling menguntungkan bagi konsumen adalah...",
+                options: [
+                    "Kemasan A, Kemasan B, Kemasan C",
+                    "Kemasan C, Kemasan B, Kemasan A",
+                    "Kemasan B, Kemasan C, Kemasan A",
+                    "Kemasan C, Kemasan A, Kemasan B"
+                ],
+                correctAnswer: 1,
+                explanation: `<strong>Konsep Nilai Ekonomis:</strong><br>Kemasan yang paling menguntungkan adalah yang memiliki harga per gram paling murah.<br><br><strong>Langkah Penyelesaian:</strong><br>1. Kemasan A: Rp 12.000 &divide; 400 gr = Rp 30,00 / gram.<br>2. Kemasan B: Rp 26.100 &divide; 900 gr = Rp 29,00 / gram.<br>3. Kemasan C (1,5 kg = 1.500 gr): Rp 42.000 &divide; 1.500 = Rp 28,00 / gram.<br><strong>Urutan (Termurah ke Termahal):</strong> Kemasan C (Rp 28), Kemasan B (Rp 29), Kemasan A (Rp 30).`
+            },
+            {
+                question: "Persediaan makanan untuk 20 orang pengungsi di suatu posko cukup untuk 15 hari. Setelah 3 hari, datang tambahan 4 orang pengungsi baru. Jika porsi makan setiap orang tetap sama, persediaan makanan tersebut akan habis dalam...",
+                options: ["10 hari lagi", "12 hari lagi", "13 hari lagi", "14 hari lagi"],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian (Metode Beban Sisa):</strong><br>1. <strong>Situasi Awal:</strong> 20 orang &times; 15 hari = 300 porsi.<br>2. <strong>Konsumsi Selama 3 Hari:</strong> Selama 3 hari pertama, makanan sudah dimakan oleh 20 orang.<br>Sisa bekal untuk mereka: 20 orang &times; (15 - 3) hari = 20 &times; 12 = 240 porsi tersisa.<br>3. <strong>Situasi Baru (Penambahan Orang):</strong> Ada tambahan 4 orang, total = 20 + 4 = 24 orang.<br>4. <strong>Hitung Waktu Sisa:</strong> Sisa 240 porsi &divide; 24 orang yang ada = <strong>10 hari lagi</strong>.`
+            },
+            {
+                question: "Grafik laju pertumbuhan tinggi tanaman jagung menunjukkan bahwa tinggi tanaman bertambah secara konstan 2,5 cm setiap hari. Jika pada hari ke-3 tinggi tanaman adalah 12 cm, maka tinggi tanaman pada hari ke-10 adalah...",
+                options: ["25,0 cm", "27,5 cm", "29,5 cm", "37,0 cm"],
+                correctAnswer: 2,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>1. <strong>Identifikasi Waktu Tumbuh:</strong> Jarak hari dari hari ke-3 sampai hari ke-10 adalah 10 - 3 = 7 hari pertumbuhan.<br>2. <strong>Hitung Pertambahan Tinggi:</strong> 7 hari &times; 2,5 cm/hari = 17,5 cm pertambahan.<br>3. <strong>Hitung Tinggi Akhir:</strong> Tinggi di hari ke-3 + Pertambahan = 12 cm + 17,5 cm = <strong>29,5 cm</strong>.`
+            },
+            {
+                question: "Mesin cetak A dapat mencetak 150 halaman dalam waktu 3 menit, sedangkan Mesin cetak B dapat mencetak 240 halaman dalam waktu 5 menit. Evaluasi efisiensi kedua mesin tersebut menunjukkan bahwa...",
+                options: [
+                    "Mesin A lebih cepat dengan selisih laju cetak 2 halaman per menit.",
+                    "Mesin B lebih cepat dengan selisih laju cetak 2 halaman per menit.",
+                    "Kedua mesin memiliki laju cetak yang sama cepat.",
+                    "Mesin A lebih cepat dengan selisih laju cetak 10 halaman per menit."
+                ],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian (Hitung Laju Kecepatan):</strong><br>1. <strong>Kecepatan Mesin A:</strong> 150 halaman &divide; 3 menit = 50 halaman / menit.<br>2. <strong>Kecepatan Mesin B:</strong> 240 halaman &divide; 5 menit = 48 halaman / menit.<br>3. <strong>Kesimpulan:</strong> Mesin A lebih cepat daripada Mesin B. Selisih kecepatannya = 50 - 48 = <strong>2 halaman per menit</strong>.`
+            },
+            {
+                question: "Pada sebuah peta berskala 1 : 250.000, jarak kota X ke kota Y adalah 8 cm. Jika peta tersebut difotokopi diperkecil dengan faktor skala 50%, maka jarak kota X ke kota Y pada peta yang baru beserta skala barunya adalah...",
+                options: [
+                    "4 cm dengan skala 1 : 125.000",
+                    "4 cm dengan skala 1 : 500.000",
+                    "16 cm dengan skala 1 : 500.000",
+                    "16 cm dengan skala 1 : 125.000"
+                ],
+                correctAnswer: 1,
+                explanation: `<strong>Konsep Pengecilan Peta:</strong><br>Jika peta diperkecil, gambar objek (seperti jarak cm di kertas) akan menjadi <em>lebih kecil</em>, namun angka penyebut skalanya akan menjadi <em>lebih besar</em> karena tingkat kompresinya semakin tinggi.<br><br><strong>Langkah Penyelesaian:</strong><br>1. <strong>Jarak Baru:</strong> Karena diperkecil 50%, jarak di peta baru = 8 cm &times; 50% = 4 cm.<br>2. <strong>Skala Baru:</strong> Pengecilan 50% (setengahnya) berarti skala melebar 2x lipat. Skala baru = 1 : (250.000 &times; 2) = 1 : 500.000.<br>Maka jaraknya <strong>4 cm dengan skala 1 : 500.000</strong>.`
+            },
+            {
+                question: "Nilai tukar mata uang asing menunjukkan bahwa 1 USD setara dengan Rp 15.000,00 dan 1 SGD setara dengan Rp 11.000,00. Jika seseorang memiliki uang sebesar 220 SGD dan ingin menukarkannya ke dalam mata uang USD, maka uang yang akan ia terima adalah...",
+                options: ["150 USD", "161 USD", "165 USD", "300 USD"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian (Konversi Silang):</strong><br>Ubah dulu ke mata uang asal (Rupiah), lalu beli mata uang yang dituju (USD).<br>1. <strong>Konversi SGD ke IDR:</strong> 220 SGD &times; Rp 11.000 = Rp 2.420.000,00.<br>2. <strong>Konversi IDR ke USD:</strong> Rp 2.420.000 &divide; Rp 15.000 (harga 1 USD) = 161,333... USD.<br>Karena uang fisik dibulatkan ke nilai wajar, ia akan menerima <strong>161 USD</strong>.`
+            },
+            {
+                question: "Pompa air merek \"Sembur\" mampu memindahkan air sebanyak 120 liter dalam waktu 4 menit. Pompa air merek \"Aliran\" mampu memindahkan air sebanyak 180 liter dalam waktu 5 menit. Jika kedua pompa digunakan bersama-sama untuk mengisi kolam berkapasitas 1.320 liter, waktu yang dibutuhkan adalah...",
+                options: ["15 menit", "20 menit", "22 menit", "24 menit"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian (Kerja Bersama):</strong><br>1. <strong>Debit Pompa Sembur:</strong> 120 L &divide; 4 mnt = 30 Liter / menit.<br>2. <strong>Debit Pompa Aliran:</strong> 180 L &divide; 5 mnt = 36 Liter / menit.<br>3. <strong>Debit Gabungan:</strong> Jika dihidupkan bersama, mereka memindahkan 30 + 36 = 66 Liter / menit.<br>4. <strong>Waktu Total:</strong> Volume Total &divide; Debit Gabungan = 1.320 &divide; 66 = <strong>20 menit</strong>.`
+            },
+            {
+                question: "Jika perbandingan x : y = 3 : 4, maka nilai dari rasio (2x + y) : (3x - y) adalah...",
+                options: ["2 : 1", "3 : 2", "5 : 3", "10 : 7"],
+                correctAnswer: 0,
+                explanation: `<strong>Langkah Penyelesaian (Substitusi Nilai Rasio):</strong><br>Karena nilai aslinya proporsional, kita bisa langsung menganggap <em>x = 3</em> dan <em>y = 4</em> (atau kelipatannya).<br>1. <strong>Substitusi ke pembilang (2x + y):</strong><br>(2(3) + 4) = 6 + 4 = 10.<br>2. <strong>Substitusi ke penyebut (3x - y):</strong><br>(3(3) - 4) = 9 - 4 = 5.<br>3. <strong>Bandingkan:</strong> 10 : 5 disederhanakan menjadi <strong>2 : 1</strong>.`
+            },
+            {
+                question: "Seorang arsitek sedang merancang maket sebuah kawasan perumahan. Ia harus memilih skala maket agar maket berukuran panjang 120 cm dapat memuat panjang lahan sebenarnya yang berukuran 300 meter. Skala maket paling tepat yang harus dipilih oleh arsitek tersebut adalah...",
+                options: ["1 : 25", "1 : 250", "1 : 2.500", "1 : 25.000"],
+                correctAnswer: 1,
+                explanation: `<strong>Langkah Penyelesaian:</strong><br>1. <strong>Samakan Satuan Pengukuran:</strong><br>Panjang maket = 120 cm.<br>Panjang sebenarnya = 300 meter = 30.000 cm.<br>2. <strong>Hitung Skala:</strong><br>Skala = Jarak Maket : Jarak Sebenarnya<br>Skala = 120 : 30.000<br>3. <strong>Sederhanakan:</strong> Bagi kedua sisi dengan 120.<br>(120 &divide; 120) : (30.000 &divide; 120) = <strong>1 : 250</strong>.`
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-questions');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `q-card-${index}`;
+
+                // Header soal
+                const header = document.createElement('div');
+                header.className = 'question-header';
+                header.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                `;
+                questionCard.appendChild(header);
+
+                // Kontainer opsi jawaban
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question${index}`;
+                    radio.value = optIndex;
+                    
+                    const customRadio = document.createElement('span');
+                    customRadio.className = 'radio-custom';
+                    
+                    const text = document.createElement('span');
+                    text.className = 'option-text';
+                    text.innerHTML = opt;
+
+                    label.appendChild(radio);
+                    label.appendChild(customRadio);
+                    label.appendChild(text);
+                    optionsContainer.appendChild(label);
+                });
+                
+                questionCard.appendChild(optionsContainer);
+
+                // Kotak penjelasan (hidden secara default)
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `exp-${index}`;
+                
+                const expTitle = document.createElement('h4');
+                expTitle.id = `exp-title-${index}`;
+                expBox.appendChild(expTitle);
+                
+                const expContent = document.createElement('div');
+                expContent.className = 'explanation-content';
+                expContent.innerHTML = q.explanation;
+                expBox.appendChild(expContent);
+
+                questionCard.appendChild(expBox);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function checkAnswers() {
+            let correctAnswersCount = 0;
+            const pointsPerQuestion = 100 / quizData.length;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                const expTitle = document.getElementById(`exp-title-${index}`);
+                
+                // Hapus styling lama jika tombol ditekan ulang (opsional)
+                q.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+                
+                expBox.classList.remove('exp-correct', 'exp-wrong');
+
+                let isCorrect = false;
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === q.correctAnswer) {
+                        correctAnswersCount++;
+                        isCorrect = true;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        // Tandai salah pada pilihan user, lalu tandai benar pada kunci yang tepat
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                    }
+                } else {
+                    // Jika dikosongkan, langsung tunjukkan jawaban benarnya
+                    document.getElementById(`label-${index}-${q.correctAnswer}`).classList.add('correct');
+                }
+
+                // Tampilkan kotak penjelasan
+                expBox.classList.add('show');
+                if (isCorrect) {
+                    expBox.classList.add('exp-correct');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jawaban Anda Tepat!';
+                } else {
+                    expBox.classList.add('exp-wrong');
+                    expTitle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ' + (selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Soal Tidak Dijawab');
+                }
+
+                // Disable input radio agar tidak bisa diubah lagi setelah diperiksa
+                const radios = document.querySelectorAll(`input[name="question${index}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            });
+
+            // Hitung dan Tampilkan Skor
+            const finalScore = Math.round(correctAnswersCount * pointsPerQuestion);
+            const finalScoreElem = document.getElementById('final-score');
+            finalScoreElem.innerText = finalScore;
+            try {
+                finalScoreElem.setAttribute('data-final-score', Math.round(finalScore));
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'MATH_QUIZ_SUBMITTED',
+                        score: Math.round(finalScore),
+                        passed: Math.round(finalScore) >= 85
+                    }, '*');
+                }
+            } catch(e) {}
+            
+            const messageElem = document.getElementById('score-message');
+            if (finalScore >= 90) messageElem.innerText = "Luar biasa! Pemahaman matematikamu sangat tajam.";
+            else if (finalScore >= 70) messageElem.innerText = "Kerja bagus! Lanjutkan latihanmu agar lebih presisi.";
+            else if (finalScore >= 50) messageElem.innerText = "Cukup baik, tapi masih ada ruang untuk perbaikan. Yuk pelajari pembahasannya!";
+            else messageElem.innerText = "Jangan menyerah! Setiap kegagalan adalah langkah menuju kesuksesan. Pelajari pembahasannya pelan-pelan.";
+
+            // Manipulasi DOM dan Animasi Scroll
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('submit-section').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-form').reset();
+            
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('submit-section').style.display = 'block';
+
+            quizData.forEach((q, index) => {
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.classList.remove('show', 'exp-correct', 'exp-wrong');
+                
+                q.options.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove('correct', 'wrong');
+                    
+                    const radio = label.querySelector('input');
+                    radio.disabled = false;
+                });
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+                function goBack() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: "CLOSE_MODAL" }, "*");
+                    return;
+                }
+            } catch(e) {}
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "#";
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>

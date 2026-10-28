@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Edufillah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        
+        /* Custom styling for checked radio buttons */
+        .radio-custom:checked + div {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .radio-custom:checked + div .dot {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        
+        /* Fallback for Base64 Images just in case */
+        img[src^="data:image"] {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onclick="window.history.back()" class="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </button>
+            <h1 class="text-lg md:text-xl font-bold text-slate-800 hidden sm:block">Kuis Statistika & Peluang</h1>
+            <div class="w-20"></div> <!-- Spacer to keep title centered -->
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-2">Uji Pemahamanmu!</h2>
+            <p class="text-slate-600">Jawablah pertanyaan-pertanyaan di bawah ini. Kamu bisa menekan tombol "Periksa Jawaban" kapan saja di akhir halaman, meskipun belum semua soal diisi.</p>
+        </div>
+
+        <form id="quiz-form" onsubmit="event.preventDefault();">
+            <div id="quiz-container" class="space-y-6">
+                <!-- Pertanyaan akan di-render di sini oleh JavaScript -->
+            </div>
+
+            <div class="mt-10 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 text-center">
+                
+                <button id="btn-submit" type="button" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:scale-105">
+                    Periksa Jawaban
+                </button>
+
+                <div id="score-container" class="hidden mt-4">
+                    <h3 class="text-xl font-medium text-slate-500 mb-2">Nilai Akhir Anda:</h3>
+                    <div class="text-6xl font-black text-indigo-700 mb-4" id="final-score">100</div>
+                    <div id="score-message" class="text-lg font-medium mb-8"></div>
+                    
+                    <button id="btn-reset" type="button" class="w-full sm:w-auto px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2 -mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Ulangi Tes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12">
+        <div class="text-center px-4">
+            <p class="font-medium tracking-wide text-sm md:text-base">By EDUFILLAH, Unlock The Secret Of Curious Minds</p>
+        </div>
+    </footer>
+
+    <script>
+        // Array Data Soal
+        const quizData = [
+            {
+                q: "Nilai rata-rata dari sekumpulan data tertulis sering juga disebut dengan istilah...",
+                options: ["Median", "Modus", "Mean", "Jangkauan"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Mean</b><br><br><b>Pengingat Konsep:</b><br>Dalam statistika, ketiga sebutan populer ini punya arti masing-masing:<br>&bull; <b>Mean</b> = Rata-rata hitung.<br>&bull; <b>Median</b> = Nilai tengah (setelah diurutkan).<br>&bull; <b>Modus</b> = Nilai yang paling eksis/paling sering muncul.<br>Maka, sebutan lain dari nilai rata-rata adalah <i>Mean</i>."
+            },
+            {
+                q: "Nilai tengah dari data yang telah diurutkan dari nilai terkecil hingga terbesar disebut...",
+                options: ["Mean", "Median", "Modus", "Kuartil"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Median</b><br><br><b>Pengingat Konsep:</b><br>Kata kuncinya adalah <b>'Nilai Tengah'</b> dan <b>'Diurutkan'</b>. Untuk mencari Median, kita wajib mengurutkan datanya dulu dari yang terkecil (minimum) sampai yang terbesar (maksimum), barulah kita cari siapa yang duduk persis di tengah-tengah."
+            },
+            {
+                q: "Dalam suatu kelompok data, nilai atau data yang paling sering muncul disebut...",
+                options: ["Rata-rata", "Jangkauan", "Modus", "Median"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Modus</b><br><br><b>Pengingat Konsep:</b><br>Modus diambil dari kata <i>'Mode'</i> (gaya/tren). Jadi, Modus adalah data yang paling ngetren alias <b>paling banyak frekuensinya (paling sering muncul)</b> dibandingkan data yang lain."
+            },
+            {
+                q: "Selisih antara nilai data terbesar dengan nilai data terkecil dalam suatu kumpulan data disebut...",
+                options: ["Jangkauan", "Median", "Rata-rata", "Frekuensi"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: Jangkauan</b><br><br><b>Pengingat Konsep:</b><br>Jangkauan atau dalam bahasa Inggris disebut <i>Range</i>, adalah jarak antara ujung paling kecil ke ujung paling besar. Cara menghitungnya mudah:<br><b>Jangkauan = Nilai Terbesar - Nilai Terkecil</b>."
+            },
+            {
+                q: "Perhatikan kumpulan data berikut: 4, 5, 5, 6, 7, 7, 7, 8, 9. Modus dari data tersebut adalah...",
+                options: ["5", "6", "7", "9"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 7</b><br><br><b>Langkah Penyelesaian:</b><br>Mari kita absen satu per satu kemunculannya:<br>&bull; Angka 4 muncul 1 kali<br>&bull; Angka 5 muncul 2 kali<br>&bull; Angka 6 muncul 1 kali<br>&bull; <b>Angka 7 muncul 3 kali (paling banyak!)</b><br>&bull; Angka 8 dan 9 muncul 1 kali<br>Karena 7 muncul paling sering, maka modusnya adalah 7."
+            },
+            {
+                q: "Rumus dasar untuk menghitung nilai rata-rata (mean) dari suatu data tunggal adalah...",
+                options: ["Jumlah seluruh nilai data dikali banyak data", "Jumlah seluruh nilai data dibagi banyak data", "Nilai terbesar dikurangi nilai terkecil", "Nilai tengah setelah data diurutkan"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Jumlah seluruh nilai data dibagi banyak data</b><br><br><b>Pengingat Konsep:</b><br>Ibaratkan ada 3 anak mengumpulkan permen. Anak A punya 2, B punya 4, C punya 3. Untuk mencari rata-ratanya, semua permen disatukan dulu (dijumlahkan), baru dibagi rata ke 3 anak tadi.<br>Maka rumusnya adalah: <b>Total Nilai &divide; Banyaknya Data</b>."
+            },
+            {
+                q: "Diberikan data: 6, 7, 8, 6, 8. Nilai rata-rata (mean) dari data tersebut adalah...",
+                options: ["6", "7", "8", "35"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 7</b><br><br><b>Langkah Penyelesaian:</b><br>1. Jumlahkan semua angkanya: 6 + 7 + 8 + 6 + 8 = <b>35</b>.<br>2. Hitung ada berapa angka (banyaknya data): Ada <b>5</b> data.<br>3. Bagi jumlah dengan banyak data: 35 &divide; 5 = <b>7</b>.<br>Jadi, nilai rata-ratanya (mean) adalah 7."
+            },
+            {
+                q: "Nilai median dari data terurut berikut: 3, 5, 7, 9, 11 adalah...",
+                options: ["5", "7", "9", "11"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 7</b><br><br><b>Langkah Penyelesaian:</b><br>Untungnya datanya sudah urut dari kecil ke besar! Datanya ada 5 angka (ganjil):<br>3, 5, <b>7</b>, 9, 11.<br>Coba coret satu per satu dari kiri dan kanan secara bersamaan. Angka yang tersisa sendirian di tengah persis adalah angka 7. Itulah mediannya."
+            },
+            {
+                q: "Jika diketahui suatu data adalah: 12, 15, 10, 18, 14. Jangkauan dari data tersebut adalah...",
+                options: ["4", "6", "8", "10"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 8</b><br><br><b>Langkah Penyelesaian:</b><br>1. Cari angka yang paling besar (Maksimum) &rarr; <b>18</b>.<br>2. Cari angka yang paling kecil (Minimum) &rarr; <b>10</b>.<br>3. Hitung selisihnya (Jangkauan): 18 - 10 = <b>8</b>."
+            },
+            {
+                q: "Perhatikan gambar diagram berikut untuk menjawab soal. (Catatan: Bayangkan sebuah diagram dengan balok-balok berdiri). Diagram yang menyajikan data dalam bentuk batang-batang persegi panjang tegak atau mendatar disebut...",
+                options: ["Diagram Lingkaran", "Diagram Batang", "Diagram Garis", "Diagram Lambang"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Diagram Batang</b><br><br><b>Pengingat Konsep:</b><br>Namanya saja sudah sangat jelas. Karena digambar menggunakan bangun datar persegi panjang (seperti batang/balok), maka jenis penyajian data ini disebut <b>Diagram Batang</b>."
+            },
+            {
+                q: "Perhatikan diagram garis berikut. Diagram garis sangat cocok digunakan untuk menyajikan data yang...",
+                options: ["Bersifat kategoris saja", "Berkelompok sangat besar", "Berkesinambungan atau berkala dari waktu ke waktu", "Tidak memiliki nilai numerik"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Berkesinambungan atau berkala dari waktu ke waktu</b><br><br><b>Pengingat Konsep:</b><br>Diagram Garis (berupa titik-titik yang dihubungkan dengan garis) berfungsi untuk melihat <b>Tren (Naik/Turun)</b>. Sangat cocok dipakai untuk data waktu yang berjalan terus. Contoh: Suhu badan pasien dari jam ke jam, atau data curah hujan dari bulan ke bulan."
+            },
+            {
+                q: "Jika suatu data disajikan dalam diagram lingkaran dan satu lingkaran penuh mewakili total data, maka besar sudut pusat untuk seluruh data tersebut adalah...",
+                options: ["90&deg;", "180&deg;", "270&deg;", "360&deg;"],
+                ans: 3,
+                exp: "<b>Jawaban Benar: 360&deg;</b><br><br><b>Pengingat Konsep:</b><br>Dalam matematika geometri dan statistika, putaran penuh pada satu lingkaran besar sudutnya mutlak bernilai <b>360 derajat (360&deg;)</b>. (Sedangkan jika hanya setengah lingkaran, berarti 180&deg;)."
+            },
+            {
+                q: "Himpunan dari semua hasil yang mungkin terjadi pada suatu percobaan statistika disebut...",
+                options: ["Titik Sampel", "Ruang Sampel", "Kejadian", "Peluang"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Ruang Sampel</b><br><br><b>Pengingat Konsep:</b><br>Ibarat sebuah ruangan yang isinya adalah <i>seluruh kemungkinan</i> yang bisa saja terjadi, itu disebut <b>Ruang Sampel (S)</b>. Sedangkan setiap anggota/isi individu di dalamnya (satu per satu) disebut Titik Sampel."
+            },
+            {
+                q: "Pada pelemparan sebuah koin logam, sisi yang mungkin muncul adalah Angka (A) atau Gambar (G). Ruang sampel dari pelemparan satu koin tersebut adalah...",
+                options: ["{A}", "{G}", "{A, G}", "{AA, GG}"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: {A, G}</b><br><br><b>Langkah Penyelesaian:</b><br>Sebuah koin uang logam hanya punya 2 muka. Kalau tidak muncul Angka (A), ya pasti muncul Gambar (G). Karena ruang sampel berisi <b>semua kemungkinan</b>, maka kita tulis keduanya di dalam kurung kurawal: <b>{A, G}</b>."
+            },
+            {
+                q: "Sebuah dadu bermata 6 dilambungkan sekali. Banyaknya titik sampel pada percobaan tersebut adalah...",
+                options: ["2", "4", "6", "12"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 6</b><br><br><b>Langkah Penyelesaian:</b><br>Bentuk dadu adalah kubus (punya 6 sisi). Masing-masing sisinya ada titik yang melambangkan angka 1, 2, 3, 4, 5, dan 6. Karena ada 6 hasil yang mungkin keluar saat dilempar, maka banyaknya titik sampel adalah <b>6</b>."
+            },
+            {
+                q: "Nilai peluang dari suatu kejadian yang pasti terjadi adalah...",
+                options: ["0", "0,5", "1", "2"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: 1</b><br><br><b>Pengingat Konsep:</b><br>Dalam Peluang (Probabilitas), angka tertinggi adalah <b>1 (atau 100%)</b>. Jika sesuatu nilainya 1, berarti kejadian itu <b>MUTLAK / PASTI TERJADI</b> tanpa keraguan sedikit pun. Contoh: Matahari terbit dari timur."
+            },
+            {
+                q: "Nilai peluang dari suatu kejadian yang mustahil atau tidak mungkin terjadi adalah...",
+                options: ["-1", "0", "1", "Tidak terhingga"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 0</b><br><br><b>Pengingat Konsep:</b><br>Kebalikan dari kepastian adalah kemustahilan. Nilai peluang tidak mungkin negatif. Nilai paling rendah adalah <b>0 (atau 0%)</b>, yang artinya kejadian tersebut <b>MUSTAHIL</b> terjadi. Contoh: Kambing bertelur."
+            },
+            {
+                q: "Kisaran nilai peluang (P) untuk setiap kejadian A selalu berada pada rentang...",
+                options: ["-1 &le; P(A) &le; 1", "0 &le; P(A) &le; 1", "0 &lt; P(A) &lt; 1", "1 &le; P(A) &le; 10"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 0 &le; P(A) &le; 1</b><br><br><b>Pengingat Konsep:</b><br>Menyambung dari soal sebelumnya, rentang/kisaran peluang itu hanya ada dari angka 0 sampai angka 1.<br>&bull; 0 = Mustahil<br>&bull; 1 = Pasti<br>&bull; Di tengah-tengahnya (misal 0,5 atau 1/2) = Mungkin terjadi, mungkin juga tidak."
+            },
+            {
+                q: "Sebuah koin dilempar sekali. Peluang munculnya sisi Angka adalah...",
+                options: ["1/4", "1/2", "3/4", "1"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 1/2</b><br><br><b>Langkah Penyelesaian:</b><br>Rumus Peluang: <b>P(A) = n(A) &divide; n(S)</b><br>&bull; n(A) = Jumlah sisi Angka di satu koin = 1.<br>&bull; n(S) = Total semua sisi koin (Angka & Gambar) = 2.<br>Maka, Peluangnya = <b>1/2</b> (atau 50%)."
+            },
+            {
+                q: "Sebuah dadu bermata 6 dilempar sekali. Peluang munculnya mata dadu bernilai 5 adalah...",
+                options: ["1/6", "2/6", "3/6", "5/6"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: 1/6</b><br><br><b>Langkah Penyelesaian:</b><br>Gunakan rumus peluang seperti biasa:<br>&bull; Sisi dadu yang ada angka '5'-nya cuma ada <b>1 buah</b>.<br>&bull; Total seluruh sisi dadu ada <b>6 buah</b>.<br>Maka peluang munculnya dadu angka 5 saat dilempar adalah <b>1/6</b>."
+            },
+            {
+                q: "Perbandingan antara banyaknya muncul suatu kejadian dengan banyaknya percobaan yang dilakukan disebut...",
+                options: ["Frekuensi Harapan", "Frekuensi Relatif", "Ruang Sampel", "Peluang Teoritis"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Frekuensi Relatif</b><br><br><b>Pengingat Konsep:</b><br>Jika kita benar-benar melakukan percobaan <i>(eksperimen)</i> berulang-ulang secara nyata (misal: melempar koin sendiri berkali-kali), lalu kita catat hasilnya dan kita bandingkan dengan total lemparan, itu disebut sebagai <b>Frekuensi Relatif</b> (Peluang Empirik)."
+            },
+            {
+                q: "Dalam 50 kali pelemparan koin, sisi Gambar muncul sebanyak 22 kali. Frekuensi relatif munculnya sisi Gambar adalah...",
+                options: ["22/50", "28/50", "22/100", "50/22"],
+                ans: 0,
+                exp: "<b>Jawaban Benar: 22/50</b><br><br><b>Langkah Penyelesaian:</b><br>Berdasarkan soal sebelumnya, rumus Frekuensi Relatif sangat gampang:<br>FR = (Kejadian yang Muncul) &divide; (Total Percobaan)<br>FR = (Muncul Gambar 22 kali) &divide; (Dilempar 50 kali)<br><b>FR = 22/50</b>. (Bisa disederhanakan menjadi 11/25, tapi opsi A sudah cukup mewakili)."
+            },
+            {
+                q: "Yang termasuk ke dalam ukuran pemusatan data (measures of central tendency) adalah...",
+                options: ["Jangkauan dan Simpangan", "Mean, Median, dan Modus", "Diagram Batang dan Diagram Garis", "Sampel dan Populasi"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: Mean, Median, dan Modus</b><br><br><b>Pengingat Konsep:</b><br><b>Ukuran Pemusatan Data</b> bertujuan untuk mencari satu angka tunggal yang bisa mewakili seluruh data (menunjukkan titik pusat kumpulnya data). Anggota geng ini tidak lain adalah trio: <b>Mean (Rata-rata), Median (Nilai Tengah), dan Modus (Sering Muncul)</b>."
+            },
+            {
+                q: "Yang termasuk ke dalam ukuran penyebaran data (measures of dispersion) adalah...",
+                options: ["Mean dan Median", "Modus dan Frekuensi", "Jangkauan (Range)", "Diagram Lingkaran"],
+                ans: 2,
+                exp: "<b>Jawaban Benar: Jangkauan (Range)</b><br><br><b>Pengingat Konsep:</b><br>Sebaliknya, <b>Ukuran Penyebaran Data</b> bertujuan untuk melihat seberapa tercerai-berai (melebar/jauh) data tersebut dari pusatnya. Salah satu wakil paling sederhana dari kelompok ini adalah <b>Jangkauan (Range)</b>, karena ia mengukur jarak dari yang paling kecil hingga paling besar."
+            },
+            {
+                q: "Perhatikan tabel frekuensi nilai matematika berikut:<br>&bull; Nilai 6 muncul 3 kali<br>&bull; Nilai 7 muncul 5 kali<br>&bull; Nilai 8 muncul 2 kali<br>Modus dari data nilai matematika tersebut adalah...",
+                options: ["6", "7", "8", "5"],
+                ans: 1,
+                exp: "<b>Jawaban Benar: 7</b><br><br><b>Langkah Penyelesaian:</b><br>Ingat konsep Modus: Cari yang jumlah frekuensinya paling besar/paling banyak!<br>&bull; Yang dapat nilai 6 ada 3 orang.<br>&bull; <b>Yang dapat nilai 7 ada 5 orang. (Paling Banyak)</b><br>&bull; Yang dapat nilai 8 ada 2 orang.<br>Karena nilai 7 didapatkan oleh paling banyak orang (5 kali muncul), maka Modusnya adalah <b>7</b>. (Jangan tertipu memilih 5, angka 5 itu frekuensinya, bukan nilainya)."
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitBtn = document.getElementById('btn-submit');
+        const resetBtn = document.getElementById('btn-reset');
+        const form = document.getElementById('quiz-form');
+        const scoreContainer = document.getElementById('score-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const scoreMessageEl = document.getElementById('score-message');
+
+        function initQuiz() {
+            quizContainer.innerHTML = '';
+            quizData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 transition-all';
+                qDiv.id = `question-box-${index}`;
+
+                let optionsHTML = '';
+                item.options.forEach((opt, optIndex) => {
+                    const letters = ['A', 'B', 'C', 'D'];
+                    optionsHTML += `
+                        <label class="relative flex items-center cursor-pointer group">
+                            <input type="radio" name="q${index}" value="${optIndex}" class="radio-custom sr-only peer" />
+                            <div class="w-full flex items-center p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-200 bg-slate-50 hover:bg-slate-100 transition-all peer-focus-visible:ring-2 ring-indigo-500">
+                                <div class="w-6 h-6 flex-shrink-0 rounded-full border-2 border-slate-300 mr-4 flex items-center justify-center bg-white transition-colors">
+                                    <div class="dot w-2 h-2 rounded-full transition-colors"></div>
+                                </div>
+                                <span class="font-semibold text-slate-500 mr-3">${letters[optIndex]}.</span>
+                                <span class="text-slate-700 font-medium">${opt}</span>
+                            </div>
+                        </label>
+                    `;
+                });
+
+                qDiv.innerHTML = `
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+                            ${index + 1}
+                        </div>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-800 leading-snug">${item.q}</h3>
+                    </div>
+                    <div class="space-y-3 pl-0 md:pl-12">
+                        ${optionsHTML}
+                    </div>
+                    <div id="explanation-${index}" class="hidden mt-6 pl-0 md:pl-12">
+                        <div class="p-5 rounded-xl text-sm md:text-base border-l-4"></div>
+                    </div>
+                `;
+                quizContainer.appendChild(qDiv);
+            });
+        }
+
+        submitBtn.addEventListener('click', () => {
+            let correctCount = 0;
+
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const expDiv = document.getElementById(`explanation-${index}`);
+                const expBox = expDiv.querySelector('div');
+                const qBox = document.getElementById(`question-box-${index}`);
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+
+                // Disable all inputs after submit
+                inputs.forEach(input => input.disabled = true);
+
+                let isCorrect = false;
+                if (selectedOption) {
+                    if (parseInt(selectedOption.value) === item.ans) {
+                        isCorrect = true;
+                        correctCount++;
+                    }
+                }
+
+                // Show Explanation Box with dynamic coloring
+                expDiv.classList.remove('hidden');
+                
+                if (isCorrect) {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-green-50 border-green-500 text-green-900 leading-relaxed';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-green-700 font-bold mb-3 text-lg">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Tepat Sekali!
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-green-300', 'bg-green-50/30');
+                } else {
+                    expBox.className = 'p-5 rounded-xl text-sm md:text-base border-l-4 bg-red-50 border-red-500 text-red-900 leading-relaxed';
+                    let headerText = selectedOption ? 'Jawaban Anda Kurang Tepat' : 'Anda Belum Menjawab';
+                    expBox.innerHTML = `
+                        <div class="flex items-center text-red-700 font-bold mb-3 text-lg">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            ${headerText}
+                        </div>
+                        ${item.exp}
+                    `;
+                    qBox.classList.add('border-red-300', 'bg-red-50/30');
+                }
+            });
+
+            // Hitung Skor (Skala 100)
+            const finalScore = Math.round((correctCount / quizData.length) * 100);
+            finalScoreEl.textContent = finalScore;
+
+            if (finalScore === 100) {
+                scoreMessageEl.innerHTML = "Luar biasa! Kamu menguasai materi Statistika & Peluang dengan sempurna! 🌟";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-green-600";
+            } else if (finalScore >= 80) {
+                scoreMessageEl.innerHTML = "Kerja bagus! Tingkat pemahamanmu sangat tinggi. Pertahankan prestasimu! 🔥";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-indigo-600";
+            } else if (finalScore >= 60) {
+                scoreMessageEl.innerHTML = "Lumayan! Jangan lupa pelajari lagi kotak pembahasannya agar semakin paham. 💪";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-yellow-600";
+            } else {
+                scoreMessageEl.innerHTML = "Jangan menyerah! Ayo baca lagi pembahasannya perlahan-lahan dan ulangi tesnya. Buktikan kamu bisa! 🚀";
+                scoreMessageEl.className = "text-lg font-medium mb-8 text-red-500";
+            }
+
+            // UI Changes
+            submitBtn.classList.add('hidden');
+            scoreContainer.classList.remove('hidden');
+            
+            // Scroll to score smoothly
+            setTimeout(() => {
+                document.getElementById('score-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            
+            // Bersihkan styling kotak dan sembunyikan pembahasan
+            quizData.forEach((item, index) => {
+                const expDiv = document.getElementById(`explanation-${index}`);
+                expDiv.classList.add('hidden');
+                
+                const qBox = document.getElementById(`question-box-${index}`);
+                qBox.classList.remove('border-green-300', 'bg-green-50/30', 'border-red-300', 'bg-red-50/30');
+
+                // Enable kembali inputs
+                const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+                inputs.forEach(input => input.disabled = false);
+            });
+
+            // Kembalikan UI State awal
+            scoreContainer.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+
+            // Scroll mulus kembali ke atas halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Inisialisasi Kuis saat pertama dimuat
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
